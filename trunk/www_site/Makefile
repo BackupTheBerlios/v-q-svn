@@ -5,6 +5,7 @@ HTML=$(FILES:.xml=.html)
 .PHONY: all clean subdirs
 
 all: $(HTML) subdirs
+	chmod a+r style.css
 
 subdirs:
 	cd xslt && $(MAKE)
