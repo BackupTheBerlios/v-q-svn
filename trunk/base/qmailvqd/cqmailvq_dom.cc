@@ -196,7 +196,7 @@ namespace POA_vq {
 		};
 		int rr = run(args);
 		if( ! WIFEXITED(rr) || WEXITSTATUS(rr) ) {
-				return lr(::vq::ivq::err_temp, "wrong exit value");
+				return lr(::vq::ivq::err_exec, restart);
 		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
