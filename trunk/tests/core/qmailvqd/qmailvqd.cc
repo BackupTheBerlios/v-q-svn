@@ -644,7 +644,51 @@ struct vq_test {
 						}
 				}
 		}
+
+		static const char * uc_dom;
+		static const char * uc_user;
+
+		CORBA::String_var uc_dom_id;
+		/**
+		 *
+		 */
+		void uc_case1() {
+				err = vq->dom_id(this->uc_dom, this->uc_dom_id);
+				if( ::vq::ivq::err_noent == err->ec ) {
+						IVQ_ERROR_EQUAL(
+							err=vq->dom_add(this->uc_dom, this->uc_dom_id), 
+							::vq::ivq::err_no);
+						BOOST_REQUIRE(::vq::ivq::err_no == err->ec);
+				}
+				err = vq->user_ex(this->uc_dom_id, this->uc_user);
+				if( ::vq::ivq::err_noent == err->ec ) {
+						::vq::ivq::auth_info ai;
+						ai.login = this->uc_user;
+						ai.pass = this->uc_user;
+						ai.flags = 0;
+						ai.id_domain = this->uc_dom_id;
+						IVQ_ERROR_EQUAL(
+							err=vq->user_add(ai, FALSE), ::vq::ivq::err_no );
+						BOOST_REQUIRE(::vq::ivq::err_no == err->ec );
+				}
+		}
+
+		/**
+		 *
+		 */
+
+		/**
+		 *
+		 */
+		void uc_cleanup() {
+				CORBA::String_var dom_id;
+				IVQ_ERROR_EQUAL(vq->dom_id(this->uc_dom, dom_id), ::vq::ivq::err_no);
+				IVQ_ERROR_EQUAL(vq->dom_rm(dom_id), ::vq::ivq::err_no);
+		}
 };
+
+const char * vq_test::uc_dom = "user-conf.pl";
+const char * vq_test::uc_user = "user-conf";
 
 /**
  * 
@@ -718,6 +762,16 @@ struct vq_test_suite : test_suite {
 				&vq_test::case11, test );
 			ts_case11->depends_on(ts_init);
 			add(ts_case11);
+
+			test_case * ts_uc1 = BOOST_CLASS_TEST_CASE( 
+				&vq_test::uc_case1, test );
+			ts_uc1->depends_on(ts_init);
+			add(ts_uc1);
+
+			test_case * ts_uc_cleanup = BOOST_CLASS_TEST_CASE( 
+				&vq_test::uc_cleanup, test );
+			ts_uc_cleanup->depends_on(ts_init);
+			add(ts_uc_cleanup);
 		}
 };
 

@@ -42,3 +42,4 @@ sleep 1
 
 echo "running client ..."
 ./qmailvqd -ORBInitRef NameService=corbaloc::$host:12456/NameService
+#gdb ./qmailvqd
