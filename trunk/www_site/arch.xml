@@ -1,0 +1,105 @@
+<chapter id="arch">
+	<title>Architecture</title>
+
+	<para>
+		This chapter describes different parts of v-q system.
+	</para>
+
+	<section id="arch.parts">
+		<title>Main parts</title>
+
+		<para>
+			V-q is a modularized system. Each of subsystems is a separate
+			interface accessed via CORBA protocol. This means that you
+			can replace any part at any time. It's matter of configuration.
+		</para>
+
+		<figure>
+			<title>Architecture in a picture</title>
+			<graphic fileref="../imgs/" format="PNG"/>
+		</figure>
+	</section>
+
+	<section id="arch.ivq">
+		<title>Interface ivq</title>
+
+		<para>
+			This is the most important interface. It is used directly
+			by client programs. It is the core of the system. This module
+			is responsible for integration with a mail transfer agent.
+			Usually this module creates and maintains data structures on
+			disk, MTA's configurations, etc.
+		</para>
+
+		<para>
+			This module calls methods from <link linkend="arch.iauth">iauth</link>
+			interface.
+		</para>
+
+		<section id="arch.ivq.cqmailvq">
+			<title>cqmailvq</title>
+			
+			<para>
+				At this time there's only one implementation of 
+				<link linkend="arch.ivq">ivq</link> represented
+				by cqmailvq class, and by qmailvqd daemon.
+			</para>
+
+			<para>
+				This object integrates with 
+				<ulink url="http://www.qmail.org">qmail</ulink> MTA. It
+				handles updating qmail's configuration, managing
+				users' maildirs, directories hierarchy, etc.
+			</para>
+
+			<para>
+				For some actions it uses small, helper programs
+				that are responsible for qmail's configuration updates.
+				This way priviledges can be separated - qmail's configuration
+				can be owned by a user other than the user which runs
+				qmailvqd.
+			</para>
+		</section>
+	</section>
+
+	<section id="arch.iauth">
+		<title>Interface iauth</title>
+
+		<para>
+			This interface represents authorization backend which
+			is responsible for storing informations about existing
+			domains and users.
+		</para>
+
+		<para>
+			Usually this interface implementations does not create
+			any entries in filesystem. They operate only on a specified
+			database.
+		</para>
+
+		<para>
+			This interface is used by <link linkend="arch.ivq">ivq
+			implementations</link>. You should not use it directly.
+			If you think that some feature should be added
+			to ivq please contact developers.
+		</para>
+
+		<section id="arch.iauth.cpgsqlauth">
+			<title>cpgsqlauth</title>
+
+			<para>
+				This implementation of <link linkend="arch.iauth">iauth
+				interface</link> operates on a PostgreSQL database.
+			</para>
+
+			<para>
+				It stores all informations in a database. Doesn't create
+				or use any files other than configuration.
+			</para>
+
+			<para>
+				It is represented by pgsqlauthd daemon.
+			</para>
+		</section>
+	</section>
+</chapter>

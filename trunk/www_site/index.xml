@@ -7,6 +7,8 @@
 	<!ENTITY intro SYSTEM "intro.xml">
 	<!ENTITY community SYSTEM "community.xml">
 	<!ENTITY install SYSTEM "install.xml">
+	<!ENTITY arch SYSTEM "arch.xml">
+	<!ENTITY license SYSTEM "license.xml">
 	]
 >
 <book lang="en">
@@ -31,12 +33,9 @@
 	</preface>
 	
 	&intro;
+	&arch;
 	&community;
 	&install;
-
-<!--	&sourceforge;
--->
-
 	&doc.gen;
 </book>
 
