@@ -1,0 +1,32 @@
+Files in current directory includes procedures and tables used by pgsqllogd,
+pgsqlauthd, they must be created in PostgreSQL database before using
+these programs.
+
+Instalation
+----------------------------
+
+First create database, it's advised to set encoding to unicode, for
+example:
+
+# createdb -Upgsql -Eunicode mail
+
+where pgsql is user allowed to create databases.
+
+Create vq system user called mail:
+
+# createuser -P -Upgsql mail
+
+You will be prompted for password for user mail, then pgsql.
+
+Now you can import database, you can do it using psql program, log in
+as mail or pgsql, you're current database should be mail, write
+
+# \i db.sql
+
+You'll be asked for pgsql user password (in my case it's PostgreSQL admin) -
+- language plpgsql will be created. After you'll be asked for mail user
+password, tables will be created.
+
+After this you should import functions from other .sql files.
+
+At the end you should have database prepared for use by vq.

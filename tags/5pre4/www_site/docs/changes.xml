@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<page menu="changes">
+
+<!-- date  -u +'%Y-%m-%dT%TGMT' -->
+<history type="sum">
+	<branch>
+		<version>4</version>
+		<date>2003-11-13T18:08:33GMT</date>
+		<info>
+			<ul>
+				<li>
+					Moved from libpq++ to libpqxx, need to install this library;
+				</li>
+				<li>
+					Upgraded code using Sablotron, this requires newest
+					version (1.0).
+				</li>
+				<li>
+					Many bugs fixed (especially with playing with qmail files);
+				</li>
+				<li>
+					Special programs for changing qmail files (better privilege separation);
+				</li>
+				<li>
+					Changed tables used to store login information;
+				</li>
+				<li>
+					Added module for vqwww that allows to browse login history;
+				</li>
+				<li>
+					Changed parameters passed to XSLT (uri is now called REQUEST_URI);
+				</li>
+				<li>
+					Translated vqwww into English, language can be selected at the login.
+				</li>
+				<li>
+					Better documentation.
+				</li>
+				<li>
+					Better error reporting.
+				</li>
+			</ul>
+		</info>
+	</branch>
+</history>
+</page>

@@ -1,0 +1,3 @@
+cpoll.o sig.o uniq.o libsys.so libsys.so.6.0
+cpoll.o dirs.o fd.o fdstr.o getline.o lock.o sig.o uniq.o util.o
+.depend

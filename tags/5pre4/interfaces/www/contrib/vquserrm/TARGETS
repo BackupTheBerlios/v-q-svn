@@ -1,0 +1,4 @@
+ac_int.o ac_str.o cconf.o cgi.o conf_home.o getgid.o getuid.o hier.o html.o install.o sabmain.o str2cc.o vquserrm.o vquserrm_conf.a
+ac_int ac_str conf_home.cc getgid getuid install str2cc vquserrm
+auto/*
+.depend
