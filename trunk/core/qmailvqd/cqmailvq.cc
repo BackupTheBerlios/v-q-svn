@@ -52,8 +52,9 @@ namespace POA_vq {
 	
 	/**
 	 */
-	cqmailvq::cqmailvq() : lr_errno(0), lastret(::vq::ivq::err_no), lastret_blkd(false) {
-		umask(0);
+	cqmailvq::cqmailvq( const std::string & h, unsigned s_dom ) 
+			: home(h), dom_split(s_dom), 
+			lr_errno(0), lastret(::vq::ivq::err_no), lastret_blkd(false) {
 	}
 	
 	/**
