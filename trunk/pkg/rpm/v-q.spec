@@ -17,9 +17,12 @@ License: GPL
 Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{name}-root
 BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
+BuildPrereq: postgresql-libs >= 7.4.6, libpqxx >= 2.5.0
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
 Prereq: sh-utils, textutils
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0
+Requires: %{name}-iauth = %{version}, %{name}-ilogger = %{version}
+Provides: %{name}-ivq = %{version}
 
 %description
 Virtual Qmail is a virtual domains manager that integrates with Qmail.
@@ -32,6 +35,19 @@ Requires: omniORB-devel >= 4.0.5-1, boost >= 1.31.0, %{name} = %{version}
 %description devel
 This package includes files that are needed to develop applications for
 Virtual Qmail.
+
+%package pgsql
+Group: System Environment/Daemons
+Summary: Implementation of iauth and ilogger interfaces using PostgreSQL
+Requires: postgresql-libs >= 7.4.6, libpqxx >= 2.5.0, %{name} = %{version}
+Provides: %{name}-iauth = %{version}, %{name}-ilogger = %{version}
+
+%description pgsql
+This package includes implementation of Virtual Qmail interfaces: 
+ * iauth which is used to store informations in a database
+ * ilogger which is used to store logs in a database
+
+Implementation is based on PostgreSQL and libpqxx.
 
 %prep
 %setup -q
@@ -77,10 +93,12 @@ EOF
 
 %build
 make
+make pgsql
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make PREFIX=$RPM_BUILD_ROOT/usr install
+make PREFIX=$RPM_BUILD_ROOT/usr install-pgsql
 
 # make /etc/sysconfig/vq
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
