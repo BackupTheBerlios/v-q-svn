@@ -36,6 +36,7 @@ SUCH DAMAGE.
 
 #include "lower.hpp"
 #include "hex.hpp"
-#include "hmac_md5.h"
+#include "hmac_md5.hpp"
+#include "split.hpp"
 
 #endif // ifndef __TEXT_HPP

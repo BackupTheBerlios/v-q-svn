@@ -39,7 +39,7 @@ hmac_md5.o: $(BASE)/comp-so hmac_md5.cc auto/lmd5.h hmac_md5.hpp
 lower.o: $(BASE)/comp-so lower.cc lower.hpp 
 	$(BASE)/comp-so lower.cc
 
-split.o: $(BAES)/comp-so split.cc split.hpp
+split.o: $(BASE)/comp-so split.cc split.hpp
 	$(BASE)/comp-so split.cc
 
 #####################

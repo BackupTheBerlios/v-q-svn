@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002,2003 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,27 +31,27 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef __SPLIT_H
-#define __SPLIT_H
+#ifndef __SPLIT_HPP
+#define __SPLIT_HPP
 
 #include <string>
 
-std::string split(const std::string &, const std::string &, 
-	const std::string &, 
-	std::string::size_type, bool rev = false );
+namespace text {
 
-std::string split(const std::string &, std::string::size_type, 
-	const std::string &, 
-	std::string::size_type, bool rev = false );
+	std::string split(const std::string &, const std::string &, 
+		const std::string &, 
+		std::string::size_type, bool rev = false );
+
+	std::string split(const std::string &, std::string::size_type, 
+		const std::string &, 
+		std::string::size_type, bool rev = false );
 		
-std::string split_dom(const std::string &, 
-	std::string::size_type, const std::string & = "/" );
+	std::string split_dom(const std::string &, 
+		std::string::size_type, const std::string & = "/" );
 
-std::string split_dom(const std::string &);
+	std::string split_user(const std::string &, 
+		std::string::size_type);
 
-std::string split_user(const std::string &, 
-	std::string::size_type);
+} // namespace text
 
-std::string split_user(const std::string &);
-
-#endif
+#endif // ifndef __SPLIT_HPP
