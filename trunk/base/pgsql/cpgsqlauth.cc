@@ -28,6 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <arpa/inet.h>
 
 #include <stdexcept>
+#include <iostream>
 
 namespace POA_vq {
 	
@@ -751,7 +752,7 @@ namespace POA_vq {
 		err->what = CORBA::string_dup(what); // string_dup not really needed
 		err->file = CORBA::string_dup(file);
 		err->line = line;
-		err->auth = TRUE;
+		err->auth = 1;
 		return err.release();
 	} std_catch
 

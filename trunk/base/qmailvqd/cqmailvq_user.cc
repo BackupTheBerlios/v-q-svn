@@ -21,21 +21,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "auto/d_namlen.h"
 
 #include <sys.hpp>
-#include <text.hpp>
-#include <pfstream.hpp>
 
-#include <sys/types.h>
 #include <sys/time.h>
-#include <unistd.h>
-#include <dirent.h>
 
-#include <csignal>
-#include <cstdio>
-#include <iomanip>
 #include <sstream>
-#include <algorithm>
 #include <cerrno>
-#include <memory>
 
 namespace POA_vq {
 
@@ -163,7 +153,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_ren, dir+user);
 		
 		replace(user.begin(),user.end(),'.',':');
-		cdir_ptr dotdir(opendir(dir.c_str()));
+		sys::cdir_ptr dotdir(opendir(dir.c_str()));
 		if( dotdir.get() ) {
 				struct dirent *de;
 				char * name;

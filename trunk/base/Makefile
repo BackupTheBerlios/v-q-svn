@@ -1,6 +1,6 @@
 BASE=..
 OBJS=vq.o auth.o logger.o autoresp.o
-INCS=`cat $(BASE)/corba.inc`
+INCS=-I. `cat $(BASE)/corba.inc`
 LIBS=`cat $(BASE)/corba.lib`
 SUBDIR=libvqmain pgsql qmailvqd
 

@@ -22,7 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <conf.hpp>
 
 // CORBA
-#include <coss/CosNaming.h>
+#include <import_export.h>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -35,6 +35,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 using namespace std;
 using namespace POA_vq;
 
+void usage(const char * me) {
+	cout<<"usage: "<<me<<" [ORB options] base_dir"<<endl;
+}
+
 int vqmain(int ac, char **av) {
 	/*
 	 * Initialize the ORB
@@ -43,14 +47,37 @@ int vqmain(int ac, char **av) {
 	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
 	
 	if( ac < 2 ) {
-			cout<<"usage: "<<*av<<" [ORB options] base_dir"<<endl;
+			usage(*av);
 			return 100;
+	}
+
+	int opt;
+	bool run = true, exp = true;
+	const char * exp_ins = "name_service#VQ.ivq";
+	
+	while( (opt=getopt(ac, av, "e:ErR")) != -1 ) switch(opt) {
+	case 'e':
+			exp = true;
+			exp_ins = optarg;
+			break;
+	case 'E':
+			exp = false;
+			break;
+	case 'r':
+			run = true;
+			break;
+	case 'R':
+			run = false;
+			break;
+	case '?':
+	default:
+			usage(*av);
+			return 111;
 	}
 
 	string base(*(av+1)); base += '/';
 	string conf_dir(base+"etc/ivq/qmail/");
-	conf::clnconf ivq_name(conf_dir+"ivq_name", "vq::ivq");
-	conf::clnconf iauth_name(conf_dir+"iauth_name", "vq::iauth");
+	conf::clnconf iauth_import(conf_dir+"iauth_import", "name_service#Auth.iauth");
 	conf::cintconf split_dom(conf_dir+"split_dom", SPLIT_DOM);
 	conf::cintconf split_user(conf_dir+"split_user", SPLIT_USER);
 	conf::cintconf fmode(conf_dir+"fmode", "0640");
@@ -71,45 +98,18 @@ int vqmain(int ac, char **av) {
 	
 	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
 	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
-	PortableServer::POAManager_var mgr = poa->the_POAManager();
-
-	/* 
-	 * Get NameService object
-	 */
-	CORBA::Object_var nsobj = orb->resolve_initial_references ("NameService");
-
-	CosNaming::NamingContext_var nc =
-			CosNaming::NamingContext::_narrow (nsobj);
-
-	if (CORBA::is_nil (nc)) {
-			cerr << "oops, I cannot access the Naming Service!" << endl;
-			return 100;
-	}
-
-	/*
-	 * Get iauth object
-	 */
-	CosNaming::Name ianame;
-	ianame.length(1);
-	ianame[0].id = iauth_name.val_str().c_str();
-	ianame[0].kind = static_cast<const char *>("");
 
 	CORBA::Object_var iaobj;
 	try {
-			iaobj = nc->resolve(ianame);
-	} catch(CosNaming::NamingContext::NotFound &) {
-			cout<<iauth_name.val_str()<<" was not found"<<endl;
-			return 100;
-	} catch(CosNaming::NamingContext::CannotProceed &) {
-			cout<<"can't proceed with "<<iauth_name.val_str()<<endl;
-			return 100;
-	} catch(CosNaming::NamingContext::InvalidName &) {
-			cout<<iauth_name.val_str()<<" is an invalid name"<<endl;
-			return 100;
+			corbautil::importObjRef(orb, iauth_import.val_str().c_str());
+	} catch( corbautil::ImportExportException & e ) {
+			cerr<<e<<endl;
+			orb->destroy();
+			return 111;
 	}
 	vq::iauth_var auth(vq::iauth::_narrow(iaobj));
 	if( CORBA::is_nil(auth) ) {
-			cout<<"can't narrow "<<iauth_name.val_str()<<endl;
+			cout<<"can't narrow iauth implementation"<<endl;
 			return 100;
 	}
 
@@ -127,39 +127,27 @@ int vqmain(int ac, char **av) {
 	
 	PortableServer::ObjectId_var oid = poa->activate_object (vqimp.get());
 	CORBA::Object_var ref = poa->id_to_reference (oid.in());
-	
 
-	/*
-	 * Construct Naming Service name for our Bank
-	 */
-	CosNaming::Name name;
-	name.length (1);
-	name[0].id = CORBA::string_dup (ivq_name.val_str().c_str());
-	name[0].kind = CORBA::string_dup ("");
-
-    /*
-	 * Store a reference to our Bank in the Naming Service. We use 'rebind'
-	 * here instead of 'bind', because rebind does not complain if the desired
-	 * name "Bank" is already registered, but silently overwrites it (the
-	 * existing reference is probably from an old incarnation of this server).
-	 */
-	cout << "Binding "<<ivq_name.val_str()<<" in the Naming Service ... " << flush;
-	nc->rebind(name, ref);
-	cout << "done." << endl;
-
-	/*
-	 * Activate the POA and start serving requests
-	 */
+	if(exp) {
+			try {
+					corbautil::exportObjRef(orb, ref, exp_ins);
+			} catch( corbautil::ImportExportException & e ) {
+					cerr<<e<<endl;
+					run = false;
+			}
+	}
+	if( run ) {
+			PortableServer::POAManager_var mgr = poa->the_POAManager();
+			/*
+			 * Activate the POA and start serving requests
+			 */
 	
-	cout << "Running." << endl;
+			cout << "Running." << endl;
 	
-	mgr->activate ();
-	orb->run();
+			mgr->activate ();
+			orb->run();
+	}
 	
-	/*
-	 * Shutdown (never reached)
-	 */
-	
-	poa->destroy (TRUE, TRUE);
+	orb->destroy();
 	return 0;
 }

@@ -19,23 +19,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "cqmailvq.hpp"
 #include "cqmailvq_common.hpp"
 
-#include <pfstream.hpp>
 #include <sys.hpp>
-#include <text.hpp>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include <sstream>
-#include <iomanip>
-#include <memory>
 #include <cerrno>
-#include <algorithm>
 
 namespace POA_vq {
 

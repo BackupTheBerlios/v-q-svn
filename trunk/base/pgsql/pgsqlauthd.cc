@@ -22,7 +22,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <conf.hpp>
 
 // CORBA
-#include <coss/CosNaming.h>
+#include <import_export.h>
+
+#include <getopt.h>
 
 #include <memory>
 #include <iostream>
@@ -30,6 +32,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 using namespace std;
 using namespace POA_vq;
+
+void usage( const char * me ) {
+	cerr<<"usage: "<<me<<" [ORB options] base_dir"<<endl;
+}
 
 int vqmain(int ac, char **av) {
 	/*
@@ -39,14 +45,37 @@ int vqmain(int ac, char **av) {
 	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
 	
 	if( ac < 2 ) {
-			cout<<"usage: "<<*av<<" [ORB options] base_dir"<<endl;
+			usage(*av);
 			return 100;
+	}
+
+	int opt;
+	bool run = true, exp = true;
+	const char * exp_ins = "name_service#Auth.iauth";
+	
+	while( (opt=getopt(ac, av, "e:ErR")) != -1 ) switch(opt) {
+	case 'e':
+			exp = true;
+			exp_ins = optarg;
+			break;
+	case 'E':
+			exp = false;
+			break;
+	case 'r':
+			run = true;
+			break;
+	case 'R':
+			run = false;
+			break;
+	case '?':
+	default:
+			usage(*av);
+			return 111;
 	}
 
 	string conf_dir(*(av+1));
 	conf_dir += "/etc/iauth/pgsql/";
 	conf::clnconf pgsql(conf_dir+"pgsql", "dbname=mail password=mail user=mail");
-	conf::clnconf iauth_name(conf_dir+"iauth_name", "vq::iauth");
 	
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
@@ -54,62 +83,34 @@ int vqmain(int ac, char **av) {
 	
 	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
 	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
-	PortableServer::POAManager_var mgr = poa->the_POAManager();
-	
+		
 	/*
 	 * Create authorization object
 	 */
 	auto_ptr<cpgsqlauth> pgauth(new cpgsqlauth(pgsql.val_str().c_str()));
-	
-	/*
-	 * Activate the Servant
-	 */
-	
+
 	PortableServer::ObjectId_var oid = poa->activate_object (pgauth.get());
 	CORBA::Object_var ref = poa->id_to_reference (oid.in());
-	
 
-	CORBA::Object_var nsobj = orb->resolve_initial_references ("NameService");
-
-	CosNaming::NamingContext_var nc =
-			CosNaming::NamingContext::_narrow (nsobj);
-
-	if (CORBA::is_nil (nc)) {
-			cerr << "oops, I cannot access the Naming Service!" << endl;
-			return 100;
+	if( exp ) {
+			try {
+					corbautil::exportObjRef(orb, ref, exp_ins);
+			} catch( corbautil::ImportExportException & e ) {
+					cerr<<e<<endl;
+					run = false;
+			}
 	}
-
-	/*
-	 * Construct Naming Service name for our Bank
-	 */
-	CosNaming::Name name;
-	name.length (1);
-	name[0].id = CORBA::string_dup (iauth_name.val_str().c_str());
-	name[0].kind = CORBA::string_dup ("");
-
-    /*
-	 * Store a reference to our Bank in the Naming Service. We use 'rebind'
-	 * here instead of 'bind', because rebind does not complain if the desired
-	 * name "Bank" is already registered, but silently overwrites it (the
-	 * existing reference is probably from an old incarnation of this server).
-	 */
-	cout << "Binding "<<iauth_name.val_str()<<" in the Naming Service ... " << flush;
-	nc->rebind(name, ref);
-	cout << "done." << endl;
-
-	/*
-	 * Activate the POA and start serving requests
-	 */
+	if( run ) {
+			PortableServer::POAManager_var mgr = poa->the_POAManager();
+			
+			/*
+			 * Activate the POA and start serving requests
+			 */
+			cout << "Running." << endl;
 	
-	cout << "Running." << endl;
-	
-	mgr->activate ();
-	orb->run();
-	
-	/*
-	 * Shutdown (never reached)
-	 */
-	
-	poa->destroy (TRUE, TRUE);
+			mgr->activate ();
+			orb->run();
+	}
+	orb->destroy();
 	return 0;
 }

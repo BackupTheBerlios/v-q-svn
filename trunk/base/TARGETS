@@ -4,3 +4,4 @@ libvq.a
 logger.hpp logger.cc logger.o
 auto
 autoresp.o libautoresp.a
+auth.hh authSK.cc vqSK.cc vq.hh loggerSK.cc logger.hh

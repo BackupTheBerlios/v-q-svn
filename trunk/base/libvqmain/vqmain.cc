@@ -56,9 +56,33 @@ int cppmain( int ac, char ** av ) try {
 } catch( vq::null_error & e ) {
 	std::cerr<<"Unexpected NULL value in "<<e.file<<" at "<<e.line<<std::endl;
 	return 111;
-} catch( CORBA::Exception & e ) {
-	std::cerr<<"CORBA exception: ";
+} catch( CORBA::SystemException & e ) {
+	std::cerr<<"CORBA system exception: ";
+#if defined(MICO_VERSION)
 	e._print(std::cerr);
+#elif defined(OMNIORB_DIST_DATE)
+	std::cerr<<"minor: "<<e.NP_minorString()<<"; completed: ";
+	switch(e.completed()) {
+	case CORBA::COMPLETED_YES: std::cerr<<"YES"; break;
+	case CORBA::COMPLETED_NO: std::cerr<<"NO"; break;
+	default: std::cerr<<"MAYBE";
+	}
+#else
+	std::cerr<<"minor: "<<e.minor()<<"; completed: ";
+	switch(e.completed()) {
+	case CORBA::COMPLETED_YES: std::cerr<<"YES"; break;
+	case CORBA::COMPLETED_NO: std::cerr<<"NO"; break;
+	default: std::cerr<<"MAYBE";
+	}
+#endif
+	std::cerr<<std::endl;
+	return 111;
+} catch( CORBA::Exception & e ) {
+	std::cerr<<"CORBA exception";
+#ifdef MICO_VERSION	
+	std::cerr<<": ";
+	e._print(std::cerr);
+#endif
 	std::cerr<<std::endl;
 	return 111;
 }

@@ -8,11 +8,12 @@ OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o \
 	qmail_virtualdomains_add.o qmail_virtualdomains_rm.o qmailvqd.o \
 	cqautoresp.o autoresp.o deliver.o
 INCS=-I$(BASE)/base -I$(BASE) -I../libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
-	-I$(BASE)/libconf `cat $(BASE)/corba.inc`
+	-I$(BASE)/libconf -I$(BASE)/corbautil/cxx/import_export -I$(BASE)/corbautil/cxx/portability \
+	`cat $(BASE)/corba.inc`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L../libvqmain -lvqmain -L$(BASE)/base -lvq \
-	-L$(BASE)/libconf -lconf \
-	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext `cat $(BASE)/corba.lib`
+	-L$(BASE)/libconf -lconf -L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
+	-L$(BASE)/corbautil -lcorbautil `cat $(BASE)/corba.lib`
 
 .PHONY: all clean install
 

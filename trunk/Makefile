@@ -2,6 +2,8 @@ SUBDIR=tools libconf libmain libsys libtext base interfaces
 
 .PHONY: all clean pgsql install install-pgsql install-conf install-dirs
 
+all:
+
 install: install-dirs install-conf
 
 all clean install:
@@ -35,3 +37,4 @@ install-conf: install-dirs
 		echo "$(PREFIX)/etc/ivq/orb_conf: created" ; \
 	fi
 
+include Makefile.common

@@ -21,24 +21,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "qmail_files.hpp"
 
 #include <sys.hpp>
-#include <text.hpp>
-
-#include <coss/CosNaming.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/time.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <dirent.h>
-#include <signal.h>
 
 #include <cerrno>
-#include <algorithm>
-#include <iomanip>
 #include <sstream>
-#include <memory>
 
 namespace POA_vq {
 
@@ -57,7 +47,7 @@ namespace POA_vq {
 				const std::string & user, uid_t uid, gid_t gid ) 
 			: home(h), domains(d),
 			fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), 
-			gid(gid), auth(auth), paths(d, s_dom, s_user) std_try {
+			gid(gid), paths(d, s_dom, s_user), auth(auth) std_try {
 	} std_catch
 	
 	/**
@@ -907,7 +897,7 @@ namespace POA_vq {
 		err->what = CORBA::string_dup(what); // string_dup not really needed
 		err->file = CORBA::string_dup(file);
 		err->line = line;
-		err->auth = FALSE;
+		err->auth = 0;
 		return err.release();
 	} std_catch
 
