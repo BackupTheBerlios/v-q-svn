@@ -1,0 +1,152 @@
+/*
+Virtual Qmail (http://v-q.foo-baz.com)
+Copyright (C) 2002-2004 Pawel Niewiadomski (new-baz.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+#include "vq.idl"
+
+module vq {
+	/**
+	 * Base class representing authorization module.
+	 */
+	interface iauth {
+			/// Type used for size specifications, the same as in cvq
+			typedef ivq::size_type size_type;
+			typedef ivq::quota_type quota_type;
+			typedef ivq::string_list string_list;
+			typedef ivq::auth_info auth_info;
+			typedef ivq::udot_info udot_info;
+			typedef ivq::udot_info_list udot_info_list;
+			typedef ivq::udot_type udot_type;
+
+			enum error {
+				err_no
+			};
+
+		/**
+		 * \defgroup dom Domains manipulation
+		 */
+		//@{
+			/// Adds domain to database
+			error dom_add(in string dom);
+			/// Adds domain's IP address
+			error dom_ip_add(in string dom, in string ip);
+			/// Remove IP for domain
+			error dom_ip_rm(in string dom, in string ip);
+			/// Removes all IP addresses asociated with domain
+			error dom_ip_rm_all(in string dom);
+			/// Lists all IP addresses asociated with domain
+			error dom_ip_ls(in string dom, out string_list ips);
+			/// Lists domains having IP addresses
+			error dom_ip_ls_dom(out string_list doms);
+			/// Removes domain.
+			error dom_rm(in string dom);
+		//@}
+		
+		/**
+		 * \defgroup user Users manipulation
+		 */
+		//@{
+			/// Adds user
+			error user_add(in string dom, in string user, in string pass, 
+				in error errex );
+			/// Removes user
+			error user_rm(in string dom, in string user);
+			/// Changes password for user
+			error user_pass(in string dom, in string user, in string pass );
+			/// Gets authorization information for user
+			error user_auth( inout auth_info ai );
+			/// Checks whether user exists
+			error user_ex(in string dom, in string user);
+		//@}
+		
+		/**
+		 * \ingroup qt_user
+		 */
+		//@{
+			/// Gets limits for user
+			error qt_get(in string dom, in string user, 
+					out quota_type bytes_max , out quota_type files_max );
+			/// Sets limits for user
+			error qt_set(in string dom, in string user, 
+					in quota_type bytes_max, in quota_type files_max );
+
+			/// Sets default value for a domain
+			error qt_def_set(in string dom, 
+					in quota_type bytes_max, in quota_type files_max );
+			/// Gets default value
+			error qt_def_get(in string dom, 
+					out quota_type bytes_max, out quota_type files_max );
+			
+			/// Sets global defaults for new domains
+			error qt_global_def_set( 
+					in quota_type bytes_max, in quota_type files_max );
+			/// Gets global defaults for new domains
+			error qt_global_def_get(
+					out quota_type bytes_max, out quota_type files_max );
+		//@}
+
+		/**
+		 * \defgroup udot Mailboxes configuration
+		 */
+		//@{
+			/// Adds mailbox configuration
+			error udot_add(in string dom, in string user,
+					in string pfix, out udot_info ui );
+			/// Removes all mailbox configuration entries
+			error udot_rm_by_type(in string dom, in string user,
+					in udot_type ut );
+			/// Removes mailbox configuration entry
+			error udot_rm_by_id(in string dom, in string user,
+					in string id );
+			/// Lists mailbox configuration
+			error udot_ls(in string dom, in string user,
+					in string pfix, out udot_info_list uis );
+			/// Lists mailbox configuation of specified type
+			error udot_ls_by_type(in string dom, in string user,
+					in string pfix, in udot_type ut,
+					out udot_info_list uis );
+			/// Changes existing entry
+			error udot_rep(in string dom, in string user,  
+					in udot_info ui );
+			/// Gets existing entry
+			error udot_get(in string dom, in string user,
+					inout udot_info ui );
+			/// Checks whether mailbox has entry of specified type
+			error udot_has(in string dom, in string user,
+					in string pfix, in udot_type ut );
+			/// Counts entries of specified type
+			error udot_type_cnt(in string dom, in string user,
+					in string pfix, in udot_type ut, 
+					out size_type cnt );
+		//@}
+		
+		/**
+		 * \ingroup err
+		 */
+		/*@{*/
+			/// return additional information about error (i.e. file name)
+			string err_info();
+			long err_sys(); //!< Returns stored errno
+
+			/// return description of error from lastret
+			string err_report();
+		/*@}*/
+	}; // interface iauth
+
+}; // module vq
+

@@ -300,11 +300,11 @@ module vq {
 					raises (null_error, runtime_error, logic_error);
 			/// Removes all options of specified type
 			error udot_rm_by_type(in string dom, in string user,
-					in string pfix, out udot_type ut )
+					in udot_type ut )
 					raises (null_error, runtime_error, logic_error);
 			/// Removes option with given id
-			error udot_rm_by_id(in string dom, in string user,
-					in string pfix, in string id)
+			error udot_rm_by_id(in string dom, in string user, 
+					in string id)
 					raises (null_error, runtime_error, logic_error);
 			/// Lists mailbox configuration
 			error udot_ls(in string dom, in string user, in string pfix, 
@@ -317,11 +317,11 @@ module vq {
 					raises (null_error, runtime_error, logic_error);
 			/// Changes value of option with given id.
 			error udot_rep(in string dom, in string user,
-					in string id, in udot_info ui )
+					in udot_info ui )
 					raises (null_error, runtime_error, logic_error);
 			/// Gets value of options with given id.
 			error udot_get( in string dom, in string user,
-					in string id, out udot_info ui )
+					inout udot_info ui )
 					raises (null_error, runtime_error, logic_error);
 			/// Checks if given option is supported
 			error udot_sup_is( in udot_type ut )
