@@ -83,7 +83,7 @@ struct auth_test {
 		 *
 		 */
 		void test_dom_rm(const char * dom) {
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			err = auth->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
 			err = auth->dom_rm(dom_id);
@@ -120,7 +120,7 @@ struct auth_test {
 					"vxcvcxvxcvxvcv" };
 			unsigned users_cnt= sizeof(users)/sizeof(*users);
 		
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			err = auth->dom_add(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 
@@ -154,8 +154,8 @@ struct auth_test {
 		void case2() {
 			const char *dom = "test.pl";
 			const char *dom_mixed = "TeST.pl";
-			CORBA::String_var dom_id;
-			CORBA::String_var dom_id1;
+			CORBA::String_var dom_id = CORBA::string_dup("");
+			CORBA::String_var dom_id1 = CORBA::string_dup("");
 
 			// 1.
 			err = auth->dom_add(dom, dom_id);
@@ -164,13 +164,13 @@ struct auth_test {
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_exists);
 
 			// 2.
-			CORBA::String_var dom_id2;
+			CORBA::String_var dom_id2 = CORBA::string_dup("");
 			err = auth->dom_id(dom, dom_id2);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			BOOST_CHECK( *dom_id2 && atoi(dom_id2) > 0);
 
 			// 3.
-			CORBA::String_var dom_id3;
+			CORBA::String_var dom_id3 = CORBA::string_dup("");
 			err = auth->dom_id(dom_mixed, dom_id3);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			BOOST_CHECK( !strcmp(dom_id2, dom_id3) );
@@ -194,7 +194,7 @@ struct auth_test {
 			};
 			unsigned doms_cnt = sizeof(doms)/sizeof(*doms);
 			if( doms_cnt-- ) {
-				CORBA::String_var id;
+				CORBA::String_var id = CORBA::string_dup("");
 				do {
 						err = auth->dom_id(doms[doms_cnt], id);
 						BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_noent);
@@ -210,7 +210,7 @@ struct auth_test {
 		 */
 		void case4() {
 			const char * dom = "case4.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 
 			std_try {
 					const char *users[] = { "s", "asdasd", "vxcvcxvxcvxvcv" };
@@ -239,7 +239,7 @@ struct auth_test {
 		 * 
 		 */
 		void case5() {
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			const char * dom = "case5.pl";
 
 			std_try {
@@ -297,7 +297,7 @@ struct auth_test {
 		 */
 		void case6() {
 			const char * dom = "case6.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			err = auth->dom_id(dom, dom_id);
 			if( err->ec != vq::ivq::err_no ) {
 					err = auth->dom_add(dom, dom_id);
@@ -343,7 +343,7 @@ struct auth_test {
 		 */
 		void case8() {
 			const char * dom = "case6.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 
 			std_try {
 					err = auth->dom_id(dom, dom_id);

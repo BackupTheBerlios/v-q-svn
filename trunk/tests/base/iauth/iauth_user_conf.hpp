@@ -30,7 +30,7 @@ struct user_conf_test {
 		 *
 		 */
 		void test_dom_rm(const char * dom) {
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			err = auth->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
 			err = auth->dom_rm(dom_id);
@@ -66,7 +66,7 @@ struct user_conf_test {
 		 */
 		void case9() {
 			const char * dom = "case9.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			std_try {
 					typedef std::deque< std::string > string_array;
 					test_dom_user_add(dom, dom_id);
@@ -157,7 +157,7 @@ struct user_conf_test {
 			const char * dom = "case10.pl";
 			std_try {
 					typedef std::deque< std::string > string_array;
-					CORBA::String_var dom_id;
+					CORBA::String_var dom_id = CORBA::string_dup("");
 					test_dom_user_add(dom, dom_id);
 
 					string_array conf;
@@ -282,7 +282,7 @@ struct user_conf_test {
 		void case12() {
 			const char * dom = "case12.pl";
 			std_try {
-					CORBA::String_var dom_id;
+					CORBA::String_var dom_id = CORBA::string_dup("");
 					test_dom_user_add(dom, dom_id);
 
 					::vq::ivq::user_info ai;
@@ -351,7 +351,7 @@ struct user_conf_test {
 				12), ::vq::ivq::err_no);
 			const char * dom = "case13.pl";
 			std_try {
-					CORBA::String_var dom_id;
+					CORBA::String_var dom_id = CORBA::string_dup("");
 					test_dom_user_add(dom, dom_id);
 
 					IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(dom_id,

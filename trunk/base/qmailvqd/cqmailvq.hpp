@@ -143,6 +143,7 @@ namespace POA_vq {
 					::vq::iauth_var & auth; //!< authorization module
 
 					virtual error* dip_rm_by_dom( const char* dom_id );
+					virtual error* da_rm_by_dom( const char* dom_id );
 
 					error * send_restart();
 					error * assign_ex(const std::string &);

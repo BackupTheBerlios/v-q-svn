@@ -38,7 +38,7 @@ struct dom_ls_test {
 			BOOST_REQUIRE(sys::getlines<std::string>(ifs, doms_sorted));
 			BOOST_REQUIRE(doms.size() == doms_sorted.size());
 	
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			string_array::const_iterator di, de;
 			for( di=doms.begin(), de=doms.end(); di!=de; ++di ) {
 					err = obj->dom_add(di->c_str(), dom_id);

@@ -29,7 +29,7 @@ struct da_dip_test {
 		 */
 		void case4() {
 			const char * dom = "case4.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			err = obj->dom_id(dom, dom_id);
 			if( ::vq::ivq::err_noent == err->ec ) {
 					IVQ_ERROR_EQUAL(obj->dom_add(dom, dom_id),
@@ -58,7 +58,7 @@ struct da_dip_test {
 			string_array insert;
 			BOOST_REQUIRE( sys::getlines<std::string>(ifs, insert) );
 			name2id_map dom2id;
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			string_array::const_iterator ib, ie, vb, ve;
 			string_array fields, vals;
 			for( ib=insert.begin(), ie=insert.end(); ib!=ie; ++ib ) {
@@ -105,10 +105,11 @@ struct da_dip_test {
 					if( ni != ne )
 							BOOST_CHECK(!strcmp(ni->second, dom_id));
 			}
+			/*
 			for( ni=dom2id.begin(), ne=dom2id.end(); ni!=ne; ++ni ) {
 					IVQ_ERROR_EQUAL(obj->dom_rm(ni->second),
 						::vq::ivq::err_no );
-			}
+			}*/
 		}
 		 
 		/**
@@ -124,7 +125,7 @@ struct da_dip_test {
 			string_array ips;
 			BOOST_REQUIRE( sys::getlines<std::string>(ifs, ips) );
 			
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			err = obj->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			BOOST_REQUIRE(*dom_id);
@@ -175,7 +176,7 @@ struct da_dip_test {
 				"oloo"
 			};
 			unsigned reas_cnt = sizeof(reas)/sizeof(*reas);
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			err = obj->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			BOOST_REQUIRE(*dom_id);

@@ -83,11 +83,11 @@ struct vq_test {
 			const char * dom = "nosuchdomain.pl";
 			const char * did = "234234";
 			
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			::vq::ivq::error_var ev(vq->dom_id(dom, dom_id));
 			BOOST_CHECK_EQUAL(ev->ec, ::vq::ivq::err_noent);
 
-			CORBA::String_var dom_name;
+			CORBA::String_var dom_name = CORBA::string_dup("");
 			ev = vq->dom_name(did, dom_name);
 			BOOST_CHECK_EQUAL(ev->ec, ::vq::ivq::err_noent);
 		}
@@ -100,8 +100,8 @@ struct vq_test {
 		void case2() {
 			const char *dom = "test.pl";
 			const char *dom_mixed = "TeST.pl";
-			CORBA::String_var dom_id;
-			CORBA::String_var dom_id1;
+			CORBA::String_var dom_id = CORBA::string_dup("");
+			CORBA::String_var dom_id1 = CORBA::string_dup("");
 
 			// 1.
 			err = vq->dom_add(dom, dom_id);
@@ -110,14 +110,14 @@ struct vq_test {
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_exists);
 
 			// 2.
-			CORBA::String_var dom_id2;
+			CORBA::String_var dom_id2 = CORBA::string_dup("");
 			err = vq->dom_id(dom, dom_id2);
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
 			BOOST_CHECK( *dom_id2 && atoi(dom_id2) > 0);
 			dom_id = dom_id2;
 
 			// 3.
-			CORBA::String_var dom_id3;
+			CORBA::String_var dom_id3 = CORBA::string_dup("");
 			err = vq->dom_id(dom_mixed, dom_id3);
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
 			BOOST_CHECK( !strcmp(dom_id2, dom_id3) );
@@ -142,7 +142,7 @@ struct vq_test {
 			};
 			unsigned doms_cnt = sizeof(doms)/sizeof(*doms);
 			if( doms_cnt-- ) {
-				CORBA::String_var id;
+				CORBA::String_var id = CORBA::string_dup("");
 				do {
 						IVQ_ERROR_EQUAL(vq->dom_id(doms[doms_cnt], id),
 							vq::ivq::err_noent);
@@ -165,7 +165,15 @@ struct vq_test {
 			unsigned doms_cnt = sizeof doms/sizeof *doms;
 			typedef std::map<CORBA::String_var, std::string> id_name_map;
 			id_name_map id2name;
-			CORBA::String_var dom_id, dom_name;
+			CORBA::String_var dom_id = CORBA::string_dup(""), dom_name = CORBA::string_dup("");
+
+			for( unsigned i=0; i<doms_cnt; ++i ) {
+					err = vq->dom_id(doms[i], dom_id);
+					if( ::vq::ivq::err_no == err->ec ) {
+							err = vq->dom_rm(dom_id);
+							IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
+					}
+			}
 
 			for( unsigned i=0; i<doms_cnt; ++i ) {
 					err = vq->dom_add(doms[i], dom_id);
@@ -200,7 +208,7 @@ struct vq_test {
 		 */
 		void case4() {
 			const char * dom = "case4.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 
 			std_try {
 					const char *users[] = { 
@@ -236,7 +244,7 @@ struct vq_test {
 		 * Get all banned emails, remove all of them
 		 */
 		void case5() {
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 
 			std_try {
 					::vq::ivq::email_banned_list_var ebs;
@@ -296,7 +304,7 @@ struct vq_test {
 		 */
 		void case6() {
 			const char * dom = "case6.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 
 			err = vq->dom_id(dom, dom_id);
 			if( err->ec != vq::ivq::err_no ) {
@@ -347,7 +355,7 @@ struct vq_test {
 				"^oloo$"
 			};
 			unsigned reas_cnt = sizeof(reas)/sizeof(*reas);
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), 
 				vq::ivq::err_no);
 			BOOST_REQUIRE(*dom_id);
@@ -396,7 +404,7 @@ struct vq_test {
 		 */
 		void case8() {
 			const char * dom = "case6.pl";
-			CORBA::String_var dom_id;
+			CORBA::String_var dom_id = CORBA::string_dup("");
 
 			std_try {
 					BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), 
@@ -451,7 +459,7 @@ struct vq_test {
 			} std_catch
 
 			// remove user
-			CORBA::String_var user_id;
+			CORBA::String_var user_id = CORBA::string_dup("");
 			BOOST_CHECK_EQUAL(auth->user_id(dom_id, "case8", user_id), 
 				::vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(auth->user_rm(dom_id, user_id), 
@@ -481,7 +489,7 @@ struct vq_test {
 					"zxcxc.zxczxc.z///", // /
 			};
 			unsigned doms_cnt = sizeof doms/sizeof *doms;
-			CORBA::String_var id;
+			CORBA::String_var id = CORBA::string_dup("");
 			if( doms_cnt -- ) {
 					do {
 							IVQ_ERROR_EQUAL(vq->dom_add(doms[doms_cnt], id),
@@ -544,7 +552,7 @@ struct vq_test {
 				dom_ids_array dom_ids;
 				dom_ids.reserve(doms_cnt);
 
-				CORBA::String_var id;
+				CORBA::String_var id = CORBA::string_dup("");
 				for( int i=0; i < doms_cnt; ++i ) {
 					err = vq->dom_id(doms[i], id);
 					if( ::vq::ivq::err_noent == err->ec ) {
@@ -639,7 +647,7 @@ struct vq_test {
 		 *
 		 */
 		void uc_cleanup() {
-				CORBA::String_var dom_id;
+				CORBA::String_var dom_id = CORBA::string_dup("");
 				IVQ_ERROR_EQUAL(vq->dom_id(this->uc_dom, dom_id), ::vq::ivq::err_no);
 				IVQ_ERROR_EQUAL(vq->dom_rm(dom_id), ::vq::ivq::err_no);
 		}

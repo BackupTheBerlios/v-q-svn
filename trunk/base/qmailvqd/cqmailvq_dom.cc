@@ -58,6 +58,9 @@ namespace POA_vq {
 		ret.reset(dip_rm_by_dom(dom_id));
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
+		ret.reset(da_rm_by_dom(dom_id));
+		if( ret->ec != ::vq::ivq::err_no )
+				return ret.release();
 		ret.reset(rcpt_rm(dom));
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
@@ -100,6 +103,8 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::dom_add(const char *d, CORBA::String_out did)
 	std_try {
 		if( ! d ) throw ::vq::null_error(__FILE__, __LINE__);
+
+		did = CORBA::string_dup("");
 
 		string dom(lower(d));
 		auto_ptr<error> ret;
@@ -176,6 +181,7 @@ namespace POA_vq {
 	 *
 	 */
 	cqmailvq::error * cqmailvq::dom_ls( domain_info_list_out dis ) std_try {
+		dis = new ::vq::ivq::domain_info_list;
 		return auth->dom_ls( dis );
 	} std_catch
 
@@ -206,15 +212,42 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		string alias(text::lower(ali));
-		auto_ptr<error> ret( assign_ex(alias) );
-		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
-		ret.reset(auth->da_rm( alias.c_str() ));
+		auto_ptr<error> ret(auth->da_rm( alias.c_str() ));
 		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
 		
+		ret.reset(rcpt_rm(ali));
+		if( ret->ec != ::vq::ivq::err_no )
+				return ret.release();
+		ret.reset(morercpt_rm(ali));
+		if( ret->ec != ::vq::ivq::err_no )
+				return ret.release();
 		ret.reset(virt_rm(alias));
-		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		if( ::vq::ivq::err_no != ret->ec ) 
+				return ret.release();
 
 		ret.reset(send_restart());
+		return ret.release();
+	} std_catch
+
+	/**
+	 * Remove aliases for a domain.
+	 * \param a alias name
+	 * \return ::vq::ivq::err_no on success
+	 */
+	cqmailvq::error * cqmailvq::da_rm_by_dom( const char * dom_id ) std_try {
+
+		if( ! dom_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
+	
+		string_list_var alis;
+		auto_ptr<error> ret(auth->da_ls_by_dom( dom_id, alis ));
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		CORBA::ULong i, s = alis->length();
+		if( ! s ) return lr(::vq::ivq::err_no, "");
+		for( i=0; i<s; ++i ) {
+				ret.reset(this->da_rm(alis[i]));
+				if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		}
 		return ret.release();
 	} std_catch
 
@@ -263,9 +296,9 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::da_ls_by_dom( const char * dom_id,
 			string_list_out alis ) std_try {
-
 		if( ! dom_id )
 				throw ::vq::null_error(__FILE__, __LINE__);
+		alis = new ::vq::ivq::string_list;
 		return auth->da_ls_by_dom( dom_id, alis );
 	} std_catch
 
@@ -345,9 +378,9 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::dip_ls_by_dom( const char * dom_id,
 			string_list_out alis ) std_try {
-
 		if( ! dom_id )
 				throw ::vq::null_error(__FILE__, __LINE__);
+		alis = new ::vq::ivq::string_list;
 		return auth->dip_ls_by_dom( dom_id, alis );
 	} std_catch
 
@@ -383,6 +416,8 @@ namespace POA_vq {
 	cqmailvq::error* cqmailvq::dom_id( const char* dom, 
 			CORBA::String_out dom_id ) std_try {
 		if( ! dom )	throw ::vq::null_error(__FILE__, __LINE__);
+		dom_id = CORBA::string_dup("");
+
 		auto_ptr<error> ret(auth->dom_id(dom, dom_id)); 
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
@@ -395,6 +430,8 @@ namespace POA_vq {
 	cqmailvq::error* cqmailvq::dom_name( const char* dom_id, 
 			CORBA::String_out dom_name ) std_try {
 		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
+		dom_name = CORBA::string_dup("");
+		
 		auto_ptr<error> ret(auth->dom_name(dom_id, dom_name));
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();

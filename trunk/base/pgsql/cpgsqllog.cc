@@ -182,6 +182,8 @@ namespace POA_vq {
 	 */
 	cpgsqllog::error * cpgsqllog::read_by_func(const rbf_func_desc_type &func, 
 			size_type start, size_type cnt, log_entry_list_out les ) std_try {
+		
+		les = new log_entry_list;
 
 		string qr( "SELECT id_log,time,ip,service,result,msg" );
 		if( ! (func.first & rbf_ignore_domain) ) qr += ",domain"; 
@@ -198,7 +200,6 @@ namespace POA_vq {
 		Result res(pqxx::NonTransaction(*pg).Exec(qr));
 		Result::size_type s = res.size();
 
-		les = new log_entry_list(static_cast<CORBA::ULong>(s));
 		les->length(s);
 		for( Result::tuple::size_type i=0, idx=0; i<s; ++i, idx=0 ) {
 				les[i].id_log = CORBA::string_dup(

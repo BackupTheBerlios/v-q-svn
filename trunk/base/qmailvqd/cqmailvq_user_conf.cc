@@ -145,6 +145,9 @@ namespace POA_vq {
 		
 		if( ! dom_id || ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
+
+		ucis = new ::vq::ivq::user_conf_info_list;
+		
 		string login(text::lower(_login));
 		string pfix(text::lower(_pfix));
 		return auth->user_conf_ls( dom_id, login.c_str(), pfix.c_str(), ucis);
@@ -164,6 +167,8 @@ namespace POA_vq {
 
 		if( ! dom_id || ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
+
+		ucis = new ::vq::ivq::user_conf_info_list;
 
 		string login(text::lower(_login));
 		string pfix(text::lower(_pfix));

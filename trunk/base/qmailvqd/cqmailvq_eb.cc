@@ -46,6 +46,7 @@ namespace POA_vq {
 	 *
 	 */
 	cqmailvq::error* cqmailvq::eb_ls( email_banned_list_out ebs ) std_try {
+		ebs = new ::vq::ivq::email_banned_list;
 		return auth->eb_ls(ebs);
 	} std_catch
 	
