@@ -19,16 +19,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "cdaemonlog.h"
 #include "conf_home.h"
 #include "vq_conf.h"
-#include "sig.h"
-#include "fd.h"
-#include "fdstr.h"
-#include "util.h"
-#include "lock.h"
 #include "pgsqlcommon.h"
-#include "sys.h"
 #include "cdaemonauth.h"
 #include "cdaemonchild.h"
 #include "cdaemonmaster.h"
+
+#include <sys.hpp>
 
 #include <sys/types.h>
 #include <sys/stat.h>

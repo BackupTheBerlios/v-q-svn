@@ -37,6 +37,12 @@ using namespace std;
 using namespace POA_vq;
 
 int cppmain(int ac, char **av) {
+	/*
+	 * Initialize the ORB
+	 */
+	
+	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
+	
 	if( ac < 2 ) {
 			cout<<"usage: "<<*av<<" [ORB options] base_dir"<<endl;
 			return 100;
@@ -59,12 +65,6 @@ int cppmain(int ac, char **av) {
 	os<<getegid();
 	conf::cgidconf gid(conf_dir+"vq_gid", os.str());
 
-	/*
-	 * Initialize the ORB
-	 */
-	
-	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
-	
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
 	 */

@@ -195,7 +195,7 @@ module vq {
 			error dom_name(in string dom_id, out string dom_name )
 					raises (null_error, except);
 		//@}
-
+#if 0
 		/**
 		 * \defgroup dra Domains REGEX aliases
 		 */
@@ -249,7 +249,7 @@ module vq {
 			error eb_ls( out email_banned_list ebs )
 					raises (null_error, except);
 		//@}
-
+#endif // if 0
 	/**
 	 * \defgroup qt Quota support
 	 * @{
