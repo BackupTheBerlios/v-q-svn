@@ -4,6 +4,9 @@ include $(BASE)/Makefile.common
 
 all: mkdep
 
+clean:
+	rm -rf `cat TARGETS`
+
 mkdep::
 	# mkdepend is from MICO
 	-which mkdepend 2>&1 > /dev/null; \

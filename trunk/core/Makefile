@@ -16,7 +16,7 @@ all:: libvq.a
 include $(BASE)/Makefile.common
 
 clean:
-	rm -rf `TARGETS`
+	rm -rf `cat TARGETS`
 	@for entry in $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \

@@ -4,3 +4,4 @@ qmail_mrh_add.o qmail_rcpthosts_add.o qmail_virtualdomains_add.o qmail_virtualdo
 qmail_mrh_add qmail_mrh_rm qmail_rcpthosts_add qmail_virtualdomains_add qmail_virtualdomains_rm qmailvqd
 cqmailvq_eb.o cqmailvq_user.o cqmailvq_user_conf.o qmail_assign_add.o qmail_assign_ex.o qmail_assign_rm.o qmail_common.o qmail_file_add.o qmail_file_rm.o qmail_mrh_rm.o qmail_progs.o
 cqmailvq_eb cqmailvq_user cqmailvq_user_conf qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_common qmail_file_add qmail_file_rm qmail_mrh_rm qmail_progs
+.depend
