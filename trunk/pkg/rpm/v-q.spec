@@ -1,0 +1,167 @@
+%define datadir %{_localstatedir}/vq
+
+%ifarch ia64
+# disable debuginfo on IA64
+%define debug_package %{nil}
+%endif
+
+Summary: Virtual Qmail
+Name: v-q
+Version: @VERSION@
+Release: 1
+URL: http://v-q.foo-baz.com/
+Vendor: http://foo-baz.com/
+Packager: Pawel Niewiadomski <new@foo-baz.com>
+Source0: %{name}-%{version}.tar.gz
+License: GPL
+Group: System Environment/Daemons
+BuildRoot: %{_tmppath}/%{name}-root
+BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
+Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
+Prereq: sh-utils, textutils
+Requires: omniORB >= 4.0.5-1, boost >= 1.31.0
+
+%description
+Virtual Qmail is a virtual domains manager that integrates with Qmail.
+
+%package devel
+Group: Development/Libraries
+Summary: Development environment for Virtual Qmail
+Requires: omniORB-devel >= 4.0.5-1, boost >= 1.31.0, %{name} = %{version}
+
+%description devel
+This package includes files that are needed to develop applications for
+Virtual Qmail.
+
+%prep
+%setup -q
+echo "-I/usr/include" > boost.inc
+echo "-L/usr/lib" > boost.lib
+echo "-lboost_date_time" > boost_date_time.lib
+echo "-lboost_regex" > boost_regex.lib
+echo "-lboost_thread" > boost_thread.lib
+echo "-lboost_unit_test_framework" > boost_unit_test.lib
+echo "-DP_USE_OMNIORB -I/usr/include" > corba.inc
+echo "-L/usr/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread" > corba.lib
+
+echo '#!/bin/sh' > idl
+echo 'exec omniidl -bcxx -Wbh=.hpp -Wbs=.cc $@' >> idl
+chmod u+x idl
+
+cat > compile << EOF
+#!/bin/sh
+exec g++ $RPM_OPT_FLAGS -D_REENTRANT -ftemplate-depth-40 -pipe -g -Wall -c \${1+"\$@"}
+EOF
+
+cat > comp-so << EOF
+#!/bin/sh
+exec g++ $RPM_OPT_FLAGS -D_REENTRANT -g -ftemplate-depth-40 -fpic -DPIC -pipe -Wall -c \${1+"\$@"}
+EOF
+
+cat > make-lib << EOF
+#!/bin/sh
+exec ar cr \${1+"\$@"}
+EOF
+
+cat > make-so << EOF
+#!/bin/sh
+main="\$1"; shift
+exec g++ -L. -shared -o "\$main" \${1+"\$@"}
+EOF
+
+cat > load << EOF
+#!/bin/sh
+main="\$1"; shift
+exec g++ -L. -o "\$main" "\$main".o \${1+"\$@"}
+EOF
+
+%build
+make
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make PREFIX=$RPM_BUILD_ROOT/usr install
+
+# make /etc/sysconfig/vq
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/vq
+echo "VQ_HOME=\"%{_prefix}\"" >> $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/vq
+echo "VQ_ETC_DIR=\"%{_sysconfdir}/vq\"" >> $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/vq
+
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d
+
+# make /etc/profile.d/vq.sh
+cat > $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/vq.sh <<EOF
+sourced=0
+for p in /etc/sysconfig/vq \$HOME/.vq ; do
+    [ -f \$p ] && . \$p && sourced=1
+done
+
+if [ "\$sourced" = 1 ] ; then
+	[ -n "\$VQ_HOME" ] && export VQ_HOME || unset VQ_HOME
+	[ -n "\$VQ_ETC_DIR" ] && export VQ_ETC_DIR || unset VQ_ETC_DIR
+fi
+unset p
+unset sourced
+EOF
+
+# make /etc/profile.d/vq.csh
+cat > $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/vq.csh <<EOF
+set sourced=0
+foreach p (/etc/sysconfig/vq \$HOME/.vq)
+        if ( -f \$p ) then
+            eval \`grep -v '^[:blank:]*#' \$p | sed 's|\([^=]*\)=\([^=]*\)|setenv \1 \2|g' | sed 's|$|;|'\`
+        endif
+        set sourced=1
+end
+EOF
+
+# make %{datadir} and %{datadir}/domains
+mkdir -p $RPM_BUILD_ROOT/%{datadir}/vq
+mkdir -p $RPM_BUILD_ROOT/%{datadir}/vq/domains
+
+# move usr/etc
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}
+mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
+
+%pre
+# Add the "_vq" user
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+	-s /sbin/nologin -r -d %{datadir} _vq 2> /dev/null || :
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+
+%doc INSTALL VERSION README README.pl_PL doc/en.html doc/pl.html
+
+%dir %{_sysconfdir}/vq
+%dir %{_sysconfdir}/vq/ivq
+%dir %{_sysconfdir}/vq/iauth
+%dir %{_sysconfdir}/vq/ilogger
+
+%dir %{_sysconfdir}/profile.d
+%{_sysconfdir}/profile.d/*
+
+%dir %{_sysconfdir}/sysconfig/
+%config(noreplace) %{_sysconfdir}/sysconfig/vq
+
+%{_bindir}/*
+#%attr(4510,root,%{suexec_caller}) %{_sbindir}/suexec
+
+%dir %{_libdir}/vq
+%{_libdir}/vq/*
+
+%attr(0750,_vq,_vq) %dir %{datadir}
+
+%files devel
+%defattr(-,root,root)
+
+%dir %{_includedir}/vq
+%{_includedir}/vq/*
+
+%changelog
+* Fri Mar 25 2005 Pawel Niewiadomski <new@foo-baz.com> 6
+- First version.
