@@ -81,6 +81,8 @@ std::string error2str( const vq::ivq::error * err ) {
  *
  */ 
 struct logger_test {
+		typedef std::deque<std::string> string_array;
+
 		vq::ilogger_var obj;
 		vq::ivq::error_var err;
 		int ac;
@@ -119,6 +121,52 @@ struct logger_test {
 
 			BOOST_REQUIRE( !CORBA::is_nil(this->obj) );
 		}
+
+		/**
+		 *
+		 */
+		void case1() {
+			std::ifstream ifs("data/case1/ips");
+			string_array ips;
+			BOOST_REQUIRE(sys::getlines<std::string>(ifs, ips));
+			ifs.close();
+			ifs.clear();
+
+			string_array::const_iterator ibeg, iend;
+			for( ibeg=ips.begin(), iend=ips.end(); ibeg!=iend; ++ibeg ) {
+					BOOST_CHECK_NO_THROW(obj->ip_set(ibeg->c_str()));
+			}
+
+			ips.clear();
+			ifs.open("data/case1/services");
+			BOOST_REQUIRE(sys::getlines<std::string>(ifs, ips));
+			ifs.close();
+			ifs.clear();
+			::vq::ilogger::service_type ser;
+			for( ibeg=ips.begin(), iend=ips.end(); ibeg!=iend; ++ibeg ) {
+					BOOST_CHECK_NO_THROW(
+						ser = lexical_cast< ::vq::ilogger::service_type >(*ibeg) );
+					BOOST_CHECK_NO_THROW(obj->service_set(ser));
+			}
+
+			ips.clear();
+			ifs.open("data/case1/domains");
+			BOOST_REQUIRE(sys::getlines<std::string>(ifs, ips));
+			ifs.close();
+			ifs.clear();
+			for( ibeg=ips.begin(), iend=ips.end(); ibeg!=iend; ++ibeg ) {
+					BOOST_CHECK_NO_THROW(obj->domain_set(ibeg->c_str()));
+			}
+
+			ips.clear();
+			ifs.open("data/case1/logins");
+			BOOST_REQUIRE(sys::getlines<std::string>(ifs, ips));
+			ifs.close();
+			ifs.clear();
+			for( ibeg=ips.begin(), iend=ips.end(); ibeg!=iend; ++ibeg ) {
+					BOOST_CHECK_NO_THROW(obj->domain_set(ibeg->c_str()));
+			}
+		}
 	
 }; // struct logger_test
 
@@ -136,6 +184,11 @@ struct logger_test_suite : test_suite {
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&logger_test::init, test );
 			add(ts_init);
+
+			test_case * ts_case1 = BOOST_CLASS_TEST_CASE(
+				&logger_test::case1, test );
+			ts_case1->depends_on(ts_init);
+			add(ts_case1);
 		}
 };
 

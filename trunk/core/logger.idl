@@ -28,20 +28,20 @@ module vq {
 	interface ilogger {
 			typedef ivq::error error;
 			typedef ivq::err_code err_code;
+			typedef unsigned short service_type;
 
 			/// Size
 			typedef ivq::size_type size_type;
 	
 			/// what we're logging about
-			enum service {
-					ser_unknown, //!< unknown connection
-					ser_smtp, //!< smpt connection
-					ser_pop3, //!< pop3 connection
-					ser_http, //!< http connection
-					ser_https, //!< https connection
-					ser_emtp //!< my emtp protocol
-			};
-	
+			const service_type ser_unknown = 0; //!< unknown connection
+			const service_type ser_smtp = 1; //!< smpt connection
+			const service_type ser_pop3 = 2; //!< pop3 connection
+			const service_type ser_http = 3; //!< http connection
+			const service_type ser_https = 4; //!< https connection
+			const service_type ser_emtp = 5; //!< my emtp protocol
+			const service_type ser_external = 127;
+			
 			/// status of authorization/login
 			enum result {
 					re_ok, //!< success
@@ -56,7 +56,7 @@ module vq {
 			struct log_entry {
 					string id_log; //!< entry's id
 					string time; //!< time when entry was stored
-					service ser; //!< service
+					service_type ser; //!< service
 					string msg; //!< error message?
 					string login; //!< user's id
 					string domain; //!< domain
@@ -70,7 +70,7 @@ module vq {
 			void ip_set( in string ip );
 	
 			/// set service type
-			void service_set( in service ser );
+			void service_set( in service_type ser );
 	
 			/// set domain
 			void domain_set( in string dom );

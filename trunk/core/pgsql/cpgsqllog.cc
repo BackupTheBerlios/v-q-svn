@@ -32,7 +32,7 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::cpgsqllog( const char * pginfo ) 
-			: ser(static_cast<cpgsqllog::service>(0)) std_try {
+			: ser(static_cast<cpgsqllog::service_type>(0)) std_try {
 		pg.reset(new Connection(pginfo));
 		if( ! pg.get() || ! pg->is_open() ) {
 				throw ::vq::except(
@@ -53,7 +53,7 @@ namespace POA_vq {
 		this->ip = ip;
 	} std_catch
 	
-	void cpgsqllog::service_set( service ser ) std_try {
+	void cpgsqllog::service_set( service_type ser ) std_try {
 		this->ser = ser;
 	} std_catch
 
