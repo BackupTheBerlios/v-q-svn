@@ -30,40 +30,40 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-#ifndef __SYS_H
-#define __SYS_H
+#ifndef __SYS_HPP
+#define __SYS_HPP
 
-#include "sig.h"
+#include "sig.hpp"
 
 #include <sys/poll.h>
 #include <inttypes.h>
 #include <stdexcept>
 
-/// returns representation of gettimeofday in TAI64 format, it may
-/// return invalid date on gettimeofday error
-const char *tai64_now();
+namespace sys {
 
-/**
- * simple wrapper for poll and struct pollfd, allows you easily add, remove
- * struct pollfd, and poll them
- */
-class cpoll {
-		public:
-				struct pollfd *fds; //!< descriptors poll
-				uint32_t cnt; //!< number of descriptions in fds
+	/**
+	 * simple wrapper for poll and struct pollfd, allows you easily add, remove
+	 * struct pollfd, and poll them
+	 */
+	class cpoll {
+			public:
+					struct pollfd *fds; //!< descriptors poll
+					uint32_t cnt; //!< number of descriptions in fds
 
-				cpoll();
-				~cpoll();
+					cpoll();
+					~cpoll();
 
-				void add(int , short); //!< add desc.
-				void rm(int); //!< remove desc.
-				void chg(int, short); //!< change poll options for desc.
-				int poll(int); //!< call poll on fds
-				const struct pollfd & operator [] (int) const; //!< easy access
+					void add(int , short); //!< add desc.
+					void rm(int); //!< remove desc.
+					void chg(int, short); //!< change poll options for desc.
+					int poll(int); //!< call poll on fds
+					const struct pollfd & operator [] (int) const; //!< easy access
 
-		protected:
-				uint32_t left; //!< number of structures that are allocated but unused
+			protected:
+					uint32_t left; //!< number of structures that are allocated but unused
 
-};
+	}; // class cpoll
 
-#endif
+} // namespace sys
+
+#endif // ifndef __SYS_HPP
