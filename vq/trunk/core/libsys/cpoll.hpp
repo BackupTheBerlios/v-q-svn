@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2004 Pawel Niewiadomski
+Copyright (c) 2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,38 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-#ifndef __SYS_HPP
-#define __SYS_HPP
+#ifndef __CPOLL_HPP
+#define __CPOLL_HPP
 
-#include "uniq.hpp"
-#include "sig.hpp"
-#include "cpoll.hpp"
+#include <sys/poll.h>
+#include <inttypes.h>
+#include <stdexcept>
 
-#endif // ifndef __SYS_HPP
+namespace sys {
+
+	/**
+	 * simple wrapper for poll and struct pollfd, allows you easily add, remove
+	 * struct pollfd, and poll them
+	 */
+	class cpoll {
+			public:
+					struct pollfd *fds; //!< descriptors poll
+					uint32_t cnt; //!< number of descriptions in fds
+
+					cpoll();
+					~cpoll();
+
+					void add(int , short); //!< add desc.
+					void rm(int); //!< remove desc.
+					void chg(int, short); //!< change poll options for desc.
+					int poll(int); //!< call poll on fds
+					const struct pollfd & operator [] (int) const; //!< easy access
+
+			protected:
+					uint32_t left; //!< number of structures that are allocated but unused
+
+	}; // class cpoll
+
+} // namespace sys
+
+#endif // ifndef __CPOLL_HPP

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2004 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,16 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-#ifndef __SYS_HPP
-#define __SYS_HPP
 
-#include "uniq.hpp"
-#include "sig.hpp"
-#include "cpoll.hpp"
+#ifndef __UNIQ_HPP
+#define __UNIQ_HPP
 
-#endif // ifndef __SYS_HPP
+#include <string>
+
+namespace sys {
+		
+	std::string uniq();
+
+} // namespace sys 
+
+#endif // ifndef __UNIQ_HPP

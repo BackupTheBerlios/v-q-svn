@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002,2003 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,27 +30,31 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
+
 #include <sys/time.h>
 #include <unistd.h>
 
 #include <stdexcept>
 #include <sstream>
 
-#include "uniq.h"
+#include "uniq.hpp"
 
-using std::runtime_error;
-using std::ostringstream;
-using std::string;
+namespace sys {
 
-/**
-\return unique value which will be used to create temporary files
-*/
-string uniq() {
-	ostringstream u;
-	struct timeval tv;
-	if(gettimeofday(&tv,NULL)==-1)
-			throw runtime_error("uniq: gettimeofday");
-	u<<tv.tv_sec<<'.'<<tv.tv_usec<<'.'<<getpid();
-	return u.str();
-}
+	using std::runtime_error;
+	using std::ostringstream;
+	using std::string;
+	
+	/**
+	\return unique value which will be used to create temporary files
+	*/
+	string uniq() {
+		ostringstream u;
+		struct timeval tv;
+		if(gettimeofday(&tv,NULL)==-1)
+				throw runtime_error("uniq: gettimeofday");
+		u<<tv.tv_sec<<'.'<<tv.tv_usec<<'.'<<getpid();
+		return u.str();
+	}
 
+} // namespace sys
