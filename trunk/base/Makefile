@@ -49,5 +49,5 @@ $(OBJS): $(BASE)/comp-so $(BASE)/corba.inc
 
 autoresp.o:
 	$(BASE)/comp-so -I$(BASE)/libmain -I$(BASE)/libtext -I$(BASE)/libsys \
-	-I$(BASE)/libvqmain $<
+	-I$(BASE)/libvqmain autoresp.cc
 

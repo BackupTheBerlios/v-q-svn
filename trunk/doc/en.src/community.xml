@@ -20,7 +20,8 @@
 		</para>
 
 		<para>
-			You can also read archive at <ulink url="http://sourceforge.net/">http://sourceforge.net/</ulink>.
+			You can also read archive at 
+			<ulink url="http://sourceforge.net/mailarchive/forum.php?forum=v-q-misc">http://sourceforge.net/mailarchive/forum.php?forum=v-q-misc</ulink>.
 		</para>
 	</section>
 
@@ -29,8 +30,10 @@
 
 		<para>
 			If you don't want to use <link linkend="community.list">mailing list</link>
-			you can always use forums available at project's SourceForge
-			<ulink url="http://sourceforge.net/">site</ulink>.
+			you can always use 
+			<ulink url="http://sourceforge.net/forum/?group_id=87916">forums</ulink>
+			available at project's SourceForge
+			<ulink url="http://sourceforge.net/projects/v-q">site</ulink>.
 		</para>
 
 		<para>
@@ -45,8 +48,8 @@
 		<para>
 			<ulink url="http://sf.net">SourceForge</ulink> offers
 			set of pages that allows you easily issue 
-			<ulink url="http://sourceforge.net/">feature request</ulink>,
-			<ulink url="http://sourceforge.net/">support request</ulink> where
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584856">feature request</ulink>,
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584854">support request</ulink> where
 			you're in trouble. You can also issue 
 			<link linkend="community.bugs">a bug report</link>.
 		</para>
@@ -87,7 +90,7 @@
 		<para>
 			Project maintains public bug list which is available on
 			SourceForge under following URL 
-			<ulink url="http://sourceforge.net/">http://sourceforge.net</ulink>.
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584853">http://sourceforge.net/tracker/?group_id=87916&amp;atid=584853</ulink>.
 			Anyone is allowed to insert entries into it. So if you find a bug
 			go straigth to this page and write all informations that
 			you think could help.
@@ -114,7 +117,7 @@
 		<para>
 			Well, not exactly - <link linkend="pniewiadomski">its maintainer</link> has a 
 			<ulink url="http://new.foo-baz.com">blog</ulink> which has
-			a <ulink url="http://new.foo-baz.com/">separate section</ulink>
+			a <ulink url="http://new.foo-baz.com/en/index.php/archives/category/virtual-qmail/">separate section</ulink>
 			only for Virtual Qmail. If you want to know what going
 			on in the project you should look there.
 		</para>
@@ -134,7 +137,7 @@
 
 			<para>
 				Don't know what to put here. I have an 
-				<ulink url="http://new.foo-baz.com/me">online CV</ulink>
+				<ulink url="http://new.foo-baz.com/me/cv.html">online CV</ulink>
 				where you can read about my work experience. 
 				I also run <ulink url="http://new.foo-baz.com">a blog</ulink>
 				where you can read some articles about Virtual Qmail,

@@ -1,7 +1,7 @@
 #ifndef __IAUTH_DOM_LS_HPP
 #define __IAUTH_DOM_LS_HPP
 
-#include "../../../core/auth.hpp"
+#include "../../../base/auth.hpp"
 
 #include <getlines.hpp>
 

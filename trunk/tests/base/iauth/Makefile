@@ -24,3 +24,6 @@ $(OBJS): $(BASE)/compile $(BASE)/boost.inc $(BASE)/corba.inc
 clean:
 		rm -rf `cat TARGETS`
 
+#################
+tests: all
+	./run

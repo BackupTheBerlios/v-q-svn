@@ -20,7 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "iauth_user_conf.hpp"
 #include "iauth_dom_alias.hpp"
 #include "iauth_dom_ls.hpp"
-#include "../../../core/auth.hpp"
+#include "../../../base/auth.hpp"
 
 #include <split.hpp>
 

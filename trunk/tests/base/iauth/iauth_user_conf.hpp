@@ -1,7 +1,7 @@
 #ifndef __IAUTH_USER_CONF_HPP
 #define __IAUTH_USER_CONF_HPP
 
-#include "../../../core/auth.hpp"
+#include "../../../base/auth.hpp"
 
 #include <getlines.hpp>
 #include <split.hpp>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-	"/usr/local/share/sgml/redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/docbookx.dtd"
 
 	[
 	<!ENTITY doc.gen SYSTEM "doc.gen.xml">
