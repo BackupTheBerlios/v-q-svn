@@ -1,5 +1,4 @@
-#include "pgsqlcommon.h"
-#include "util.h"
+#include "pgsqlcommon.hpp"
 
 using namespace std;
 

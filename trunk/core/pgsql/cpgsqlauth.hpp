@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "../auth.hpp"
 #include "pgsqlcommon.hpp"
 
 namespace POA_vq {
@@ -23,9 +24,20 @@ namespace POA_vq {
 	/**
 	 * 
 	 */
-	class cpgsqlauth : public cdaemonchild {
+	class cpgsqlauth : public iauth {
 			public:
 					typedef ::vq::iauth::error error;
+					typedef ::vq::iauth::string_list_out string_list_out;
+					typedef ::vq::iauth::udot_info udot_info;
+					typedef ::vq::iauth::udot_info_list udot_info_list;
+					typedef ::vq::iauth::udot_info_list_out udot_info_list_out;
+					typedef ::vq::iauth::udot_info_out udot_info_out;
+					typedef ::vq::iauth::udot_type udot_type;
+					typedef ::vq::iauth::auth_info auth_info;
+					typedef ::vq::iauth::quota_type quota_type;
+					typedef ::vq::iauth::quota_type_out quota_type_out;
+					typedef ::vq::iauth::size_type size_type;
+					typedef ::vq::iauth::size_type_out size_type_out;
 
 					cpgsqlauth();
 					virtual ~cpgsqlauth();
@@ -88,34 +100,6 @@ namespace POA_vq {
 	
 					/// pgsql
 					pqxx::Connection *pg;
-	
-					void cmd_dom_add();
-					void cmd_dom_rm();
-					void cmd_user_add();
-					void cmd_user_pass();
-					void cmd_user_rm();
-					void cmd_user_auth();
-					void cmd_user_ex();
-					void cmd_dom_ip_add();
-					void cmd_dom_ip_rm();
-					void cmd_dom_ip_rm_all();
-					void cmd_dom_ip_ls();
-					void cmd_dom_ip_ls_dom();
-					void cmd_udot_add() throw (out_of_range);
-					void cmd_udot_ls();
-					void cmd_udot_ls_type();
-					void cmd_udot_rm();
-					void cmd_udot_rm_type();
-					void cmd_udot_get();
-					void cmd_udot_rep();
-					void cmd_udot_has();
-					void cmd_udot_type_cnt();
-					void cmd_qt_def_set();
-					void cmd_qt_def_get();
-					void cmd_qt_global_def_set();
-					void cmd_qt_global_def_get();
-					void cmd_qt_get();
-					void cmd_qt_set();
 	
 					void qt_def_get(const std::string &);
 					void qt_def_set(const std::string &);

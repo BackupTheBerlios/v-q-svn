@@ -17,40 +17,42 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 module vq {
+	/**
+	 * \defgroup exceptions Exceptions used by this class
+	 * \ingroup err
+	 * @{
+	 */
+ 	exception runtime_error {
+			string what;
+			string file;
+			unsigned long line;
+	};
+
+	/**
+	 * you wrote some shit
+	 */
+	exception logic_error {
+			string what;
+			string file;
+			unsigned long line;
+	};
+
+	/**
+	 * Argument was NULL but it's not allowed
+	 */
+	 exception null_error {
+	 		string file;
+			unsigned long line;
+	 };
+	/*@}*/
+
+
 	interface ivq {
 			typedef unsigned long quota_type; //!< Type for holding quota values
 			typedef unsigned long size_type; //!< Type for holding sizes
 			typedef unsigned short aif_type;
 			typedef sequence<string> string_list;
 
-		/**
-		 * \defgroup exceptions Exceptions used by this class
-		 * \ingroup err
-		 * @{
-		 */
-		 	exception runtime_error {
-					string what;
-					string file;
-					unsigned long line;
-			};
-
-			/**
-			 * you wrote some shit
-			 */
-			exception logic_error {
-					string what;
-					string file;
-					unsigned long line;
-			};
-
-			/**
-			 * Argument was NULL but it's not allowed
-			 */
-			 exception null_error {
-			 		string file;
-					unsigned long line;
-			 };
-		/*@}*/
 
 		/**
 		 * \ingroup err
