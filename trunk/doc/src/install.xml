@@ -44,7 +44,7 @@
 					<para>compatible mail transfer agent</para>
 				</listitem>
 				<listitem>
-					<para>Sablotron if you want to compile WWW interface</para>
+					<para>Sablotron if you want to compile WWW interface. It must be at least version 1.0.</para>
 				</listitem>
 				<listitem>
 					<para><ulink url="http://www.boost.org">boost</ulink> library</para>
