@@ -49,6 +49,7 @@ namespace POA_vq {
 					typedef ::vq::ivq::user_conf_info user_conf_info;
 					typedef ::vq::ivq::user_conf_info_out user_conf_info_out;
 					typedef ::vq::ivq::user_conf_info_list_out user_conf_info_list_out;
+					typedef ::vq::ivq::user_conf_info_list_var user_conf_info_list_var;
 					typedef ::vq::ivq::error error;
 					typedef ::vq::ivq::err_code err_code;
 					typedef ::vq::ivq::string_list_out string_list_out;
@@ -93,14 +94,18 @@ namespace POA_vq {
 				    virtual error* user_conf_rm_by_type( const char* dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut );
-				    virtual error* user_conf_rm( const char* id );
+				    virtual error* user_conf_rm( const char* dom_id, 
+							const char* user, const char* pfix, 
+							const char* id );
 				    virtual error* user_conf_ls( const char* dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_info_list_out uis );
 				    virtual error* user_conf_ls_by_type( const char* dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, user_conf_info_list_out uis );
-				    virtual error* user_conf_rep( const user_conf_info& ui );
+				    virtual error* user_conf_rep( const char* dom_id, 
+							const char* user, const char* pfix, 
+							const user_conf_info& ui );
 				    virtual error* user_conf_get( user_conf_info& ui );
 				    virtual error* user_conf_type_has( const char* dom_id, 
 							const char* user, const char* pfix, 
@@ -108,7 +113,6 @@ namespace POA_vq {
 				    virtual error* user_conf_type_cnt( const char* dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, size_type_out cnt );
-				
 				
 			protected:
 					static const char tmp_end[]; //!< temporary file extension
@@ -189,7 +193,7 @@ namespace POA_vq {
 					/// create path to dot-qmail
 					std::string dotfile(const std::string &, const std::string &, const std::string &);
 					/// create line which will be added to dot-qmail
-					std::string user_conf_ln(const user_conf_info &);
+					error * user_conf_ln(const user_conf_info &, std::string &);
 				//@}
 	
 				/**

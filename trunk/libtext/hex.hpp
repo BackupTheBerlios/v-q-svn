@@ -26,6 +26,9 @@ namespace text {
 
 	std::string hex_from( const std::string & hex );
 	std::string to_hex(const unsigned char *buf, unsigned bufl);
+	inline std::string to_hex(const char *buf, unsigned bufl) {
+		return to_hex(reinterpret_cast<const unsigned char *>(buf), bufl);
+	}
 
 } // namespace text
 

@@ -66,46 +66,46 @@ module vq {
 					err_dom_inv,
 					/// invalid user name
 					err_user_inv, // 3
-					/// user not found
-					err_user_nf, 
 					/// error in authorization module
-					err_auth, // 5
+					err_auth, 
 					/// dot file - type is not supported
 					err_user_conf_tns,
 					/// can't open sth
-					err_open, //  7
+					err_open, // 8
 					/// can't write
 					err_wr,
 					/// can't read
-					err_rd, // 9
+					err_rd, // 10
 					/// can't stat
 					err_stat,
 					/// not a directory
-					err_notdir, // 11
+					err_notdir, // 12
 					/// chmod failed
 					err_chmod,
 					/// file's locked
-					err_lckd, // 13
+					err_lckd, // 14
 					/// can't rename
 					err_ren,
 					/// can't change owner
-					err_chown, // 15
+					err_chown, // 16
 					/// overflow
 					err_over,
 					/// child crashed or returned something unexpected
-					err_exec, // 17
+					err_exec, // 18
 					/// can't create directory
 					err_mkdir,
 					/// entry exists
-					err_exists, // 19
+					err_exists, // 20
 					/// no such element/entry
 					err_noent,
 					/// can't remove
-					err_unlink, // 21
+					err_unlink, // 22
 					/// invalid password
 					err_pass_inv, 
 					/// internal function returned unexpected value
-					err_func_res
+					err_func_res,
+					/// function not implemented
+					err_func_ni
 			};
 
 			/// errors
@@ -148,9 +148,10 @@ module vq {
 			};
 
 			/// Mailbox options
-			const user_conf_type ut_redir = 1; //!< redirection
-			const user_conf_type ut_maildir = 2; //!< maildir
-			const user_conf_type ut_autoresp = 3; //!< autorespond
+			const user_conf_type uc_redir = 1; //!< redirection
+			const user_conf_type uc_maildir = 2; //!< maildir
+			const user_conf_type uc_autoresp = 3; //!< autorespond
+			const user_conf_type uc_external = 127; //!< all external options should be > than this
 
 			/// user's dot file info
 			struct user_conf_info {
@@ -310,7 +311,8 @@ module vq {
 					in string pfix, in user_conf_type ut )
 					raises (null_error, db_error, except);
 			/// Removes mailbox configuration entry
-			error user_conf_rm( in string id )
+			error user_conf_rm( in string dom_id, in string user,
+					in string pfix, in string id )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuration
 			error user_conf_ls(in string dom_id, in string user,
@@ -322,7 +324,8 @@ module vq {
 					out user_conf_info_list uis )
 					raises (null_error, db_error, except);
 			/// Changes existing entry
-			error user_conf_rep( in user_conf_info ui )
+			error user_conf_rep( in string dom_id, in string user, 
+					in string pfix, in user_conf_info ui )
 					raises (null_error, db_error, except);
 			/// Gets existing entry
 			error user_conf_get( inout user_conf_info ui )

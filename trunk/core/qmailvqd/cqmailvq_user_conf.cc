@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "cqmailvq_common.hpp"
 
 #include <pfstream.hpp>
+#include <text.hpp>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,18 +41,30 @@ namespace POA_vq {
 	 * \param ui configuration
 	 */
 	cqmailvq::error * cqmailvq::user_conf_add(const char * dom_id, 
-			const char *login, const char *pfix, user_conf_info & ui ) {
-		string dom(text::lower(d)), user(text::lower(u)), ext(text::lower(e));
-		string df(dotfile(dom, user, ext)), dftmp;
-		string ln(user_conf_ln(ui));
-		if(ln.empty()) return lr(::vq::ivq::err_no, "");
-	
-		if( file_add(df, ln, dftmp, ui.type == autoresp || ui.type == sms) )
-				return lastret;
+			const char *_login, const char *_pfix, user_conf_info & ui ) std_try {
+
+		if( !dom_id || !_login || !_pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+
+		string login(text::lower(_login)), pfix(text::lower(_pfix));
+
+		string ln;
+		auto_ptr<error> ret(user_conf_ln(ui, ln));
+		if( ::vq::ivq::err_func_ni == ret->ec ) {
+				return auth->user_conf_add(dom_id, login.c_str(), 
+					pfix.c_str(), ui);
+		}
 		
-		if(auth->user_conf_add(dom,user,ext,ui)) {
+		string df(dotfile(dom_id, login, pfix)), dftmp;
+
+		ret.reset(file_add(df, ln, dftmp, ui.type == ::vq::ivq::uc_autoresp ));
+		if( ::vq::ivq::err_no != ret->ec )
+				return ret.release();
+		
+		ret.reset(auth->user_conf_add(dom_id, login.c_str(), pfix.c_str(), ui));
+		if( ::vq::ivq::err_no != ret->ec ) {
 				unlink(dftmp.c_str());
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
+				return ret.release();
 		}
 		if( rename(dftmp.c_str(), df.c_str()) ) {
 				unlink(dftmp.c_str());
@@ -60,7 +73,6 @@ namespace POA_vq {
 		return lr( ::vq::ivq::err_no, "" );
 	} std_catch
 
-#if 0
 	/** 
 	 * Remove entry with given id.
 	 * \param d domain
@@ -68,22 +80,33 @@ namespace POA_vq {
 	 * \param ext address's extention
 	 * \param id entry's id.
 	 */
-	cqmailvq::error * cqmailvq::user_conf_rm(const string &d, 
-					const string &user, const string &ext,
-					const string & id) {
-		string dom(text::lower(d));
+	cqmailvq::error * cqmailvq::user_conf_rm(const char * dom_id, 
+			const char *_login, const char *_pfix,
+			const char * id) std_try {
+
+		if( ! dom_id || ! _login || ! _pfix || ! id )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
 		user_conf_info ui;
-		ui.id = id;
-		if(user_conf_get(dom, ui)) return lastret;
+		ui.id_conf = id;
+		auto_ptr<error> ret(user_conf_get(ui)); 
+		if( ::vq::ivq::err_no != ret->ec )
+				return ret.release();
 	
-		string ln(user_conf_ln(ui));
-		string df(dotfile(dom, text::lower(user), text::lower(ext)));
-		if(ln.empty()) return lr(::vq::ivq::err_no, "");
+		string ln;
+		ret.reset(user_conf_ln(ui, ln));
+		if( ::vq::ivq::err_func_ni == ret->ec ) {
+				return auth->user_conf_rm(ui.id_conf);
+		}
+		
+		string df(dotfile(dom_id, text::lower(_login), text::lower(_pfix)));
 	
 		// is it portable?? may be on some systems it will block?
 		opfstream dout;
 		string dftmp;
-		if( tmp_crt(df, dout, dftmp) != ::vq::ivq::err_no ) return lastret;
+		ret.reset( tmp_crt(df, dout, dftmp) );
+		if( ::vq::ivq::err_no != ret->ec ) 
+				return ret.release();
 		
 		ipfstream din(df.c_str());
 		if(din) {
@@ -101,10 +124,14 @@ namespace POA_vq {
 		dout.flush();
 		if(!dout) return lr(::vq::ivq::err_wr, dftmp);
 	
-		if(auth->user_conf_rm(dom,id)) return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-		return lr(rename(dftmp.c_str(), df.c_str()) ? ::vq::ivq::err_ren : ::vq::ivq::err_no, dftmp);
+		ret.reset(auth->user_conf_rm(ui.id_conf));
+		if( ::vq::ivq::err_no != ret->ec )
+				return ret.release();
+		if(rename(dftmp.c_str(), df.c_str()))
+				return lr( ::vq::ivq::err_ren, dftmp);
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
-	
+
 	/**
 	 * Lists all mailbox configurations for e-mail
 	 * \param d domain
@@ -112,11 +139,15 @@ namespace POA_vq {
 	 * \param e extension
 	 * \param uideq information read from database
 	 */
-	cqmailvq::error * cqmailvq::user_conf_ls(const string &d, const string &u,
-			const string &e, vector<user_conf_info> & uideq) {
-		string dom(text::lower(d)), user(text::lower(u));
-		if(auth->user_conf_ls(dom,user,text::lower(e),uideq)) return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-		return lr(::vq::ivq::err_no, "");
+	cqmailvq::error * cqmailvq::user_conf_ls(const char * dom_id, 
+			const char * _login, const char * _pfix,
+			user_conf_info_list_out ucis ) std_try {
+		
+		if( ! dom_id || ! _login || ! _pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		string login(text::lower(_login));
+		string pfix(text::lower(_pfix));
+		return auth->user_conf_ls( dom_id, login.c_str(), pfix.c_str(), ucis);
 	} std_catch
 	
 	/**
@@ -127,69 +158,110 @@ namespace POA_vq {
 	 * \param uideq information read from database
 	 * \param type type of entries
 	 */
-	cqmailvq::error * cqmailvq::user_conf_ls(const string &d, const string &u,
-			const string &e, user_conf_type type, vector<user_conf_info> & uideq) {
-		if(auth->user_conf_ls(text::lower(d),text::lower(u),text::lower(e),type,uideq)) 
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-		return lr(::vq::ivq::err_no, "");
+	cqmailvq::error * cqmailvq::user_conf_ls_by_type(const char * dom_id, 
+			const char * _login, const char * _pfix,
+			user_conf_type ut, user_conf_info_list_out ucis ) std_try {
+
+		if( ! dom_id || ! _login || ! _pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+
+		string login(text::lower(_login));
+		string pfix(text::lower(_pfix));
+		return auth->user_conf_ls_by_type( dom_id, login.c_str(), pfix.c_str(), 
+				ut, ucis ); 
 	} std_catch
-	
+
 	/**
 	 * Changes entry
 	 */
-	cqmailvq::error * cqmailvq::user_conf_rep(const string &d, const string &u, 
-			const string &e, const user_conf_info & uin) {
-		string dom(text::lower(d));
+	cqmailvq::error * cqmailvq::user_conf_rep(const char * dom_id, 
+			const char * _login, const char * _pfix,
+			const user_conf_info & uin ) std_try {
+
+		if( ! dom_id || ! _login || ! _pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
 		user_conf_info uio;
-		uio.id = uin.id;
-		if(user_conf_get(dom, uio)) return lastret;
+		uio.id_conf = uin.id_conf;
+		auto_ptr<error> ret(user_conf_get(uio));
+		if( ::vq::ivq::err_no != ret->ec )
+				return ret.release();
+
+		if( uin.type != uio.type )
+				return lr(::vq::ivq::err_func_ni, "uin.type != uio.type");
 	
-		string df(dotfile(dom, text::lower(u), text::lower(e)));
-		string lno(user_conf_ln(uio)), lnn(user_conf_ln(uin));
-		if(lno.empty()) return lr(::vq::ivq::err_no, "");
+		string lno, lnn;
+		ret.reset(user_conf_ln(uio, lno));
+		if( ::vq::ivq::err_no != ret->ec && ::vq::ivq::err_func_ni != ret->ec )
+				return ret.release();
+		ret.reset(user_conf_ln(uin, lnn));
+		if( ::vq::ivq::err_no != ret->ec && ::vq::ivq::err_func_ni != ret->ec )
+				return ret.release();
+
+		if( ::vq::ivq::err_func_ni == ret->ec ) {
+				return auth->user_conf_rep(uin);
+		}
+
+		string df(dotfile(dom_id, text::lower(_login), text::lower(_pfix)));
 	
 		// is it portable?? may be on some systems it will block?
 		opfstream dout;
 		string dftmp;
-		if( tmp_crt(df, dout, dftmp) != ::vq::ivq::err_no ) return(lastret); 
+		ret.reset(tmp_crt(df, dout, dftmp));
+		if( ::vq::ivq::err_no != ret->ec ) 
+				return ret.release(); 
 		
 		ipfstream din(df.c_str());
 		if(din) {
 				string cln;
 	
-				if( uin.type == autoresp || uin.type == sms )
+				if( ::vq::ivq::uc_autoresp == uin.type )
 						dout<<lnn<<endl;
 	
 				while(getline(din, cln)) {
 						if(cln!=lno && !cln.empty()) {
 								dout<<cln<<endl;
-								if(!dout) return lr(::vq::ivq::err_wr, dftmp);
+								if(!dout) { 
+										unlink(dftmp.c_str());
+										return lr(::vq::ivq::err_wr, dftmp);
+								}
 						}
 				}
 			
-				if( ! ( uin.type == autoresp || uin.type == sms ) )
+				if( ! ( ::vq::ivq::uc_autoresp == uin.type ) )
 						dout<<lnn<<endl;
 	
-				if(din.bad()) return lr(::vq::ivq::err_rd, df);
+				if(din.bad()) {
+						unlink(dftmp.c_str());
+						return lr(::vq::ivq::err_rd, df);
+				}
 				din.clear();
 		} else 
 				dout<<lnn<<endl;
 		dout.flush();
-		if(!dout) return lr(::vq::ivq::err_wr, dftmp);
+		if(!dout) {
+				unlink(dftmp.c_str());
+				return lr(::vq::ivq::err_wr, dftmp);
+		}
 	
-		if(auth->user_conf_rep(dom,uin)) return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-		return lr(rename(dftmp.c_str(), df.c_str()) ? ::vq::ivq::err_ren : ::vq::ivq::err_no, dftmp);
+		ret.reset(auth->user_conf_rep(uin));
+		if( ::vq::ivq::err_no != ret->ec ) {
+				unlink(dftmp.c_str());
+				return ret.release();
+		}
+		if(rename(dftmp.c_str(), df.c_str())) {
+				return lr(::vq::ivq::err_ren, dftmp);
+		}
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
-	
+
 	/**
 	 * Get all configuration for domain
 	 */
-	cqmailvq::error * cqmailvq::user_conf_get(const string &dom, user_conf_info &ui) std_try {
-		if(auth->user_conf_get(text::lower(dom), ui))
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-		return lr(::vq::ivq::err_no, "");
+	cqmailvq::error * cqmailvq::user_conf_get(user_conf_info &ui) std_try {
+		return auth->user_conf_get(ui);
 	} std_catch
-#endif // if 0	
+
 	/**
 	 * Create path for dot-qmail file
 	 * \param d domain
@@ -208,65 +280,53 @@ namespace POA_vq {
 		}
 		return dotfile;
 	} std_catch
-#if 0
-	/**
-	 * \return 0 if type is not supported
-	 */
-	cqmailvq::error * cqmailvq::user_conf_sup_is(user_conf_type t) std_try {
-		unsigned ud_supl = sizeof(ud_supl);
-		if(!ud_supl) return 0;
-		ud_supl--;
-		do {
-				if(ud_sup[ud_supl] == t) return 1;
-		} while(ud_supl--);
-		return 0;
-	} std_catch
-	
+
 	/**
 	 * Create line which will be add do dot-qmail
 	 */
-	string cqmailvq::user_conf_ln(const user_conf_info &ui) std_try {
-		string ret;
-		string::size_type pos, pos1;
-		string tmp, tmp1;
-		switch(ui.type) {
-		case redir:
-				ret.reserve(ui.val.length()+3);
-				ret = '&';
-				ret += ui.val;
-				break;
-		case autoresp:
-				ret = "|";
-				ret += home+"/bin/autoresp ";
-				tmp1 = hex_from(ui.val);
+	cqmailvq::error * cqmailvq::user_conf_ln(const user_conf_info &ui, 
+			string & ln ) std_try {
+
+		ln.erase();
+		if( ::vq::ivq::uc_redir == ui.type) {
+				ln.reserve( strlen(ui.val)+2 );
+				ln = '&';
+				ln += ui.val;
+				lr(::vq::ivq::err_no, "");
+		}
+
+		if( ::vq::ivq::uc_autoresp == ui.type ) {
+				string::size_type pos, pos1;
+				string tmp, tmp1;
+				ln = "|";
+				ln += this->home+"/bin/autoresp ";
+				tmp1 = text::hex_from(static_cast<const char *>(ui.val));
 	
 				pos = tmp1.find('\0');
 				if( pos == string::npos )
-						throw logic_error("user_conf_ln: there's no message!", __FILE__, __LINE__);
+						throw logic_error("user_conf_ln: there's no message!");
 				
 				tmp = tmp1.substr(0, pos);
-				ret += tmp;
+				ln += tmp;
 				
 				pos1 = tmp1.find('\0', ++pos);
 				tmp = tmp1.substr(pos, pos1 - pos);
-				ret += ' ';
-				ret += to_hex((cqmailvq::error * *) tmp.data(), tmp.length());
+				ln += ' ';
+				ln += text::to_hex(tmp.data(), tmp.length());
 				
 				if( pos1 != string::npos 
 					&& (pos1 = tmp1.find('\0', (pos=pos1+1))) != string::npos ) {
 						tmp = tmp1.substr(pos, pos1-pos);
 						if( ! tmp.empty() ) {
-								ret+=' ';
-								ret+=to_hex((cqmailvq::error * *) tmp.data(), tmp.length());
+								ln+=' ';
+								ln+=text::to_hex(tmp.data(), tmp.length());
 						}
 				}
-				break;
-		default:
-				ret = ui.val;
+				return lr(::vq::ivq::err_no, "");
 		}
-		return ret;
+		return lr(::vq::ivq::err_func_ni, "wrong user_conf_info.type");
 	} std_catch
-	
+
 	/**
 	 * Is mailbox has entry with this type
 	 * \param dom domain
@@ -274,24 +334,19 @@ namespace POA_vq {
 	 * \param ext extension
 	 * \param type type to find
 	 */
-	cqmailvq::error * cqmailvq::user_conf_has(const string &dom, const string &user, 
-			const string &ext, user_conf_type type) {
-		if(auth->user_conf_has(text::lower(dom), text::lower(user), text::lower(ext), type))
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-		return lr(::vq::ivq::err_no, "");
+	cqmailvq::error * cqmailvq::user_conf_type_has(const char * dom_id, 
+			const char * _login, const char * _pfix,
+			user_conf_type type) std_try {
+
+		if( ! dom_id || ! _login || ! _pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+
+		string login(text::lower(_login));
+		string pfix(text::lower(_pfix));
+		return auth->user_conf_type_has( dom_id, login.c_str(), 
+				pfix.c_str(), type);
 	} std_catch
-	
-	/**
-	 * Add to dot-qmail default entries
-	 */
-	cqmailvq::error * cqmailvq::user_conf_add_md_def(const string &d, const string &u,
-			const string &e) {
-		user_conf_info ui;
-		ui.type = maildir;
-		ui.val = "./"+text::lower(u)+"/Maildir/";
-		return user_conf_add(d, u, e, ui);
-	} std_catch
-#endif // if 0	
+
 	/**
 	 * creates temporary file, chown(vq), chmod(vq_mode)
 	 */
@@ -310,7 +365,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_chmod, fnout);
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
-#if 0
+
 	/**
 	 * Remove all entries of given type
 	 * \param d domain
@@ -318,46 +373,79 @@ namespace POA_vq {
 	 * \param e extension
 	 * \param type delete this type
 	 */
-	cqmailvq::error * cqmailvq::user_conf_rm(const string &d, const string &u,
-			const string &e, user_conf_type type) {
-		vector<user_conf_info> uis;
-		vector<user_conf_info>::iterator uis_end, uis_cur;
-		if(user_conf_ls(d, u, e, type, uis)) return(lastret);
-		uis_end = uis.end();
-		
-		string dom(text::lower(d));
-		string df(dotfile(dom, text::lower(u), text::lower(e)));
+	cqmailvq::error * cqmailvq::user_conf_rm_by_type(const char * dom_id, 
+			const char * _login, const char * _pfix,
+			user_conf_type type) std_try {
+
+		string login(text::lower(_login));
+		string pfix(text::lower(_pfix));
 	
-		for( uis_cur=uis.begin(); uis_cur != uis_end; ++ uis_cur ) {
-				uis_cur->val = user_conf_ln(*uis_cur);
+		user_conf_info_list_var uis;
+		auto_ptr<error> ret(user_conf_ls_by_type(dom_id, login.c_str(), 
+				pfix.c_str(), type, uis));
+		if( ::vq::ivq::err_no != ret->ec ) 
+				return ret.release();
+		
+		string ln;
+		CORBA::ULong uisl = uis->length(), i;
+		for( i=0; i<uisl; ++i ) {
+				ret.reset(user_conf_ln(uis[i], ln));
+				if( ::vq::ivq::err_func_ni == ret->ec ) {
+						return auth->user_conf_rm_by_type(dom_id, login.c_str(),
+								pfix.c_str(), type );
+				} else if( ::vq::ivq::err_no != ret->ec ) {
+						return ret.release();		
+				}
+				uis[i].val = ln.c_str();
 		}
 	
 		// is it portable?? may be on some systems it will block?
 		opfstream dout;
 		string dftmp;
-		if( tmp_crt(df, dout, dftmp) != ::vq::ivq::err_no ) return(lastret);
+		string df(dotfile(dom_id, login, pfix));
+		ret.reset(tmp_crt(df, dout, dftmp));
+		if( ::vq::ivq::err_no != ret->ec ) 
+				return ret.release();
 		
 		ipfstream din(df.c_str());
 		if(din) {
 				string cln;
 				while(getline(din, cln)) {
 						if( cln.empty() ) continue;
-						for( uis_cur = uis.begin(); uis_cur != uis_end; uis_cur ++ ) {
-								if( cln == uis_cur->val ) break;
+						for( i = 0; i<uisl; ++i ) {
+								if( cln == static_cast<const char *>
+										(uis[i].val) ) break;
 						}
-						if( uis_cur == uis_end ) {
+						if( i == uisl ) {
 								dout<<cln<<endl;
-								if(!dout) return lr(::vq::ivq::err_wr, dftmp);
+								if(!dout) {
+										unlink(dftmp.c_str());
+										return lr(::vq::ivq::err_wr, dftmp);
+								}
 						}
 				}
-				if(din.bad()) return lr(::vq::ivq::err_rd, df);
+				if(din.bad()) {
+						unlink(dftmp.c_str());
+						return lr(::vq::ivq::err_rd, df);
+				}
 				din.clear();
 		}
 	
 		dout.flush();
-		if(!dout) return lr(::vq::ivq::err_wr, dftmp);
-		if(auth->user_conf_rm(dom,u,e,type)) return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-		return lr(rename(dftmp.c_str(), df.c_str()) ? ::vq::ivq::err_ren : ::vq::ivq::err_no, dftmp);
+		if(!dout) {
+				unlink(dftmp.c_str());
+				return lr(::vq::ivq::err_wr, dftmp);
+		}
+		ret.reset(auth->user_conf_rm_by_type( dom_id, login.c_str(), 
+				pfix.c_str(), type));
+		if( ::vq::ivq::err_no != ret->ec ) {
+				unlink(dftmp.c_str());
+				return ret.release();
+		}
+		if( rename(dftmp.c_str(), df.c_str()) ) {
+				return lr(::vq::ivq::err_ren, dftmp);
+		}
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	
 	/**
@@ -368,11 +456,16 @@ namespace POA_vq {
 	 * \param type
 	 * \param cnt number of entries found
 	 */
-	cqmailvq::error * cqmailvq::user_conf_type_cnt( const string &d, const string &u, const string &e,
-			user_conf_type type, size_type &cnt) {
-		if( auth->user_conf_type_cnt(d,u,e,type,cnt) )
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report() );
-		return lr(::vq::ivq::err_no, "");
+	cqmailvq::error * cqmailvq::user_conf_type_cnt( const char * dom_id, 
+			const char * _login, const char * _pfix,
+			user_conf_type ut, size_type &cnt) std_try {
+
+		if( ! dom_id || ! _login || ! _pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+
+		string login(text::lower(_login));
+		string pfix(text::lower(_pfix));
+		return auth->user_conf_type_cnt( dom_id, login.c_str(), pfix.c_str(),
+			ut, cnt);
 	} std_catch
-#endif  // if 0
 } // namespace POA_vq
