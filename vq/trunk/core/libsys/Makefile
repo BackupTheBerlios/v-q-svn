@@ -1,8 +1,8 @@
-BASE=../../
+BASE=../..
 
 .PHONY: auto-mkdir
 
-all: auto-mkdir libsys.so
+all: auto-mkdir .depend libsys.so
 
 auto-mkdir:
 	mkdir -p auto
@@ -22,37 +22,40 @@ util.o dirs.o lock.o
 	$(BASE)/make-so libsys.so.6.0 sig.o cpoll.o uniq.o fd.o fdstr.o getline.o \
 	util.o dirs.o lock.o
 
-cpoll.o: $(BASE)/comp-so cpoll.cc cpoll.hpp
+cpoll.o: $(BASE)/comp-so cpoll.cc
 	$(BASE)/comp-so cpoll.cc
 
-dirs.o: $(BASE)/comp-so dirs.cc dirs.hpp
+dirs.o: $(BASE)/comp-so dirs.cc
 	$(BASE)/comp-so dirs.cc
 
-fd.o: $(BASE)/comp-so fd.cc fd.hpp
+fd.o: $(BASE)/comp-so fd.cc
 	$(BASE)/comp-so fd.cc
 
-fdstr.o: $(BASE)/comp-so fdstr.cc fdstr.hpp fd.hpp
+fdstr.o: $(BASE)/comp-so fdstr.cc
 	$(BASE)/comp-so fdstr.cc
 
-getline.o: $(BASE)/comp-so getline.cc getline.hpp fd.hpp fdstr.hpp 
+getline.o: $(BASE)/comp-so getline.cc
 	$(BASE)/comp-so getline.cc
 
-hmac_md5.o: $(BASE)/comp-so hmac_md5.c auto/lmd5.h
+hmac_md5.o: $(BASE)/comp-so hmac_md5.c
 	$(BASE)/comp-so hmac_md5.c
 
-lock.o: $(BASE)/comp-so lock.cc lock.hpp auto/hasflock.h
+lock.o: $(BASE)/comp-so lock.cc
 	$(BASE)/comp-so lock.cc
 
-sig.o: $(BASE)/comp-so sig.cc sig.hpp
+sig.o: $(BASE)/comp-so sig.cc
 	$(BASE)/comp-so sig.cc
 
-uniq.o: $(BASE)/comp-so uniq.cc uniq.hpp
+uniq.o: $(BASE)/comp-so uniq.cc
 	$(BASE)/comp-so uniq.cc
 
-util.o: $(BASE)/comp-so util.cc util.hpp
+util.o: $(BASE)/comp-so util.cc
 	$(BASE)/comp-so util.cc
 
 #################
-
+.depend:
+	echo '# Module dependencies' > .depend
+	$(BASE)/tools/mkdep *.cc >> .depend
+	
 clean:
 		rm -rf `cat TARGETS`
