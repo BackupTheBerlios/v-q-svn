@@ -43,7 +43,7 @@ split.o: $(BASE)/comp-so split.cc
 	$(BASE)/comp-so split.cc
 
 #####################
-.depend:
+.depend: auto/lmd5.h
 	echo '# Module dependencies' > .depend
 	$(BASE)/tools/mkdep *.cc >> .depend
 	

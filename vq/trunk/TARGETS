@@ -1,5 +1,5 @@
 ac_int.o ac_str.o autoresp.o cconf.o cdaemonauth.o cfsvq.o choose.o conf_qmail.o conf_vq.o cpoll.o cqautoresp.o daemon.o deliver.o dirs.o dom_add.o dom_alias_add.o dom_alias_rm.o dom_ip_add.o dom_ip_ls.o dom_ip_rm.o dom_rm.o fd.o fdstr.o getgid.o getline.o getuid.o hex.o hier.o hmac_md5.o install.o lock.o lower.o pgsqlauthd.o pgsqlcommon.o pgsqllogd.o qt_cur_set.o qt_def_get.o qt_def_set.o qt_get.o qt_over.o qt_set.o sig.o skillall.o split.o str2cc.o udot_add.o udot_ls.o udot_rm.o user_add.o user_auth.o user_pass.o user_rm.o util.o vq_init.o
-auto/*
+auto
 libfd.so libfd.so.5.0 
 libfs.so libfs.so.5.0 
 libsplit.so libsplit.so.5.0 
