@@ -5,9 +5,6 @@
 #define HAVE_NAMESPACE_STD 1
 #include <pqxx/all.h>
 
-/// translates alias to domain name
-char alias2dom( pqxx::Connection &, std::string & );
-
 #define std_try { try
 #define std_catch catch( sql_error & e ) { \
 	std::string em("sql error: \""); \

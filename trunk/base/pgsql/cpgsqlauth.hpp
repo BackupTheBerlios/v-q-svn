@@ -16,8 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#ifndef __CPGSQLAUTH_HPP
+#define __CPGSQLAUTH_HPP
+
 #include "../auth.hpp"
 #include "pgsqlcommon.hpp"
+#include "cpgsqlpool.hpp"
 
 #include <memory>
 
@@ -49,7 +53,7 @@ namespace POA_vq {
 					typedef ::vq::iauth::domain_info_list_out domain_info_list_out;
 					typedef ::vq::iauth::domain_info_list domain_info_list;
 
-					cpgsqlauth( const char *pginfo );
+					cpgsqlauth( const std::string &pginfo, size_type pgs );
 					virtual ~cpgsqlauth();
 					
 	
@@ -117,7 +121,8 @@ namespace POA_vq {
 
 			protected:
 					/// pgsql
-					std::auto_ptr<pqxx::Connection> pg;
+					cpgsqlpool pool;
+					
 					/*
 					void qt_def_get(const std::string &);
 					void qt_def_set(const std::string &);
@@ -158,3 +163,5 @@ namespace POA_vq {
 
 
 } // namespace POA_vq
+
+#endif // ifndef __CPGSQLAUTH_HPP

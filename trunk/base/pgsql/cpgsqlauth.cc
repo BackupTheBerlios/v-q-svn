@@ -40,13 +40,8 @@ namespace POA_vq {
 	/**
 	 * \param pginfo Connection configuration
 	 */
-	cpgsqlauth::cpgsqlauth( const char *pginfo ) std_try {
-		pg.reset(new Connection(pginfo));
-		if( ! pg.get() || ! pg->is_open() ) {
-				throw ::vq::except(
-						static_cast<const char*>("can't create connection"),
-						__FILE__, __LINE__ ); 
-		}
+	cpgsqlauth::cpgsqlauth( const std::string &pginfo, size_type pgs ) 
+			: pool(pginfo, pgs) std_try {
 	} std_catch;
 	
 	/**
@@ -65,7 +60,8 @@ namespace POA_vq {
 
 		string dom(lower(_dom));
 
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT DOM_ADD("+Quote(dom, false)+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
@@ -93,7 +89,8 @@ namespace POA_vq {
 
 		string dom(lower(_dom));
 
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT DOM_ID("+Quote(dom, false)+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
@@ -119,7 +116,8 @@ namespace POA_vq {
 
 		domain = CORBA::string_dup("");
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT domain FROM vq_view_DOM_NAME WHERE id_domain="
 			+Quote(dom_id, false) ));
 
@@ -136,7 +134,8 @@ namespace POA_vq {
 	cpgsqlauth::error * cpgsqlauth::dom_rm( const char * dom_id ) std_try {
 		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT DOM_RM("+Quote(dom_id, false)+')');
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec("SELECT DOM_RM("+Quote(dom_id, false)+')');
 
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -145,7 +144,8 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqlauth::error * cpgsqlauth::dom_ls( domain_info_list_out dis ) std_try {
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT id_domain,domain FROM vq_view_dom_ls"));
 
 		dis = new domain_info_list;
@@ -170,7 +170,8 @@ namespace POA_vq {
 		if( !ai.id_domain || !ai.login || !ai.pass /*|| !ai.dir*/ )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 				"SELECT USER_ADD("
 				+Quote(static_cast<const char *>(ai.id_domain), false)+','
 				+Quote(lower(static_cast<const char *>(ai.login)), false)+','
@@ -228,7 +229,8 @@ namespace POA_vq {
 		if( ! dom_id || ! rea )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 				"SELECT "+func+"("
 				+Quote(static_cast<const char *>(dom_id))+','
 				+Quote(static_cast<const char *>(rea))+')'));
@@ -268,7 +270,8 @@ namespace POA_vq {
 		if( ! rea )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec(
 				"SELECT "+func+"("+Quote(static_cast<const char *>(rea))+')');
 
 		return lr(::vq::ivq::err_no, "");
@@ -299,7 +302,8 @@ namespace POA_vq {
 			string_list_out reas, 
 			const std::string & field, const std::string & view ) std_try {
 
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT "+field+" FROM "+view+" WHERE id_domain="
 			+Quote(static_cast<const char *>(dom_id)) ));
 
@@ -324,7 +328,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login || ! _pass )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 				"SELECT USER_PASS("
 				+Quote(dom_id, false)+','
 				+Quote(lower(login), false)+','
@@ -350,7 +355,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec(
 				"SELECT USER_RM("
 				+Quote(dom_id, false)+','
 				+Quote(lower(login), false)+')');
@@ -364,7 +370,8 @@ namespace POA_vq {
 			const char * login ) std_try {
 		if( ! dom_id || ! login ) throw ::vq::null_error(__FILE__, __LINE__);
 
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT EXISTS (SELECT * FROM vq_view_USER_EX "
 			"WHERE id_domain="+Quote(dom_id, false)
 			+" AND login="+Quote(lower(login), false)+')' ));
@@ -386,7 +393,8 @@ namespace POA_vq {
 		if( ! re_domain || ! re_login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 				"SELECT EB_ADD("
 				+Quote(static_cast<const char *>(re_domain))+','
 				+Quote(static_cast<const char *>(re_login))+')'));
@@ -412,7 +420,8 @@ namespace POA_vq {
 		if( ! re_domain || ! re_login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec(
 				"SELECT EB_RM("
 				+Quote(static_cast<const char *>(re_domain))+','
 				+Quote(static_cast<const char *>(re_login))+')');
@@ -424,7 +433,8 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqlauth::error * cpgsqlauth::eb_ls( email_banned_list_out ebs ) std_try {
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT re_domain,re_login FROM vq_view_eb_ls"));
 		
 		ebs = new email_banned_list;
@@ -450,7 +460,8 @@ namespace POA_vq {
 		if( ! ai.id_domain || ! ai.login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT pass,dir,flags FROM vq_view_user_get"
 			" WHERE id_domain="+Quote(static_cast<const char *>(ai.id_domain))
 			+" AND login="+Quote(lower(static_cast<const char *>(ai.login))) ));
@@ -476,7 +487,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT USER_CONF_ADD("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
@@ -500,7 +512,8 @@ namespace POA_vq {
 		if( !dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT id_conf,val,type FROM vq_view_user_conf_ls "
 			"WHERE id_domain="+ Quote(dom_id, false)
 			+" AND login="+ Quote(lower(login), false)
@@ -531,7 +544,8 @@ namespace POA_vq {
 		if( !dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT id_conf,val,type FROM vq_view_user_conf_ls"
 			" WHERE id_domain="+ Quote(dom_id, false)
 			+" AND login="+ Quote(lower(login), false)
@@ -560,7 +574,8 @@ namespace POA_vq {
 	cpgsqlauth::error * cpgsqlauth::user_conf_rm(const char * user_conf_id) std_try {
 		if( ! user_conf_id ) throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT USER_CONF_RM("+Quote(user_conf_id, false)+')');
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec("SELECT USER_CONF_RM("+Quote(user_conf_id, false)+')');
 
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -574,7 +589,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login || ! ext ) 
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT USER_CONF_RM_BY_TYPE("
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec("SELECT USER_CONF_RM_BY_TYPE("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
 			+ Quote(lower(ext), false) + ','
@@ -587,7 +603,8 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqlauth::error * cpgsqlauth::user_conf_get( user_conf_info & ui ) std_try {
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT TYPE,VAL FROM vq_view_USER_CONF_GET WHERE id_conf="
 			+ Quote(static_cast<const char *>(ui.id_conf), false) ));
 	
@@ -606,7 +623,8 @@ namespace POA_vq {
 	cpgsqlauth::error * cpgsqlauth::user_conf_rep( 
 			const user_conf_info & ui ) std_try {
 	
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 				"SELECT USER_CONF_REP("
 				+Quote(static_cast<const char *>(ui.id_conf), false)+','
 				+Quote(ToString( static_cast<CORBA::ULong>(ui.type) ), false)+','
@@ -635,7 +653,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT EXISTS (SELECT * FROM vq_view_user_conf_type_has WHERE "
 			"id_domain="+Quote(dom_id)
 			+" AND login="+Quote(lower(login))
@@ -660,7 +679,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT count FROM vq_view_USER_CONF_TYPE_CNT"
 			" WHERE id_domain="+ Quote(dom_id)
 			+ " AND login="+ Quote(lower(login))
@@ -684,7 +704,8 @@ namespace POA_vq {
 		if( ! dom_id )
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT QT_USER_DEF_SET("
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec("SELECT QT_USER_DEF_SET("
 			+Quote(dom_id)+','
 			+Quote(ToString(bytes_max))+','
 			+Quote(ToString(files_max))+')');
@@ -702,7 +723,8 @@ namespace POA_vq {
 		if( ! dom_id )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT qt_user_bytes_def,qt_user_files_def "
 			"FROM vq_view_QT_USER_DEF_GET WHERE id_domain="+Quote(dom_id) ));
 	
@@ -724,7 +746,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		Result res(NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(NonTransaction(*pg.get()).Exec(
 			"SELECT qt_bytes_max,qt_files_max from vq_view_QT_USER_GET"
 			" WHERE id_domain="+Quote(dom_id)
 			+" AND login="+Quote(lower(login)) ));
@@ -748,7 +771,8 @@ namespace POA_vq {
 		if( ! dom_id || ! login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT QT_USER_SET("
+		cpgsqlpool::value_ptr pg(pool.get());
+		NonTransaction(*pg.get()).Exec("SELECT QT_USER_SET("
 			+Quote(dom_id)+','+Quote(lower(login))+','
 			+Quote(ToString(bytes_max))+','
 			+Quote(ToString(files_max))+')');

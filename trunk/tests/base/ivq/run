@@ -16,9 +16,21 @@ export LD_LIBRARY_PATH="/tmp"
 cp -f $BASE/lib*/*.so* /tmp
 
 host=localhost
+prog=ivq
+use_orb=mico
+
+ldd $prog | grep omni > /dev/null
+if [ $? = 0 ] ; then
+	use_orb=omni
+fi
 
 echo "starting Naming Service daemon ..."
-nsd -ORBIIOPAddr inet:$host:12456 &
+if [ $use_orb = mico ] ; then
+	nsd -ORBIIOPAddr inet:$host:12456 &
+else
+	rm -rf omninames-*
+	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:12456 &
+fi
 nsd_pid=$!
 
 trap "kill $nsd_pid" 0
@@ -26,16 +38,13 @@ sleep 2
 
 echo "starting iauth(pgsqlauthd) server ..."
 $BASE/base/pgsql/pgsqlauthd \
--ORBIIOPAddr inet:$host:44444 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 iauth_pid=$!
 trap "kill $nsd_pid $iauth_pid" 0
 sleep 2
 
-echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
 echo "starting ivq(qmailvqd) server ..."
 $BASE/base/qmailvqd/qmailvqd \
--ORBIIOPAddr inet:$host:33333 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 ivq_pid=$!
 
@@ -45,3 +54,5 @@ sleep 2
 echo "running client ..."
 ./ivq -ORBInitRef NameService=corbaloc::$host:12456/NameService name_service#VQ.ivq
 #gdb ./ivq
+
+rm -rf omninames-*

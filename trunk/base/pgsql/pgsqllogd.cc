@@ -108,6 +108,7 @@ int vqmain(int ac, char **av) {
 	conf::clnconf pgsql(conf_dir+"pgsql", "dbname=mail password=mail user=mail");
 	conf::clnconf dep_mod(conf_dir+"dep_mod", "fixed_ports_no_imr");
 	conf::clnconf policy(conf_dir+"policy", "single_thread_model");
+	conf::cintconf pgsql_pool(conf_dir+"pgsql_pool", "1");
 
 	auto_ptr<cpoa_hier> poa;
 	try {
@@ -121,7 +122,8 @@ int vqmain(int ac, char **av) {
 	/*
 	 * Create authorization object
 	 */
-	auto_ptr<cpgsqllog> pglog(new cpgsqllog(pgsql.val_str().c_str()));
+	auto_ptr<cpgsqllog> pglog( new cpgsqllog(pgsql.val_str(), 
+		pgsql_pool.val_int()) );
 
 	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(pglog.get());
 	CORBA::Object_var ref = poa->core_poa()->id_to_reference (oid.in());

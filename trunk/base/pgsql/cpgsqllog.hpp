@@ -16,8 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#ifndef __CPGSQLLOG_HPP
+#define __CPGSQLLOG_HPP
+
 #include "../logger.hpp"
 #include "pgsqlcommon.hpp"
+#include "cpgsqlpool.hpp"
+
+#include <boost/shared_ptr.hpp>
 
 #include <memory>
 #include <algorithm>
@@ -57,19 +63,18 @@ namespace POA_vq {
 					virtual error* rm_by_dom();
 					virtual error* rm_by_user();
 
-					cpgsqllog( const char * );
+					cpgsqllog( const std::string &, size_type );
 					virtual ~cpgsqllog();
 
 			protected:
 					/// pgsql
-					std::auto_ptr<pqxx::Connection> pg;
+					cpgsqlpool pool;
 
 					std::string ip;
 					std::string dom;
 					std::string log;
 					std::string ser;
 
-		
 					typedef int rbf_ignore_type;
 					const static rbf_ignore_type rbf_ignore_domain = 1;
 					const static rbf_ignore_type rbf_ignore_login = 1<<1;
@@ -86,7 +91,7 @@ namespace POA_vq {
 							size_type & cnt );
 
 					virtual error * rm_by_func( const std::string & );
-	
+
 				/**
 				 * \defgroup err Errors handling
 				 */
@@ -100,3 +105,5 @@ namespace POA_vq {
 	};
 
 } // namespace POA_vq
+
+#endif // ifndef __CPGSQLLOG_HPP

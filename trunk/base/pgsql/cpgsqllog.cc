@@ -32,14 +32,9 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqllog::cpgsqllog( const char * pginfo ) std_try {
+	cpgsqllog::cpgsqllog( const std::string & pginfo, size_type pgs_pool ) 
+			: pool(pginfo, pgs_pool) std_try {
 		clear();
-		pg.reset(new Connection(pginfo));
-		if( ! pg.get() || ! pg->is_open() ) {
-				throw ::vq::except(
-						static_cast<const char*>("can't create connection"),
-						__FILE__, __LINE__ ); 
-		}
 	} std_catch
 	
 	/**
@@ -98,7 +93,8 @@ namespace POA_vq {
 		if( ! msg )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		pqxx::NonTransaction(*pg).Exec(
+		cpgsqlpool::value_ptr pg(pool.get());
+		pqxx::NonTransaction(*pg.get()).Exec(
 			"SELECT log_write("
 			+pqxx::Quote(this->ip)+","
 			+this->ser+","
@@ -140,7 +136,8 @@ namespace POA_vq {
 			size_type & cnt ) std_try {
 
 		string qr("SELECT "+func);
-		Result res(pqxx::NonTransaction(*pg).Exec(qr));
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(pqxx::NonTransaction(*pg.get()).Exec(qr));
 		if( res.empty() ) return lr(::vq::ivq::err_func_res, func.c_str());
 		
 		cnt = res[0][0].as< size_type >(0);
@@ -196,8 +193,9 @@ namespace POA_vq {
 		if( start ) {
 				qr+= " OFFSET "+ToString(start);
 		}
-	
-		Result res(pqxx::NonTransaction(*pg).Exec(qr));
+
+		cpgsqlpool::value_ptr pg(pool.get());
+		Result res(pqxx::NonTransaction(*pg.get()).Exec(qr));
 		Result::size_type s = res.size();
 
 		les->length(s);
@@ -260,7 +258,8 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::rm_by_func( const std::string & func ) std_try {
-		pqxx::NonTransaction(*pg).Exec("SELECT "+func);
+		cpgsqlpool::value_ptr pg(pool.get());
+		pqxx::NonTransaction(*pg.get()).Exec("SELECT "+func);
   		return lr(::vq::ivq::err_no, "");
 	} std_catch
 

@@ -1,20 +1,31 @@
 #!/bin/sh
+export BASE=../../..
 export LD_LIBRARY_PATH="/tmp" 
-cp -f ../../../lib*/*.so* /tmp
+cp -f $BASE/lib*/*.so* /tmp
 
 host=localhost
+prog=iauth
+use_orb=mico
+
+ldd $prog | grep omni > /dev/null
+if [ $? = 0 ] ; then
+	use_orb=omni
+fi
 
 echo "starting Naming Service daemon ..."
-nsd -ORBIIOPAddr inet:$host:12456 &
+if [ $use_orb = mico ] ; then
+	nsd -ORBIIOPAddr inet:$host:12456 &
+else
+	rm -rf omninames-*
+	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:12456 &
+fi
 nsd_pid=$!
 
 trap "kill $nsd_pid" 0
 sleep 2
 
 echo "starting iauth(pgsqlauthd) server ..."
-#ulimit -c 132234
-../../../base/pgsql/pgsqlauthd \
--ORBIIOPAddr unix:iauth.sock \
+$BASE/base/pgsql/pgsqlauthd \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 server_pid=$!
 
@@ -24,3 +35,5 @@ sleep 2
 echo "running client ..."
 ./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService name_service#Auth.iauth
 #gdb iauth
+
+rm -rf omninames-*
