@@ -1,0 +1,1 @@
+-L/usr/local/pqxx/lib -lpqxx -L/usr/local/pgsql/lib -lpq

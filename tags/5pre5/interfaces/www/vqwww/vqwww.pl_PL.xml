@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<msgs>
+	<log>
+		<m n="inv/email/@empty">Musisz podać e-mail.</m>
+		<m n="inv/email/@syntax">Nieprawidłowy adres e-mail.</m>
+		<m n="inv/email/@dirty">E-mail zawierał nieprawidłowe znaki zostały one zamienione.</m>
+		<m n="inv/pass/@empty">Musisz podać hasło.</m>
+		<m n="inv/pass/@dirty">Hasło zawiera nieprawidłowe znaki.</m>
+		<m n="inv/auth">Autoryzacja nie powiodła się.</m>
+		<m n="sto">Sesja wygasła proszę się ponownie zalogować.</m>
+		<m n="email">Adres e-mail:</m>
+		<m n="pass">Hasło:</m>
+		<m n="locale">Język:</m>
+		<m n="submit">Zaloguj</m>
+	</log>
+
+	<exception>
+		<m n="@unexpected">brak opisu błędu</m>
+		<m n="desc">Błąd podczas wykonywania polecenia. Spróbuj ponownie za chwilę lub powiadom administratora.</m>
+		<m n="msg">Komunikat błędu: </m>
+	</exception>
+
+	<menu>
+		<mod>
+			<m n="out">Koniec</m>
+			<m n="conf">Konfiguracja</m>
+		</mod>
+	</menu>
+</msgs>

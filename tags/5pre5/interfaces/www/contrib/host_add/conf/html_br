@@ -1,0 +1,6 @@
+_
+
+Character which replaces all disallowed characters. It's used when
+creating XML/HTML output - replaces all characters which could
+invalidate output.
+
