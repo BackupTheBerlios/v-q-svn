@@ -2,7 +2,7 @@
 export LD_LIBRARY_PATH="/tmp" 
 cp -f ../../../lib*/*.so* /tmp
 
-host=`uname -n`
+host=localhost
 
 echo "starting Naming Service daemon ..."
 nsd -ORBIIOPAddr inet:$host:12456 &
@@ -14,6 +14,7 @@ sleep 2
 echo "starting iauth(pgsqlauthd) server ..."
 #ulimit -c 132234
 ../../../core/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 server_pid=$!
 

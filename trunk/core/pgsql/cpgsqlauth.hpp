@@ -141,7 +141,8 @@ namespace POA_vq {
     				virtual error * da_dip_rm( const char* rea,
 							const std::string & func );
     				virtual error * da_dip_ls_by_dom( const char* dom_id, 
-							string_list_out rea, const std::string & func );
+							string_list_out rea, 
+							const std::string &, const std::string & func );
 				//@}
 	};
 

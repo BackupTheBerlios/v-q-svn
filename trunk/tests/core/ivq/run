@@ -15,7 +15,7 @@ done
 export LD_LIBRARY_PATH="/tmp" 
 cp -f ../../../lib*/*.so* /tmp
 
-host=`uname -n`
+host=localhost
 
 echo "starting Naming Service daemon ..."
 nsd -ORBIIOPAddr inet:$host:12456 &
@@ -26,6 +26,7 @@ sleep 2
 
 echo "starting iauth(pgsqlauthd) server ..."
 ../../../core/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 iauth_pid=$!
 trap "kill $nsd_pid $iauth_pid" 0
@@ -34,6 +35,7 @@ sleep 2
 echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
 echo "starting ivq(qmailvqd) server ..."
 ../../../core/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 ivq_pid=$!
 
