@@ -2,7 +2,10 @@ BASE=../..
 OBJS=cpgsqlauth.o pgsqlauthd.o
 INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libsys -I$(BASE)/libtext \
 `cat $(BASE)/corba.inc` `cat pgsql.inc`
-LIBS=-L$(BASE)/core -L$(BASE)/libsys -L$(BASE)/libtext \
+LIBS=-Wl,-rpath=/tmp \
+-Wl,-rpath=`pwd`/$(BASE)/libtext -Wl,-rpath=/usr/local/progs/pqxx-gcc2/lib \
+-L$(BASE) -lmain -L$(BASE)/core -lvq \
+-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
 `cat $(BASE)/corba.lib` `cat pgsql.lib`
 
 all: .depend pgsqlauthd

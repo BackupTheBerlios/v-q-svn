@@ -34,7 +34,7 @@ namespace POA_vq {
 	 */
 	cpgsqlauth::cpgsqlauth( const char *pginfo ) {
 		pg.reset(new Connection(pginfo));
-		if( ! pg.get() ) {
+		if( ! pg.get() || ! pg->is_open() ) {
 				throw ::vq::runtime_error(
 						static_cast<const char*>("can't create connection"),
 						__FILE__, __LINE__ ); 
