@@ -62,9 +62,9 @@ install: all
 			$(MAKE) $@; \
 		) || exit 1; \
 	done
-	$(INSTALL) -d -m 0755 $(PREFIX)/include/v-q/base
+	$(INSTALL) -d -m 0755 $(PREFIX)/include/vq/base
 	for p in auth.hpp auth.idl vq.idl vq.hpp logger.idl logger.hpp; do \
-		$(INSTALL) -m 0644 $$p $(PREFIX)/include/v-q/base/$$p ; \
+		$(INSTALL) -m 0644 $$p $(PREFIX)/include/vq/base/$$p ; \
 	done
-	$(INSTALL) -d -m 0755 $(PREFIX)/lib/v-q
-	$(INSTALL) -m 0755 libvq.a $(PREFIX)/lib/v-q/libvq.a
+	$(INSTALL) -d -m 0755 $(PREFIX)/lib/vq
+	$(INSTALL) -m 0755 libvq.a $(PREFIX)/lib/vq/libvq.a

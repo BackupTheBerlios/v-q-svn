@@ -47,10 +47,10 @@ clean:
 
 #################
 install: all
-	$(INSTALL) -d -m 0755 $(PREFIX)/include/v-q/libtext
+	$(INSTALL) -d -m 0755 $(PREFIX)/include/vq/libtext
 	for p in *.hpp ; do \
-		$(INSTALL) -m 0644 $$p $(PREFIX)/include/v-q/libtext/$$p ; \
+		$(INSTALL) -m 0644 $$p $(PREFIX)/include/vq/libtext/$$p ; \
 	done
-	$(INSTALL) -d -m 0755 $(PREFIX)/lib/v-q
-	$(INSTALL) -m 0755 libtext.so.6.0 $(PREFIX)/lib/v-q/libtext.so.6.0
-	$(INSTALL) -m 0755 libtext.so $(PREFIX)/lib/v-q/libtext.so
+	$(INSTALL) -d -m 0755 $(PREFIX)/lib/vq
+	$(INSTALL) -m 0755 libtext.so.6.0 $(PREFIX)/lib/vq/libtext.so.6.0
+	$(INSTALL) -m 0755 libtext.so $(PREFIX)/lib/vq/libtext.so

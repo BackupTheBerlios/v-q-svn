@@ -55,9 +55,10 @@ $(BASE)/load $(BASE)/corba.lib error2str.o cdom_name2id.o libcluemain.a
 
 user_auth: user_auth.o
 
-user_auth: \
-$(BASE)/load $(BASE)/corba.lib error2str.o cdom_name2id.o libcluemain.a
-	$(BASE)/load $@ $(LIBS) -L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys \
+user_auth: $(BASE)/load $(BASE)/corba.lib error2str.o cdom_name2id.o
+	$(BASE)/load $@ -L$(BASE)/libmain -lmain -L$(BASE)/base/libvqmain -lvqmain \
+	-L$(BASE)/libconf -lconf -L$(BASE)/base -lvq \
+	-L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys \
 	error2str.o cdom_name2id.o `cat $(BASE)/corba.lib`
 
 $(OBJS): $(BASE)/compile $(BASE)/corba.inc
@@ -89,8 +90,8 @@ install: all
 			dom_ip_ls dom_ip_rm dom_ip_add ; do \
 		$(INSTALL) -m 0755 $$p $(PREFIX)/bin/$$p ; \
 	done
-	$(INSTALL) -d -m 0755 $(PREFIX)/include/v-q/interfaces/clue
-	$(INSTALL) -m 0644 cluemain.hpp $(PREFIX)/include/v-q/interfaces/clue/cluemain.hpp
-	$(INSTALL) -d -m 0755 $(PREFIX)/lib/v-q
-	$(INSTALL) -m 0755 libcluemain.a $(PREFIX)/lib/v-q/libcluemain.a
+	$(INSTALL) -d -m 0755 $(PREFIX)/include/vq/interfaces/clue
+	$(INSTALL) -m 0644 cluemain.hpp $(PREFIX)/include/vq/interfaces/clue/cluemain.hpp
+	$(INSTALL) -d -m 0755 $(PREFIX)/lib/vq
+	$(INSTALL) -m 0755 libcluemain.a $(PREFIX)/lib/vq/libcluemain.a
 

@@ -79,7 +79,7 @@ int vqmain( int ac, char ** av ) {
 			ivqobj = ce.ns->resolve(obj_name);
 			ce.vq = vq::ivq::_narrow(ivqobj);
 			if( CORBA::is_nil(ce.vq) ) {
-					cout<<"can't narrow "<<ivq_name.val_str()<<endl;
+					cerr<<"can't narrow "<<ivq_name.val_str()<<endl;
 					return 100;
 			}
 	} corba_catch(" while resolving "+ivq_name.val_str());	

@@ -1,8 +1,10 @@
 SUBDIR=tools libconf libmain libsys libtext base interfaces
 
-.PHONY: all clean pgsql install install-pgsql
+.PHONY: all clean pgsql install install-pgsql install-conf install-dirs
 
-all clean:
+install: install-dirs install-conf
+
+all clean install:
 	@for entry in $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \
@@ -20,15 +22,16 @@ pgsql install-pgsql:
 		) || exit 1; \
 	done
 
-install:
-	for p in etc etc/ivq etc/iauth etc/ilogger bin lib lib/v-q include include/v-q ; do \
+install-dirs:
+	for p in etc etc/ivq etc/iauth etc/ilogger bin lib lib/vq include include/vq ; do \
 		$(INSTALL) -d -m 0755 $(PREFIX)/$$p ; \
 	done
-	@for entry in $(SUBDIR); do \
-		( \
-			echo "===> $$entry" ; \
-			cd $$entry ; \
-			exec $(MAKE) $@; \
-		) || exit 1; \
-	done
+
+install-conf: install-dirs
+	@echo "Installing default configuration..."
+	@if [ ! -f $(PREFIX)/etc/ivq/orb_conf ] ; then \
+		echo "-ORBInitRef NameService=corbaloc::127.0.0.1:12456/NameService" > $(PREFIX)/etc/ivq/orb_conf ; \
+		chmod 644 $(PREFIX)/etc/ivq/orb_conf ; \
+		echo "$(PREFIX)/etc/ivq/orb_conf: created" ; \
+	fi
 

@@ -1,0 +1,18 @@
+#!/bin/sh
+if [ ! -z "$VQ_HOME" ] ; then
+	export PATH="$PATH":"$VQ_HOME"
+else
+	export VQ_HOME="/var/vq"
+fi
+export PATH="$PATH":/var/qmail/bin
+
+exec 2>&1
+
+con=40
+if [ -f /var/qmail/control/concurrencypop3d ]; then
+    con="`cat /var/qmail/control/concurrencypop3d`"
+fi
+
+exec tcpserver -c "$con" -RHv 0 110 qmail-popup \
+"`hostname`.`domainname`" user_auth \
+qmail-pop3d Maildir

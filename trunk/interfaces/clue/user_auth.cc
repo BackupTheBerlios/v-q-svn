@@ -316,11 +316,82 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	} catch( exception & e ) {
 			LOG( ::vq::ilogger::re_int, e.what());
 			return 1;
+	} catch( CORBA::Exception & e ) {
+			std::ostringstream os;
+			e._print(os);
+			LOG( ::vq::ilogger::re_int, os.str().c_str());
+			return 1;
 	} catch( ... ) {
 			LOG( ::vq::ilogger::re_int, "exception" );
-			return(1);
+			return 1;
 	}
 	return 0;
 } catch( ... ) {
-	return 1;
+	return 111;
+}
+
+int vqmain( int ac, char ** av ) try {
+	using namespace std;
+
+	conf::clnconf ivq_name(VQ_HOME+"/etc/ivq/ivq_name", "vq::ivq");
+	/*
+	 * Initialize the ORB
+	 */
+	string orb_conf(VQ_HOME+"/etc/ivq/orb_conf");
+	char * orb_av[] = {
+			*av,
+			"-ORBConfFile",
+			 const_cast<char *>(orb_conf.c_str())
+	};
+	int orb_ac = sizeof orb_av/sizeof *orb_av;
+	CORBA::ORB_var orb = CORBA::ORB_init (orb_ac, orb_av);
+			
+	/*
+	 * Obtain a reference to the RootPOA and its Manager
+	 */
+	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
+	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
+	PortableServer::POAManager_var mgr = poa->the_POAManager();
+
+	cluemain_env ce;
+
+	/* 
+	 * Get NameService object
+	 */
+	CORBA::Object_var nsobj;
+	CosNaming::NamingContext_var nc;
+	try {
+			nsobj = orb->resolve_initial_references ("NameService");
+			ce.ns = CosNaming::NamingContext::_narrow (nsobj);
+		
+			if (CORBA::is_nil (ce.ns)) {
+					return 100;
+			}
+	} catch(...) {
+			return 111;
+	}
+		
+	/*
+	 * Get iauth object
+	 */
+	CosNaming::Name obj_name;
+	obj_name.length(1);
+	obj_name[0].id = ivq_name.val_str().c_str();
+	obj_name[0].kind = static_cast<const char *>("");
+
+	CORBA::Object_var ivqobj;
+	vq::ivq_var vq;
+	try {
+			ivqobj = ce.ns->resolve(obj_name);
+			ce.vq = vq::ivq::_narrow(ivqobj);
+			if( CORBA::is_nil(ce.vq) ) {
+					return 100;
+			}
+	} catch(...) {
+			return 111;
+	}
+	
+	return cluemain(ac, av, ce);
+} catch(...) {
+	return 111;
 }

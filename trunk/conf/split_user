@@ -1,5 +1,0 @@
-3
-
-Level of splits of user name. To lower number of entries in directory
-containing user mailboxes tree is created. For value 3 entries in
-domain's directory look as following: for user test, path is t/e/s/test/.

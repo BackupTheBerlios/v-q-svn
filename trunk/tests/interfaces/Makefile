@@ -1,6 +1,6 @@
-SUBDIR=base interfaces
+SUBDIR=clue
 
-.PHONY: all clean tests install
+.PHONY: all clean
 
 all::
 	@for entry in $(SUBDIR); do \
@@ -29,4 +29,3 @@ clean:
 		) || exit 1; \
 	done
 
-install:
