@@ -1,1 +1,5 @@
 autoresp.o dom_add.o dom_alias_add.o dom_alias_rm.o dom_ip_add.o dom_ip_ls.o dom_ip_rm.o dom_rm.o qt_def_get.o qt_def_set.o qt_get.o qt_set.o udot_add.o udot_ls.o udot_rm.o user_add.o user_auth.o user_pass.o user_rm.o .depend
+cdom_name2id.o cluemain.o error2str.o user_conf_add.o user_conf_ls.o user_conf_rm.o
+libcluemain.a
+user_conf_add user_conf_ls user_conf_rm
+dom_add dom_alias_add dom_alias_rm dom_ip_add dom_ip_ls dom_ip_rm dom_rm qt_def_get qt_def_set qt_get qt_set udot_add udot_ls udot_rm user_add user_auth user_pass user_rm .depend
