@@ -56,7 +56,7 @@ int vqmain(int ac, char **av) {
 	conf::cintconf fmode(conf_dir+"fmode", "0640");
 	conf::cintconf mmode(conf_dir+"mmode", "0750");
 	conf::cintconf dmode(conf_dir+"dmode", "0750");
-	conf::clnconf user(conf_dir+"user", "vq");
+	conf::clnconf user(conf_dir+"user", "_vq");
 	ostringstream os;
 	os<<geteuid();
 	conf::cuidconf uid(conf_dir+"uid", os.str());

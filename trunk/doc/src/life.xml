@@ -29,7 +29,9 @@
 			<title>Omail-webmail</title>
 
 			<para>
-			...
+				All you need to do is to configure omail-webmail to use
+				vpopmail and change call to <filename>vchkpw</filename> 
+				to <filename>user_auth</filename>.
 			</para>
 		</section>
 	</section>

@@ -1,0 +1,421 @@
+<HTML
+><HEAD
+><TITLE
+>Preparation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Dependencies"
+HREF="install.deps.html"><LINK
+REL="NEXT"
+TITLE="Compilation"
+HREF="install.comp.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-01-16T20:59:36"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.deps.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 7. Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.comp.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.prep"
+>7.3. Preparation</A
+></H1
+><P
+>&#13;			First step is to download and install
+			all software pointed out in <A
+HREF="install.html#install.download"
+>Section 7.1</A
+> 
+			and <A
+HREF="install.deps.html"
+>Section 7.2</A
+>.
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="AEN395"
+>7.3.1. Creating user and group</A
+></H2
+><P
+>&#13;			V-q daemon can work as any user, but it is suggested
+			to run them under _vq group and _vq user.
+			</P
+><P
+>&#13;			You can use following commands to do that (works under
+			Linux and OpenBSD):
+</P><PRE
+CLASS="synopsis"
+>groupadd _vq
+useradd -g _vq -d /var/vq _vq</PRE
+><P>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.unpack"
+>7.3.2. Unpacking sources</A
+></H2
+><P
+>&#13;				Depending on package format you can use <SPAN
+CLASS="application"
+>tar</SPAN
+>,
+				<SPAN
+CLASS="application"
+>bzip2</SPAN
+>, <SPAN
+CLASS="application"
+>gzip</SPAN
+>
+				to decompress archive.
+			</P
+><P
+>&#13;				If archive's name ends with <TT
+CLASS="filename"
+>.tar.gz</TT
+> you
+				can unpack it with following commands:
+</P><PRE
+CLASS="synopsis"
+>&#13;tar -xzvf v-q.*.tar.gz
+</PRE
+><P>
+				If you tar doesn't supports gzip unpacking use:
+</P><PRE
+CLASS="synopsis"
+>&#13;gzip -dc v-q.*.tar.gz | tar -xvf -
+</PRE
+><P>
+			</P
+><P
+>&#13;				If archive's name ends with <TT
+CLASS="filename"
+>.tar.bz2</TT
+> you can
+				unpack it using:
+</P><PRE
+CLASS="synopsis"
+>&#13;bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
+</PRE
+><P>
+			</P
+><P
+>&#13;				At this time sources are released only with specified formats.
+		
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+						<SPAN
+CLASS="application"
+>Bzip2</SPAN
+> gives 
+						better compression rate than <SPAN
+CLASS="application"
+>gzip</SPAN
+>
+						but it's not as popular as <SPAN
+CLASS="application"
+>gzip</SPAN
+> so before
+						downloading archive in this format check 
+						if you have it installed on your system.
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.conf"
+>7.3.3. Configuration before compilation</A
+></H2
+><P
+>&#13;				Before running <SPAN
+CLASS="application"
+>make</SPAN
+>
+				you must configure sources. There's no 
+				<SPAN
+CLASS="application"
+>configure</SPAN
+> script. V-q
+				don't use <SPAN
+CLASS="application"
+>autoconf</SPAN
+> and
+				it's family.
+			</P
+><P
+>&#13;				But don't be scared. Configuration is quite easy - all you
+				need to do is edit few files.
+			</P
+><P
+>&#13;				First you need to set compiler and its options. In the
+				main directory there are following files:
+				<P
+></P
+></P><UL
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>compile</TT
+> is used in normal compilation.
+						Default version executes <SPAN
+CLASS="application"
+>g++</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>comp-so</TT
+> is used to compile
+						objects that will be included in shared libraries.
+						Default version executes <SPAN
+CLASS="application"
+>g++</SPAN
+>
+						with arguments: -fpic -DPIC.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>load</TT
+> is used to link
+						objects. Default version executes <SPAN
+CLASS="application"
+>g++</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>make-lib</TT
+> is used to create
+						statically linked library. It executes 
+						<SPAN
+CLASS="application"
+>ar</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>make-so</TT
+> is used to
+						create dynamically linked library. It executes
+						<SPAN
+CLASS="application"
+>g++</SPAN
+> with -shared option.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>idl</TT
+> is used to
+						process IDL definitions to C++ files. Remember that
+						it creates 2 files with extensions: .hpp and .cc.
+						Default version calls <SPAN
+CLASS="application"
+>idl</SPAN
+>
+						(<A
+HREF="http://www.mico.org"
+TARGET="_top"
+>MICO</A
+> has
+						such program).
+					</P
+></LI
+></UL
+><P>
+			</P
+><P
+>&#13;				If you use other options or programs to compile your
+				version of v-q please send information about them to
+				<A
+HREF="community.authors.html#pniewiadomski"
+>Pawe³ Niewiadomski</A
+>
+			</P
+><P
+>&#13;				Next step is to edit files with extensions:
+				<TT
+CLASS="filename"
+>.inc</TT
+> and <TT
+CLASS="filename"
+>.lib</TT
+>.
+				First are used during compilation, they include informations
+				about directories used in searching included files.
+				Second are used while linking, they include references
+				to libraries. You don't need to edit all of them. For example
+				if you don't want to compile PostgreSQL modules
+				you don't need to edit <TT
+CLASS="filename"
+>pgsql.inc</TT
+> and
+				<TT
+CLASS="filename"
+>pgsql.lib</TT
+>. Usually these files
+				include description inside them.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.deps.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.comp.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Dependencies</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Compilation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

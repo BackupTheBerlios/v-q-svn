@@ -1,0 +1,318 @@
+<HTML
+><HEAD
+><TITLE
+>Installation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Compilation"
+HREF="install.comp.html"><LINK
+REL="NEXT"
+TITLE="Generating documentation"
+HREF="doc.gen.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-01-16T20:59:36"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.comp.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 7. Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="doc.gen.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.install"
+>7.5. Installation</A
+></H1
+><P
+>&#13;			After succesful compilation you're ready to install software.
+			It's easy as writing:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;./install
+</B
+></TT
+>
+</PRE
+><P>
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.steps.qmail"
+>7.5.1. Special steps for Qmail</A
+></H2
+><P
+>&#13;				After installing v-q you can tweak some settings.
+				For example if qmail's configuration owner
+				is other than user running <SPAN
+CLASS="application"
+>qmailvqd</SPAN
+>
+				you can change owner and set SETUID permission
+				for <TT
+CLASS="filename"
+>bin/qmail*</TT
+> programs (except 
+				<SPAN
+CLASS="application"
+>qmailvqd</SPAN
+>). This will
+				allow these programs to change qmail's configuration.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.steps.pgsql"
+>7.5.2. Special steps for PostgreSQL</A
+></H2
+><P
+>&#13;				First you need to create user for v-q. Default
+				user is "mail", but you can use any name. 
+				To create user you can use following command:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;createuser -A -D -P mail
+</B
+></TT
+>
+</PRE
+><P>
+			</P
+><P
+>&#13;				Then you need to create a database for v-q. Default
+				name is "mail". But you can use any name.
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;createdb -E utf-8 -O mail mail
+</B
+></TT
+>
+</PRE
+><P>
+			</P
+><P
+>&#13;				To create objects in a database you can use PERL script
+				<SPAN
+CLASS="application"
+>install.pgsql</SPAN
+>. This
+				document doesn't desribe how to manually create them.
+				If you don't want to use this script check it's
+				source to see what needs to be created.
+
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+						Before running this script check whether
+						it suits you needs (for example schema name).
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
+
+				<DIV
+CLASS="caution"
+><P
+></P
+><TABLE
+CLASS="caution"
+BORDER="1"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Caution</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>&#13;						Remeber to set password for database user
+						and configure PostgreSQL to authorize users.
+						If you don't do it everyone will be able to
+						modify entries in a database.
+					</P
+></TD
+></TR
+></TABLE
+></DIV
+>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.problems"
+>7.5.3. What if I have problems?</A
+></H2
+><P
+>&#13;				If you have problems installing v-q check
+				<A
+HREF="http://v-q.foo-baz.com"
+TARGET="_top"
+>home page</A
+>,
+				check also 
+				<A
+HREF="http://sf.net/projects/v-q"
+TARGET="_top"
+>v-q's page on SourceForge</A
+>.
+				There you will find a mailing list, forums, etc.
+			</P
+><P
+>&#13;				Read also <A
+HREF="community.html"
+>Chapter 5</A
+>
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.comp.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="doc.gen.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Compilation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Generating documentation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
