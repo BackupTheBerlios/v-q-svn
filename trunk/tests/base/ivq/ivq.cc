@@ -16,20 +16,21 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "../etrans.hpp"
 #include "../iauth/iauth_common.hpp"
 #include "../iauth/iauth_user_conf.hpp"
 #include "../iauth/iauth_dom_alias.hpp"
 #include "../iauth/iauth_dom_ls.hpp"
-#include "../../../base/vq.hpp"
 
+#include <vq.hpp>
 #include <text.hpp>
+
+#include <import_export.h>
 
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/regex.hpp>
-
-#include <coss/CosNaming.h>
 
 #include <memory>
 #include <sstream>
@@ -38,39 +39,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 using namespace boost::unit_test_framework;
 
 /**
- * 
- */
-void et_vq_null_error( const vq::null_error &e ) {
-	BOOST_ERROR("null_error");
-}
-
-/**
- * 
- */
-void et_vq_except( const vq::except &e ) {
-	BOOST_ERROR(std::string("ivq::except: ")+static_cast<const char *>(e.what));
-}
-
-/**
- * 
- */
-void et_vq_db_error( const vq::db_error &e ) {
-	BOOST_ERROR(std::string("ivq::db_error: ")+static_cast<const char *>(e.what));
-}
-
-/**
- * 
- */
-void et_corba_exception( const CORBA::Exception & e ) {
-	std::ostringstream os;
-	e._print(os);
-	BOOST_ERROR("corba exception: "+os.str());
-}
-
-/**
  *
  */
-std::string error2str( const vq::ivq::error * err ) {
+std::string error2str( const vq::ivq::error_var & err ) {
 	std::ostringstream os;
 	os<<"error: "<<err->what<<" in "<<err->file<<" at "<<err->line;
 	return os.str();
@@ -90,28 +61,14 @@ struct vq_test {
 
 		void init() {
 			CORBA::ORB_var orb = CORBA::ORB_init(this->ac, this->av);
-			CORBA::Object_var nsobj = 
-					orb->resolve_initial_references ("NameService");
-			
-			CosNaming::NamingContext_var nc =
-					CosNaming::NamingContext::_narrow (nsobj);
 
-			BOOST_REQUIRE( !CORBA::is_nil(nc) );
-
-			CosNaming::Name name;
-			name.length (1);
-			name[0].id = CORBA::string_dup ("vq::ivq");
-			name[0].kind = CORBA::string_dup ("");
+			BOOST_REQUIRE(ac>1);
 
 			CORBA::Object_var obj;
 			try {
-					obj = nc->resolve (name);
-			} catch (CosNaming::NamingContext::NotFound &exc) {
-					BOOST_FAIL("NotFound exception.");
-			} catch (CosNaming::NamingContext::CannotProceed &exc) {
-					BOOST_FAIL("CannotProceed exception.");
-			} catch (CosNaming::NamingContext::InvalidName &exc) {
-					BOOST_FAIL("InvalidName exception.");
+					obj = corbautil::importObjRef(orb, av[1]);
+			} catch ( corbautil::ImportExportException & e ) {
+					BOOST_ERROR(e.msg);
 			}
 
 			vq = vq::ivq::_narrow(obj);
@@ -266,7 +223,7 @@ struct vq_test {
 					for( unsigned i=0; i<users_cnt; ++i ) {
 							ai.login = users[i];
 								
-							IVQ_ERROR_EQUAL(vq->user_add(ai, FALSE), 
+							IVQ_ERROR_EQUAL(vq->user_add(ai, 0), 
 								vq::ivq::err_no);
 					}
 			} std_catch
@@ -320,12 +277,12 @@ struct vq_test {
 					ai.login = CORBA::string_dup("aroote");
 					ai.flags = 0;
 			
-					IVQ_ERROR_EQUAL(vq->user_add(ai, TRUE), 
+					IVQ_ERROR_EQUAL(vq->user_add(ai, 1), 
 						vq::ivq::err_user_inv);
-					IVQ_ERROR_EQUAL(vq->user_add(ai, TRUE), 
+					IVQ_ERROR_EQUAL(vq->user_add(ai, 1), 
 						vq::ivq::err_user_inv);
 
-					IVQ_ERROR_EQUAL(vq->user_add(ai, FALSE), 
+					IVQ_ERROR_EQUAL(vq->user_add(ai, 0), 
 						vq::ivq::err_no);
 			} std_catch
 
@@ -356,7 +313,7 @@ struct vq_test {
 
 			err = vq->user_ex(dom_id, ai.login);
 			if( err->ec == vq::ivq::err_noent ) {
-					IVQ_ERROR_EQUAL(vq->user_add(ai, FALSE), 
+					IVQ_ERROR_EQUAL(vq->user_add(ai, 0), 
 						vq::ivq::err_no);
 			}
 			std::string now(boost::posix_time::to_iso_string(
@@ -471,7 +428,7 @@ struct vq_test {
 					ai.login = CORBA::string_dup("case8");
 					ai.flags = 0;
 		
-					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+					BOOST_CHECK_EQUAL(auth->user_add(ai, 0), 
 						vq::ivq::err_no);
 		
 					// check quota for created user
@@ -655,7 +612,7 @@ struct vq_test {
 						ai.flags = 0;
 						ai.id_domain = this->uc_dom_id;
 						IVQ_ERROR_EQUAL(
-							err=vq->user_add(ai, FALSE), ::vq::ivq::err_no );
+							err=vq->user_add(ai, 0), ::vq::ivq::err_no );
 						BOOST_REQUIRE(::vq::ivq::err_no == err->ec );
 				}
 		}
@@ -872,7 +829,8 @@ test_suite* init_unit_test_suite( int ac, char* av[] ) {
 	register_exception_translator<vq::null_error>( &et_vq_null_error );
 	register_exception_translator<vq::db_error>( &et_vq_db_error );
 	register_exception_translator<vq::except>( &et_vq_except );
-	register_exception_translator<CORBA::Exception>( &et_corba_exception );
+	register_exception_translator<CORBA::Exception>( &et_CORBA_Exception );
+	register_exception_translator<CORBA::SystemException>( &et_CORBA_SystemException );
 
 	test->add(new vq_test_suite(ac, av));
 

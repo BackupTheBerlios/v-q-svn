@@ -10,6 +10,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <fstream>
+#include <vector>
+#include <map>
 
 template <class OBJ_TYPE, class WRAPPER>
 struct user_conf_test {
@@ -47,7 +49,7 @@ struct user_conf_test {
 			ai.login = CORBA::string_dup(dom);
 			ai.flags = 0;
 		
-			err = auth->user_add(ai, FALSE);
+			err = auth->user_add(ai, 0);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 		}
 
@@ -89,7 +91,7 @@ struct user_conf_test {
 							ai.pass = dom_id;
 							ai.flags = 0;
 							ai.login = ubeg->c_str(); 
-							IVQ_ERROR_EQUAL(auth->user_add(ai, FALSE),
+							IVQ_ERROR_EQUAL(auth->user_add(ai, 0),
 								::vq::ivq::err_no);
 
 							for( pbeg=pfixs.begin(), pend=pfixs.end();
@@ -178,7 +180,7 @@ struct user_conf_test {
 							BOOST_REQUIRE(fc != fe);
 							ai.login = fc->c_str();
 							
-							err = auth->user_add(ai, FALSE);
+							err = auth->user_add(ai, 0);
 							if( err->ec != ::vq::ivq::err_no 
 								&& err->ec != ::vq::ivq::err_exists ) {
 									BOOST_ERROR(error2str(err));	
@@ -286,7 +288,7 @@ struct user_conf_test {
 					ai.pass = static_cast<const char *>("asdasd");
 					ai.flags = 0;
 					ai.login = static_cast<const char *>("test");
-					IVQ_ERROR_EQUAL(auth->user_add(ai, FALSE), ::vq::ivq::err_no);
+					IVQ_ERROR_EQUAL(auth->user_add(ai, 0), ::vq::ivq::err_no);
 
 					typedef std::vector< ::vq::ivq::user_conf_info > uci_array; 
 					uci_array ucis;
@@ -360,7 +362,7 @@ struct user_conf_test {
 					ai.pass = static_cast<const char *>("asdasd");
 					ai.flags = 0;
 					ai.login = static_cast<const char *>("test");
-					IVQ_ERROR_EQUAL(auth->user_add(ai, FALSE), ::vq::ivq::err_no);
+					IVQ_ERROR_EQUAL(auth->user_add(ai, 0), ::vq::ivq::err_no);
 
 					IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(dom_id,
 						ai.login, static_cast<const char *>(""),

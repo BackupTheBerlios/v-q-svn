@@ -14,7 +14,7 @@ sleep 2
 echo "starting iauth(pgsqlauthd) server ..."
 #ulimit -c 132234
 ../../../base/pgsql/pgsqlauthd \
--ORBIIOPAddr inet:$host:44444 \
+-ORBIIOPAddr unix:iauth.sock \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 server_pid=$!
 
@@ -22,5 +22,5 @@ trap "kill $nsd_pid $server_pid" 0
 sleep 2
 
 echo "running client ..."
-./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService 
+./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService name_service#Auth.iauth
 #gdb iauth

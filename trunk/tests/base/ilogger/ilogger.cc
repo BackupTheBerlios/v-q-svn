@@ -16,18 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "../etrans.hpp"
 #include "../iauth/iauth_common.hpp"
-#include "../../../base/logger.hpp"
 
+#include <logger.hpp>
 #include <getlines.hpp>
 #include <split.hpp>
+
+#include <import_export.h>
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
-
-#include <coss/CosNaming.h>
 
 #include <memory>
 #include <sstream>
@@ -39,39 +40,9 @@ using namespace boost::unit_test_framework;
 using boost::lexical_cast;
 
 /**
- * 
- */
-void et_vq_null_error( const vq::null_error &e ) {
-	BOOST_ERROR("null");
-}
-
-/**
- * 
- */
-void et_vq_except( const vq::except &e ) {
-	BOOST_ERROR(e.what);
-}
-
-/**
- * 
- */
-void et_vq_db_error( const vq::db_error &e ) {
-	BOOST_ERROR(e.what);
-}
-
-/**
- * 
- */
-void et_corba_exception( const CORBA::Exception & e ) {
-	std::ostringstream os;
-	e._print(os);
-	BOOST_ERROR(os.str());
-}
-
-/**
  *
  */
-std::string error2str( const vq::ivq::error * err ) {
+std::string error2str( const vq::ivq::error_var & err ) {
 	std::ostringstream os;
 	os<<"error: "<<err->what<<" in "<<err->file<<" at "<<err->line;
 	return os.str();
@@ -95,28 +66,14 @@ struct logger_test {
 
 		void init() {
 			CORBA::ORB_var orb = CORBA::ORB_init(this->ac, this->av);
-			CORBA::Object_var nsobj = 
-					orb->resolve_initial_references ("NameService");
-			
-			CosNaming::NamingContext_var nc =
-					CosNaming::NamingContext::_narrow (nsobj);
 
-			BOOST_REQUIRE( !CORBA::is_nil(nc) );
-
-			CosNaming::Name name;
-			name.length (1);
-			name[0].id = CORBA::string_dup ("vq::ilogger");
-			name[0].kind = CORBA::string_dup ("");
+			BOOST_REQUIRE(ac>1);
 
 			CORBA::Object_var obj;
 			try {
-					obj = nc->resolve (name);
-			} catch (CosNaming::NamingContext::NotFound &exc) {
-					BOOST_FAIL("NotFound exception.");
-			} catch (CosNaming::NamingContext::CannotProceed &exc) {
-					BOOST_FAIL("CannotProceed exception.");
-			} catch (CosNaming::NamingContext::InvalidName &exc) {
-					BOOST_FAIL("InvalidName exception.");
+					obj = corbautil::importObjRef(orb, av[1]);
+			} catch ( corbautil::ImportExportException & e ) {
+					BOOST_ERROR(e.msg);
 			}
 
 			this->obj = vq::ilogger::_narrow(obj);
@@ -446,7 +403,8 @@ test_suite* init_unit_test_suite( int ac, char* av[] ) {
 	register_exception_translator<vq::null_error>( &et_vq_null_error );
 	register_exception_translator<vq::db_error>( &et_vq_db_error );
 	register_exception_translator<vq::except>( &et_vq_except );
-	register_exception_translator<CORBA::Exception>( &et_corba_exception );
+	register_exception_translator<CORBA::Exception>( &et_CORBA_Exception );
+	register_exception_translator<CORBA::SystemException>( &et_CORBA_SystemException );
 
 	test->add(new logger_test_suite(ac, av));
 

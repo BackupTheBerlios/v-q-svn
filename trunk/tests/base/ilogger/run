@@ -22,5 +22,5 @@ trap "kill $nsd_pid $server_pid" 0
 sleep 2
 
 echo "running client ..."
-./ilogger -ORBInitRef NameService=corbaloc::$host:12456/NameService $@
+./ilogger -ORBInitRef NameService=corbaloc::$host:12456/NameService name_service#Logger.ilogger $@
 #gdb ilogger

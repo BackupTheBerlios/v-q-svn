@@ -1,9 +1,11 @@
 BASE=../../..
 OBJS=ivq.o
 INCS=`cat $(BASE)/boost.inc` `cat $(BASE)/corba.inc` -I$(BASE)/libtext \
-	-I$(BASE)/libsys
+	-I$(BASE)/libsys -I$(BASE)/corbautil/cxx/import_export \
+	-I$(BASE)/base -I$(BASE)/corbautil/cxx/portability
 LIBS=`cat $(BASE)/boost.lib` `cat $(BASE)/boost_unit_test.lib` `cat $(BASE)/boost_date_time.lib` \
-	`cat $(BASE)/corba.lib` -L$(BASE)/base -lvq -L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys
+	-L$(BASE)/corbautil -lcorbautil `cat $(BASE)/corba.lib` \
+	-L$(BASE)/base -lvq -L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys
 
 all: .depend ivq
 
