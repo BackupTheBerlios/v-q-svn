@@ -1,4 +1,4 @@
-SUBDIR=tools libconf libmain libsys libtext corbautil base interfaces
+SUBDIR=tools libconf libmain libsys libtext corbautil base interfaces pkg-rpm
 
 .PHONY: all clean pgsql install install-pgsql install-conf install-dirs
 
@@ -31,5 +31,11 @@ install-dirs:
 
 install-conf: install-dirs
 	@echo "Installing default configuration..."
+
+pkg-rpm:
+	@if [ `id -u` != 0 ] ; then echo You must be root. ; exit 1; fi
+	rm -rf "/usr/src/redhat/SOURCES/v-q-`head -n 1 VERSION`"
+	svn export . "/usr/src/redhat/SOURCES/v-q-`head -n 1 VERSION`"
+	sed -e "s/VQ_VERSION/`head -n 1 VERSION`/" < v-q.spec > /usr/src/redhat/SPECS/v-q.spec
 
 include Makefile.common
