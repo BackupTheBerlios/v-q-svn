@@ -1,5 +1,5 @@
 BASE=../..
-OBJS=cqmailvq.o
+OBJS=cpgsqlauth.o
 INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libsys -I$(BASE)/libtext \
 `cat ../../corba.inc`
 LIBS=`cat ../../corba.lib`
