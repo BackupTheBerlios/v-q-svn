@@ -137,7 +137,7 @@ namespace POA_vq {
 	
 	/**
 	*/
-	cpgsqlauth::error * cpgsqlauth::user_add( const auth_info & ai, 
+	cpgsqlauth::error * cpgsqlauth::user_add( const user_info & ai, 
 			CORBA::Boolean is_banned ) std_try {
 		if( !ai.id_domain || !ai.login || !ai.pass /*|| !ai.dir*/ )
 				throw ::vq::null_error(__FILE__, __LINE__);
@@ -380,7 +380,7 @@ namespace POA_vq {
 	/**
 	 * 
 	 */
-	cpgsqlauth::error * cpgsqlauth::user_get( auth_info & ai ) std_try {
+	cpgsqlauth::error * cpgsqlauth::user_get( user_info & ai ) std_try {
 		if( ! ai.id_domain || ! ai.login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
@@ -398,7 +398,7 @@ namespace POA_vq {
 		ai.login = res[0][1].c_str();
 		ai.pass = res[0][2].c_str();
 		ai.dir = res[0][3].c_str();
-		ai.flags = res[0][4].as< ::vq::iauth::aif_type >(0);
+		ai.flags = res[0][4].as< ::vq::iauth::uif_type >(0);
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 

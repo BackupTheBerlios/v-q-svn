@@ -10,7 +10,7 @@ LIBS=-L$(BASE)/libmain -lmain -L$(BASE)/libvqmain -lvqmain -L. -lcluemain \
 	-L$(BASE)/libconf -lconf -L$(BASE)/core -lvq
 
 all: dom_add dom_rm user_add user_rm user_pass user_conf_add user_conf_ls \
-user_conf_rm
+user_conf_rm user_auth
 
 include $(BASE)/Makefile.common
 
@@ -23,12 +23,12 @@ dom_add dom_rm: \
 $(BASE)/load $(BASE)/corba.lib $@.o error2str.o libcluemain.a
 	$(BASE)/load $@ $(LIBS) error2str.o `cat $(BASE)/corba.lib`
 	
-user_add user_rm user_pass user_conf_add user_conf_ls user_conf_rm: \
+user_add user_rm user_pass user_conf_add user_conf_ls user_conf_rm user_auth: \
 $(BASE)/load $(BASE)/corba.lib $@.o error2str.o cdom_name2id.o libcluemain.a
 	$(BASE)/load $@ $(LIBS) -L$(BASE)/libtext -ltext \
 	error2str.o cdom_name2id.o `cat $(BASE)/corba.lib`
 
-$(OBJS): .depend $(BASE)/compile
+$(OBJS): $(BASE)/compile
 
 user_conf_add.o: $(BASE)/boost.inc user_conf_add.cc
 user_conf_ls.o: $(BASE)/boost.inc user_conf_ls.cc

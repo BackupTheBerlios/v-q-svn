@@ -139,7 +139,7 @@ struct auth_test {
 			err = auth->dom_add(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 		
-			vq::iauth::auth_info ai;
+			vq::iauth::user_info ai;
 			ai.id_domain = CORBA::string_dup(dom_id);
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
@@ -166,7 +166,7 @@ struct auth_test {
 			err = auth->dom_add(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 
-			vq::iauth::auth_info ai;
+			vq::iauth::user_info ai;
 			ai.id_domain = CORBA::string_dup(dom_id);
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
@@ -261,7 +261,7 @@ struct auth_test {
 					err = auth->dom_add(dom, dom_id);
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 
-					vq::iauth::auth_info ai;
+					vq::iauth::user_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
@@ -316,7 +316,7 @@ struct auth_test {
 							BOOST_CHECK(!strcmp(ebs[1U].re_login, "root"));
 					}
 
-					vq::iauth::auth_info ai;
+					vq::iauth::user_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
@@ -346,7 +346,7 @@ struct auth_test {
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			}
 
-			vq::iauth::auth_info ai;
+			vq::iauth::user_info ai;
 			ai.id_domain = CORBA::string_dup(dom_id);
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
@@ -363,7 +363,7 @@ struct auth_test {
 			err = auth->user_pass(dom_id, ai.login, now.c_str());
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
 
-			vq::iauth::auth_info aicur;
+			vq::iauth::user_info aicur;
 			aicur.id_domain = ai.id_domain;
 			aicur.login = ai.login;
 			err = auth->user_get(aicur);
@@ -465,7 +465,7 @@ struct auth_test {
 					BOOST_CHECK_EQUAL(bytes_max, ubytes);
 		
 					// adding user
-					vq::iauth::auth_info ai;
+					vq::iauth::user_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");

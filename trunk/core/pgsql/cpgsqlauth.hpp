@@ -37,7 +37,7 @@ namespace POA_vq {
 					typedef ::vq::iauth::user_conf_info_list_out user_conf_info_list_out;
 					typedef ::vq::iauth::user_conf_type_out user_conf_type_out;
 					typedef ::vq::iauth::user_conf_type user_conf_type;
-					typedef ::vq::iauth::auth_info auth_info;
+					typedef ::vq::iauth::user_info user_info;
 					typedef ::vq::iauth::quota_type quota_type;
 					typedef ::vq::iauth::quota_type_out quota_type_out;
 					typedef ::vq::iauth::size_type size_type;
@@ -64,12 +64,12 @@ namespace POA_vq {
     				virtual error * dra_ls_by_dom( const char* dom_id, 
 							string_list_out rea );
 
-				    virtual error * user_add( const auth_info & ai,
+				    virtual error * user_add( const user_info & ai,
 							CORBA::Boolean is_banned );
 				    virtual error * user_rm( const char* dom, const char* user );
 				    virtual error * user_pass( const char* dom, const char* user, 
 							const char* pass );
-					virtual error * user_get( auth_info& ai );
+					virtual error * user_get( user_info& ai );
 					virtual error * user_ex( const char *dom, const char *user);
 					
 				    virtual error * eb_add( const char * re_domain, 

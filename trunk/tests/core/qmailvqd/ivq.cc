@@ -133,7 +133,7 @@ struct vq_test {
 				}
 				err = vq->user_ex(this->uc_dom_id, this->uc_user);
 				if( ::vq::ivq::err_noent == err->ec ) {
-						::vq::ivq::auth_info ai;
+						::vq::ivq::user_info ai;
 						ai.login = this->uc_user;
 						ai.pass = this->uc_user;
 						ai.flags = 0;

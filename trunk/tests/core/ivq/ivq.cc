@@ -255,11 +255,11 @@ struct vq_test {
 					IVQ_ERROR_EQUAL(vq->dom_add(dom, dom_id),
 						vq::ivq::err_no);
 
-					vq::ivq::auth_info ai;
+					vq::ivq::user_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
-					ai.flags = ::vq::ivq::aif_pop3_blk;
+					ai.flags = ::vq::ivq::uif_pop3_blk;
 
 					for( unsigned i=0; i<users_cnt; ++i ) {
 							ai.login = users[i];
@@ -311,7 +311,7 @@ struct vq_test {
 							BOOST_CHECK(!strcmp(ebs[1U].re_login, "root"));
 					}
 
-					vq::ivq::auth_info ai;
+					vq::ivq::user_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
@@ -345,7 +345,7 @@ struct vq_test {
 						vq::ivq::err_no);
 			}
 
-			vq::ivq::auth_info ai;
+			vq::ivq::user_info ai;
 			ai.id_domain = CORBA::string_dup(dom_id);
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
@@ -362,7 +362,7 @@ struct vq_test {
 			IVQ_ERROR_EQUAL(vq->user_pass(dom_id, ai.login, now.c_str()),
 				vq::ivq::err_no );
 
-			vq::ivq::auth_info aicur;
+			vq::ivq::user_info aicur;
 			aicur.id_domain = ai.id_domain;
 			aicur.login = ai.login;
 			IVQ_ERROR_EQUAL(vq->user_get(aicur), vq::ivq::err_no );
@@ -462,7 +462,7 @@ struct vq_test {
 					BOOST_CHECK_EQUAL(bytes_max, ubytes);
 		
 					// adding user
-					vq::iauth::auth_info ai;
+					vq::iauth::user_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
@@ -596,7 +596,7 @@ struct vq_test {
 							dom_ids.push_back(id);
 				}
 
-				::vq::ivq::auth_info ai;
+				::vq::ivq::user_info ai;
 				for( dom_ids_array::size_type i=0, s=dom_ids.size(); i<s; ++i ) {
 						ai.id_domain = dom_ids[i];
 						for( int j=0; j < users_cnt; ++j ) {
@@ -647,7 +647,7 @@ struct vq_test {
 				}
 				err = vq->user_ex(this->uc_dom_id, this->uc_user);
 				if( ::vq::ivq::err_noent == err->ec ) {
-						::vq::ivq::auth_info ai;
+						::vq::ivq::user_info ai;
 						ai.login = this->uc_user;
 						ai.pass = this->uc_user;
 						ai.flags = 0;

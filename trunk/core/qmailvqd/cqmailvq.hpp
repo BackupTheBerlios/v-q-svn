@@ -39,7 +39,7 @@ namespace POA_vq {
 	 */
 	class cqmailvq : public ivq {
 			public:
-					typedef ::vq::ivq::auth_info auth_info;
+					typedef ::vq::ivq::user_info user_info;
 					typedef ::vq::ivq::quota_type quota_type;
 					typedef ::vq::ivq::quota_type_out quota_type_out;
 					typedef ::vq::ivq::size_type size_type;
@@ -67,14 +67,14 @@ namespace POA_vq {
 				    virtual error* dom_id( const char* dom, CORBA::String_out dom_id );
     				virtual error* dom_name( const char* dom_id, CORBA::String_out dom_name );
 
-				    virtual error* user_add( const auth_info& ai, 
+				    virtual error* user_add( const user_info& ai, 
 							CORBA::Boolean is_banned );
 				    virtual error* user_rm( const char* dom_id, 
 							const char* login );
 				    virtual error* user_pass( const char* dom_id, 
 							const char* login, const char* pass );
 				    virtual error* user_val( const char* user );
-				    virtual error* user_get( auth_info& ai );
+				    virtual error* user_get( user_info& ai );
 				    virtual error* user_ex( const char* dom_id, 
 							const char* login );
 #if 0

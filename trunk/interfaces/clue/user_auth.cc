@@ -25,26 +25,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <text.hpp>
 #include <sys.hpp>
 #include <conf.hpp>
+#include <vqmain.hpp>
 
-#include <sys/types.h>
-#include <unistd.h>
-
-#include <exception>
 #include <iostream>
-#include <cerrno>
-#include <string>
 #include <sstream>
 
 using namespace std;
 using namespace vq;
 using namespace text;
 using namespace sys;
+using clue::error2str;
 
 char *me = NULL, **av;
 int ac;
 const char *remip = NULL, *locip = NULL, *defdom = NULL;
 bool quiet = false;
-string resp, pass;
+string resp, pass, login;
 enum { smtp, pop3 } contype;
 
 ::vq::ilogger_var olog;
@@ -59,43 +55,45 @@ enum { smtp, pop3 } contype;
  *
  */
 char read_auth_info() {
-	if( ! getline(3,vqai.user,'\0')
+	if( ! getline(3,login,'\0')
 		|| ! getline(3,pass,'\0')
 		|| ! getline(3,resp,'\0')) {
-			LOG( ::ivq::ilogger::re_read, strerror(errno));
+			LOG( ::vq::ilogger::re_read, strerror(errno));
 			return(1);
 	}
-	vqai.user = lower(vqai.user);
+	login = lower(login);
 	if( ac_atchars.val_str().empty() ) {
-			LOG( ::ivq::ilogger::re_int, "ac_atchars empty");
+			LOG( ::vq::ilogger::re_int, "ac_atchars empty");
 			return(1);
 	}
-	string::size_type atpos = vqai.user.find_last_of(ac_atchars.val_str());
-	if( atpos != vqai.user.npos ) {
-			vqai.dom = vqai.user.substr(atpos+1);
-			vqai.user = vqai.user.substr(0,atpos);
+	string::size_type atpos = login.find_last_of(ac_atchars.val_str());
+	string dom;
+	if( atpos != login.npos ) {
+			dom = login.substr(atpos+1);
+			login = login.substr(0,atpos);
 	}
-
-	if( vqai.dom.empty() ) vqai.dom = defdom ? defdom : locip;
+	if( login.empty() ) {
+			LOG(::vq::ilogger::re_data, "empty login" );
+			return(1);
+	}
+	vqai.login = login.c_str();
+	olog->login_set(vqai.login);
 	
-	if( vqai.dom.empty() || !ovq->dom_val(vqai.dom) ) {
-			LOG(::ivq::ilogger::re_data, 
-				(string)"invalid domain name: "+vqai.dom);
+	if( dom.empty() ) dom = defdom ? defdom : locip;
+	if( dom.empty() )
+			LOG(::vq::ilogger::re_data, "empty domain");
 			return 1;
 	}
-	
-	olog->domain_set(vqai.dom);
+	olog->domain_set(dom);
 
-	if( vqai.user.empty() || !ovq->user_val(vqai.user) ) {
-			LOG(::ivq::ilogger::re_data, 
-				(string)"invalid user name: "+vqai.user );
-			return(1);
+	ret=ovq->dom_id(dom.c_str(), vqai.id_domain);
+	if( ret->ec != ::vq::ivq::err_no ) {
+			LOG(::vq:ilogger::re_data, error2str(ret));
+			return 1;
 	}
-	
-	olog->login_set(vqai.user);
-	
+
 	if( pass.empty() ) {
-			LOG(::ivq::ilogger::re_data, "empty password");
+			LOG(::vq::ilogger::re_data, "empty password");
 			return(1);
 	}
 	return 0;
@@ -127,10 +125,7 @@ char read_env() {
 					locip = "127.0.0.1";
 			}
 	}			
-	if( !(tmp=getenv("TCPLOCALPORT")) ) {
-			cerr<<me<<": TCPLOCALPORT is not set"<<endl;
-			return(1);
-	} else {
+	if( (tmp=getenv("TCPLOCALPORT")) ) 
 			istringstream is;
 			is.str(tmp);
 			is >> itmp;
@@ -138,7 +133,10 @@ char read_env() {
 					cerr<<me<<": TCPLOCALPORT is not a valid port number"<<endl;
 					return(1);
 			}
+	} else {
+			itmp = -1;
 	}
+
 	switch(itmp) {
 	default:
 	case 995:
@@ -148,7 +146,7 @@ char read_env() {
 					return(1);
 			}
 			contype = pop3;
-			olog->service_set(::ivq::ilogger::ser_pop3);
+			olog->service_set(::vq::ilogger::ser_pop3);
 			break;
 	case 80: // HTTP
 	case 443: // HTTPS
@@ -159,18 +157,20 @@ char read_env() {
 
 			switch(itmp) {
 			case 80:
-					olog->service_set(::ivq::ilogger::ser_http);
+					olog->service_set(::vq::ilogger::ser_http);
 					break;
 			case 443:
-					olog->service_set(::ivq::ilogger::ser_https);
+					olog->service_set(::vq::ilogger::ser_https);
 					break;
 			case 250:
-					olog->service_set(::ivq::ilogger::ser_emtp);
+					olog->service_set(::vq::ilogger::ser_emtp);
 					break;
 			default:
-					olog->service_set(::ivq::ilogger::ser_unknown);
+					olog->service_set(::vq::ilogger::ser_unknown);
 			}
 			break;
+	default:
+			olog->service_set(::vq::ilogger::ser_unknown);
 	}
 	return 0;
 }
@@ -206,7 +206,7 @@ char auth_cram() {
  *
  */
 char login_smtp() {
-	LOG( ::ivq::ilogger::re_ok, "" );
+	LOG( ::vq::ilogger::re_ok, "" );
 	return(0);
 }
 
@@ -224,7 +224,7 @@ char login_pop() {
 		|| setuid(ac_vq_uid.val_int()) || seteuid(getuid()) ) {
 			return(1);
 	}
-	LOG(::ivq::ilogger::re_ok, "" );
+	LOG(::vq::ilogger::re_ok, "" );
 
 	delete olog; olog = NULL;
 	delete ovq; ovq = NULL;
@@ -238,7 +238,7 @@ char login_pop() {
 char proc_auth_info() {
 	if(contype==smtp) {
 			if( vqai.flags & cvq::smtp_blk ) {
-					LOG(::ivq::ilogger::re_blk, "" );
+					LOG(::vq::ilogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_cram())
@@ -247,7 +247,7 @@ char proc_auth_info() {
 			}
 	} else {
 			if( vqai.flags & cvq::pop3_blk ) {
-					LOG(::ivq::ilogger::re_blk, "" );
+					LOG(::vq::ilogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_apop())
@@ -255,7 +255,7 @@ char proc_auth_info() {
 					return login_pop();
 			}
 	}
-	LOG( ::ivq::ilogger::re_pass, pass );
+	LOG( ::vq::ilogger::re_pass, pass );
 	return(1);
 }
 

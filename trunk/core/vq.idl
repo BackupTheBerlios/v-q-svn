@@ -49,9 +49,11 @@ module vq {
 	interface ivq {
 			typedef unsigned long quota_type; //!< Type for holding quota values
 			typedef unsigned long size_type; //!< Type for holding sizes
-			typedef unsigned short aif_type;
+			typedef unsigned short uif_type;
 			typedef unsigned short user_conf_type;
 			typedef sequence<string> string_list;
+			typedef short gid_type;
+			typedef short uid_type;
 
 		/**
 		 * \ingroup err
@@ -120,31 +122,33 @@ module vq {
 				
 			/// possible user account flags
 			/// was:
-			/// enum auth_info_flags {
+			/// enum user_info_flags {
 			/// blocked pop3 access
-			const aif_type aif_pop3_blk = 1;
+			const uif_type uif_pop3_blk = 1;
 			/// blocked smtp access
-			const aif_type aif_smtp_blk = 2;
+			const uif_type uif_smtp_blk = 2;
 			/// admin (it was first added user)
-			const aif_type aif_admin = 4;
+			const uif_type uif_admin = 4;
 			/// ftp access blocked
-			const aif_type aif_ftp_blk = 8;
+			const uif_type uif_ftp_blk = 8;
 			/// ignore me (entry MUST be ignored)
-			const aif_type aif_ignore = 16;
+			const uif_type uif_ignore = 16;
 			/// super (server) admin
-			const aif_type aif_supadm = 32;
+			const uif_type uif_supadm = 32;
 			/// };
 
 			/**
 			 * structure used in some routines. it includes basic
 			 * user's information.
 			 */
-			struct auth_info {
+			struct user_info {
 					string id_domain; //!< domain
 					string login;
 					string pass; //!< password
 					string dir; //!< mailbox directory
-					aif_type flags; //!< additional flags
+					uif_type flags; //!< additional flags
+					gid_type gid;
+					uid_type uid;
 			};
 
 			/// Mailbox options
@@ -215,7 +219,7 @@ module vq {
 		 * @{
 		 */
 			/// Adds user
-			error user_add(in auth_info ai, in boolean is_banned )
+			error user_add(in user_info ai, in boolean is_banned )
 					raises (null_error, except, db_error);
 			/// Removes user
 			error user_rm(in string dom_id, in string login)
@@ -227,7 +231,7 @@ module vq {
 			error user_val(in string user)
 					raises (null_error, except, db_error);
 			/// Gets informations about user
-			error user_get(inout auth_info ai)
+			error user_get(inout user_info ai)
 					raises (null_error, except, db_error);
 			/// Checks whether user exists
 			error user_ex(in string dom_id, in string login)

@@ -107,7 +107,7 @@ namespace POA_vq {
 	 * \param ai includes information about user
 	 * \param flags if (flags & 1) != 0 then don't check whether login is banned
 	 */
-	cqmailvq::error * cqmailvq::user_add( const auth_info & ai, 
+	cqmailvq::error * cqmailvq::user_add( const user_info & ai, 
 			CORBA::Boolean is_banned ) std_try {
 
 		if(!ai.login || !ai.id_domain)
@@ -238,7 +238,7 @@ namespace POA_vq {
 	 * \param ai (ai.login should be set to user's name, ai.id_domain should be set to user's domain)
 	 * \return 0 true if information was retrieved successful
 	 */
-	cqmailvq::error * cqmailvq::user_get(auth_info & ai) std_try {
+	cqmailvq::error * cqmailvq::user_get(user_info & ai) std_try {
 		if( ! ai.login || ! ai.id_domain ) 
 				throw ::vq::null_error(__FILE__, __LINE__);
 
@@ -249,6 +249,8 @@ namespace POA_vq {
 							static_cast<const char *>(ai.id_domain),
 							lower(static_cast<const char *>(ai.login))).c_str();
 				}
+				ai.gid = this->gid;
+				ai.uid = this->uid;
 				return lr(::vq::ivq::err_no, "");
 		}
 		return ret.release();

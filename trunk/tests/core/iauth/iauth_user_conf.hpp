@@ -40,7 +40,7 @@ struct user_conf_test {
 			err = auth->dom_add(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 		
-			vq::iauth::auth_info ai;
+			vq::iauth::user_info ai;
 			ai.id_domain = CORBA::string_dup(dom_id);
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
@@ -77,7 +77,7 @@ struct user_conf_test {
 					
 					string_array::const_iterator ubeg, uend, pbeg, pend;
 					::vq::ivq::user_conf_info ui;
-					::vq::ivq::auth_info ai;
+					::vq::ivq::user_info ai;
 					ui.type = ::vq::ivq::uc_redir;
 					typedef std::vector<CORBA::String_var> id_array;
 					id_array ids;
@@ -161,7 +161,7 @@ struct user_conf_test {
 					BOOST_REQUIRE(sys::getlines<std::string>(ifs, conf));
 					ifs.close();
 
-					::vq::ivq::auth_info ai;
+					::vq::ivq::user_info ai;
 					ai.id_domain = dom_id;
 					ai.pass = static_cast<const char *>("asdasd");
 					ai.flags = 0;
@@ -281,7 +281,7 @@ struct user_conf_test {
 					CORBA::String_var dom_id;
 					test_dom_user_add(dom, dom_id);
 
-					::vq::ivq::auth_info ai;
+					::vq::ivq::user_info ai;
 					ai.id_domain = dom_id;
 					ai.pass = static_cast<const char *>("asdasd");
 					ai.flags = 0;
@@ -355,7 +355,7 @@ struct user_conf_test {
 						static_cast<const char *>(""),
 						12), ::vq::ivq::err_no);
 
-					::vq::ivq::auth_info ai;
+					::vq::ivq::user_info ai;
 					ai.id_domain = dom_id;
 					ai.pass = static_cast<const char *>("asdasd");
 					ai.flags = 0;

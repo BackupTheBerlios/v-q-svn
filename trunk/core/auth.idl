@@ -28,11 +28,11 @@ module vq {
 			typedef ivq::size_type size_type;
 			typedef ivq::quota_type quota_type;
 			typedef ivq::string_list string_list;
-			typedef ivq::auth_info auth_info;
+			typedef ivq::user_info user_info;
 			typedef ivq::user_conf_info user_conf_info;
 			typedef ivq::user_conf_info_list user_conf_info_list;
 			typedef ivq::user_conf_type user_conf_type;
-			typedef ivq::aif_type aif_type;
+			typedef ivq::uif_type uif_type;
 			typedef ivq::email_banned email_banned;
 			typedef ivq::email_banned_list email_banned_list;
 			typedef ivq::domain_re_alias domain_re_alias;
@@ -84,7 +84,7 @@ module vq {
 		 */
 		//@{
 			/// Adds user
-			error user_add(in auth_info ai, in boolean is_banned )
+			error user_add(in user_info ai, in boolean is_banned )
 					raises (null_error, db_error, except);
 			/// Removes user
 			error user_rm(in string dom_id, in string login)
@@ -93,7 +93,7 @@ module vq {
 			error user_pass(in string dom_id, in string login, in string pass )
 					raises (null_error, db_error, except);
 			/// Gets informations about user
-			error user_get( inout auth_info ai )
+			error user_get( inout user_info ai )
 					raises (null_error, db_error, except);
 			/// check if user exists (err_noent if not, err_no if exists)
 			error user_ex( in string dom_id, in string login )
