@@ -6,6 +6,8 @@
 #include <getlines.hpp>
 #include <split.hpp>
 
+#include <p_strings.h>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
 

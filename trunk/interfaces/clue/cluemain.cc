@@ -21,68 +21,53 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <vqmain.hpp>
 #include <conf.hpp>
 
+#include <import_export.h>
+
 #include <iostream>
 #include <cstdlib>
 
-		
 int vqmain( int ac, char ** av ) {
 	using namespace std;
 
-	conf::clnconf ivq_name(VQ_HOME+"/etc/ivq/ivq_name", "vq::ivq");
-	/*
-	 * Initialize the ORB
-	 */
-	string orb_conf(VQ_HOME+"/etc/ivq/orb_conf");
-	char * orb_av[] = {
-			*av,
-			"-ORBConfFile",
-			 const_cast<char *>(orb_conf.c_str())
-	};
-	int orb_ac = sizeof orb_av/sizeof *orb_av;
-	CORBA::ORB_var orb = CORBA::ORB_init (orb_ac, orb_av);
+	conf::clnconf ivq_import(VQ_HOME+"/etc/ivq/ivq_import", "name_service#VQ.ivq");
+	
+	cluemain_env ce;
+	ce.orb = CORBA::ORB_init (ac, av);
 			
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
 	 */
-	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
+	CORBA::Object_var poaobj = ce.orb->resolve_initial_references ("RootPOA");
 	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
-	PortableServer::POAManager_var mgr = poa->the_POAManager();
-
-	cluemain_env ce;
-
-	/* 
-	 * Get NameService object
-	 */
-	CORBA::Object_var nsobj;
-	CosNaming::NamingContext_var nc;
-	try {
-			nsobj = orb->resolve_initial_references ("NameService");
-			ce.ns = CosNaming::NamingContext::_narrow (nsobj);
-		
-			if (CORBA::is_nil (ce.ns)) {
-					cerr << "oops, I cannot access the Naming Service!" << endl;
-					return 100;
-			}
-	} corba_catch(" while resolving NameService");
-		
-	/*
-	 * Get iauth object
-	 */
-	CosNaming::Name obj_name;
-	obj_name.length(1);
-	obj_name[0].id = ivq_name.val_str().c_str();
-	obj_name[0].kind = static_cast<const char *>("");
 
 	CORBA::Object_var ivqobj;
-	vq::ivq_var vq;
 	try {
-			ivqobj = ce.ns->resolve(obj_name);
+			ivqobj = corbautil::importObjRef(ce.orb, ivq_import.val_str().c_str());
+	} catch( corbautil::ImportExportException & e ) {
+			cerr<<e<<endl;
+			ce.orb->destroy();
+			return 100;
+	}
+
+	try {
 			ce.vq = vq::ivq::_narrow(ivqobj);
 			if( CORBA::is_nil(ce.vq) ) {
-					cerr<<"can't narrow "<<ivq_name.val_str()<<endl;
+					cerr<<"can't narrow "<<ivq_import.val_str()<<endl;
+					ce.orb->destroy();
 					return 100;
 			}
-	} corba_catch(" while resolving "+ivq_name.val_str());	
-	
-	return cluemain(ac, av, ce);
+	} catch(...) {
+			cerr<<"Exception while resolving ivq implementation"<<endl;
+			throw;
+	}	
+
+	try {
+			int ret = cluemain(ac, av, ce);
+			ce.orb->shutdown(0);
+			ce.orb->destroy();
+			return ret;
+	} catch(...) {
+			ce.orb->destroy();
+			throw;
+	}
 }

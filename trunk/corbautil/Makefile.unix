@@ -1,2 +1,4 @@
-all clean:
+all:
+
+all clean install:
 	cd cxx && $(MAKE) -f Makefile.unix $@

@@ -26,6 +26,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <conf.hpp>
 #include <vqmain.hpp>
 
+#include <import_export.h>
+
 #include <unistd.h>
 
 #include <iostream>
@@ -280,21 +282,16 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	::av = av;
 	::ac = ac;
 	
-	conf::clnconf ilogger_name(VQ_HOME+"/etc/ilogger/ilogger_name", "vq::ilogger");
-	/*
-	 * Get iauth object
-	 */
-	CosNaming::Name obj_name;
-	obj_name.length(1);
-	obj_name[0].id = ilogger_name.val_str().c_str();
-	obj_name[0].kind = static_cast<const char *>("");
+	conf::clnconf ilogger_import(VQ_HOME+"/etc/ilogger/ilogger_import", "Logger.ilogger");
 
 	CORBA::Object_var ilogobj;
-	vq::ilogger_var log;
-	ilogobj = ce.ns->resolve(obj_name);
-	if( CORBA::is_nil( ilogobj ) ) {
-			return 1;
+	try {
+			ilogobj = corbautil::importObjRef(ce.orb, 
+				ilogger_import.val_str().c_str());
+	} catch( corbautil::ImportExportException & e ) {
+			throw;
 	}
+	
 	olog = ::vq::ilogger::_narrow(ilogobj);
 	ovq = ce.vq;
 
@@ -316,11 +313,52 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	} catch( exception & e ) {
 			LOG( ::vq::ilogger::re_int, e.what());
 			return 1;
+	} catch( vq::except & e ) {
+			std::ostringstream os;
+			os<<"Exception: "<<e.what<<" in "<<e.file<<" at "<<e.line;
+			LOG( ::vq::ilogger::re_int, os.str().c_str());
+			return 111;
+	} catch( vq::db_error & e ) {
+			std::ostringstream os;
+			os<<"Database exception: "<<e.what<<" in "<<e.file<<" at "<<e.line;
+			LOG( ::vq::ilogger::re_int, os.str().c_str());
+			return 111;
+	} catch( vq::null_error & e ) {
+			std::ostringstream os;
+			os<<"Unexpected NULL value in "<<e.file<<" at "<<e.line;
+			LOG( ::vq::ilogger::re_int, os.str().c_str());
+			return 111;
+	} catch( CORBA::SystemException & e ) {
+			std::ostringstream os;
+			os<<"CORBA system exception: ";
+#if defined(MICO_VERSION)
+			e._print(os);
+#elif defined(OMNIORB_DIST_DATE)
+			os<<"minor: "<<e.NP_minorString()<<"; completed: ";
+			switch(e.completed()) {
+			case CORBA::COMPLETED_YES: os<<"YES"; break;
+			case CORBA::COMPLETED_NO: os<<"NO"; break;
+			default: os<<"MAYBE";
+			}
+#else
+			os<<"minor: "<<e.minor()<<"; completed: ";
+			switch(e.completed()) {
+			case CORBA::COMPLETED_YES: os<<"YES"; break;
+			case CORBA::COMPLETED_NO: os<<"NO"; break;
+			default: os<<"MAYBE";
+			}
+#endif
+			LOG( ::vq::ilogger::re_int, os.str().c_str());
+			return 111;
 	} catch( CORBA::Exception & e ) {
 			std::ostringstream os;
+			os<<"CORBA exception";
+#ifdef MICO_VERSION	
+			os<<": ";
 			e._print(os);
+#endif
 			LOG( ::vq::ilogger::re_int, os.str().c_str());
-			return 1;
+			return 111;
 	} catch( ... ) {
 			LOG( ::vq::ilogger::re_int, "exception" );
 			return 1;
@@ -333,7 +371,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 int vqmain( int ac, char ** av ) try {
 	using namespace std;
 
-	conf::clnconf ivq_name(VQ_HOME+"/etc/ivq/ivq_name", "vq::ivq");
+	conf::clnconf ivq_import(VQ_HOME+"/etc/ivq/ivq_import", "name_service#VQ.ivq");
 	/*
 	 * Initialize the ORB
 	 */
@@ -344,54 +382,38 @@ int vqmain( int ac, char ** av ) try {
 			 const_cast<char *>(orb_conf.c_str())
 	};
 	int orb_ac = sizeof orb_av/sizeof *orb_av;
-	CORBA::ORB_var orb = CORBA::ORB_init (orb_ac, orb_av);
+	cluemain_env ce;
+	ce.orb = CORBA::ORB_init (orb_ac, orb_av);
 			
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
 	 */
-	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
+	CORBA::Object_var poaobj = ce.orb->resolve_initial_references ("RootPOA");
 	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
-	PortableServer::POAManager_var mgr = poa->the_POAManager();
-
-	cluemain_env ce;
-
-	/* 
-	 * Get NameService object
-	 */
-	CORBA::Object_var nsobj;
-	CosNaming::NamingContext_var nc;
-	try {
-			nsobj = orb->resolve_initial_references ("NameService");
-			ce.ns = CosNaming::NamingContext::_narrow (nsobj);
-		
-			if (CORBA::is_nil (ce.ns)) {
-					return 100;
-			}
-	} catch(...) {
-			return 111;
-	}
-		
-	/*
-	 * Get iauth object
-	 */
-	CosNaming::Name obj_name;
-	obj_name.length(1);
-	obj_name[0].id = ivq_name.val_str().c_str();
-	obj_name[0].kind = static_cast<const char *>("");
 
 	CORBA::Object_var ivqobj;
-	vq::ivq_var vq;
 	try {
-			ivqobj = ce.ns->resolve(obj_name);
+			ivqobj = corbautil::importObjRef(ce.orb, ivq_import.val_str().c_str());
+	} catch( corbautil::ImportExportException & e ) {
+			//cerr<<e<<endl;
+			ce.orb->destroy();
+			return 100;
+	}
+
+	try {
 			ce.vq = vq::ivq::_narrow(ivqobj);
 			if( CORBA::is_nil(ce.vq) ) {
+					//cerr<<"can't narrow "<<ivq_import.val_str()<<endl;
 					return 100;
 			}
 	} catch(...) {
-			return 111;
-	}
+			cerr<<"Exception while resolving ivq implementation"<<endl;
+			//throw;
+			ce.orb->destroy();
+			return 100;
+	}	
 	
 	return cluemain(ac, av, ce);
 } catch(...) {
-	return 111;
+	return 100;
 }

@@ -26,7 +26,8 @@ namespace POA_vq {
 	/**
 	 * 
 	 */
-	class cpgsqlauth : public iauth {
+	class cpgsqlauth : public iauth, 
+		public PortableServer::RefCountServantBase {
 			public:
 					typedef ::vq::iauth::error error;
 					typedef ::vq::iauth::err_code err_code;

@@ -6,6 +6,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <string>
+#include <deque>
 
 typedef std::deque< vq::ivq::user_conf_type > types_array;
 

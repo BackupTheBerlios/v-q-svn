@@ -1,11 +1,9 @@
-P_USE_ORB?=P_USE_MICO
+INSTALL?=install
 
 .SUFFIXES: .cxx
 
-.cxx.o:
-	$(CXX) $(CXXFLAGS) -c -o $@ $< -I. \
-	-I../gsp \
-	-I../import_export \
-	-I../PoaUtility \
-	-I../portability -D$(P_USE_ORB)
+.cxx.o: $(BASE)/corba.inc
+	$(BASE)/comp-so $< -I. -I../gsp -I../import_export -I../PoaUtility \
+	-I../portability `cat $(BASE)/corba.inc`
 
+include $(BASE)/Makefile.common

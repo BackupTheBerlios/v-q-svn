@@ -27,7 +27,8 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	 class cpgsqllog : public ilogger {
+	 class cpgsqllog : public ilogger,
+		public PortableServer::RefCountServantBase {
 			public:
 					typedef ::vq::ilogger::service_type service_type;
 					typedef ::vq::ilogger::result_type result_type;

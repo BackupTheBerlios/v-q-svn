@@ -1,4 +1,4 @@
-SUBDIR=tools libconf libmain libsys libtext base interfaces
+SUBDIR=tools libconf libmain libsys libtext corbautil base interfaces
 
 .PHONY: all clean pgsql install install-pgsql install-conf install-dirs
 

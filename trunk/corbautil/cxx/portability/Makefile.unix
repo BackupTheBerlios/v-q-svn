@@ -1,0 +1,22 @@
+#-----------------------------------------------------------------------
+# Copyright IONA Technologies 2002-2003.  All rights reserved.
+# This software is provided "as is".
+#-----------------------------------------------------------------------
+BASE=../../..
+
+include ../../Makefile.unix.inc
+
+#--------
+# Rules
+#--------
+
+default: all
+
+all clean:
+
+install: all
+	$(INSTALL) -d -m 755 $(PREFIX)/include/vq/corbautil/portability
+	@for p in *.h *.txt ; do \
+		$(INSTALL) -m 644 $$p $(PREFIX)/include/vq/corbautil/portability/$$p ; \
+	done
+

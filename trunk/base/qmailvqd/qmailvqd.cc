@@ -95,13 +95,19 @@ int vqmain(int ac, char **av) {
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
 	 */
-	
 	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
-	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
+	PortableServer::POA_var root_poa = PortableServer::POA::_narrow (poaobj);
+	PortableServer::POAManager_var mgr = root_poa->the_POAManager();
+	mgr->activate();
+
+	CORBA::PolicyList pl;
+	pl.length(1);
+	pl[0] = root_poa->create_thread_policy(PortableServer::SINGLE_THREAD_MODEL);
+	PortableServer::POA_var poa = root_poa->create_POA("RealPOA", mgr, pl);
 
 	CORBA::Object_var iaobj;
 	try {
-			corbautil::importObjRef(orb, iauth_import.val_str().c_str());
+			iaobj = corbautil::importObjRef(orb, iauth_import.val_str().c_str());
 	} catch( corbautil::ImportExportException & e ) {
 			cerr<<e<<endl;
 			orb->destroy();
@@ -128,7 +134,7 @@ int vqmain(int ac, char **av) {
 	PortableServer::ObjectId_var oid = poa->activate_object (vqimp.get());
 	CORBA::Object_var ref = poa->id_to_reference (oid.in());
 
-	if(exp) {
+	if( exp ) {
 			try {
 					corbautil::exportObjRef(orb, ref, exp_ins);
 			} catch( corbautil::ImportExportException & e ) {
@@ -136,15 +142,13 @@ int vqmain(int ac, char **av) {
 					run = false;
 			}
 	}
+	vqimp->_remove_ref();
 	if( run ) {
-			PortableServer::POAManager_var mgr = poa->the_POAManager();
 			/*
 			 * Activate the POA and start serving requests
 			 */
 	
 			cout << "Running." << endl;
-	
-			mgr->activate ();
 			orb->run();
 	}
 	

@@ -6,9 +6,12 @@ OBJS=cluemain.o dom_add.o dom_alias_add.o dom_alias_rm.o dom_ip_add.o \
 	user_pass.o user_conf_add.o user_conf_ls.o user_conf_rm.o dom_id.o \
 	dom_ls.o dom_alias_ls.o
 INCS=-I$(BASE)/base -I$(BASE) -I$(BASE)/libsys -I$(BASE)/libtext \
-	-I$(BASE)/base/libvqmain -I$(BASE)/libconf `cat $(BASE)/corba.inc`
+	-I$(BASE)/base/libvqmain -I$(BASE)/libconf \
+	-I$(BASE)/corbautil/cxx/import_export -I$(BASE)/corbautil/cxx/portability \
+	`cat $(BASE)/corba.inc`
 LIBS=-L$(BASE)/libmain -lmain -L$(BASE)/base/libvqmain -lvqmain -L. -lcluemain \
-	-L$(BASE)/libconf -lconf -L$(BASE)/base -lvq
+	-L$(BASE)/libconf -lconf -L$(BASE)/base -lvq -L../../corbautil -lcorbautil \
+	`cat $(BASE)/corba.lib`
 
 .PHONY: all clean install
 
@@ -30,7 +33,7 @@ dom_ls: dom_ls.o
 
 dom_add dom_rm dom_ls: \
 $(BASE)/load $(BASE)/corba.lib error2str.o libcluemain.a
-	$(BASE)/load $@ $(LIBS) error2str.o `cat $(BASE)/corba.lib`
+	$(BASE)/load $@ error2str.o $(LIBS)
 
 user_add: user_add.o
 user_rm: user_rm.o
@@ -50,16 +53,16 @@ user_add user_rm user_pass user_conf_add user_conf_ls user_conf_rm dom_id \
 dom_alias_add dom_alias_rm dom_alias_ls \
 dom_ip_add dom_ip_rm dom_ip_ls: \
 $(BASE)/load $(BASE)/corba.lib error2str.o cdom_name2id.o libcluemain.a
-	$(BASE)/load $@ $(LIBS) -L$(BASE)/libtext -ltext \
-	error2str.o cdom_name2id.o `cat $(BASE)/corba.lib`
+	$(BASE)/load $@ error2str.o cdom_name2id.o $(LIBS) -L$(BASE)/libtext -ltext
 
 user_auth: user_auth.o
 
 user_auth: $(BASE)/load $(BASE)/corba.lib error2str.o cdom_name2id.o
-	$(BASE)/load $@ -L$(BASE)/libmain -lmain -L$(BASE)/base/libvqmain -lvqmain \
+	$(BASE)/load $@ error2str.o cdom_name2id.o -L$(BASE)/libmain -lmain \
+	-L$(BASE)/base/libvqmain -lvqmain \
 	-L$(BASE)/libconf -lconf -L$(BASE)/base -lvq \
 	-L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys \
-	error2str.o cdom_name2id.o `cat $(BASE)/corba.lib`
+	-L$(BASE)/corbautil -lcorbautil `cat $(BASE)/corba.lib`
 
 $(OBJS): $(BASE)/compile $(BASE)/corba.inc
 

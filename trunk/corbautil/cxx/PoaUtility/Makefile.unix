@@ -2,6 +2,7 @@
 # Copyright IONA Technologies 2002-2004. All rights reserved.
 # This software is provided "as is".
 #-----------------------------------------------------------------------
+BASE=../../..
 
 include ../../Makefile.unix.inc
 
@@ -19,4 +20,6 @@ default:	all
 all:		$(OBJ)
 
 clean:
-	-rm *.o
+	-rm -f *.o
+
+install:

@@ -1,1 +1,1 @@
--L/usr/local/lib/ -lboost_regex-gcc-1_31
+-L/usr/local/lib/ -lboost_regex-gcc-mt-1_31

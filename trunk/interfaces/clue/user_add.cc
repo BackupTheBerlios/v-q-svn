@@ -64,14 +64,14 @@ bool user_add(const string &e, const string &p, ::vq::ivq::uif_type flags,
 	ai.flags = flags;
 	ai.login = esplit.front().c_str();
 	
-	::vq::ivq::error_var ret(dom_name2id(vq, esplit.back(), ai.id_domain));
+	::vq::ivq::error_var ret = dom_name2id(vq, esplit.back(), ai.id_domain);
 	if( ::vq::ivq::err_no != ret->ec ) {
 			if( ! quiet )
 					cout<<error2str(ret)<<endl;
 			return quiet;
 	}
 
-	ret = vq->user_add(ai, eb_chk ? TRUE : FALSE );
+	ret = vq->user_add(ai, eb_chk ? 1 : 0 );
 	if( ::vq::ivq::err_no != ret->ec ) {
 			if(!quiet)
 					cout<<error2str(ret)<<endl;

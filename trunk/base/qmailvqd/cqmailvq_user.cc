@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys.hpp>
 
 #include <sys/time.h>
+#include <unistd.h>
 
 #include <sstream>
 #include <cerrno>

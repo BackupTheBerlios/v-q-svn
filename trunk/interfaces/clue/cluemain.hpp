@@ -23,18 +23,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <vq.hpp>
 
-#include <coss/CosNaming.h>
-
-#define corba_catch(x) catch( CORBA::Exception & e ) { \
-		std::cerr<<"CORBA exception"<< (x) <<": "; \
-		e._print(std::cerr); \
-		std::cerr<<std::endl; \
-		return 10; \
-}
+#include <p_orb.h>
 
 struct cluemain_env {
 	vq::ivq_var vq; //!< V-q's main object
-	CosNaming::NamingContext_var ns; //!< NameService
+	CORBA::ORB_var orb;
 };
 
 int cluemain( int, char **, cluemain_env & );

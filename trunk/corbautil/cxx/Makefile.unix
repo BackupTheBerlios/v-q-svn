@@ -2,30 +2,49 @@
 # Copyright IONA Technologies 2002-2003.  All rights reserved.
 # This software is provided "as is".
 #-----------------------------------------------------------------------
+BASE=../..
+SUBDIR=PoaUtility import_export portability
 
-#include "../Makefile.unix.inc"
+include ../Makefile.unix.inc
 
 #--------
 # Lists of files used by make rules.
 #--------
-LIB_OBJ =	PoaUtility/PoaUtility.o import_export/import_export.o
+LIB_OBJ=PoaUtility/PoaUtility.o import_export/import_export.o
 
 #--------
 # Rules
 #--------
 
-default:	all
+default: all
 
-all:		../libcorbautil.a
+all: ../libcorbautil.a
 
-../libcorbautil.a:	make_in_subdirs
-	ar cr ../libcorbautil.a $(LIB_OBJ)
+../libcorbautil.a: $(BASE)/make-lib $(LIB_OBJ)
+	$(BASE)/make-lib ../libcorbautil.a $(LIB_OBJ)
 
-make_in_subdirs:
-	cd PoaUtility && $(MAKE)
-	cd import_export && $(MAKE)
+$(LIB_OBJ):
+	@for p in $(SUBDIR) ; do \
+		(echo "===> $$p"; \
+		cd $$p ; \
+		$(MAKE) all ; ) || exit 1; \
+	done
 
 clean:
-	cd PoaUtility && $(MAKE) $@
-	cd import_export && $(MAKE) $@
-	-rm ../*.a
+	@for p in $(SUBDIR) ; do \
+		(echo "===> $$p" ; \
+		cd $$p ; \
+		$(MAKE) $@ ; ) || exit 1 ; \
+	done
+	-rm -f ../*.a
+
+install: all
+	$(INSTALL) -d -m 0755 $(PREFIX)/lib/vq
+	$(INSTALL) -d -m 0755 $(PREFIX)/include/vq/corbautil
+	$(INSTALL) -m 0755 ../libcorbautil.a $(PREFIX)/lib/vq/libcorbautil.a
+	@for p in $(SUBDIR) ; do \
+		(echo "===> $$p" ; \
+		cd $$p ; \
+		$(MAKE) $@ ; ) || exit 1 ; \
+	done
+

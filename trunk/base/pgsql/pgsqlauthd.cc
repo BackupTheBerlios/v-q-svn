@@ -82,8 +82,15 @@ int vqmain(int ac, char **av) {
 	 */
 	
 	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
-	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
-		
+	PortableServer::POA_var root_poa = PortableServer::POA::_narrow (poaobj);
+	PortableServer::POAManager_var mgr = root_poa->the_POAManager();
+	mgr->activate();
+
+	CORBA::PolicyList pl;
+	pl.length(1);
+	pl[0] = root_poa->create_thread_policy(PortableServer::SINGLE_THREAD_MODEL);
+	PortableServer::POA_var poa = root_poa->create_POA("RealPOA", mgr, pl);
+
 	/*
 	 * Create authorization object
 	 */
@@ -100,16 +107,23 @@ int vqmain(int ac, char **av) {
 					run = false;
 			}
 	}
+	pgauth->_remove_ref(); // ???
 	if( run ) {
-			PortableServer::POAManager_var mgr = poa->the_POAManager();
 			
 			/*
 			 * Activate the POA and start serving requests
 			 */
 			cout << "Running." << endl;
-	
-			mgr->activate ();
+#if 1
 			orb->run();
+#else
+			for( ;; ) {
+					omni_thread::sleep(1);
+					if( orb->work_pending() ) {
+							orb->perform_work();
+					}
+			}
+#endif 
 	}
 	orb->destroy();
 	return 0;

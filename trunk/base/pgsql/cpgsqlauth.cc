@@ -61,6 +61,8 @@ namespace POA_vq {
 			CORBA::String_out dom_id ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
 
+		dom_id = CORBA::string_dup("");
+
 		string dom(lower(_dom));
 
 		Result res(NonTransaction(*pg).Exec(
@@ -86,6 +88,8 @@ namespace POA_vq {
 	cpgsqlauth::error * cpgsqlauth::dom_id( const char * _dom,
 			CORBA::String_out dom_id ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
+		
+		dom_id = CORBA::string_dup("");
 
 		string dom(lower(_dom));
 
@@ -113,6 +117,8 @@ namespace POA_vq {
 			CORBA::String_out domain ) std_try {
 		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
 
+		domain = CORBA::string_dup("");
+		
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT domain FROM vq_view_DOM_NAME WHERE id_domain="
 			+Quote(dom_id, false) ));
@@ -141,10 +147,12 @@ namespace POA_vq {
 	cpgsqlauth::error * cpgsqlauth::dom_ls( domain_info_list_out dis ) std_try {
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT id_domain,domain FROM vq_view_dom_ls"));
+
+		dis = new domain_info_list;
+
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
-		dis = new domain_info_list(static_cast<CORBA::ULong>(s));
 		dis->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
 			dis[i].id_domain = CORBA::string_dup(
@@ -294,10 +302,12 @@ namespace POA_vq {
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT "+field+" FROM "+view+" WHERE id_domain="
 			+Quote(static_cast<const char *>(dom_id)) ));
+
+		reas = new string_list;
+
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
-		reas = new string_list(static_cast<CORBA::ULong>(s));
 		reas->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
 			reas[i] = CORBA::string_dup(
@@ -416,10 +426,12 @@ namespace POA_vq {
 	cpgsqlauth::error * cpgsqlauth::eb_ls( email_banned_list_out ebs ) std_try {
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT re_domain,re_login FROM vq_view_eb_ls"));
+		
+		ebs = new email_banned_list;
+		
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
-		ebs = new email_banned_list(static_cast<CORBA::ULong>(s));
 		ebs->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
 			ebs[i].re_domain = CORBA::string_dup(
@@ -494,10 +506,11 @@ namespace POA_vq {
 			+" AND login="+ Quote(lower(login), false)
 			+" AND ext="+ Quote(lower(pfix), false) ));
 
+		uis = new user_conf_info_list;
+
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
-		uis = new user_conf_info_list(static_cast<CORBA::ULong>(s));
 		uis->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
 			uis[i].id_conf = res[i][0].is_null() 
@@ -525,10 +538,11 @@ namespace POA_vq {
 			+" AND ext="+ Quote(lower(pfix), false)
 			+" AND type="+Quote(ToString( static_cast<CORBA::ULong>(ut) )) ));
 
+		uis = new user_conf_info_list;
+
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
-		uis = new user_conf_info_list(static_cast<CORBA::ULong>(s));
 		uis->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
 			uis[i].id_conf = CORBA::string_dup(

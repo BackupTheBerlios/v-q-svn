@@ -39,7 +39,8 @@ namespace POA_vq {
 	 * Implementation of ivq. It stores everything on filesystem (in directory
 	 * conf_home/domains/).
 	 */
-	class cqmailvq : public ivq {
+	class cqmailvq : public ivq,
+		public PortableServer::RefCountServantBase {
 			public:
 					typedef ::vq::ivq::user_info user_info;
 					typedef ::vq::ivq::quota_type quota_type;

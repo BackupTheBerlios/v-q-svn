@@ -22,21 +22,25 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <vq.hpp>
 
 #include <string>
+#include <map>
 
 namespace clue {
 
 	class cdom_name2id {
 			public:
+					// template because of broken OmniORB
+					template< class T >
 					inline ::vq::ivq::error_var operator()( ::vq::ivq_var &,
-							const std::string &, CORBA::String_var & );
+							const std::string &, T & );
 
 			protected:
-					typedef std::map< std::string, CORBA::String_var > domain2id_map;
+					typedef std::map< std::string, std::string > domain2id_map;
 					static domain2id_map dom2id;
 	};
 
+	template < class T >
 	inline ::vq::ivq::error_var cdom_name2id::operator()( ::vq::ivq_var &vq,
-			const std::string & dom, CORBA::String_var & id ) {
+			const std::string & dom, T & id ) {
 
 		domain2id_map::const_iterator did_itr( this->dom2id.find(dom) );
 		::vq::ivq::error_var ret(new ::vq::ivq::error);
@@ -47,9 +51,9 @@ namespace clue {
 						return ret;
 				}
 				did_itr = dom2id.insert( dom2id.begin(), 
-						std::make_pair(dom, did) );
+					std::make_pair(dom, static_cast<const char *>(did)) );
 		}
-		id = did_itr->second;
+		id = did_itr->second.c_str();
 		ret->ec = ::vq::ivq::err_no;
 		return ret;
 	}
