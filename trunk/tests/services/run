@@ -1,0 +1,4 @@
+#!/bin/sh
+for p in `ls [0-9]*.pl | sort -i` ; do
+	./$p
+done
