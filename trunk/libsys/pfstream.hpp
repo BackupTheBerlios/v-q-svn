@@ -53,38 +53,10 @@ public:
 				return this->_M_file.fd();
 		}
 
-		__filebuf_type* open( int, std::ios_base::openmode , 
-				bool __del = true, int_type __size = 0 );
-
 		__filebuf_type* open( const charT * __s, std::ios_base::openmode __om ) {
 				return std::basic_filebuf<charT, traits>::open(__s, __om);
 		}
 };
-
-template <typename charT, typename traits>
-	typename basic_filebuf<charT, traits>::__filebuf_type* 
-	basic_filebuf<charT, traits>::
-	open( int __fd, std::ios_base::openmode __mode, 
-			bool __del, typename basic_filebuf<charT, traits>::int_type __size ) {
-		__filebuf_type *__ret = NULL;
-		
-		this->_M_file.sys_open(__fd, __mode, __del);
-		if (this->is_open()) {
-				this->_M_mode = __mode;
-				if (__size > 0 && __size < 4) {
-						// Specify unbuffered.
-						this->_M_buf = this->_M_unbuf;
-						this->_M_buf_size = __size;
-						this->_M_buf_size_opt = 0;
-				} else {
-						this->_M_buf_size_opt = __size;
-						this->_M_allocate_internal_buffer();
-				}
-				this->_M_set_indeterminate();
-				__ret = this;
-		}
-		return __ret;
-}
 
 //----------------------------------------------------------------------
 // Class basic_ipfstream<>
