@@ -7,13 +7,7 @@
 		includes also part about securing v-q system.
 	</para>
 
-	<section id="life.conf">
-		<title>Configuration</title>
-
-		<para>
-			
-		</para>
-	</section>
+	&life.conf;
 
 	<section id="life.security">
 		<title>Security not by obscurity</title>
@@ -27,7 +21,8 @@
 		<title>Integration with other software</title>
 
 		<para>
-		...
+			Following chapter describes how to integrate v-q with 
+			other software.
 		</para>
 
 		<section id="life.inte.omail">
