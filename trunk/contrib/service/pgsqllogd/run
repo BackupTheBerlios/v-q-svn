@@ -1,4 +1,11 @@
 #!/bin/sh
+if [ ! -z "$VQ_HOME" ] ; then
+	export PATH="$PATH":"$VQ_HOME"
+else
+	export VQ_HOME="/var/vq"
+fi
+
 exec 2>&1
-export PATH="$PATH":/usr/local/bin:/usr/local/progs/v-q/bin:/var/vq/bin:/var/v-q/bin
-exec pgsqllogd
+exec su _vq -c "exec pgsqllogd -ORBIIOPAddr unix:/var/v-q/sockets/qmailvqd.sock \
+-ORBInitRef NameService=corbaloc::127.0.0.1:12456/NameService \
+$VQ_HOME"

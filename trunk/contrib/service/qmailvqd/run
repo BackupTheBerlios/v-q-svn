@@ -6,6 +6,6 @@ else
 fi
 
 exec 2>&1
-exec su _vq -c "exec pgsqlauthd -ORBIIOPAddr unix:/var/v-q/sockets/qmailvqd.sock \
+exec su _vq -c "exec qmailvqd -ORBIIOPAddr unix:/var/v-q/sockets/qmailvqd.sock \
 -ORBInitRef NameService=corbaloc::127.0.0.1:12456/NameService \
 $VQ_HOME"

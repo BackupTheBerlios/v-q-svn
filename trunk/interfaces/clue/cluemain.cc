@@ -25,7 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <cstdlib>
 
 		
-int vqmain( int ac, char ** av ) try {
+int vqmain( int ac, char ** av ) {
 	using namespace std;
 
 	conf::clnconf ivq_name(VQ_HOME+"/etc/ivq/ivq_name", "vq::ivq");
@@ -85,5 +85,4 @@ int vqmain( int ac, char ** av ) try {
 	} corba_catch(" while resolving "+ivq_name.val_str());	
 	
 	return cluemain(ac, av, ce);
-} corba_catch("")
-
+}

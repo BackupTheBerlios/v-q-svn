@@ -22,7 +22,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-02-19T20:34:40"><META
+CONTENT="2005-02-26T16:41:23"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -91,11 +91,41 @@ CLASS="screen"
 >&#13;<TT
 CLASS="userinput"
 ><B
->&#13;./install
+>&#13;make install
 </B
 ></TT
 >
 </PRE
+><P>
+			You can also add PREFIX=some/directory to install it in
+			other that default one. For example following command
+			will install all files in <TT
+CLASS="filename"
+>/var/v-q</TT
+>:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;make PREFIX=/var/v-q install
+</B
+></TT
+>
+</PRE
+><P>
+			</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+					Default destination directory is /var/vq.
+				</P
+></BLOCKQUOTE
+></DIV
 ><P>
 		</P
 ><DIV
@@ -193,6 +223,51 @@ CLASS="userinput"
 				Remember that pqxx-config must be in the path (if you don't have
 				this program it means eaither libpqxx is not installed or it's too old
 				version).
+			</P
+><P
+>&#13;				To install PostgreSQL modules run:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;make install-pgsql
+</B
+></TT
+>
+</PRE
+><P>
+				You can also add PREFIX=some/directory if you want to install
+				it in other directory than the default one. 
+				For example following command will install it in
+				<TT
+CLASS="filename"
+>/var/v-q</TT
+>:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;make PREFIX=/var/v-q install-pgsql
+</B
+></TT
+>
+</PRE
+><P>
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+						Default destination directory is /var/vq.
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
 			</P
 ><P
 >&#13;				To create objects in a database you can use PERL script

@@ -2,12 +2,17 @@ BASE=..
 LANGS=en pl
 JADE?=openjade
 
-.PHONY: all clean subdirs
+.PHONY: all all-doc clean subdirs
 
+all-doc: doc-html doc-rtf
+
+include $(BASE)/Makefile.common
 
 doc-html:
 	for l in $(LANGS) ; do \
 		./insert_code.pl $$l.src .xml ; \
+		sed -e 's#\(<\!--ENV:PREFIX-->\).*\(<\!--/ENV:PREFIX-->\)#\1$(PREFIX)\2#' < $$l.src/install.xml > $$l.src/install.xml.tmp ; \
+		mv $$l.src/install.xml.tmp $$l.src/install.xml ; \
 		(cd $$l.html/ && env SGML_CATALOG_FILES=/usr/local/share/sgml/catalog \
 		openjade -t sgml -i output-html -d ../$$l.src/stylesheet.dsl \
 		/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl \

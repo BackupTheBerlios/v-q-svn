@@ -115,7 +115,7 @@
 			</para>
 
 			<para>
-			You can use following commands to do that (works under
+			You can use following commands to create this account (works under
 			Linux and OpenBSD):
 <synopsis>groupadd _vq
 useradd -g _vq -d /var/vq _vq</synopsis>
@@ -291,9 +291,22 @@ make >&amp; out
 			It's easy as writing:
 <screen>
 <userinput>
-./install
+make install
 </userinput>
 </screen>
+			You can also add PREFIX=some/directory to install it in
+			other that default one. For example following command
+			will install all files in <filename>/var/v-q</filename>:
+<screen>
+<userinput>
+make PREFIX=/var/v-q install
+</userinput>
+</screen>
+			<note>
+				<para>
+					Default destination directory is <!--ENV:PREFIX-->/var/vq<!--/ENV:PREFIX-->.
+				</para>
+			</note>
 		</para>
 
 		<section id="install.steps.qmail">
@@ -351,6 +364,29 @@ make pgsql >&amp; out.pgsql
 				Remember that pqxx-config must be in the path (if you don't have
 				this program it means eaither libpqxx is not installed or it's too old
 				version).
+			</para>
+
+			<para>
+				To install PostgreSQL modules run:
+<screen>
+<userinput>
+make install-pgsql
+</userinput>
+</screen>
+				You can also add PREFIX=some/directory if you want to install
+				it in other directory than the default one. 
+				For example following command will install it in
+				<filename>/var/v-q</filename>:
+<screen>
+<userinput>
+make PREFIX=/var/v-q install-pgsql
+</userinput>
+</screen>
+				<note>
+					<para>
+						Default destination directory is <!--ENV:PREFIX-->/var/vq<!--/ENV:PREFIX-->.
+					</para>
+				</note>
 			</para>
 
 			<para>
