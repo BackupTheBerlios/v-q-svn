@@ -5,9 +5,11 @@ use strict;
 use Test;
 use conf;
 
-BEGIN { plan tests => 2 }
+BEGIN { plan tests => 0 }
 
-foreach my $d (@conf::domains) {
+my $conf = new conf;
+
+foreach my $d ($conf->domains) {
 	my $cmd = "dom_rm -q \"$d\"";
 	`$cmd`;
 	ok($?>>8, 0);
