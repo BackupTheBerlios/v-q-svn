@@ -1,0 +1,189 @@
+/*
+Virtual Qmail (http://v-q.foo-baz.com)
+Copyright (C) 2002-2004 Pawel Niewiadomski (new-baz.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+#include "vq.idl"
+
+module vq {
+	/**
+	 * Base class representing authorization module.
+	 */
+	interface iauth {
+			/// Type used for size specifications, the same as in cvq
+			typedef ivq::size_type size_type;
+			typedef ivq::quota_type quota_type;
+			typedef ivq::string_list string_list;
+			typedef ivq::user_info user_info;
+			typedef ivq::user_conf_info user_conf_info;
+			typedef ivq::user_conf_info_list user_conf_info_list;
+			typedef ivq::user_conf_type user_conf_type;
+			typedef ivq::uif_type uif_type;
+			typedef ivq::email_banned email_banned;
+			typedef ivq::email_banned_list email_banned_list;
+			typedef ivq::err_code err_code;
+			typedef ivq::error error;
+			typedef ivq::domain_info domain_info;
+			typedef ivq::domain_info_list domain_info_list;
+
+		/**
+		 * \defgroup dom Domains manipulation
+		 */
+		//@{
+			/// Adds domain to database
+			error dom_add(in string dom, out string dom_id)
+					raises (null_error, db_error, except);
+			/// Removes domain.
+			error dom_rm(in string dom_id)
+					raises (null_error, db_error, except);
+			/// Translates domain name to id.
+			error dom_id(in string dom, out string did)
+					raises (null_error, db_error, except);
+			error dom_name(in string dom_id, out string domain)
+					raises (null_error, db_error, except);
+			error dom_ls( out domain_info_list dis )
+					raises (null_error, db_error, except);
+		//@}
+
+		/**
+		 * \defgroup dra Domain aliases
+		 */
+		//@{
+			/// add alias for a domain
+			error da_add(in string dom_id, in string ali)
+					raises (null_error, except, db_error);
+			/// Removes alias
+			error da_rm(in string ali)
+					raises (null_error, except, db_error);
+			/// Lists all aliases for a domain
+			error da_ls_by_dom(in string dom_id, out string_list alis )
+					raises (null_error, except, db_error);
+		//@}
+
+		/**
+		 * \defgroup dra Domain's IP addresses
+		 */
+		//@{
+			/// add IP address for a domain
+			error dip_add(in string dom_id, in string ip)
+					raises (null_error, except, db_error);
+			/// Removes IP address
+			error dip_rm(in string ip)
+					raises (null_error, except, db_error);
+			/// Lists all IP addresses for a domain
+			error dip_ls_by_dom(in string dom_id, out string_list ips )
+					raises (null_error, except, db_error);
+		//@}
+
+		/**
+		 * \defgroup user Users manipulation
+		 */
+		//@{
+			/// Adds user
+			error user_add(in user_info ai, in boolean is_banned )
+					raises (null_error, db_error, except);
+			/// Removes user
+			error user_rm(in string dom_id, in string login)
+					raises (null_error, db_error, except);
+			/// Changes password for user
+			error user_pass(in string dom_id, in string login, in string pass )
+					raises (null_error, db_error, except);
+			/// Gets informations about user
+			error user_get( inout user_info ai )
+					raises (null_error, db_error, except);
+			/// check if user exists (err_noent if not, err_no if exists)
+			error user_ex( in string dom_id, in string login )
+					raises (null_error, db_error, except);
+		//@}
+		/**
+		 * \defgroup eb Emails banned
+		 */
+		//@{
+			error eb_add(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_rm(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_ls(out email_banned_list ebs)
+					raises (db_error, except);
+		//@}
+		/**
+		 * \ingroup qt_user
+		 */
+		//@{
+			/// Gets limits for user
+			error qt_user_get(in string dom_id, in string user_id, 
+					out quota_type bytes_max , out quota_type files_max )
+					raises (null_error, db_error, except);
+			/// Sets limits for user
+			error qt_user_set(in string dom_id, in string user_id, 
+					in quota_type bytes_max, in quota_type files_max )
+					raises (null_error, db_error, except);
+			/// Sets default value for a domain
+			error qt_user_def_set(in string dom_id, 
+					in quota_type bytes_max, in quota_type files_max )
+					raises (null_error, db_error, except);
+			/// Gets default value
+			error qt_user_def_get(in string dom_id, 
+					out quota_type bytes_max, out quota_type files_max )
+					raises (null_error, db_error, except);
+		//@}
+
+		/**
+		 * \defgroup user_conf Mailboxes configuration
+		 */
+		//@{
+			/// Adds mailbox configuration
+			error user_conf_add(in string dom_id, in string user,
+					in string pfix, inout user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Removes all mailbox configuration entries
+			error user_conf_rm_by_type(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut )
+					raises (null_error, db_error, except);
+			/// Removes mailbox configuration entry
+			error user_conf_rm( in string id )
+					raises (null_error, db_error, except);
+			/// Lists mailbox configuration
+			error user_conf_ls(in string dom_id, in string user,
+					in string pfix, out user_conf_info_list uis )
+					raises (null_error, db_error, except);
+			/// Lists mailbox configuation of specified type
+			error user_conf_ls_by_type(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut,
+					out user_conf_info_list uis )
+					raises (null_error, db_error, except);
+			/// Changes existing entry
+			error user_conf_rep( in user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Gets existing entry
+			error user_conf_get(	inout user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Checks whether mailbox has entry of specified type
+			error user_conf_type_has(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut )
+					raises (null_error, db_error, except);
+			/// Counts entries of specified type
+			error user_conf_type_cnt(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut, 
+					out size_type cnt )
+					raises (null_error, db_error, except);
+		//@}
+		
+	}; // interface iauth
+
+}; // module vq
+

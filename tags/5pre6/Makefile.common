@@ -1,0 +1,14 @@
+.PHONY: auto-mkdir
+
+auto-mkdir:
+	mkdir -p auto
+
+#################
+$(BASE)/tools/mkdep:
+	(cd $(BASE)/tools/ && $(MAKE) mkdep)
+	
+.depend: $(BASE)/compile $(BASE)/tools/mkdep *.cc
+	CC=$(BASE)/compile $(BASE)/tools/mkdep $(INCS) *.cc >> .depend 
+	if [ -e .depend -a ! -s .depend ]; then \
+		rm -f .depend ; \
+	fi

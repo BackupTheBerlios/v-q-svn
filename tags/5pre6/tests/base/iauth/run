@@ -1,0 +1,26 @@
+#!/bin/sh
+export LD_LIBRARY_PATH="/tmp" 
+cp -f ../../../lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+nsd -ORBIIOPAddr inet:$host:12456 &
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+#ulimit -c 132234
+../../../core/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+server_pid=$!
+
+trap "kill $nsd_pid $server_pid" 0
+sleep 2
+
+echo "running client ..."
+./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService 
+#gdb iauth

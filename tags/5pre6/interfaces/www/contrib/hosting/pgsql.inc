@@ -1,0 +1,1 @@
+-I/usr/local/pgsql/include -I/usr/local/pqxx/include/

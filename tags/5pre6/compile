@@ -1,0 +1,3 @@
+#!/bin/sh
+# WARNING: This file was auto-generated. Do not edit!
+exec eg++ -D_REENTRANT -ftemplate-depth-20 -pipe -g -Wall -c ${1+"$@"}

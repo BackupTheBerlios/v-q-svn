@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+	"/usr/local/share/sgml/redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/docbookx.dtd"
+
+	[
+	<!ENTITY doc.gen SYSTEM "doc.gen.xml">
+	<!ENTITY intro SYSTEM "intro.xml">
+	<!ENTITY community SYSTEM "community.xml">
+	<!ENTITY install SYSTEM "install.xml">
+	<!ENTITY arch SYSTEM "arch.xml">
+	<!ENTITY license SYSTEM "license.xml">
+	<!ENTITY devs SYSTEM "devs.xml">
+	<!ENTITY com.support SYSTEM "com.support.xml">
+	<!ENTITY life SYSTEM "life.xml">
+	<!ENTITY life.conf SYSTEM "life.conf.xml">
+	]
+>
+<book lang="en">
+	<bookinfo>
+		<title>Virtual Qmail</title>
+		<authorgroup>
+			<author>
+				<firstname>Paweł</firstname>
+				<surname>Niewiadomski</surname>
+			</author>
+		</authorgroup>
+		<copyright>
+			<year>2003</year>
+			<year>2004</year>
+			<year>2005</year>
+			<holder><ulink url="http://foo-baz.com">foo-baz.com</ulink></holder>
+		</copyright>
+	</bookinfo>
+
+	<preface id="foreword">
+		<title>Foreword</title>
+
+		<para>
+			This is a guide to Virtual Qmail. I hope you'll enjoy
+			reading it. Please direct all questions, bug reports,
+			or suggestions for changes to Paweł Niewiadomski 
+			&lt;<literal>new [__at__] foo-baz [__dot__] com</literal>&gt;.
+		</para>
+	</preface>
+	
+	&intro;
+	&arch;
+	&life;
+	&devs;
+	&community;
+	&com.support;
+	&install;
+	&doc.gen;
+</book>
+

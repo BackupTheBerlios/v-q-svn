@@ -1,0 +1,229 @@
+<HTML
+><HEAD
+><TITLE
+>Compilation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Preparation"
+HREF="install.prep.html"><LINK
+REL="NEXT"
+TITLE="Installation"
+HREF="install.install.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-01-16T21:05:56"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.prep.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 7. Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.install.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.comp"
+>7.4. Compilation</A
+></H1
+><P
+>Now it's time to compile sources. If you configured
+		everything properly you should be able to successfully
+		compile it.</P
+><P
+>&#13;			To compile program use <SPAN
+CLASS="application"
+>make</SPAN
+>.
+			You can use both flavors: BSD or GNU. Depending on the shell
+			you use you can, for <SPAN
+CLASS="application"
+>sh</SPAN
+>, write:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;make 2&#62;&#38;1 &#62; out
+</B
+></TT
+>
+</PRE
+><P>
+			If you use tcsh you can use:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;make &#62;&#38; out
+</B
+></TT
+>
+</PRE
+><P>
+			When <SPAN
+CLASS="application"
+>make</SPAN
+> finishes check
+			<TT
+CLASS="filename"
+>out</TT
+> to see output generated during
+			compilation.
+		</P
+><P
+>&#13;			If you can't compile v-q please send <TT
+CLASS="filename"
+>out</TT
+>
+			to <A
+HREF="community.authors.html#pniewiadomski"
+>Pawe³ Niewiadomski</A
+>.
+		</P
+><P
+>&#13;			Running <SPAN
+CLASS="application"
+>make</SPAN
+> generates
+			only base system without any database based modules or WWW
+			interface. Makefile includes following useful targets:
+			<P
+></P
+></P><UL
+><LI
+><P
+>pgsql - PostgreSQL based modules</P
+></LI
+><LI
+><P
+>clean - removes all objects created during compilation</P
+></LI
+></UL
+><P>
+		</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.prep.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.install.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Preparation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Installation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,264 @@
+<HTML
+><HEAD
+><TITLE
+>Dependencies</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="NEXT"
+TITLE="Preparation"
+HREF="install.prep.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-01-16T21:05:56"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 7. Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.prep.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.deps"
+>7.2. Dependencies</A
+></H1
+><P
+>&#13;			This is a sophisticated software that depends on few other
+			projects.
+		</P
+><P
+>&#13;			Common dependencies are:
+
+			<P
+></P
+></P><UL
+><LI
+><P
+>C++ compiler</P
+></LI
+><LI
+><P
+>&#13;						CORBA implementation with IDL to C++ mapping, 
+						for example <A
+HREF="http://www.mico.org"
+TARGET="_top"
+>MICO</A
+>
+					</P
+></LI
+><LI
+><P
+>compatible mail transfer agent</P
+></LI
+><LI
+><P
+>Sablotron if you want to compile WWW interface. It must be at least version 1.0.</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.boost.org"
+TARGET="_top"
+>boost</A
+> library</P
+></LI
+><LI
+><P
+>DocBook and doxygen if you want to generate new version of documentation</P
+></LI
+><LI
+><P
+>Iconv if you want to generate WWW interface</P
+></LI
+><LI
+><P
+>compatible database client libraries</P
+></LI
+><LI
+><P
+>Cgicc library if you want to generate WWW interface</P
+></LI
+></UL
+><P>
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.mta"
+>7.2.1. Mail transfer agent</A
+></H2
+><P
+>&#13;				At this time only <SPAN
+CLASS="application"
+>qmail</SPAN
+> is supported.
+				So before you begin you must install it.
+			</P
+><P
+>&#13;				We suggest you installing <SPAN
+CLASS="application"
+>qmail</SPAN
+>
+				patched using <A
+HREF="http://q-p.foo-baz.com"
+TARGET="_top"
+>Qmail-patches</A
+>.
+				But v-q doesn't require that, you can use any version you want.
+			</P
+><P
+>&#13;				We hope that as time comes other MTAs will be supported.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.pgsql"
+>7.2.2. PostgreSQL version</A
+></H2
+><P
+>&#13;				First you need to download <SPAN
+CLASS="application"
+>PostgreSQL</SPAN
+>.
+				Using newest stable version is suggested. You also
+				need libpqxx and PERL module called Pg (if you want to
+				use automatic installation script). All progams
+				you can download from <A
+HREF="http://www.postgresql.org"
+TARGET="_top"
+>&#13;				http://www.postgresql.org</A
+>.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.prep.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Installation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Preparation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
