@@ -58,6 +58,9 @@
 			<itemizedlist>
 				<listitem><para>quota support</para></listitem>
 				<listitem><para>i18n support</para></listitem>
+				<listitem><para>manager of extended addresses known from Qmail</para></listitem>
+				<listitem><para>WWW interface for administrators</para></listitem>
+				<listitem><para>Postfix and Sendmail support.</para></listitem>
 			</itemizedlist>
 		</para>
 	</section>

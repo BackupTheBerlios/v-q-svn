@@ -351,6 +351,15 @@ createdb -E utf-8 -O mail mail
 						it suits you needs (for example schema name).
 					</para>
 				</note>
+
+				<caution>
+					<para>
+						Remeber to set password for database user
+						and configure PostgreSQL to authorize users.
+						If you don't do it everyone will be able to
+						modify entries in a database.
+					</para>
+				</caution>
 			</para>
 		</section>
 
@@ -362,7 +371,11 @@ createdb -E utf-8 -O mail mail
 				<ulink url="http://v-q.foo-baz.com">home page</ulink>,
 				check also 
 				<ulink url="http://sf.net/projects/v-q">v-q's page on SourceForge</ulink>.
-				There you will find mailing list, forums, etc.
+				There you will find a mailing list, forums, etc.
+			</para>
+
+			<para>
+				Read also <xref linkend="community"/>
 			</para>
 		</section>
 	</section>

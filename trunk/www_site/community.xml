@@ -1,10 +1,156 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
-<chapter>
+<chapter id="community">
 	<title>Community</title>
 
-	<section>
-		<title>Contributors</title>
+	<para>
+		Here you can find out where to look for help, share ideas.
+	</para>
 
-		<para id="pniewiadomski">PN</para>
+	<section id="community.list">
+		<title>Mailing list</title>
+
+		<para>
+			At this time there's only one list available. It's hosted
+			on <ulink url="http://sf.net">SourceForge</ulink>.
+		</para>
+		
+		<para>
+			To subscribe to it check following address 
+			<ulink url="http://sourceforge.net/mail/?group_id=87916">http://sourceforge.net/mail/?group_id=87916</ulink>.
+		</para>
+
+		<para>
+			You can also read archive at <ulink url="http://sourceforge.net/">http://sourceforge.net/</ulink>.
+		</para>
+	</section>
+
+	<section id="community.forums">
+		<title>Forums</title>
+
+		<para>
+			If you don't want to use <link linkend="community.list">mailing list</link>
+			you can always use forums available at project's SourceForge
+			<ulink url="http://sourceforge.net/">site</ulink>.
+		</para>
+
+		<para>
+			There you can discuss about this software, projects
+			around it. Users' experiences, etc.
+		</para>
+	</section>
+
+	<section id="community.requests">
+		<title>Requests</title>
+
+		<para>
+			<ulink url="http://sf.net">SourceForge</ulink> offers
+			set of pages that allows you easily issue 
+			<ulink url="http://sourceforge.net/">feature request</ulink>,
+			<ulink url="http://sourceforge.net/">support request</ulink> where
+			you're in trouble. You can also issue 
+			<link linkend="community.bugs">a bug report</link>.
+		</para>
+
+		<para>
+			You can also contact 
+			<link linkend="pniewiadomski">Paweł Niewiadomski</link> directly.
+		</para>
+	</section>
+
+	<section id="community.success">
+		<title>Success stories</title>
+
+		<para>
+			It would be great if you could share with us your story.
+			This will help grow community around v-q. We all
+			now that a good community around project is a great thing :-)
+		</para>
+	</section>
+
+	<section id="community.bugs">
+		<title>Reporting bugs</title>
+
+		<para>
+			As all software in the world this one has also bugs.
+			I try my best to lowerage number of them. But as with
+			all bugs it's hard to kill them all. So if you find any 
+			please notify me.
+		</para>
+
+		<para>
+			If you find a bug please try to reproduce it. Reproducing
+			a bug means a lot about it and helps developers to remove
+			it ASAP. But if you're not able to reproduce it also
+			please give us a message about it.
+		</para>
+
+		<para>
+			Project maintains public bug list which is available on
+			SourceForge under following URL 
+			<ulink url="http://sourceforge.net/">http://sourceforge.net</ulink>.
+			Anyone is allowed to insert entries into it. So if you find a bug
+			go straigth to this page and write all informations that
+			you think could help.
+		</para>
+
+		<para>
+			Informations you should include in a bug report:
+			v-q's version, architecture, operating system, 
+			error description, messages printed by program, 
+			configuration (except of passwords of course :-), 
+			action description. And of course if you can reproduce it
+			please write all actions to do it.
+		</para>
+
+		<para>
+			If you can please write a test case for a bug and send
+			us a patch. It will mean a lot for us.
+		</para>
+	</section>
+
+	<section id="community.blog">
+		<title>Virtual Qmail has it's blog</title>
+
+		<para>
+			Well, not exactly - <link linkend="pniewiadomski">its maintainer</link> has a 
+			<ulink url="http://new.foo-baz.com">blog</ulink> which has
+			a <ulink url="http://new.foo-baz.com/">separate section</ulink>
+			only for Virtual Qmail. If you want to know what going
+			on in the project you should look there.
+		</para>
+	</section>
+
+	<section>
+		<title>Authors</title>
+
+		<para>
+			At this time this software is developed by a single man
+			company called <ulink url="http://foo-baz.com">foo-baz.com</ulink>
+			which is owned by <link linkend="pniewiadomski">Paweł Niewiadomski</link>.
+		</para>
+
+		<section id="pniewiadomski">
+			<title>Paweł Niewiadomski</title>
+
+			<para>
+				Don't know what to put here. I have an 
+				<ulink url="http://new.foo-baz.com/me">online CV</ulink>
+				where you can read about my work experience. 
+				I also run <ulink url="http://new.foo-baz.com">a blog</ulink>
+				where you can read some articles about Virtual Qmail,
+				Unix and other stuff that I wanted to write about.
+			</para>
+
+			<para>
+				In short I'm an Unix guy which loves creating good
+				applications. I work as a developer and maganer of a
+				programming division. I live in a small city called
+				Koszalin in Poland. I try to run small company
+				called <ulink url="http://foo-baz.com">foo-baz.com</ulink>.
+				At this time my only product is my knowledge about
+				v-q, Linux, OpenBSD and databases. May be some
+				day it will make foo-baz.com a profitable company :-)
+			</para>
+		</section>
 	</section>
 </chapter>
