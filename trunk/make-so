@@ -1,4 +1,4 @@
 #!/bin/sh
 # WARNING: This file was auto-generated. Do not edit!
 main="$1"; shift
-exec g++ -L. -shared -o "$main" ${1+"$@"}
+exec eg++ -L. -shared -o "$main" ${1+"$@"}

@@ -58,8 +58,7 @@ module vq {
 		 * \ingroup err
 		 */
 		/*@{*/
-			/// errors
-			enum error {
+			enum err_code {
 					/// no error
 					err_no, 
 					/// temporary error
@@ -106,6 +105,14 @@ module vq {
 					err_unlink,
 					/// domain doesn't exist
 					err_dom_nf
+			};
+
+			/// errors
+			struct error {
+					err_code ec;
+					string what;
+					string file;
+					unsigned long line;
 			};
 		/*@}*/
 				
@@ -171,73 +178,48 @@ module vq {
 
 		/**
 		 * \defgroup dom Playing with domains
-		 * @{
 		 */
+		 //@{
 			/// Add domain
 			error dom_add(in string dom) 
 					raises (null_error, except); 
-
-			/**
-			 * Add domain's alias address (for example ip address).
-			 * Ip addresses should be in form [a.b.c.d], or a.b.c.d (
-			 * it's better to add 2 forms).
-			 */
-			error dom_ip_add(in string dom, in string ip)
-					raises (null_error, except);
-			/// Removes IP address
-			error dom_ip_rm(in string dom, in string ip)
-					raises (null_error, except);
-			/// Removes all IP addresses
-			error dom_ip_rm_all(in string dom)
-					raises (null_error, except);
-			/// Lists addresses asociated with domain
-			error dom_ip_ls(in string dom, out string_list ips)
-					raises (null_error, except);
-			/// Lists domains which have IP addresses asociated
-			error dom_ip_ls_dom(out string_list doms)
-					raises (null_error, except);
 			/// Removes domain
 			error dom_rm(in string dom)
-					raises (null_error, except);
-			/// Adds alias for domain
-			error dom_alias_add(in string dom, in string ali)
-					raises (null_error, except);
-			/// Removes alias
-			error dom_alias_rm(in string ali)
 					raises (null_error, except);
 			/// Validates domain name
 			error dom_val(in string dom)
 					raises (null_error, except);
-	/*@}*/
-
-	/**
-	 * \ingroup err
-	 */
-	/*@{*/
-			/// return additional information about error (i.e. file name)
-			string err_info()
+			/// Gets ID of domain
+			error dom_id(in string dom, out string dom_id)
 					raises (null_error, except);
-			long err_sys(); //!< return stored errno
+		//@}
 
-			/// return message associated with given error code
-			string err_str( in error err );
+		/**
+		 * \defgroup dra Domains REGEX aliases
+		 */
+		//@{
+			error dra_add(in string dom_id, in string rea)
+					raises (null_error, except);
+			/// Removes IP address
+			error dra_rm(in string dom_id, in string rea)
+					raises (null_error, except);
+			/// Removes all IP addresses
+			error dra_rm_by_dom(in string dom_id)
+					raises (null_error, except);
+		//@}
 
-			/// return description of error from lastret
-			string err_report();
-	/*@}*/
-			
-	/**
-	 * \defgroup user User handling
-	 * @{
-	 */
+		/**
+		 * \defgroup user User handling
+		 * @{
+		 */
 			/// Adds user
-			error user_add(in auth_info ai, in error eex )
+			error user_add(inout auth_info ai, in boolean is_banned )
 					raises (null_error, except);
 			/// Removes user
-			error user_rm(in string dom, in string user)
+			error user_rm(in string dom_id, in string user_id)
 					raises (null_error, except);
 			/// Changes password
-			error user_pass(in string dom, in string user, in string pass)
+			error user_pass(in string dom_id, in string user_id, in string pass)
 					raises (null_error, except);
 			/// Checks if user name is valid (not if user exists)
 			error user_val(in string user)
@@ -245,10 +227,23 @@ module vq {
 			/// Gets authorization info. for user
 			error user_auth(inout auth_info ai)
 					raises (null_error, except);
-			/// Checks if user exists
-			error user_ex(in string dom, in string user)
+			/// Gets ID of given user
+			error user_id(in string dom_id, in string login, 
+					out string uid )
 					raises (null_error, except);
-	//@}
+		//@}
+
+		/**
+		 * \defgroup eb Emails banned
+		 */
+		//@{
+			error eb_add(in string re_domain, in string re_login )
+					raises (null_error, except);
+			error eb_rm(in string re_domain, in string re_login )
+					raises (null_error, except);
+			error eb_ls( out email_banned_list ebs )
+					raises (null_error, except);
+		//@}
 
 	/**
 	 * \defgroup qt Quota support
@@ -259,11 +254,11 @@ module vq {
 		 * \ingroup qt
 		 */
 		//@{
+#if 0
 			/// Parses string into quota_types
 			error qt_parse( in string qts, 
 				out quota_type bytes_max, out quota_type files_max )
 					raises (null_error, except);
-#if 0			
 			/// Adds value to current usage
 			error qt_cur_set(const string&, 
 					in string, int32_t)
@@ -272,7 +267,6 @@ module vq {
 			error qt_over(in string, 
 					in string)
 					raises (null_error, except);
-#endif // if 0
 			/// Sets limits
 			error qt_set(in string dom, in string user, 
 					out quota_type bytes_max, out quota_type files_max )
@@ -351,6 +345,7 @@ module vq {
 					in udot_type ut, out size_type cnt )
 					raises (null_error, except);
 		//@}
+#endif // if 0
 	}; // interface ivq
 
 }; // module vq

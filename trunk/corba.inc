@@ -1,1 +1,1 @@
--I/usr/local/include
+-I/usr/local/progs/mico/include

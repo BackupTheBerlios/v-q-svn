@@ -1,2 +1,3 @@
 #!/bin/sh
-exec idl --no-boa --hh-suffix=hpp $@
+export PATH="/usr/local/progs/mico/bin:$PATH"
+exec /usr/local/progs/mico/bin/idl --no-boa --hh-suffix=hpp $@

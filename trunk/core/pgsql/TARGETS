@@ -1,2 +1,4 @@
 auto/
 .depend
+cpgsqlauth.o pgsqlauthd.o
+pgsqlauthd

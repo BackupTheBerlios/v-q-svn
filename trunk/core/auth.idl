@@ -58,7 +58,7 @@ module vq {
 			error dom_rm(in string dom_id)
 					raises (null_error, db_error, except);
 			/// Translates domain name to id.
-			error dom_id(in string dom, out string dom_id)
+			error dom_id(in string dom, out string did)
 					raises (null_error, db_error, except);
 		//@}
 		/**
@@ -103,7 +103,7 @@ module vq {
 					raises (null_error, db_error, except);
 			/// Translates user name to id
 			error user_id(in string dom_id, in string login, 
-					out string user_id )
+					out string uid )
 					raises (null_error, db_error, except);
 		//@}
 		/**

@@ -2,7 +2,7 @@ BASE=..
 
 .PHONY: auto-mkdir
 
-all: auto-mkdir .depend libtext.so
+all: auto-mkdir auto/lmd5.h .depend libtext.so
 
 include $(BASE)/Makefile.common
 

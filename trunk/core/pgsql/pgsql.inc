@@ -1,1 +1,1 @@
--I/usr/local/progs/pqxx-gcc2/include -I/usr/local/include/postgresql
+-I/usr/local/progs/pqxx/include -I/usr/local/include/postgresql

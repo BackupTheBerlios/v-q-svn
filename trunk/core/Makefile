@@ -1,9 +1,9 @@
 BASE=..
-OBJS=auth.o vq.o
+OBJS=vq.o auth.o
 INCS=`cat $(BASE)/corba.inc`
 LIBS=`cat $(BASE)/corba.lib`
 
-all: .depend libvq.a
+all: vq.cc auth.cc .depend libvq.a
 
 include $(BASE)/Makefile.common
 
@@ -12,7 +12,7 @@ include $(BASE)/Makefile.common
 libvq.a: $(BASE)/make-lib auth.o vq.o
 	$(BASE)/make-lib libvq.a auth.o vq.o
 
-auth.cc auth.hpp: $(BASE)/idl auth.idl vq.idl
+auth.cc auth.hpp: $(BASE)/idl auth.idl vq.idl vq.hpp
 	$(BASE)/idl auth.idl
 
 vq.cc vq.hpp: $(BASE)/idl vq.idl
