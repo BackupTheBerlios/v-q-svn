@@ -21,4 +21,4 @@ trap "kill $nsd_pid $server_pid" 0
 sleep 1
 
 echo "running client ..."
-./pgsqlauthd -ORBInitRef NameService=corbaloc::$host:12456/NameService 
+./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService 

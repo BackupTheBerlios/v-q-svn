@@ -1,2 +1,2 @@
-pgsqlauthd pgsqlauthd.o
+iauth.o iauth
 .depend

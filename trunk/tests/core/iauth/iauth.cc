@@ -554,7 +554,7 @@ struct auth_test {
 					string_array::const_iterator ubeg, uend, pbeg, pend;
 					::vq::ivq::user_conf_info ui;
 					::vq::ivq::auth_info ai;
-					ui.type = ::vq::ivq::ut_redir;
+					ui.type = ::vq::ivq::uc_redir;
 					typedef std::vector<CORBA::String_var> id_array;
 					id_array ids;
 					ids.reserve(users.size()*pfixs.size());

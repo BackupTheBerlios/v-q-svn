@@ -1,16 +1,16 @@
 BASE=../../..
-OBJS=pgsqlauthd.o
+OBJS=iauth.o
 INCS=`cat $(BASE)/boost.inc` `cat $(BASE)/corba.inc` -I$(BASE)/libsys \
 -I$(BASE)/libtext
 LIBS=`cat $(BASE)/boost.lib` `cat $(BASE)/corba.lib` -L$(BASE)/core -lvq \
 -L$(BASE)/libtext -ltext
 
-all: .depend pgsqlauthd
+all: .depend iauth 
 
 include $(BASE)/Makefile.common
 
-pgsqlauthd: $(BASE)/load $(BASE)/boost.lib $(BASE)/corba.lib pgsqlauthd.o
-	$(BASE)/load pgsqlauthd $(LIBS)
+iauth: $(BASE)/load $(BASE)/boost.lib $(BASE)/corba.lib iauth.o
+	$(BASE)/load iauth $(LIBS)
 
 ##################
 
