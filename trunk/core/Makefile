@@ -2,14 +2,32 @@ BASE=..
 OBJS=vq.o auth.o
 INCS=`cat $(BASE)/corba.inc`
 LIBS=`cat $(BASE)/corba.lib`
+SUBDIR=pgsql qmailvqd
 
-all: vq.cc auth.cc .depend libvq.a
+all:: libvq.a
+	@for entry in $(SUBDIR); do \
+		( \
+			echo "===> $$entry" ; \
+			cd $$entry ; \
+			$(MAKE) $@; \
+		); \
+	done
 
 include $(BASE)/Makefile.common
 
+clean:
+	rm -rf `TARGETS`
+	@for entry in $(SUBDIR); do \
+		( \
+			echo "===> $$entry" ; \
+			cd $$entry ; \
+			$(MAKE) $@; \
+		); \
+	done
+
 ##################
 
-libvq.a: $(BASE)/make-lib auth.o vq.o
+libvq.a: $(BASE)/make-lib auth.o vq.o .depend
 	$(BASE)/make-lib libvq.a auth.o vq.o
 
 auth.cc auth.hpp: $(BASE)/idl auth.idl vq.idl vq.hpp
@@ -22,8 +40,4 @@ $(OBJS): $(BASE)/comp-so $(BASE)/corba.inc
 
 .cc.o:
 	$(BASE)/comp-so $(INCS) $<
-
-#################
-clean:
-		rm -rf `cat TARGETS`
 

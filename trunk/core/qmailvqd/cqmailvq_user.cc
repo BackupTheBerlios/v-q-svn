@@ -126,7 +126,8 @@ namespace POA_vq {
 	
 		if(!sys::mkdirhier(user_add_dir.c_str(), this->dmode, 
 					this->uid, this->gid)) 
-				return lr(::vq::ivq::err_mkdir, user_add_dir);
+				return lr( EEXIST == errno 
+					? ::vq::ivq::err_exists : ::vq::ivq::err_mkdir, user_add_dir);
 	
 		auto_ptr<error> ret;
 		ret.reset(maildir_make(

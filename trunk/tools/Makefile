@@ -1,3 +1,7 @@
+BASE=..
+
+include $(BASE)/Makefile.common
+
 all: mkdep
 
 mkdep::

@@ -8,9 +8,14 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
 `cat $(BASE)/corba.lib` `cat pgsql.lib`
 
-all: .depend pgsqlauthd
+all::
 
 include $(BASE)/Makefile.common
+
+pgsql:: .depend pgsqlauthd
+
+clean:
+		rm -rf `cat TARGETS`
 
 pgsqlauthd: $(BASE)/load $(BASE)/corba.lib cpgsqlauth.o pgsqlauthd.o
 	$(BASE)/load pgsqlauthd cpgsqlauth.o $(LIBS)
@@ -21,8 +26,3 @@ $(OBJS): $(BASE)/compile $(BASE)/corba.inc pgsql.inc
 
 .cc.o:
 	$(BASE)/compile $(INCS) $<
-
-#################
-clean:
-		rm -rf `cat TARGETS`
-

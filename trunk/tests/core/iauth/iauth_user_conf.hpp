@@ -179,8 +179,11 @@ struct user_conf_test {
 							ai.login = fc->c_str();
 							
 							err = auth->user_add(ai, FALSE);
-							BOOST_CHECK( err->ec == ::vq::ivq::err_no 
-								|| err->ec == ::vq::ivq::err_exists );
+							if( err->ec != ::vq::ivq::err_no 
+								&& err->ec != ::vq::ivq::err_exists ) {
+									BOOST_ERROR(error2str(err));	
+							}
+
 							++fc;
 							if( fc == fe ) continue;
 							

@@ -1,9 +1,18 @@
-SUBDIR=tools libconf/ libmain/ libsys/ libtext/ core/
+SUBDIR=tools libconf libmain libvqmain libsys libtext core
 
-.PHONY: all clean
+.PHONY: all clean pgsql
 
-all:
+all::
 	@for entry in $(SUBDIR); do \
+		( \
+			echo "===> $$entry" ; \
+			cd $$entry ; \
+			$(MAKE) $@; \
+		); \
+	done
+
+pgsql::
+	@for entry in core/pgsql; do \
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \
