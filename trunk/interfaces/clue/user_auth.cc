@@ -30,16 +30,16 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-#include "cvq.h"
-#include "getline.h"
-#include "vq_conf.h"
-#include "lower.h"
-#include "hmac_md5.h"
+#include "cvq.hpp"
+#include "getline.hpp"
+#include "vq_conf.hpp"
+#include "lower.hpp"
+#include "hmac_md5.hpp"
 #include "auto/lmd5.h"
-#include "clogger.h"
-#include "sig.h"
-#include "sys.h"
-#include "main.h"
+#include "clogger.hpp"
+#include "sys.hpp"
+#include "main.hpp"
+#include "text.hpp"
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -52,55 +52,57 @@ SUCH DAMAGE.
 
 using namespace std;
 using namespace vq;
+using namespace text;
+using namespace sys;
 
 char *me = NULL, **av;
 int ac;
 const char *remip = NULL, *locip = NULL, *defdom = NULL;
 bool quiet = false;
-cvq *sys = NULL;
+cvq *vqo = NULL;
 string resp, pass;
 enum { smtp, pop3 } contype;
-cvq::auth_info sysai;
+cvq::auth_info vqai;
 clogger *olog = NULL;
 
 /*
  *
  */
 char read_auth_info() {
-	if( ! getline(3,sysai.user,'\0')
+	if( ! getline(3,vqai.user,'\0')
 		|| ! getline(3,pass,'\0')
 		|| ! getline(3,resp,'\0')) {
 			olog->write( clogger::re_read, strerror(errno));
 			return(1);
 	}
-	sysai.user = lower(sysai.user);
+	vqai.user = lower(vqai.user);
 	if( ac_atchars.val_str().empty() ) {
 			olog->write( clogger::re_int, "ac_atchars empty");
 			return(1);
 	}
-	string::size_type atpos = sysai.user.find_last_of(ac_atchars.val_str());
-	if( atpos != sysai.user.npos ) {
-			sysai.dom = sysai.user.substr(atpos+1);
-			sysai.user = sysai.user.substr(0,atpos);
+	string::size_type atpos = vqai.user.find_last_of(ac_atchars.val_str());
+	if( atpos != vqai.user.npos ) {
+			vqai.dom = vqai.user.substr(atpos+1);
+			vqai.user = vqai.user.substr(0,atpos);
 	}
 
-	if( sysai.dom.empty() ) sysai.dom = defdom ? defdom : locip;
+	if( vqai.dom.empty() ) vqai.dom = defdom ? defdom : locip;
 	
-	if( sysai.dom.empty() || !sys->dom_val(sysai.dom) ) {
+	if( vqai.dom.empty() || !vqo->dom_val(vqai.dom) ) {
 			olog->write(clogger::re_data, 
-				(string)"invalid domain name: "+sysai.dom);
+				(string)"invalid domain name: "+vqai.dom);
 			return 1;
 	}
 	
-	olog->domain_set(sysai.dom);
+	olog->domain_set(vqai.dom);
 
-	if( sysai.user.empty() || !sys->user_val(sysai.user) ) {
+	if( vqai.user.empty() || !vqo->user_val(vqai.user) ) {
 			olog->write(clogger::re_data, 
-				(string)"invalid user name: "+sysai.user );
+				(string)"invalid user name: "+vqai.user );
 			return(1);
 	}
 	
-	olog->login_set(sysai.user);
+	olog->login_set(vqai.user);
 	
 	if( pass.empty() ) {
 			olog->write(clogger::re_data, "empty password");
@@ -193,7 +195,7 @@ char auth_apop() {
 	string hexdigest;
 	MD5Init(&ctx);
 	MD5Update(&ctx,(const unsigned char*)resp.data(),resp.length());
-	MD5Update(&ctx,(const unsigned char*)sysai.pass.data(),sysai.pass.length());
+	MD5Update(&ctx,(const unsigned char*)vqai.pass.data(),vqai.pass.length());
 	MD5Final(digest,&ctx);
 	hexdigest = to_hex(digest,16);
 	return pass==hexdigest ? 0 : 1;
@@ -204,8 +206,8 @@ char auth_apop() {
 char auth_cram() {
 	unsigned char digest[16];
 	string hexdigest;
-	hmac_md5((const unsigned char*)sysai.pass.data(),
-					sysai.pass.length(),(const unsigned char*)resp.data(),
+	hmac_md5((const unsigned char*)vqai.pass.data(),
+					vqai.pass.length(),(const unsigned char*)resp.data(),
 					resp.length(),digest);
 	hexdigest = to_hex(digest,16);
 	return pass==hexdigest ? 0 : 1;
@@ -223,10 +225,10 @@ char login_smtp() {
  *
  */
 char login_pop() {
-	if( setenv("HOME", sysai.dir.c_str(), 1) ) {
+	if( setenv("HOME", vqai.dir.c_str(), 1) ) {
 			return(1);
 	}
-	if( chdir(sysai.dir.c_str()) ) {
+	if( chdir(vqai.dir.c_str()) ) {
 			return(1);
 	}
 	if( setgid(ac_vq_gid.val_int()) || setegid(getgid()) 
@@ -236,7 +238,7 @@ char login_pop() {
 	olog->write(clogger::re_ok, "" );
 
 	delete olog; olog = NULL;
-	delete sys; sys = NULL;
+	delete vqo; vqo = NULL;
 	execvp(*av,av);
 	return(1);
 } 
@@ -246,21 +248,21 @@ char login_pop() {
  */
 char proc_auth_info() {
 	if(contype==smtp) {
-			if( sysai.flags & cvq::smtp_blk ) {
+			if( vqai.flags & cvq::smtp_blk ) {
 					olog->write(clogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_cram())
-				|| pass==sysai.pass ) {
+				|| pass==vqai.pass ) {
 					return login_smtp();
 			}
 	} else {
-			if( sysai.flags & cvq::pop3_blk ) {
+			if( vqai.flags & cvq::pop3_blk ) {
 					olog->write(clogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_apop())
-				|| pass==sysai.pass ) {
+				|| pass==vqai.pass ) {
 					return login_pop();
 			}
 	}
@@ -280,7 +282,7 @@ int cppmain(int ac, char **av)
 	sig_pipe_ign();
 
 	try {
-			sys = cvq::alloc();
+			vqo = cvq::alloc();
 			olog = clogger::alloc();
 			
 			if(read_env()) return 3;
@@ -290,13 +292,13 @@ int cppmain(int ac, char **av)
 			if(read_auth_info()) return 2;
 
 			char ret;
-			switch( (ret=sys->user_auth(sysai)) ) {
+			switch( (ret=vqo->user_auth(vqai)) ) {
 			case 0: break;
 			case cvq::err_user_nf:
 					olog->write( clogger::re_data, "no such user" );
 					return(1);
 			default:
-					olog->write( clogger::re_int, sys->err_report());
+					olog->write( clogger::re_int, vqo->err_report());
 					return 1;
 			}
 

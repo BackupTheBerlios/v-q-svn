@@ -1,7 +1,7 @@
-#ifndef __VQ_CONF_H
-#define __VQ_CONF_H
+#ifndef __VQ_CONF_HPP
+#define __VQ_CONF_HPP
 
-#include "cconf.h"
+#include "cconf.hpp"
 
 namespace vq {
 		

@@ -30,8 +30,8 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-#include "cvq.h"
-#include "main.h"
+#include "cvq.hpp"
+#include "main.hpp"
 
 #include <unistd.h>
 

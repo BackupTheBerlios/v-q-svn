@@ -226,7 +226,7 @@ auto/vq_user.o: comp-so auto/vq_user.cc cconf.h
 ben: load ben.o main.o libsys.so libvq.so libsplit.so pthread.lib
 	./load ben main.o -lsys -lvq -lsplit `cat pthread.lib`
 
-ben.o: compile ben.cc sys.h sig.h cdaemonauth.h cauth.h cvq.h main.h
+ben.o: compile ben.cc sys.h sig.h cdaemonauth.h cauth.h cvq.h main.hpp
 	./compile ben.cc
 
 liblog.so: liblog.so.5.0
@@ -308,13 +308,13 @@ qmail_virtualdomains_add: load main.o qmail_virtualdomains_add.o vq_conf.a lock.
 qmail_virtualdomains_rm: load main.o qmail_virtualdomains_rm.o vq_conf.a lock.o uniq.o
 	./load qmail_virtualdomains_rm main.o vq_conf.a lock.o uniq.o
 
-ac_int.o: compile ac_int.cc conf_home.h main.h
+ac_int.o: compile ac_int.cc conf_home.h main.hpp
 	./compile ac_int.cc -DHOME_NS=vq
 
-ac_str.o: compile ac_str.cc conf_home.h main.h
+ac_str.o: compile ac_str.cc conf_home.h main.hpp
 	./compile ac_str.cc -DHOME_NS=vq
 
-autoresp.o: compile autoresp.cc lower.h sys.h sig.h cautoresp.h main.h
+autoresp.o: compile autoresp.cc lower.h sys.h sig.h cautoresp.h main.hpp
 	./compile autoresp.cc
 
 cauth.o: comp-so cauth.cc cauth.h cvq.h
@@ -350,7 +350,7 @@ cfsvq.h cvq.h cauth.h lower.h lock.h dirs.h split.h \
 util.h auto/d_namlen.h sys.h sig.h
 	./comp-so cfsvq_user.cc
 
-choose.o: compile choose.cc main.h
+choose.o: compile choose.cc main.hpp
 	./compile choose.cc
 
 clogger.o: comp-so clogger.cc clogger.h lower.h
@@ -375,34 +375,34 @@ cvq.o: comp-so cvq.cc cvq.h
 daemon: main.o daemon.o cforkmaster.o libsys.so libfs.so auto/dl.lib
 	./load daemon main.o cforkmaster.o -lsys -lfs `cat auto/dl.lib`
 
-daemon.o: daemon.cc cdaemonchild.h cdaemonmaster.h main.h
+daemon.o: daemon.cc cdaemonchild.h cdaemonmaster.h main.hpp
 	./compile daemon.cc
 
-deliver.o: compile deliver.cc split.h vq_conf.h cconf.h main.h
+deliver.o: compile deliver.cc split.h vq_conf.h cconf.h main.hpp
 	./compile deliver.cc
 
-dirs.o: comp-so dirs.cc dirs.h main.h
+dirs.o: comp-so dirs.cc dirs.h main.hpp
 	./comp-so dirs.cc
 
-dom_add.o: compile dom_add.cc cvq.h main.h
+dom_add.o: compile dom_add.cc cvq.h main.hpp
 	./compile dom_add.cc
 
-dom_alias_add.o: compile dom_alias_add.cc cvq.h main.h
+dom_alias_add.o: compile dom_alias_add.cc cvq.h main.hpp
 	./compile dom_alias_add.cc
 
-dom_alias_rm.o: compile dom_alias_rm.cc cvq.h main.h
+dom_alias_rm.o: compile dom_alias_rm.cc cvq.h main.hpp
 	./compile dom_alias_rm.cc
 
-dom_ip_add.o: compile dom_ip_add.cc cvq.h main.h
+dom_ip_add.o: compile dom_ip_add.cc cvq.h main.hpp
 	./compile dom_ip_add.cc
 
-dom_ip_ls.o: compile dom_ip_ls.cc cvq.h main.h
+dom_ip_ls.o: compile dom_ip_ls.cc cvq.h main.hpp
 	./compile dom_ip_ls.cc
 
-dom_ip_rm.o: compile dom_ip_rm.cc cvq.h main.h
+dom_ip_rm.o: compile dom_ip_rm.cc cvq.h main.hpp
 	./compile dom_ip_rm.cc
 
-dom_rm.o: compile dom_rm.cc cvq.h main.h
+dom_rm.o: compile dom_rm.cc cvq.h main.hpp
 	./compile dom_rm.cc
 
 fd.o: comp-so fd.cc fd.h
@@ -411,13 +411,13 @@ fd.o: comp-so fd.cc fd.h
 fdstr.o: comp-so fdstr.cc fdstr.h fd.h
 	./comp-so fdstr.cc
 
-getgid.o: compile getgid.cc main.h
+getgid.o: compile getgid.cc main.hpp
 	./compile getgid.cc
 
 getline.o: comp-so getline.cc getline.h 
 	./comp-so getline.cc
 
-getuid.o: compile getuid.cc main.h
+getuid.o: compile getuid.cc main.hpp
 	./compile getuid.cc
 
 hex.o: comp-so hex.cc sys.h sig.h
@@ -429,7 +429,7 @@ hier.o: compile hier.cc conf_home.h vq_conf.h cconf.h install.h
 hmac_md5.o: comp-so hmac_md5.c auto/lmd5.h
 	./comp-so hmac_md5.c
 
-install.o: compile install.cc install.h main.h
+install.o: compile install.cc install.h main.hpp
 	./compile install.cc
 
 lock.o: comp-so lock.cc lock.h auto/hasflock.h
@@ -441,7 +441,7 @@ lower.o: comp-so lower.cc lower.h
 maildir_inject.o: maildir_inject.cc compile
 	./compile maildir_inject.cc
 
-main.o: compile main.h main.cc
+main.o: compile main.hpp main.cc
 	./compile main.cc
 
 pgsqlauthd.o: comp-so pgsqlauthd.cc conf_home.h vq_conf.h cconf.h \
@@ -458,15 +458,15 @@ cdaemonauth.h pgsql.inc cdaemonchild.h cdaemonmaster.h
 	./compile pgsqllogd.cc `cat pgsql.inc`
 
 qmail_assign_add.o: compile qmail_assign_add.cc pfstream.h vq_conf.h cconf.h \
-lock.h uniq.h main.h
+lock.h uniq.h main.hpp
 	./compile qmail_assign_add.cc
 
 qmail_assign_ex.o: compile qmail_assign_ex.cc pfstream.h vq_conf.h cconf.h \
-main.h
+main.hpp
 	./compile qmail_assign_ex.cc
 
 qmail_assign_rm.o: compile qmail_assign_rm.cc pfstream.h vq_conf.h cconf.h \
-lock.h uniq.h qmail_common.h main.h
+lock.h uniq.h qmail_common.h main.hpp
 	./compile qmail_assign_rm.cc
 
 qmail_common.o: compile qmail_common.cc pfstream.h vq_conf.h cconf.h \
@@ -474,22 +474,22 @@ lock.h uniq.h qmail_files.h qmail_common.h
 	./compile qmail_common.cc
 
 qmail_file_add.o: compile qmail_file_add.cc pfstream.h vq_conf.h cconf.h \
-lock.h uniq.h qmail_files.h main.h
+lock.h uniq.h qmail_files.h main.hpp
 	./compile qmail_file_add.cc
 
 qmail_file_rm.o: compile qmail_file_rm.cc pfstream.h vq_conf.h cconf.h \
-lock.h uniq.h qmail_files.h qmail_common.h main.h
+lock.h uniq.h qmail_files.h qmail_common.h main.hpp
 	./compile qmail_file_rm.cc
 
 qmail_files.o: comp-so qmail_files.cc qmail_files.h 
 	./comp-so qmail_files.cc
 
 qmail_mrh_add.o: compile qmail_mrh_add.cc pfstream.h vq_conf.h cconf.h lock.h \
-uniq.h main.h
+uniq.h main.hpp
 	./compile qmail_mrh_add.cc
 
 qmail_mrh_rm.o: compile qmail_mrh_rm.cc pfstream.h vq_conf.h cconf.h \
-lock.h uniq.h qmail_common.h main.h
+lock.h uniq.h qmail_common.h main.hpp
 	./compile qmail_mrh_rm.cc
 
 qmail_progs.o: compile qmail_progs.cc qmail_progs.h conf_home.h vq_conf.h \
@@ -497,70 +497,70 @@ cconf.h
 	./compile qmail_progs.cc
 
 qmail_rcpthosts_add.o: compile qmail_rcpthosts_add.cc pfstream.h vq_conf.h cconf.h \
-lock.h uniq.h main.h
+lock.h uniq.h main.hpp
 	./compile qmail_rcpthosts_add.cc
 
-qmail_run.o: compile qmail_run.cc qmail_progs.h main.h
+qmail_run.o: compile qmail_run.cc qmail_progs.h main.hpp
 	./compile qmail_run.cc
 
 qmail_virtualdomains_add.o: compile qmail_virtualdomains_add.cc pfstream.h \
-vq_conf.h cconf.h lock.h uniq.h main.h
+vq_conf.h cconf.h lock.h uniq.h main.hpp
 	./compile qmail_virtualdomains_add.cc
 
 qmail_virtualdomains_rm.o: compile qmail_virtualdomains_rm.cc pfstream.h \
-vq_conf.h cconf.h lock.h uniq.h main.h
+vq_conf.h cconf.h lock.h uniq.h main.hpp
 	./compile qmail_virtualdomains_rm.cc
 
-qt_cur_set.o: compile qt_cur_set.cc cvq.h main.h
+qt_cur_set.o: compile qt_cur_set.cc cvq.h main.hpp
 	./compile qt_cur_set.cc
 
-qt_def_get.o: compile qt_def_get.cc cvq.h main.h
+qt_def_get.o: compile qt_def_get.cc cvq.h main.hpp
 	./compile qt_def_get.cc
 
-qt_def_set.o: compile qt_def_set.cc cvq.h main.h
+qt_def_set.o: compile qt_def_set.cc cvq.h main.hpp
 	./compile qt_def_set.cc
 
-qt_get.o: compile qt_get.cc cvq.h  main.h
+qt_get.o: compile qt_get.cc cvq.h  main.hpp
 	./compile qt_get.cc
 
-qt_over.o: compile qt_over.cc cvq.h  main.h
+qt_over.o: compile qt_over.cc cvq.h  main.hpp
 	./compile qt_over.cc
 
-qt_set.o: compile qt_set.cc cvq.h  main.h
+qt_set.o: compile qt_set.cc cvq.h  main.hpp
 	./compile qt_set.cc
 
 sig.o: comp-so sig.cc sig.h
 	./comp-so sig.cc
 
-split.o: comp-so split.cc split.h vq_conf.h cconf.h  main.h
+split.o: comp-so split.cc split.h vq_conf.h cconf.h  main.hpp
 	./comp-so split.cc
 
-str2cc.o: compile str2cc.cc main.h
+str2cc.o: compile str2cc.cc main.hpp
 	./compile str2cc.cc
 
-udot_add.o: compile udot_add.cc cvq.h main.h
+udot_add.o: compile udot_add.cc cvq.h main.hpp
 	./compile udot_add.cc
 
-udot_ls.o: compile udot_ls.cc cvq.h main.h
+udot_ls.o: compile udot_ls.cc cvq.h main.hpp
 	./compile udot_ls.cc
 
-udot_rm.o: compile udot_rm.cc cvq.h main.h
+udot_rm.o: compile udot_rm.cc cvq.h main.hpp
 	./compile udot_rm.cc
 
 uniq.o: comp-so uniq.cc uniq.h
 	./comp-so uniq.cc
 
-user_add.o: compile user_add.cc cvq.h main.h
+user_add.o: compile user_add.cc cvq.h main.hpp
 	./compile user_add.cc
 
 user_auth.o: compile user_auth.cc cvq.h getline.h vq_conf.h cconf.h \
-lower.h hmac_md5.h auto/lmd5.h clogger.h sig.h sys.h main.h
+lower.h hmac_md5.h auto/lmd5.h clogger.h sig.h sys.h main.hpp
 	./compile user_auth.cc
 
-user_pass.o: compile user_pass.cc cvq.h main.h
+user_pass.o: compile user_pass.cc cvq.h main.hpp
 	./compile user_pass.cc
 
-user_rm.o: compile user_rm.cc cvq.h main.h
+user_rm.o: compile user_rm.cc cvq.h main.hpp
 	./compile user_rm.cc
 
 util.o: comp-so util.cc util.h 

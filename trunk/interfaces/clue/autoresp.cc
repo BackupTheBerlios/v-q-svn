@@ -30,10 +30,10 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-#include "main.h"
-#include "lower.h"
-#include "sys.h"
-#include "cautoresp.h"
+#include "main.hpp"
+#include "text.hpp"
+#include "sys.hpp"
+#include "cautoresp.hpp"
 
 #include <string>
 #include <map>
@@ -44,6 +44,8 @@ SUCH DAMAGE.
 #include <cctype>
 
 using namespace std;
+using namespace text;
+using namespace sys;
 
 cautoresp *autoresp = NULL; 
 
