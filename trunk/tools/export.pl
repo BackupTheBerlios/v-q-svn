@@ -23,6 +23,16 @@ if( ! (($? >> 8) == 0 && ($? & 127) == 0) ) {
 	die("svn execution failed");
 }
 
+chdir "../$ARGV[0]" or die("chdir ../$ARGV[0] failed");
+
+foreach $cmd ( "make clean", "make", "make pgsql", 
+		"gmake clean", "gmake", "gmake clean", "make clean" ) {
+	system $cmd;
+	if( ! (($? >> 8) == 0 && ($? & 127) == 0) ) {
+		die("$cmd failed");
+	}
+}
+
 chdir ".." or die("chdir .. failed");
 system "tar cf - $ARGV[0] | bzip2 -c9 > $ARGV[0].tar.bz2";
 if( ! (($? >> 8) == 0 && ($? & 127) == 0) ) {
