@@ -199,7 +199,7 @@ namespace POA_vq {
 
 		les = new log_entry_list(static_cast<CORBA::ULong>(s));
 		les->length(s);
-		for( Result::size_type i=0, idx=0; i<s; ++i, idx=0 ) {
+		for( Result::tuple::size_type i=0, idx=0; i<s; ++i, idx=0 ) {
 				les[i].id_log = CORBA::string_dup(
 					res[i][idx].is_null() ? "" : res[i][idx].c_str() );
 				++idx;
