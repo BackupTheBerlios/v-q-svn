@@ -11,7 +11,8 @@ LIBS=-L$(BASE)/libmain -lmain -L$(BASE)/libvqmain -lvqmain -L. -lcluemain \
 	-L$(BASE)/libconf -lconf -L$(BASE)/core -lvq
 
 all: dom_add dom_rm user_add user_rm user_pass user_conf_add user_conf_ls \
-user_conf_rm user_auth dom_id dom_alias_add dom_alias_rm dom_ls dom_alias_ls
+user_conf_rm user_auth dom_id dom_alias_add dom_alias_rm dom_ls dom_alias_ls \
+dom_ip_ls dom_ip_rm dom_ip_add
 
 include $(BASE)/Makefile.common
 
@@ -38,9 +39,13 @@ dom_id: dom_id.o
 dom_alias_add: dom_alias_add.o
 dom_alias_rm: dom_alias_rm.o
 dom_alias_ls: dom_alias_ls.o
+dom_ip_add: dom_ip_add.o
+dom_ip_rm: dom_ip_rm.o
+dom_ip_ls: dom_ip_ls.o
 
 user_add user_rm user_pass user_conf_add user_conf_ls user_conf_rm dom_id \
-dom_alias_add dom_alias_rm dom_alias_ls: \
+dom_alias_add dom_alias_rm dom_alias_ls \
+dom_ip_add dom_ip_rm dom_ip_ls: \
 $(BASE)/load $(BASE)/corba.lib error2str.o cdom_name2id.o libcluemain.a
 	$(BASE)/load $@ $(LIBS) -L$(BASE)/libtext -ltext \
 	error2str.o cdom_name2id.o `cat $(BASE)/corba.lib`
