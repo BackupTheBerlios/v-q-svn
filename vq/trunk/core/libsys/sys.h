@@ -43,10 +43,6 @@ SUCH DAMAGE.
 /// return invalid date on gettimeofday error
 const char *tai64_now();
 
-// return data in hex representation
-std::string to_hex(const unsigned char *, unsigned );
-std::string hex_from(const std::string & );
-
 /**
  * simple wrapper for poll and struct pollfd, allows you easily add, remove
  * struct pollfd, and poll them
