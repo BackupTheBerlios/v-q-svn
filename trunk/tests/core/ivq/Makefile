@@ -1,16 +1,16 @@
 BASE=../../..
-OBJS=qmailvqd.o
+OBJS=ivq.o
 INCS=`cat $(BASE)/boost.inc` `cat $(BASE)/corba.inc` -I$(BASE)/libtext \
 -I$(BASE)/libsys
 LIBS=`cat $(BASE)/boost.lib` `cat $(BASE)/corba.lib` -L$(BASE)/core -lvq \
 -L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys
 
-all: .depend qmailvqd
+all: .depend ivq
 
 include $(BASE)/Makefile.common
 
-qmailvqd: $(BASE)/load $(BASE)/boost.lib $(BASE)/corba.lib qmailvqd.o
-	$(BASE)/load qmailvqd $(LIBS)
+ivq: $(BASE)/load $(BASE)/boost.lib $(BASE)/corba.lib ivq.o
+	$(BASE)/load ivq $(LIBS)
 
 ##################
 

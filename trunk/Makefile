@@ -1,4 +1,4 @@
-SUBDIR=libconf/ libmain/ libsys/ libtext/ core/
+SUBDIR=tools libconf/ libmain/ libsys/ libtext/ core/
 
 .PHONY: all clean
 

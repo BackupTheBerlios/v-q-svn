@@ -34,9 +34,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 using namespace boost::unit_test_framework;
 
-#warning dodac test - dodawanie konfiguracji, usuwanie uzytkownika, sprawdzanie czy konfiguracja zostala usunieta
-#warning dodac - sprawdzanie czy jak user_conf_rep jest wywolane z innym typem to zwroci blad
-
 /**
  * 
  */
@@ -661,8 +658,22 @@ struct vq_test {
 		}
 
 		/**
-		 *
+		 * If user_conf_rep is called and ui.type differs than current
+		 * it should return err_func_ni (funtion not implemented).
 		 */
+		void uc_case2() {
+				::vq::ivq::user_conf_info ui;
+				ui.type = ::vq::ivq::uc_redir;
+				ui.val = static_cast<const char *>("asdasdasd");
+				IVQ_ERROR_EQUAL(err=vq->user_conf_add(this->uc_dom_id,
+					this->uc_user, static_cast<const char *>(""), ui ), 
+					::vq::ivq::err_no );
+				BOOST_REQUIRE(::vq::ivq::err_no == err->ec);
+				ui.type += ::vq::ivq::uc_external;
+				IVQ_ERROR_EQUAL(err=vq->user_conf_rep(this->uc_dom_id,
+					this->uc_user, static_cast<const char *>(""), ui ), 
+					::vq::ivq::err_func_ni );
+		}
 
 		/**
 		 *
@@ -777,6 +788,11 @@ struct vq_test_suite : test_suite {
 				&vq_test::uc_case1, test );
 			ts_uc1->depends_on(ts_init);
 			add(ts_uc1);
+
+			test_case * ts_uc2 = BOOST_CLASS_TEST_CASE( 
+				&vq_test::uc_case2, test );
+			ts_uc2->depends_on(ts_init);
+			add(ts_uc2);
 
 			test_case * ts_uc_cleanup = BOOST_CLASS_TEST_CASE( 
 				&vq_test::uc_cleanup, test );

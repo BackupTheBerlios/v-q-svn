@@ -9,7 +9,7 @@ nsd -ORBIIOPAddr inet:$host:12456 &
 nsd_pid=$!
 
 trap "kill $nsd_pid" 0
-sleep 1
+sleep 2
 
 echo "starting iauth(pgsqlauthd) server ..."
 #ulimit -c 132234
@@ -18,7 +18,7 @@ echo "starting iauth(pgsqlauthd) server ..."
 server_pid=$!
 
 trap "kill $nsd_pid $server_pid" 0
-sleep 1
+sleep 2
 
 echo "running client ..."
 ./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService 

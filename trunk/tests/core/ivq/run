@@ -41,5 +41,5 @@ trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
 sleep 2
 
 echo "running client ..."
-./qmailvqd -ORBInitRef NameService=corbaloc::$host:12456/NameService
-#gdb ./qmailvqd
+./ivq -ORBInitRef NameService=corbaloc::$host:12456/NameService
+#gdb ./ivq
