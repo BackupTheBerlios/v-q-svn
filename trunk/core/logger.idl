@@ -27,9 +27,10 @@ module vq {
 	 */
 	interface ilogger {
 			typedef ivq::error error;
+			typedef ivq::err_code err_code;
 
 			/// Size
-			typedef unsigned long size_type;
+			typedef ivq::size_type size_type;
 	
 			/// what we're logging about
 			enum service {

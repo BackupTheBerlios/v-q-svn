@@ -1,5 +1,5 @@
 BASE=../..
-OBJS=cpgsqlauth.o pgsqlauthd.o
+OBJS=cpgsqlauth.o pgsqlauthd.o cpgsqllog.o pgsqllogd.o
 INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf `cat $(BASE)/corba.inc` `cat pgsql.inc`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
@@ -8,7 +8,7 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
 `cat $(BASE)/corba.lib` `cat pgsql.lib`
 
-pgsql: .depend pgsqlauthd
+pgsql: .depend pgsqlauthd pgsqllogd
 
 all::
 
@@ -19,6 +19,9 @@ clean:
 
 pgsqlauthd: $(BASE)/load $(BASE)/corba.lib cpgsqlauth.o pgsqlauthd.o
 	$(BASE)/load pgsqlauthd cpgsqlauth.o $(LIBS)
+
+pgsqllogd: $(BASE)/load $(BASE)/corba.lib cpgsqllog.o pgsqllogd.o
+	$(BASE)/load pgsqllogd cpgsqllog.o $(LIBS)
 
 ##################
 

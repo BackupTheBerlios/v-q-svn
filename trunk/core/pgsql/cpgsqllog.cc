@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cpgsqllog.h"
+#include "cpgsqllog.hpp"
 
 #include <text.hpp>
 
@@ -26,7 +26,7 @@ namespace POA_vq {
 
 	using namespace std;
 	using namespace vq;
-	
+	using namespace pqxx;
 	
 	/**
 	 *
@@ -72,31 +72,36 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqllog::write( result res, const char * msg ) std_try {
+	cpgsqllog::error * cpgsqllog::write( result res, const char * msg ) std_try {
 		if( ! msg )
 				throw ::vq::null_error(__FILE__, __LINE__);
+		/*
 	
 		pqxx::Result x(pqxx::NonTransaction(*pg).Exec(
 			"SELECT INSERT INTO log (LOGIN,SERVICE,RESULT,IP,MSG)"
 			" VALUES("+pqxx::Quote(log, false)+","
 			+pqxx::Quote(ser, false)+","+pqxx::Quote(res, false)+","
 			+pqxx::Quote(ip, false)+","+pqxx::Quote(msg, false)+")"));
+		*/
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
-	
+
 	/**
 	 *
 	 */
-	void cpgsqllog::write( const string & dom, const string &log, 
-			const string &ser, const string &res, 
-			const string &ip, const string &msg ) {
-	
-		pqxx::Result x(pqxx::NonTransaction(*pg).Exec(
-			(string)"INSERT INTO log (DOMAIN,LOGIN,SERVICE,RESULT,IP,MSG)"
-			" VALUES("+pqxx::Quote(dom, false)+","+pqxx::Quote(log, false)+","
-			+pqxx::Quote(ser, false)+","+pqxx::Quote(res, false)+","
-			+pqxx::Quote(ip, false)+","+pqxx::Quote(msg, false)+")"));
+	cpgsqllog::error * cpgsqllog::count( size_type & cnt ) std_try {
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::read( size_type start, size_type end,
+			log_entry_list_out les ) std_try {
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	
+#if 0	
 	/**
 	 *
 	 */
@@ -224,5 +229,19 @@ namespace POA_vq {
 		} else 
 				throw rd_error();
 	} std_catch
-	
+#endif // #if 0
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::lr_wrap(err_code ec, const char *what,
+			const char * file, CORBA::ULong line ) std_try {
+		auto_ptr<error> err(new error);
+		err->ec = ec;
+		err->what = CORBA::string_dup(what); // string_dup not really needed
+		err->file = CORBA::string_dup(file);
+		err->line = line;
+		return err.release();
+	} std_catch
+
 } // namespace POA_vq

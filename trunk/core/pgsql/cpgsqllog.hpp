@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "../auth.hpp"
+#include "../logger.hpp"
 #include "pgsqlcommon.hpp"
 
 #include <memory>
@@ -33,6 +33,7 @@ namespace POA_vq {
 					typedef ::vq::ilogger::error error;
 					typedef ::vq::ilogger::size_type size_type;
 					typedef ::vq::ilogger::log_entry_list_out log_entry_list_out;
+					typedef ::vq::ilogger::err_code err_code;
 					
 					virtual void ip_set( const char* ip );
     				virtual void service_set( service ser );
@@ -67,3 +68,4 @@ namespace POA_vq {
 				/*@}*/	
 	};
 
+} // namespace POA_vq

@@ -27,8 +27,8 @@ clean:
 
 ##################
 
-libvq.a: $(BASE)/make-lib auth.o vq.o .depend
-	$(BASE)/make-lib libvq.a auth.o vq.o
+libvq.a: $(BASE)/make-lib auth.o vq.o logger.o .depend
+	$(BASE)/make-lib libvq.a auth.o vq.o logger.o
 
 auth.cc auth.hpp: $(BASE)/idl auth.idl vq.idl vq.hpp
 	$(BASE)/idl auth.idl
