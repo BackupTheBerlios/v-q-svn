@@ -22,6 +22,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <text.hpp>
 #include <util.hpp>
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include <stdexcept>
 
 namespace POA_vq {
@@ -196,6 +201,9 @@ namespace POA_vq {
 	 */
 	cpgsqlauth::error * cpgsqlauth::da_add( const char * dom_id,
 			const char * ali ) std_try {
+		in_addr addr;
+		if( inet_aton(ali ? ali : "", &addr) )
+				return lr(::vq::ivq::err_dom_inv, ali);
 		return da_dip_add(dom_id, ali, "DA_ADD");
 	} std_catch
 

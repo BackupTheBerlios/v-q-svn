@@ -23,14 +23,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys.hpp>
 #include <text.hpp>
 
-#include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/time.h>
+#include <sys/stat.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <dirent.h>
-#include <signal.h>
+#include <sys/wait.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include <sstream>
 #include <iomanip>
@@ -304,6 +303,10 @@ namespace POA_vq {
 		if( ! dom_id || ! ali )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
+		in_addr addr;
+		if( inet_aton(ali ? ali : "", &addr) )
+				return lr(::vq::ivq::err_dom_inv, ali);
+
 		string alias(text::lower(ali));
 		
 		auto_ptr<error> ret(moreipme_add(alias));
