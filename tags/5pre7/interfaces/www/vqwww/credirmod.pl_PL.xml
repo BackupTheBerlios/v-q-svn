@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<msgs>
+	<menu>
+		<mod>
+			<m n="redir">Przekierowanie</m>
+			<desc>
+				<m n="redir">
+					Umożliwia ustawienie przesyłania wiadomości na inne adresy. Przydatne
+					gdy np. jedziesz na urlop a chcesz aby ktoś zajmował się Twoimi sprawami.
+				</m>
+			</desc>
+		</mod>
+	</menu>
+	<mod>
+		<redir>
+			<m n="getcant">Nie można pobrać aktualnej listy przekierowań.</m>
+			<m n="desc">
+				Uwaga: adresy nie są w żaden sposób sprawdzane, jeżeli wpiszesz
+				nieprawidłowy adres możesz doprowadzić do utraty części swojej
+				korespondencji. Przed ustawieniem przekierowania sprawdź czy adres działa.
+			</m>
+			<m n="inv/rm">Nie można usunąć: </m>
+			<m n="inv/add">Nie można dodać: </m>
+			<m n="inv/rep">Nie można zamienić: </m>
+			<m n="email">Adres e-mail: </m>
+			<m n="submit">Zmień</m>
+		</redir>
+	</mod>
+</msgs>
