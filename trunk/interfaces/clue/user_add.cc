@@ -63,6 +63,7 @@ bool user_add(const string &e, const string &p, ::vq::ivq::uif_type flags,
 	::vq::ivq::user_info ai;
 	ai.flags = flags;
 	ai.login = esplit.front().c_str();
+	ai.pass = p.c_str();
 	
 	::vq::ivq::error_var ret = dom_name2id(vq, esplit.back(), ai.id_domain);
 	if( ::vq::ivq::err_no != ret->ec ) {
