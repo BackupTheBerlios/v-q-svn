@@ -21,5 +21,5 @@ trap "kill $nsd_pid $server_pid" 0
 sleep 1
 
 echo "running client ..."
-echo ./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService 
-gdb iauth
+./iauth -ORBInitRef NameService=corbaloc::$host:12456/NameService 
+#gdb iauth

@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "../iauth/iauth_common.hpp"
+#include "../iauth/iauth_user_conf.hpp"
 #include "../../../core/vq.hpp"
 
 #include <text.hpp>
@@ -31,24 +33,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <map>
 
 using namespace boost::unit_test_framework;
-
-#define std_try { try
-#define std_catch catch( vq::null_error & e ) { \
-	BOOST_ERROR("null_error"); \
-} catch( vq::db_error & e ) { \
-	BOOST_ERROR(e.what); \
-} catch( vq::except & e ) { \
-	BOOST_ERROR(e.what); \
-} }
-	
-#define IVQ_ERROR_EQUAL(eptr, ecmp) \
-do { \
-	::vq::ivq::error_var ev(eptr); \
-	::vq::ivq::err_code ec = ecmp; \
-	BOOST_CHECK_EQUAL(ev->ec, ec); \
-	if( ec != ev->ec ) \
-		BOOST_ERROR(error2str(ev)); \
-} while(0)
 
 /**
  * 
@@ -694,9 +678,32 @@ const char * vq_test::uc_user = "user-conf";
  * 
  */
 struct vq_test_suite : test_suite {
+		struct obj_wrap {
+				::vq::ivq_var & obj;
+				
+				obj_wrap( ::vq::ivq_var & a ) : obj(a) {}
+				
+				::vq::ivq::error * user_conf_rm(const char *dom_id,
+						const char *login, const char *pfix, const char * id ) {
+					return obj->user_conf_rm(dom_id, login, pfix, id);
+				}
+
+				::vq::ivq::error * user_conf_rep( const char *dom_id, 
+						const char * login, const char * pfix, 
+						const ::vq::ivq::user_conf_info & ui ) {
+					return obj->user_conf_rep(dom_id, login, pfix, ui);
+				}
+		};
+
+		typedef user_conf_test<vq::ivq_var, obj_wrap> obj_user_conf_test;
+
+		boost::shared_ptr<vq_test> test;
+		boost::shared_ptr< obj_user_conf_test > uc_test;
+
 		vq_test_suite(int ac, char *av[]) 
-				: test_suite("qmailvqd tests") {
-			boost::shared_ptr<vq_test> test(new vq_test(ac, av));
+				: test_suite("qmailvqd tests"),
+				test(new vq_test(ac, av)),
+				uc_test(new obj_user_conf_test(test->vq)) {
 
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&vq_test::init, test );
@@ -772,6 +779,33 @@ struct vq_test_suite : test_suite {
 				&vq_test::uc_cleanup, test );
 			ts_uc_cleanup->depends_on(ts_init);
 			add(ts_uc_cleanup);
+
+			{
+			test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
+				&obj_user_conf_test::case9, uc_test );
+			ts_case9->depends_on(ts_init);
+			add(ts_case9);
+
+			test_case * ts_case10 = BOOST_CLASS_TEST_CASE( 
+				&obj_user_conf_test::case10, uc_test );
+			ts_case10->depends_on(ts_init);
+			add(ts_case10);
+
+			test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
+				&obj_user_conf_test::case11, uc_test );
+			ts_case11->depends_on(ts_init);
+			add(ts_case11);
+
+			test_case * ts_case12 = BOOST_CLASS_TEST_CASE( 
+				&obj_user_conf_test::case12, uc_test );
+			ts_case12->depends_on(ts_init);
+			add(ts_case12);
+
+			test_case * ts_case13 = BOOST_CLASS_TEST_CASE( 
+				&obj_user_conf_test::case13, uc_test );
+			ts_case13->depends_on(ts_init);
+			add(ts_case13);
+			}
 		}
 };
 

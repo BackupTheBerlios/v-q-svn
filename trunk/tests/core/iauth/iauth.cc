@@ -517,9 +517,31 @@ struct auth_test {
  * 
  */
 struct auth_test_suite : test_suite {
+		struct auth_wrap {
+				::vq::iauth_var & auth;
+				
+				auth_wrap( ::vq::iauth_var & a ) : auth(a) {}
+				
+				::vq::ivq::error * user_conf_rm(const char *,
+						const char *, const char *, const char * id ) {
+					return auth->user_conf_rm(id);
+				}
+
+				::vq::ivq::error * user_conf_rep( const char *, const char *,
+						const char *, const ::vq::ivq::user_conf_info & ui ) {
+					return auth->user_conf_rep(ui);
+				}
+		};
+		
+		typedef user_conf_test<vq::iauth_var, auth_wrap> obj_user_conf_test;
+
+		boost::shared_ptr<auth_test> test;
+		boost::shared_ptr< obj_user_conf_test > uc_test;
+
 		auth_test_suite(int ac, char *av[]) 
-				: test_suite("pgsqlauthd tests") {
-			boost::shared_ptr<auth_test> test(new auth_test(ac, av));
+				: test_suite("pgsqlauthd tests"), 
+				test(new auth_test(ac, av)),
+				uc_test(new obj_user_conf_test(test->auth)) {
 
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&auth_test::init, test );
@@ -565,32 +587,28 @@ struct auth_test_suite : test_suite {
 			ts_case8->depends_on(ts_init);
 			add(ts_case8);
 
-			typedef user_conf_test<vq::iauth_var> auth_user_conf_test;
-			boost::shared_ptr< auth_user_conf_test > uc_test(
-				new auth_user_conf_test(test->auth));
-
 			test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
-				&auth_user_conf_test::case9, uc_test );
+				&obj_user_conf_test::case9, uc_test );
 			ts_case9->depends_on(ts_init);
 			add(ts_case9);
 
 			test_case * ts_case10 = BOOST_CLASS_TEST_CASE( 
-				&auth_user_conf_test::case10, uc_test );
+				&obj_user_conf_test::case10, uc_test );
 			ts_case10->depends_on(ts_init);
 			add(ts_case10);
 
 			test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
-				&auth_user_conf_test::case11, uc_test );
+				&obj_user_conf_test::case11, uc_test );
 			ts_case11->depends_on(ts_init);
 			add(ts_case11);
 
 			test_case * ts_case12 = BOOST_CLASS_TEST_CASE( 
-				&auth_user_conf_test::case12, uc_test );
+				&obj_user_conf_test::case12, uc_test );
 			ts_case12->depends_on(ts_init);
 			add(ts_case12);
 
 			test_case * ts_case13 = BOOST_CLASS_TEST_CASE( 
-				&auth_user_conf_test::case13, uc_test );
+				&obj_user_conf_test::case13, uc_test );
 			ts_case13->depends_on(ts_init);
 			add(ts_case13);
 		}
