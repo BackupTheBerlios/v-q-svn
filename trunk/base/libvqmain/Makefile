@@ -1,4 +1,4 @@
-BASE=..
+BASE=../..
 INCS=-I../libmain
 
 all: .depend libvqmain.a

@@ -2,7 +2,7 @@ BASE=..
 OBJS=vq.o auth.o logger.o autoresp.o
 INCS=`cat $(BASE)/corba.inc`
 LIBS=`cat $(BASE)/corba.lib`
-SUBDIR=pgsql qmailvqd
+SUBDIR=pgsql qmailvqd libvqmain
 
 all:: .depend libvq.a libautoresp.a
 	@for entry in $(SUBDIR); do \

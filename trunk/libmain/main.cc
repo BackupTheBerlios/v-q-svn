@@ -63,5 +63,8 @@ int main( int ac, char ** av ) {
 	} catch( const std::exception & e ) {
 			std::cerr<<"Exception caugth: "<<e.what()<<std::endl;
 			return 111;
+	} catch( ... ) {
+			std::cerr<<"Unknown exception caugth"<<std::endl;
+			return 111;
 	}
 }
