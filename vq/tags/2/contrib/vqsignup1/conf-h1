@@ -1,0 +1,8 @@
+#!/bin/sh
+
+fn="`head -n 1 conf/conf_dir`/$1"
+if [ -f "$fn" ] ; then
+    exec head -n 1 "$fn"
+fi
+
+exec head -n 1 "$1"

@@ -1,0 +1,38 @@
+ac_int.o ac_str.o autoresp.o cconf.o ccurlog.o cdaemonauth.o cfsvq.o choose.o conf_qmail.o conf_vq.o cpoll.o cqautoresp.o daemon.o deliver.o dirs.o dom_add.o dom_alias_add.o dom_alias_rm.o dom_ip_add.o dom_ip_ls.o dom_ip_rm.o dom_rm.o fd.o fdstr.o getgid.o getline.o getuid.o hex.o hier.o hmac_md5.o install.o lock.o lower.o pgsqlauthd.o pgsqlcommon.o pgsqllogd.o qt_cur_set.o qt_def_get.o qt_def_set.o qt_get.o qt_over.o qt_set.o sig.o skillall.o split.o str2cc.o udot_add.o udot_ls.o udot_rm.o user_add.o user_auth.o user_pass.o user_rm.o util.o vq_init.o
+auto/*
+libfd.so libfd.so.1 libfs.so libfs.so.1 libsplit.so libsplit.so.1 libsys.so libsys.so.1 libtext.so libtext.so.1 libvq.so libvq.so.1
+ccurlog.cc ccurlog.h ccurlog.inc ccurlog.lib
+vq_conf.a
+conf_vq.cc
+./ac_str
+./str2cc
+./ac_int
+./getuid
+./dom_add
+./user_add
+./getgid
+./dom_alias_add
+./user_pass
+./user_rm
+./dom_rm
+./dom_alias_rm
+./install
+./qt_set
+./choose
+./user_auth
+./dom_ip_add
+./dom_ip_rm
+./dom_ip_ls
+./pgsqlauthd
+./qt_get
+./qt_cur_set
+./qt_over
+./deliver
+./udot_rm
+./qt_def_set
+./udot_ls
+./qt_def_get
+./pgsqllogd
+./autoresp
+./udot_add
+cvq.o

@@ -1,0 +1,91 @@
+d_namlen.h
+cdaemonauth.o
+cfsvq.o
+conf_pgsql.o
+conf_ps.o
+conf_qmail.o
+conf_qmail_mode.o
+conf_split_dom.o
+conf_split_user.o
+conf_vq.o
+conf_vq_mode.o
+deliver.o
+dirs.o
+dom_add.o
+dom_alias_add.o
+fd.o
+fdstr.o
+getline.o
+int2cc.o
+lock.o
+lower.o
+pgsqlauthd.o
+sig.o
+skillall.o
+split.o
+str2cc.o
+user_add.o
+user_pass.o
+user_rm.o
+util.o
+cdaemonauth.a
+cfsvq.a
+skillall.a
+split.a
+choose.o conf_atchars.o conf_vq_gid.o conf_vq_uid.o conf_vq_user.o csyslog.o dom_alias_rm.o dom_ip_add.o dom_ip_ls.o dom_ip_rm.o dom_rm.o hmac_md5.o install.o lmd5.o user_auth.o
+user_add user_auth user_pass
+user_rm str2cc pgsqlauthd
+user_rm int2cc install dom_add dom_alias_rm dom_alias_add
+dom_ip_ls dom_ip_add dom_ip_rm dom_rm
+deliver choose
+conf_atchars.cc conf_pgsql.cc conf_ps.cc conf_qmail.cc conf_qmail_mode.cc conf_split_dom.cc conf_split_user.cc conf_vq.cc conf_vq_gid.cc conf_vq_mode.cc conf_vq_uid.cc conf_vq_user.cc
+lmd5.h lmd5.c
+qt_set.o
+qt_set
+qt_get.o
+qt_get
+qt_cur_set.o
+qt_cur_set
+qt_over.o
+qt_over
+qt_def_set.o
+qt_def_set
+qt_def_get.o
+qt_def_get
+pgsqllogd.o
+pgsqllogd
+cdaemonlog.o
+ccurlog.o
+ccurlog.inc
+ccurlog.lib
+ccurlog.h
+ccurlog.cc
+getuid.o
+getuid
+getgid.o
+getgid
+d_namlen.h
+tryd_namlen.o
+hasflock.h
+lmd5.h
+lmd5.c
+vq_init.o
+pgsqlcommon.o
+conf_vq_fmode.o
+conf_vq_fmode.cc
+udot_add udot_add.o
+udot_rm.o udot_rm
+conf_qmail_hyp.cc conf_qmail_hyp.o
+udot_ls.o
+udot_ls
+libfd.so.1
+libsplit.so.1
+libvq.so.1
+libfs.so.1
+libsys.so.1
+achk4qmail achk4qmail.o
+cpoll.o
+libtext.so.1
+hex.o
+libfd.so libfs.so libsplit.so libsys.so libtext.so libvq.so
+daemon.o

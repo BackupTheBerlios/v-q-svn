@@ -1,0 +1,189 @@
+<!DOCTYPE html public "-//W3C//DTD HTML 4.0 Transitional//EN"><html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Virtual Qmail</title>
+    <meta name="author" content="Pawel Niewiadomski, new@foo-baz.com">
+    <meta name="keywords" content="virtual, qmail, mta, domains, hosting, linux, openbsd, mail system">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+  </head>
+  <body bgcolor="white" color="black">
+    <table cellspacing="0" cellpadding="0" width="700">
+      <tr>
+        <td>
+          <h2 class="sec">Virtual Qmail</h2>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <table width="100%" cellspacing="0" cellpadding="0">
+            <tr class="menu">
+              <td>
+                <a href="../dev">Developers</a> <a href="../docs">Documentation</a> <a href="../sf">SourceForge</a> <a href="http://sourceforge.net/projects/v-q/project/showfiles.php?group_id=87916">Download files</a> <a href="../site_map.html">Site map</a> </td>
+            </tr>
+            <tr class="sec">
+              <td>
+                <a href="../">start</a> :: <a href="../docs">Documentation</a> :: <a href="../docs/intro.html">Introduction</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <table cellspacing="0" cellpadding="0" width="700">
+      <tr>
+        <td valign="top" class="first">
+          <table width="170" class="first" cellspacing="0" cellpadding="0">
+            <tr>
+              <td>
+                <a href="../docs/intro.html">Introduction</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/changes.html">Summary of changes</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/install.html">Installation</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/upgrade.html">Upgrade</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/conf">Configuration</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/license.html">License</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/ports.html">Supported systems</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/todo.html">Things to do</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/mailing_lists.html">Mailing lists</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td width="100%">
+          <table cellpadding="5" width="100%" height="200">
+            <tr>
+              <td valign="top">
+	<p>
+		Project goal is to create virtual domains managing system, it should
+		be easy to setup, create and maintain. It should be also very reliable and
+		fast - it's designed for big sites. It does not support real users and
+		it won't. 
+	</p>
+
+	<p>
+		What vq won't do at any time in the future: 
+		<ul>
+			<li>support POP3 authorization based relaying as vpopmail does - use SMTP-AUTH!</li>
+			<li>support real users</li>
+			<li>support any other mailboxes type than Maildir</li>
+		</ul>
+	</p>
+
+	<p>
+		Current futures:
+		<ul>
+			<li>PostgreSQL based authorization</li>
+			<li>PostgreSQL based logging of user's authorizations</li>
+		</ul>
+	</p>
+
+	<p>
+		If you think that some future is missing you're welcome to add it or
+		if you can't but think it should be implemented you can contact author.
+	</p>
+
+	<p>
+		Following is a list of programs in contrib directory:
+	</p>
+	
+	<h4 class="sec">freemail</h4>
+		This module will support options associated with free e-mail accounts.
+		At this time it include only option to change informations about
+		user (sex, country, city, education level, etc.).
+	
+
+	<h4 class="sec">hosting</h4>
+		This module will support options associated with hosting servers.
+		At this time it supports: adding new e-mail accounts to domain,
+		setting FTP access, removing users, access to WWW usage logs.
+		Setting aliases for WWW.
+	
+
+	<h4 class="sec">vqsignup</h4>
+		Simple program that allows users to create new e-mail accounts.
+	
+
+	<h4 class="sec">vquserrm</h4>
+		Removes user.
+	
+
+	<h4 class="sec">host_add</h4>
+		Adds domain.
+	
+
+	<h4 class="sec">pg2fs</h4>
+		Used with hosting module. It's used to configure tinydns, dnscache.
+		Hosting module after changing data calls stored in SQL server 
+		functions from <a href="http://iidea.pl/~paweln/proj/pgutil">pgutil 
+		package</a>. They create simple files which are processed by pg2fs
+		to create tinydns and dnscache configuration.
+	
+
+	<h4 class="sec">valid</h4>
+		Small library. Includes functions used to validate informations as
+		data, polish tax number, polish post code, etc.
+	
+
+	<h4 class="sec">vqsignup1</h4>
+		Special version of vqsignup which collects information about user
+		(sex, education level, city, country). It's used to create free
+		e-mail service.
+	
+
+	<h4 class="sec">vqwww</h4>
+		Account manager. Includes modules that allows to: change password,
+		set e-mail redirection, set automatic response, see history of login.
+		It support dynamic loading of shared libraries, so it may be easily
+		extended.
+	
+</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center" class="sec">
+          <a href="http://new.foo-baz.com/">
+					Copyrigth 2003, created by Pawel Niewiadomski
+				</a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center" class="first">
+          <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=87916&amp;type=2" width="125" heigth="37" border="0" alt="SourceForge.net Logo"></a>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

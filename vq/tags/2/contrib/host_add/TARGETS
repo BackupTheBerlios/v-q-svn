@@ -1,0 +1,22 @@
+sabmain.o host_add.o
+conf_xmlstart.o conf_xsltsheet.o int2cc.o str2cc.o
+int2cc str2cc host_add
+conf_xmlstart.cc conf_xsltsheet.cc
+cgi.o
+conf_domains.cc
+conf_domains.o
+conf_user_ok.o
+conf_user_ok.cc
+conf_pass_ok.o
+conf_pass_ok.cc
+conf_html_br.cc conf_html_br.o
+html.o
+conf_vq_uid.cc conf_vq_gid.cc
+getgid.o
+getuid.o
+install.o install
+conf_home.cc conf_home.o
+getuid getgid
+conf_vq_gid.o conf_vq_uid.o
+conf_pref_ok.o
+conf_pref_ok.cc

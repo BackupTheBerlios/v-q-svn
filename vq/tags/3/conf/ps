@@ -1,0 +1,3 @@
+/bin/ps ax
+
+Command for processes list.

@@ -1,0 +1,32 @@
+cconfmod.o cfilesess.o cgi.o conf_fs.o conf_fs_split.o conf_sess_timeout.o conf_xmlstart.o 
+conf_xsltsheet.o 
+conf_xslt_file.o
+conf_xslt_file.cc
+cpassmod.o int2cc.o sabmain.o str2cc.o vqwww.o conf_fs.cc conf_fs_split.cc conf_sess_timeout.cc conf_xmlstart.cc 
+cfilesess.a sabmain.a
+vqwww
+int2cc str2cc
+lmd5.c lmd5.h lmd5.o
+conf_html_br.cc conf_html_br.o conf_pass_ok.o conf_pass_ok.cc conf_user_ok.o conf_user_ok.cc
+html.o
+coutmod.o
+conf_redir_max.cc conf_redir_max.o
+cpassmod.a credirmod.a
+conf_pass_maxl.cc conf_pass_minl.cc conf_user_maxl.cc conf_user_minl.cc conf_pass_maxl.o conf_pass_minl.o conf_user_maxl.o conf_user_minl.o
+credirmod.o
+conf_home.o
+conf_home.cc
+conf_vq_uid.cc
+conf_vq_uid.o
+conf_vq_gid.cc
+conf_vq_gid.o
+install.o
+install
+getuid.o
+getuid
+getgid.o
+getgid
+conf_xsltsheet.a
+libsess.so.1
+libsess.so
+dl.lib

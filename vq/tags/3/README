@@ -1,0 +1,20 @@
+Virtual Qmail
+---------------------------------------------------
+Project goal is to create virtual domains managing system, it should
+be easy to setup, create and maintain. It should be also very reliable and
+fast - it's designed for big sites. It does not support real users and
+it won't. 
+
+What vq won't do at any time in the future: 
+----------------------------------------------------
+* support POP3 authorization based relaying as vpopmail does - use SMTP-AUTH!
+* support real users
+* support any other mailboxes type than Maildir
+
+Current futures:
+-----------------------------------------------------
+* PostgreSQL based authorization
+* PostgreSQL based logging of user's authorizations
+
+If you think that some future is missing you're welcome to add it or
+if you can't but think it should be implemented you can contact author.

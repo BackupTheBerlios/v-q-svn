@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>Virtual QMail</title>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" class="n">
+<table width="100%" class="n">
+<tr><td valign="top">
+<table class="n" width="170">
+  <tr>
+    <td>
+      <a href="AUTHORS.html">AUTHORS</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Peoples that have done something for you</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="INSTALL.html">INSTALL</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Installation procedure</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="PORTS.html">PORTS</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Supported systems</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="README.html">README</a>
+    </td>
+  </tr>
+  <tr>
+    <td>About software</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="TODO.html">TODO</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Wish list</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="VERSION.html">VERSION</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Current version number</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="MAILING_LISTS.html">MAILING_LISTS</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Share you ideas with other.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="OPENCM.LOG.html">OPENCM.LOG</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Development history</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="DOWNLOAD.html">DOWNLOAD</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Download links</td>
+  </tr>
+</table>
+</td><td valign="top" width="100%">
+<pre class="n">
+First you need to install qmail (it's better to place it in /var/qmail),
+you can download patch for qmail from http://iidea.pl/~paweln/proj/q-p/
+(it's a special patch including most common needed stuff and also
+specially created to support some features of vq).
+
+Installing with PostgreSQL module.
+
+Install PostgreSQL, create user and database for mail system, if you want
+to use programs from contrib directory you should specify encoding for
+table as utf-8, or you'll have to modify source code for that programs.
+
+For more details see doc/pgsql directory, especially README file :-)
+
+Step-by-step
+-----------------------------
+1. create group vq, create user vq in group vq. default directory is /var/vq.
+2. create databases and tables (see doc/pgsql/README)
+3. edit conf/* files, or copy current configuration to conf directory.
+4. make
+5. ./install
+6. make /var/vq/lib searchable by ld (on Linux add this directory to 
+/etc/ld.so.conf, on OpenBSD edit /etc/rc.conf, variable shlib_dirs)
+7. that's it folks, you may use vq
+
+Problems
+-----------------------------
+There may be problems with gcc 3.x, I've changed sources to compile under
+this compiler, but I haven't tested it. I'm waiting on your response.
+</pre>
+</td></tr></body></html>

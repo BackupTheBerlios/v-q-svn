@@ -1,0 +1,12 @@
+.n {
+ font-size: 8pt;
+ font-family: helvetica;
+}
+
+.sec {
+ background: #C8C8C8;
+}
+
+a:link { color: #004DEA; text-decoration: underline}
+a:visited { color: #003399; text-decoration: underline}
+a:hover { color: #FF6600; text-decoration: none}

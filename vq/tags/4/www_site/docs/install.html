@@ -1,0 +1,211 @@
+<!DOCTYPE html public "-//W3C//DTD HTML 4.0 Transitional//EN"><html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Virtual Qmail</title>
+    <meta name="author" content="Pawel Niewiadomski, new@foo-baz.com">
+    <meta name="keywords" content="virtual, qmail, mta, domains, hosting, linux, openbsd, mail system">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+  </head>
+  <body bgcolor="white" color="black">
+    <table cellspacing="0" cellpadding="0" width="700">
+      <tr>
+        <td>
+          <h2 class="sec">Virtual Qmail</h2>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <table width="100%" cellspacing="0" cellpadding="0">
+            <tr class="menu">
+              <td>
+                <a href="../dev">Developers</a> <a href="../docs">Documentation</a> <a href="../sf">SourceForge</a> <a href="http://sourceforge.net/projects/v-q/project/showfiles.php?group_id=87916">Download files</a> <a href="../site_map.html">Site map</a> </td>
+            </tr>
+            <tr class="sec">
+              <td>
+                <a href="../">start</a> :: <a href="../docs">Documentation</a> :: <a href="../docs/install.html">Installation</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <table cellspacing="0" cellpadding="0" width="700">
+      <tr>
+        <td valign="top" class="first">
+          <table width="170" class="first" cellspacing="0" cellpadding="0">
+            <tr>
+              <td>
+                <a href="../docs/intro.html">Introduction</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/changes.html">Summary of changes</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/install.html">Installation</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/upgrade.html">Upgrade</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/conf">Configuration</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/license.html">License</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/ports.html">Supported systems</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/todo.html">Things to do</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="../docs/mailing_lists.html">Mailing lists</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td width="100%">
+          <table cellpadding="5" width="100%" height="200">
+            <tr>
+              <td valign="top">
+	<h4 class="sec">Common part</h4>
+		<p>
+			First you need to install MTA (at this time only qmail is supported).
+			I created patch for qmail including most needed stuff like
+			smtp-auth, ssl, etc., more informations are located at 
+			<a href="http://new.foo-baz.com/proj/q-p/">http://new.foo-baz.com/proj/q-p/</a>.
+		</p>
+
+		<p>
+			Following installation procedure was created using OpenBSD 3.4 box, but
+			it will work also for Linux. Commands are executed as root:
+		</p>
+	
+		<ol>
+			<li>groupadd vq</li>
+			<li>useradd -g vq -d /var/vq vq</li>
+			<li>bunzip2 -c vq-*.tar.bz2 | tar -xf -</li>
+			<li>cd vq</li>
+			<li>
+				vim *.lib *.inc<br>
+				Files *.inc includes options for compiler telling where to look
+				for include files. Files *.lib point to libraries and directories.
+				On OpenBSD usually you need add -liconv to iconv.lib, Linux's
+				glibc includes iconv (so you need to remove this line).
+				Default options may not work for you (it's not an error), you
+				must set values depending on your system configuration.
+				Sometimes you will need to add some other libraries, I found
+				that sablotron on OpenBSD 3.4 references functions from readline, 
+				ncurses.
+			</li>
+			<li>
+				vim comp-so compile make-so make-lib<br>
+				Comp* are used to call compiler so you may put there
+				optimization options. Check files if they match your system.
+				If you compile vq on system not listed in 
+				<a href="ports.html">Documentation::Supported Systems</a> please
+				send me an information.
+			</li>
+			<li>
+				vim conf/*<br>
+				Edit you configuration files.
+			</li>
+			<li>
+				make<br>
+				This starts compilation. I'm using gcc 2.95.5 and 3.2.2.
+				If you encounter any problems please give me feedback.
+				I'll try to fix them ASAP. Also if you want to port this
+				package on other systems I will help.
+			</li>
+			<li>
+				./install<br>
+				Installing files in home.
+			</li>
+			<li>
+				Add home/lib to linker's seach path. On OpenBSD you need
+				to edit /etc/rc.conf, variable shlib_dirs (this works
+				after restart, to update current database run 
+				ldconfig -m home/lib). On Linux add path to /etc/ld.so.conf and
+				run ldconfig.
+			</li>
+			<li>
+				Depending on system you should set SUID/SGID and owners
+				for all home/bin/qmail* files. They must have an access
+				to qmail/control, qmail/users, and qmail's processes (qmail-send).
+			</li>
+			<li>
+				That should be all. You have now working vq system.
+			</li>
+		</ol>
+	
+
+	<h4 class="sec">Using PostgreSQL as a database server</h4>
+		<ol>
+			<li>
+				Install <a href="http://www.postgresql.org">PostgreSQL</a>.<br>
+				I try to keep using the most current stable version.
+				I don't support older versions. Install also libpqxx, use
+				newest stable version.
+			</li>
+			<li>
+				Create user, default is "mail".
+			</li>
+			<li>
+				Create database, default is "mail". It's adviced
+				to set encoding to UTF-8 (programs in contrib relay on this
+				setting).
+			</li>
+			<li>
+				Go to the doc/pgsql directory. There's list of things
+				you need to do. It also contains SQL files that are
+				used to create basic database structure.
+			</li>
+		</ol>
+	
+
+	<h4 class="sec">Programs in contrib</h4>
+		<p>
+			I think that after installing vq you'll be able to install the
+			rest of programs. There may be problems with hosting and
+			freemail modules. They require to add some specific tables to database.
+			Run some daemons. I assume that senior administrators will
+			handle this. If you are interested in developing/using them
+			on your site you can contact me, I'll try to help.
+		</p>
+	
+</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center" class="sec">
+          <a href="http://new.foo-baz.com/">
+					Copyrigth 2003, created by Pawel Niewiadomski
+				</a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center" class="first">
+          <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=87916&amp;type=2" width="125" heigth="37" border="0" alt="SourceForge.net Logo"></a>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+3
+
+Number of splits done on cfilesess session dir name. To lower number of
+entries for main directory containing sessions special tree is created.
+For value of 3 session is stored in following manner: session id: 3344556677,
+path: 33/44/55/3344556677.

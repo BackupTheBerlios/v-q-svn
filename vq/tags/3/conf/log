@@ -1,0 +1,5 @@
+2
+
+Logging type:
+ 1 - log via syslog
+ 2 - PostgreSQL (cdaemonlog)

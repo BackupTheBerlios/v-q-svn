@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<page>
+<files>
+	<file name="AUTHORS">
+		<desc>Peoples that have done something for you</desc>
+	</file>
+	<file name="INSTALL">
+		<desc>Installation procedure</desc>
+	</file>
+	<file name="PORTS">
+		<desc>Supported systems</desc>
+	</file>
+	<file name="README">
+		<desc>About software</desc>
+	</file>
+	<file name="TODO">
+		<desc>Wish list</desc>
+	</file>
+	<file name="VERSION">
+		<desc>Current version number</desc>
+	</file>
+	<file name="MAILING_LISTS">
+		<desc>Share you ideas with other.</desc>
+	</file>
+	<link name="DOWNLOAD" href="DOWNLOAD.html">
+		<desc>Download links</desc>
+	</link>
+	<log name="OPENCM.LOG">
+		<desc>Development history</desc>
+	</log>
+</files>
+<msg>
+New release available!
+</msg>
+</page>
+

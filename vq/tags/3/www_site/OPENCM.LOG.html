@@ -1,0 +1,233 @@
+<html>
+<head>
+<title>Virtual QMail</title>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" class="n">
+<table width="100%" class="n">
+<tr><td valign="top">
+<table class="n" width="170">
+  <tr>
+    <td>
+      <a href="AUTHORS.html">AUTHORS</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Peoples that have done something for you</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="INSTALL.html">INSTALL</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Installation procedure</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="PORTS.html">PORTS</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Supported systems</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="README.html">README</a>
+    </td>
+  </tr>
+  <tr>
+    <td>About software</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="TODO.html">TODO</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Wish list</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="VERSION.html">VERSION</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Current version number</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="MAILING_LISTS.html">MAILING_LISTS</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Share you ideas with other.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="OPENCM.LOG.html">OPENCM.LOG</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Development history</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="DOWNLOAD.html">DOWNLOAD</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Download links</td>
+  </tr>
+</table>
+</td><td valign="top" width="100%">
+<pre class="n">
+Branch version: 17 (Virtual QMail)
+date: 2003-07-25T17:14:32.846969GMT 
+author: paweln@iidea.pl
+DOC: CHANGES removed, information about changes should be stored in opencm.
+CODE: hosting/pg2fs: added support of configuration files.
+CODE: hosting: added reading from configuration files.
+CODE: hosting: moved vqwww/chosting -> hosting
+CODE: freemail: added reading from configuration files.
+
+----------------------------
+Branch version: 16 (Virtual QMail)
+date: 2003-07-20T15:09:31.128001GMT 
+author: paweln@iidea.pl
+CODE: moved some common code to file_add, file_rm.
+CODE: added reading configuration from files.
+BUG: changed all #include <errno.h> to #include <cerrno>
+BUG: changed all #include <signal.h> to #include <csignal>
+BUG: changed all #include <stdlib.h> to #include <cstdlib>
+CODE: created new directory try for testing programs.
+CODE: added user friendly help messages in programs.
+CODE: added autoresp program.
+CODE: changed 4 spaces to 1 tab character. now it's disallowed to use spaces to intend.
+BUG: changed char to udot_type in declaration of udot_*, pgsqlauthd wasn't changed
+CODE: split install.cc into two parts: install.{cc,h} - common functions, hier.cc - hierarchy of destination directory
+BUG: added -lsys -lfd -ltext -lfs -lsplit to some make rules, linking was failing on Linux (it worked on OpenBSD)
+DOC: added VERSION file, it will contain version number of release.
+DOC: added www_site directory where xml files will be put, they'll be used to create www site about project
+BUG: vq::getuid.cc,getgid.cc: conf_vq_{u,g}id_s was assigned with name, not id, causing invalid entries in /var/qmail/users/assign
+
+----------------------------
+Branch version: 15 (Virtual QMail)
+date: 2003-05-04T17:45:35.777130GMT 
+author: paweln@iidea.pl
+added freemail in contrib.
+added vquserrm in contrib.
+vqwww: now it reads configuration from conf_home/etc/vqwww
+Fixed bug in cdaemonauth::udot_add - ext was created from user-ext, so
+database entries weren't matched after insertion.
+Fixed bug causing using conf/vq_mode to create conf_vq_fmode.cc
+Fixed bug in int2cc - octal number where treated as decimal.
+vqsignup2: removed conf-h1.
+
+----------------------------
+Branch version: 14 (Virtual QMail)
+date: 2003-04-13T18:34:58.201095GMT 
+author: paweln@iidea.pl
+vq: added option -l to user_add that cause login is not check against
+disallowed logins database. modified plpgsql function user_add.
+
+vq: removed conf-h1 and using configuration files from home directory,
+it was silly idea. now you must copy configuration from home directory
+manually.
+
+----------------------------
+Branch version: 13 (Virtual QMail)
+date: 2003-04-13T17:47:43.557279GMT 
+author: paweln@iidea.pl
+Removed conf-h1 and reading configuration from home directory.
+It was silly idea. Added descriptions in vqwww program (configuration
+options).
+
+----------------------------
+Branch version: 12 (Virtual QMail)
+date: 2003-04-13T06:57:31.841257GMT 
+author: paweln@iidea.pl
+Created program for removing users via www.
+
+----------------------------
+Branch version: 11 (Virtual QMail)
+date: 2003-04-11T18:36:07.674300GMT 
+author: paweln@iidea.pl
+added cleaning of www alias directory. corrected www aliases listings.
+
+----------------------------
+Branch version: 10 (Virtual QMail)
+date: 2003-04-10T21:47:10.912838GMT 
+author: paweln@iidea.pl
+Removed pfstreams from cfsvq, small bug fixes in wwwalichg
+
+----------------------------
+Branch version: 9 (Virtual QMail)
+date: 2003-04-10T16:28:29.798130GMT 
+author: paweln@iidea.pl
+Split daemon part from pgsqllogd, pgsqlauthd. Started porting it to
+gcc 3.2.2.
+
+----------------------------
+Branch version: 8 (Virtual QMail)
+date: 2003-03-22T15:52:42.108209GMT 
+author: paweln@iidea.pl
+Changed mode of installed libraries from 0640 to 0644
+
+----------------------------
+Branch version: 7 (Virtual QMail)
+date: 2003-03-21T10:27:08.930233GMT 
+author: paweln@iidea.pl
+Fixed errors in code (didn't compile), made libraries compatible
+with OpenBSD (.so.1) and Linux (.so)
+
+----------------------------
+Branch version: 6 (Virtual QMail)
+date: 2003-03-21T09:11:08.862656GMT 
+author: paweln@iidea.pl
+Fixed bug with shared libraries (now make creates 2 versions so.1 for
+OpenBSD and so for Linux). Added new module for chosting.
+
+----------------------------
+Branch version: 5 (Virtual QMail)
+date: 2003-03-15T04:44:04.011102GMT 
+author: paweln@iidea.pl
+Bug fixes - linking libraries while compiling works!
+
+----------------------------
+Branch version: 4 (Virtual QMail)
+date: 2003-03-13T01:39:49.265712GMT 
+author: paweln@iidea.pl
+Added information about installing tables in pgsql, added log.sql -
+- table for pgsqllogd.
+
+----------------------------
+Branch version: 3 (Virtual QMail)
+date: 2003-03-12T09:33:41.460860GMT 
+author: paweln@iidea.pl
+Done some cleanup - changed every .h file in vq, contrib/vqwww to
+not use using namespace std; (use std:: in headers). Added loadable 
+modules to vqwww (not tested). some bugs corrected.
+
+----------------------------
+Branch version: 2 (Virtual QMail)
+date: 2003-03-09T06:15:57.586230GMT 
+author: paweln@iidea.pl
+Deleted binary files.
+
+----------------------------
+Branch version: 1 (Virtual QMail)
+date: 2003-03-09T06:05:09.899737GMT 
+author: paweln@iidea.pl
+Import.
+
+----------------------------
+Branch version: 0 (Virtual QMail)
+date: 2003-03-09T05:59:45.263857GMT 
+author: paweln@iidea.pl
+Initial, empty configuration for Virtual QMail:
+Import of Virtual QMail source code.
+
+----------------------------
+</pre>
+</td></tr></body></html>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<page menu="intro">
+	<p>
+		Project goal is to create virtual domains managing system, it should
+		be easy to setup, create and maintain. It should be also very reliable and
+		fast - it's designed for big sites. It does not support real users and
+		it won't. 
+	</p>
+
+	<p>
+		What vq won't do at any time in the future: 
+		<ul>
+			<li>support POP3 authorization based relaying as vpopmail does - use SMTP-AUTH!</li>
+			<li>support real users</li>
+			<li>support any other mailboxes type than Maildir</li>
+		</ul>
+	</p>
+
+	<p>
+		Current futures:
+		<ul>
+			<li>PostgreSQL based authorization</li>
+			<li>PostgreSQL based logging of user's authorizations</li>
+		</ul>
+	</p>
+
+	<p>
+		If you think that some future is missing you're welcome to add it or
+		if you can't but think it should be implemented you can contact author.
+	</p>
+
+	<p>
+		Following is a list of programs in contrib directory:
+	</p>
+	
+	<sec tit="freemail">
+		This module will support options associated with free e-mail accounts.
+		At this time it include only option to change informations about
+		user (sex, country, city, education level, etc.).
+	</sec>
+
+	<sec tit="hosting">
+		This module will support options associated with hosting servers.
+		At this time it supports: adding new e-mail accounts to domain,
+		setting FTP access, removing users, access to WWW usage logs.
+		Setting aliases for WWW.
+	</sec>
+
+	<sec tit="vqsignup">
+		Simple program that allows users to create new e-mail accounts.
+	</sec>
+
+	<sec tit="vquserrm">
+		Removes user.
+	</sec>
+
+	<sec tit="host_add">
+		Adds domain.
+	</sec>
+
+	<sec tit="pg2fs">
+		Used with hosting module. It's used to configure tinydns, dnscache.
+		Hosting module after changing data calls stored in SQL server 
+		functions from <a href="http://iidea.pl/~paweln/proj/pgutil">pgutil 
+		package</a>. They create simple files which are processed by pg2fs
+		to create tinydns and dnscache configuration.
+	</sec>
+
+	<sec tit="valid">
+		Small library. Includes functions used to validate informations as
+		data, polish tax number, polish post code, etc.
+	</sec>
+
+	<sec tit="vqsignup1">
+		Special version of vqsignup which collects information about user
+		(sex, education level, city, country). It's used to create free
+		e-mail service.
+	</sec>
+
+	<sec tit="vqwww">
+		Account manager. Includes modules that allows to: change password,
+		set e-mail redirection, set automatic response, see history of login.
+		It support dynamic loading of shared libraries, so it may be easily
+		extended.
+	</sec>
+</page>

@@ -1,0 +1,5 @@
+#ifndef __conf_home
+#define __conf_home
+#include <string>
+const std::string conf_home = "\x2f\x75\x73\x72\x2f\x6c\x6f\x63\x61\x6c\x2f\x66\x72\x65\x65\x6d\x61\x69\x6c";
+#endif

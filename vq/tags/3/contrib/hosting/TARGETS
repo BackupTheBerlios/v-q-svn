@@ -1,0 +1,8 @@
+ac_str.o cconf.o cftpmod.o conf_home.o cpginfodb.o cuseraddmod.o cusersmod.o cwwwalimod.o cwwwstatmod.o hier.o hosting.o infodb_init.o install.o stat_auth.o str2cc.o wwwalichg.o hosting_conf.a libhosting.so
+auto/*
+ac_str
+install
+stat_auth
+wwwalichg
+str2cc
+conf_home.cc

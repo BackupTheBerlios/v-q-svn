@@ -1,0 +1,7 @@
+* option to allow domains/users to use other uid/gid numbers.
+* manager of -ext addresses.
+* WWW manager of all domains under vq
+* clean up exceptions - create my own versions
+* use of daemontools (restart qmail by them if system supports it)
+* translate vqwww to English
+* compile it under gcc 3.2

@@ -1,0 +1,1001 @@
+<!DOCTYPE html public "-//W3C//DTD HTML 4.0 Transitional//EN"><html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Virtual Qmail</title>
+    <meta name="author" content="Pawel Niewiadomski, new@foo-baz.com">
+    <meta name="keywords" content="virtual, qmail, mta, domains, hosting, linux, openbsd, mail system">
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body bgcolor="white" color="black">
+    <table cellspacing="0" cellpadding="0" width="700">
+      <tr>
+        <td>
+          <h2 class="sec">Virtual Qmail</h2>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <table width="100%" cellspacing="0" cellpadding="0">
+            <tr class="menu">
+              <td>
+                <a href="../../dev">Developers</a> <a href="../../docs">Documentation</a> <a href="../../sf">SourceForge</a> <a href="http://sourceforge.net/projects/v-q/project/showfiles.php?group_id=87916">Download files</a> <a href="../../site_map.html">Site map</a> </td>
+            </tr>
+            <tr class="sec">
+              <td>
+                <a href="../../">start</a> :: <a href="../../docs">Documentation</a> :: <a href="../../docs/conf">Configuration</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <table cellspacing="0" cellpadding="0" width="700">
+      <tr>
+        <td valign="top" class="first">
+          <table width="170" class="first" cellspacing="0" cellpadding="0">
+            <tr>
+              <td>
+                <a href="../../docs/conf/files.html">Configuration files</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td width="100%">
+          <table cellpadding="5" width="100%" height="200">
+            <tr>
+              <td valign="top">
+                <table>
+                  <tr>
+                    <td class="first">
+					Project: vq</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: autoresp_ttl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Period in seconds when information about senders is cached. So, if someone
+ sends 5 messages within this time only one automatic reponse will be generated.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pgsql</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Connect information used while connecting with PostgreSQL server.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: qmail</td>
+                  </tr>
+                  <tr>
+                    <td>
+ QMail's home directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: qmail_hyp</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Hyphen used by qmail.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: qmail_mode</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Mode of files created in qmail's home. 0 means octal form.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: split_dom</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Level of splits of domain name. Directory "domains" includes domains
+ registered in system. It's possible to lower number of entries per 
+ directory by creating tree. If you leave this with value 3, path for
+ "test.org.pl" in "domains" will look: domains/pl/org/test/test.org.pl.
+ If you don't want any splits set it to 0.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: split_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Level of splits of user name. To lower number of entries in directory
+ containing user mailboxes tree is created. For value 3 entries in
+ domain's directory look as following: for user test, path is t/e/s/test/.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_fmode</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Mode of files created in vq's home.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_mode</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Mode of directories created in vq's home.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Name of vq user.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: atchars</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars treated as a separator between user and domain in e-mail addresses.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Virtual QMail's home directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: freemail</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: xmlstart</td>
+                  </tr>
+                  <tr>
+                    <td>
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: cntry_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Country - minimal length.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Home directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: html_br</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: notify</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Program which will be executed after adding user, program will be called
+ with following arguments: domain_name login users_info_id
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_maxl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Password's maximal length
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Minimal length of password
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Allowed chars in password.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pgsql</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Connect string for vqsignup1d
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_maxl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Maximal length of username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Minimal length of username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Name of vq user.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: city_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ City - minimal length.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: host_add</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: html_br</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+ 
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in password
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pref_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in hostname.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ VQ's user
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: xmlstart</td>
+                  </tr>
+                  <tr>
+                    <td>
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: domains</td>
+                  </tr>
+                  <tr>
+                    <td>
+ File which includes list of allowed domains.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Destination directory
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: hosting</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: notify</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Program which will be executed after adding user, program will be called
+ with following arguments: domain_name login users_info_id
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: ftp_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in FTP paths.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Home directory
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: ftp_base</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Base directory for FTP access.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pgsql</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Connect string for pgsqlauthd
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: prefix_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in WWW aliases (prefix field)
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: wwwali_exe</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Program run to change links in htdocs directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: html_br</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Minimal length of username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_maxl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Maximal length of username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_maxl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Password's maximal length.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Password's minimal length.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in password.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Name of vq user.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: pg2fs</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: tdns_user</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: dnsc_mode</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Mode of files created for dnscache.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: dnsc_restart</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Command used to restart dnscache.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: dnsc_root</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Base directory for dnscache.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: dnsc_user</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Home directory
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: tdns_group</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Group of user running tinydns.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: tdns_make</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Command used to compila data.cdb for tinydns.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: tdns_mode</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Mode of file created in tinydns directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: tdns_root</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Base directory of tinydns.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: dnsc_group</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Group of user running dnscache.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: valid</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Destination directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: vqsignup</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Destination directory for binary files.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: domains</td>
+                  </tr>
+                  <tr>
+                    <td>
+ File which includes list of allowed domains.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: html_br</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in password.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Name of vq user.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: xmlstart</td>
+                  </tr>
+                  <tr>
+                    <td>
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: vqsignup1</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: domains</td>
+                  </tr>
+                  <tr>
+                    <td>
+ File which includes list of allowed domains.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: html_br</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: notify</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Program which will be executed after adding user, program will be called
+ with following arguments: domain_name login users_info_id
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in password.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pgsql</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Connect string for pgsqlauthd
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Name of vq user.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: xmlstart</td>
+                  </tr>
+                  <tr>
+                    <td>
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: xmlstart1</td>
+                  </tr>
+                  <tr>
+                    <td>
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Destination directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: vquserrm</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Home directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Name of vq user.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: xmlstart</td>
+                  </tr>
+                  <tr>
+                    <td>
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</td>
+                  </tr>
+                  <tr>
+                    <td class="first">
+					Project: vqwww</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: sess_fmode</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Mode of file created to store session's information.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: vq_user</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Name of vq user.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Minimal length of username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: user_maxl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Maximal length of username.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: sess_timeout</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Timeout of session, counted in minutes. If user is idle more than
+ this time it will have to authorize.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: redir_max</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Number of possible redirections for one address.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_ok</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Chars allowed in password.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_minl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Minimal length of password.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: pass_maxl</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Password's maximal length.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: html_br</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: fs_split</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Number of splits done on cfilesess session dir name. To lower number of
+ entries for main directory containing sessions special tree is created.
+ For value of 3 session is stored in following manner: session id: 3344556677,
+ path: 33/44/55/3344556677.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: xmlstart</td>
+                  </tr>
+                  <tr>
+                    <td>
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: home</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Destination directory.
+</td>
+                  </tr>
+                  <tr>
+                    <td class="sec">
+						File: fs</td>
+                  </tr>
+                  <tr>
+                    <td>
+ Place for storing sessions with cfilesess.</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center" class="sec">
+          <a href="http://new.foo-baz.com/">
+					Copyrigth 2003, created by Pawel Niewiadomski
+				</a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center" class="first">
+          <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=87916&amp;type=2" width="125" heigth="37" border="0" alt="SourceForge.net Logo"></a>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

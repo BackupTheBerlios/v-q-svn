@@ -1,0 +1,15 @@
+ac_int.o ac_str.o cautorespmod.o cconf.o cconfmod.o cfilesess.o cgi.o conf_home.o coutmod.o cpassmod.o credirmod.o getgid.o getuid.o hier.o html.o install.o sabmain.o str2cc.o vqwww.o
+conf_home.cc
+./vqwww
+./str2cc
+./ac_int
+./libsess.so.1
+./libsess.so
+./ac_str
+./install
+./getgid
+./getuid
+auto/*
+vqwww_conf.a
+ac_gen.o
+ac_gen

@@ -1,0 +1,29 @@
+First you need to install qmail (it's better to place it in /var/qmail),
+you can download patch for qmail from http://iidea.pl/~paweln/proj/q-p/
+(it's a special patch including most common needed stuff and also
+specially created to support some features of vq).
+
+Installing with PostgreSQL module.
+
+Install PostgreSQL, create user and database for mail system, if you want
+to use programs from contrib directory you should specify encoding for
+table as utf-8, or you'll have to modify source code for that programs.
+
+For more details see doc/pgsql directory, especially README file :-)
+
+Step-by-step
+-----------------------------
+1. create group vq, create user vq in group vq.
+2. create databases and tables (see doc/pgsql/README)
+3. edit conf/* files, or copy current configuration to conf directory.
+4. make
+5. ./install
+6. make /var/vq/lib searchable by ld (on Linux add this directory to 
+/etc/ld.so.conf, on OpenBSD edit /etc/rc.conf, variable shlib_dirs)
+7. that's it folks, you may use vq
+
+Problems
+-----------------------------
+1. At this time gcc 3.2 is not supported, I don't run any system with it (I'm
+using 2.95), I think there may be some problems with compiling it under
+3.2 (especially namespaces), someone could try and report problems to me.

@@ -1,0 +1,7 @@
+cgi.o conf_home.o conf_xmlstart.o conf_xslt_file.o conf_xsltsheet.o html.o sabmain.o str2cc.o vquserrm.o
+vquserrm str2cc
+conf_home.cc conf_xslt_file.cc conf_xsltsheet.a
+conf_xmlstart.cc
+getgid.o getgid getuid getuid.o
+install conf_vq_gid.cc conf_vq_uid.cc
+install.o conf_vq_gid.o conf_vq_uid.o

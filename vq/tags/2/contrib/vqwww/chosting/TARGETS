@@ -1,0 +1,17 @@
+cftpmod.o cgi.o conf_ftp_base.o conf_pgsql.o cpginfodb.o infodb_init.o str2cc.o conf_ftp_base.cc conf_pgsql.cc chosting.so libhosting.so
+str2cc
+conf_ftp_ok.cc conf_ftp_ok.o conf_html_br.o conf_html_br.cc
+cftpmod.a
+hosting.o
+cwwwalimod.o
+conf_prefix_ok.o
+conf_prefix_ok.cc
+conf_wwwali_exe.o conf_wwwali_exe.cc
+wwwalichg.o wwwalichg
+cusersmod.o
+cuseraddmod.o
+conf_notify.cc conf_notify.o
+conf_home.o
+install.o install
+stat_auth stat_auth.o
+conf_home.cc cwwwstatmod.o

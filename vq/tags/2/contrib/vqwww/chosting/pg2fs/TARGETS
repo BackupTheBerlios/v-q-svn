@@ -1,0 +1,2 @@
+conf_dnsc_gid.o conf_dnsc_mode.o conf_dnsc_restart.o conf_dnsc_root.o conf_dnsc_uid.o conf_tdns_gid.o conf_tdns_make.o conf_tdns_mode.o conf_tdns_root.o conf_tdns_uid.o getgid.o getuid.o int2cc.o lock.o pg2fs.o str2cc.o conf_dnsc_gid.cc conf_dnsc_mode.cc conf_dnsc_restart.cc conf_dnsc_root.cc conf_dnsc_uid.cc conf_tdns_gid.cc conf_tdns_make.cc conf_tdns_mode.cc conf_tdns_root.cc conf_tdns_uid.cc
+getgid getuid int2cc str2cc pg2fs

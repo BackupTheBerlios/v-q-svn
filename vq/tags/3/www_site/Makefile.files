@@ -1,0 +1,74 @@
+all: index.html AUTHORS.html INSTALL.html PORTS.html README.html TODO.html VERSION.html MAILING_LISTS.html OPENCM.LOG.html 
+
+AUTHORS: ../AUTHORS
+	cp -f ../AUTHORS .
+	chmod 644 AUTHORS
+
+AUTHORS.html: AUTHORS head.html tail.html pre.inc pre_end.inc
+	cat head.html pre.inc AUTHORS pre_end.inc tail.html \
+	> AUTHORS.html.tmp && mv -f AUTHORS.html.tmp AUTHORS.html
+	chmod 644 AUTHORS.html
+
+INSTALL: ../INSTALL
+	cp -f ../INSTALL .
+	chmod 644 INSTALL
+
+INSTALL.html: INSTALL head.html tail.html pre.inc pre_end.inc
+	cat head.html pre.inc INSTALL pre_end.inc tail.html \
+	> INSTALL.html.tmp && mv -f INSTALL.html.tmp INSTALL.html
+	chmod 644 INSTALL.html
+
+PORTS: ../PORTS
+	cp -f ../PORTS .
+	chmod 644 PORTS
+
+PORTS.html: PORTS head.html tail.html pre.inc pre_end.inc
+	cat head.html pre.inc PORTS pre_end.inc tail.html \
+	> PORTS.html.tmp && mv -f PORTS.html.tmp PORTS.html
+	chmod 644 PORTS.html
+
+README: ../README
+	cp -f ../README .
+	chmod 644 README
+
+README.html: README head.html tail.html pre.inc pre_end.inc
+	cat head.html pre.inc README pre_end.inc tail.html \
+	> README.html.tmp && mv -f README.html.tmp README.html
+	chmod 644 README.html
+
+TODO: ../TODO
+	cp -f ../TODO .
+	chmod 644 TODO
+
+TODO.html: TODO head.html tail.html pre.inc pre_end.inc
+	cat head.html pre.inc TODO pre_end.inc tail.html \
+	> TODO.html.tmp && mv -f TODO.html.tmp TODO.html
+	chmod 644 TODO.html
+
+VERSION: ../VERSION
+	cp -f ../VERSION .
+	chmod 644 VERSION
+
+VERSION.html: VERSION head.html tail.html pre.inc pre_end.inc
+	cat head.html pre.inc VERSION pre_end.inc tail.html \
+	> VERSION.html.tmp && mv -f VERSION.html.tmp VERSION.html
+	chmod 644 VERSION.html
+
+MAILING_LISTS: ../MAILING_LISTS
+	cp -f ../MAILING_LISTS .
+	chmod 644 MAILING_LISTS
+
+MAILING_LISTS.html: MAILING_LISTS head.html tail.html pre.inc pre_end.inc
+	cat head.html pre.inc MAILING_LISTS pre_end.inc tail.html \
+	> MAILING_LISTS.html.tmp && mv -f MAILING_LISTS.html.tmp MAILING_LISTS.html
+	chmod 644 MAILING_LISTS.html
+
+OPENCM.LOG:
+	cm log >OPENCM.LOG
+	chmod 644 OPENCM.LOG
+
+OPENCM.LOG.html: pre.inc pre_end.inc OPENCM.LOG head.html tail.html 
+	cat head.html pre.inc OPENCM.LOG pre_end.inc tail.html \
+	> OPENCM.LOG.html.tmp && mv -f OPENCM.LOG.html.tmp OPENCM.LOG.html
+	chmod 644 OPENCM.LOG.html
+
