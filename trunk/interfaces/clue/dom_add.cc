@@ -28,8 +28,8 @@ const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] (domain){1,}"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-q] [domain ...]"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Add domains in mail system. It does not add any users, so"<<endl
 		<<"after creating domain you should add at least postmaster user"<<endl

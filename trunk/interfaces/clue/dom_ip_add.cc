@@ -33,8 +33,8 @@ const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] domain (ip){1,}"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-q] domain [ip ...]"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Assign IP addresses to domain. Usually user_auth if"<<endl
 		<<"user's name is not an e-mail address tries to guess name of"<<endl

@@ -16,90 +16,101 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "main.hpp"
+#include "error2str.hpp"
+#include "cluemain.hpp"
+#include "cdom_name2id.hpp"
+#include "user_conf_opts_parse.hpp"
 
-#include <unistd.h>
-
-#include <exception>
-#include <iostream>
-#include <cerrno>
-#include <deque>
+#include <split.hpp>
+#include <vqmain.hpp>
 
 using namespace std;
+using namespace clue;
 
-const char *me = NULL;
 /*
  *
  */
-void usage()
+void usage(const char * me, const std::string & uc_names)
 {
-	cerr<<"usage: "<<me<< " [options] (e-mail entry's_id){1,}"<<endl
+	cerr<<"usage: "<<me<< " [-q] [-t type] [e-mail [entry's_id] ...]"<<endl
 		<<"-q\tquiet mode, only first e-mail is processed"<<endl
+		<<"-t\tremove only this type of configuration, entry's id. must be ommited"<<endl
 		<<endl
-		<<"Delete action assiociated with user's mailbox."<<endl
+		<<"Delete configuration option assiociated with user's mailbox."<<endl
 		<<"Warning: some options must be present for valid processing of"<<endl
-		<<"delivieries, etc. Use at your own risk."<<endl;
+		<<"delivieries, etc. Use at your own risk. Type can be literal if "<<endl
+		<<uc_names<<" includes mapping to numeric."<<endl;
 }
 
 /*
  *
  */
-int cppmain(int ac, char **av)
+int cluemain(int ac, char **av, ::vq::ivq_var & vq )
 {
-	me = *av;
-	try {
-			int opt;
-			bool quiet=false;
-			while( (opt=getopt(ac,av,"qh")) != -1 ) {
-					switch(opt) {
-					case 'q':
-							quiet=true;
-							break;
-					default:		
-					case '?':
-					case 'h':
-							usage();
-							return(1);
-					}
-			}
-			ac -= optind;
-			av += optind;
-			if( 1 > ac || ac % 2 ) {
-					usage();
-					return(1);
-			}
+	const char * me = *av;
+	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
+	conf::cmapconf::map_type uc_names_map( conf::cmapconf(fn_uc_names).val_map() );
+	types_array types;
 
-			cvq *vq(cvq::alloc());
+	bool quiet=false;
+	int ar = opts_parse(ac, av, fn_uc_names, uc_names_map, types, quiet);
+	if( ar ) return ar;
 
-			uint8_t ret;
-			char *atpos = NULL;
-
-			if(quiet) ac=2;
-
-			for(int i=0; i < ac; i+=2 ) {
-					atpos = rindex(av[i], '@');
-					if(!quiet) cout<<av[i]<<": ";
-					if( atpos ) {
-							*atpos++ = '\0';
-							ret = vq->udot_rm(atpos, av[i], "", av[i+1]);
-							if(ret) {
-									if(!quiet)
-											cout<<vq->err_report()<<endl;
-									else return(ret);
-							} else {
-									if(!quiet)
-											cout<<"Entry was removed"<<endl;
-									else return 0;
-							}
-					} else {
-							if( ! quiet ) cout<<"invalid e-mail"<<endl;
-							else return 1;
-					}
-			}
-	} catch( const exception & e ) {
-			cerr << "exception: " << e.what() << endl;
+	if( 1 > ac || (types.empty() && ac % 2) ) {
+			usage(me, fn_uc_names);
 			return 1;
 	}
+
+	CORBA::String_var did;
+	cdom_name2id dom_name2id;
+	vq::ivq::error_var ret;
+	vq::ivq::user_conf_info_list_var ucis;
+	std::deque< std::string > esplit;
+	types_array::const_iterator type_itr, type_end;
+	
+	if(quiet) ac=2;
+	for(int i=0; i < ac && i+1 < ac; i++ ) {
+			esplit = text::split(av[i], "@");
+			if( esplit.size() != 2 ) {
+					if( ! quiet ) {
+							cout<<av[i]<<": invalid e-mail"<<endl;
+							continue;
+					} else return 1;
+			}
+			ret = dom_name2id(vq, esplit.back().c_str(), did);
+			if( vq::ivq::err_no != ret->ec ) {
+					if( ! quiet ) {
+							cout<<av[i]<<": "<<error2str(ret)<<endl;
+							continue;
+					} else return 1;
+			}
+
+			if( types.empty() ) {
+					ret = vq->user_conf_rm(did, esplit.front().c_str(), "", 
+						static_cast<const char *>(av[i+1]) );
+					if( vq::ivq::err_no != ret->ec ) {
+							if( ! quiet ) {
+									cout<<av[i]<<": "<<error2str(ret)<<endl;
+									continue;
+							} else return 1;
+					}
+					cout<<av[i]<<": removed: "<<av[i+1]<<endl;
+			} else {
+					for( type_itr=types.begin(), type_end=types.end();
+								type_itr != type_end; ++type_itr ) {
+
+							ret = vq->user_conf_rm_by_type(did, 
+								esplit.front().c_str(), "", *type_itr );
+							if( vq::ivq::err_no != ret->ec ) {
+									if( ! quiet ) {
+											cout<<av[i]<<": "<<error2str(ret);
+											continue;
+									} else return 1;
+							}
+							cout<<av[i]<<": removed type: "<<*type_itr<<endl;
+					}
+			}
+	}
+
 	return 0;
 }

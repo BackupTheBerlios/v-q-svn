@@ -28,8 +28,8 @@ const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] (domain){1,}"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-q] [domain ...]"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Remove domain and all entries assiociated with it."<<endl
 		<<"Warning: it removes users' mailboxes physically."<<endl;

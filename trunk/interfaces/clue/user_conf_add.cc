@@ -34,7 +34,7 @@ using namespace clue;
  */
 void usage( const char *me, const std::string & uc_names )
 {
-	cerr<<"usage: "<<me<< " [options] (e-mail type value){1,}"<<endl
+	cerr<<"usage: "<<me<< " [-q] [e-mail type value ...]"<<endl
 		<<"-q\tquiet mode, only first e-mail is processed"<<endl
 		<<endl
 		<<"Add options assiociated with mailboxes, for example autoresponse"<<endl

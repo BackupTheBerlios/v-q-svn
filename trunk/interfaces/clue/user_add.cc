@@ -34,10 +34,10 @@ static const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] [-s] (e-mail password){1,}"<<endl
-		<<"\t-s\tstdin mode - read e-mail addresses and passwords from stdin"<<endl
-		<<"\t-l\tdon't check whether login is disallowed"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-q] [-s] [e-mail password ...]"<<endl
+		<<"-s\tstdin mode - read e-mail addresses and passwords from stdin"<<endl
+		<<"-l\tdon't check whether login is disallowed"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Program adds users. Default action is to read users and passwords"<<endl
 		<<"from command line, check if login is allowed. In stdin mode"<<endl

@@ -34,8 +34,8 @@ const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-a] (domain){1,}"<<endl
-		<<"\t-a\tall domains"<<endl
+	cerr<<"usage: "<<me<< " [-a] [domain ...]"<<endl
+		<<"-a\tall domains"<<endl
 		<<endl
 		<<"Program shows IP addresses assiociated with given domains'"<<endl
 		<<"names."<<endl;

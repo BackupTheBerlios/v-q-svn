@@ -19,10 +19,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "error2str.hpp"
 #include "cluemain.hpp"
 #include "cdom_name2id.hpp"
+#include "user_conf_opts_parse.hpp"
 
 #include <split.hpp>
-#include <conf.hpp>
 #include <vqmain.hpp>
+
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace clue;
@@ -32,7 +34,8 @@ using namespace clue;
  */
 void usage( const char *me, const std::string & uc_names )
 {
-	cerr<<"usage: "<<me<< " (e-mail){1,}"<<endl
+	cerr<<"usage: "<<me<< "[-t type] [e-mail ...]"<<endl
+		<<"\t-t type\tlist only configuration of specified type"<<endl
 		<<endl
 		<<"List options assiociated with specified mailboxes."<<endl
 		<<"Some of them may be in unreadable form that must be processed"<<endl
@@ -41,25 +44,41 @@ void usage( const char *me, const std::string & uc_names )
 		<<"mapping in "<<uc_names<<'.'<<endl;
 }
 
+/**
+ * Prints user_conf_info_list
+ */
+void ucis_print( ostream & cout, const char * email,
+		vq::ivq::user_conf_info_list_var & ucis,
+		const conf::cmapconf::map_type & uc_names_map ) {
+
+	conf::cmapconf::map_type::const_iterator name_itr;
+	for( CORBA::ULong j = 0, size=ucis->length(); j<size; ++j ) {
+			cout<<email<<": "<<ucis[j].id_conf;
+			name_itr = uc_names_map.find(
+				static_cast<const char *>(ucis[j].id_conf));
+			if( name_itr != uc_names_map.end() )
+					cout<<" ("<<name_itr->second<<')';
+				
+			cout<<": "<<ucis[j].type<<": "<<ucis[j].val<<endl;
+	}
+}
+
 /*
  *
  */
 int cluemain(int ac, char **av, vq::ivq_var & vq )
 {
-	int opt;
+	const char * me = *av;
 	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
-	while( (opt=getopt(ac,av,"h")) != -1 ) {
-			switch(opt) {
-			case '?':
-			case 'h':
-					usage(*av, fn_uc_names);
-					return(1);
-			}
-	}
-	ac -= optind;
-	av += optind;
+	conf::cmapconf::map_type uc_names_map( conf::cmapconf(fn_uc_names).val_map() );
+	types_array types;
+
+	bool quiet = false; // ignored 
+	int ar = opts_parse(ac, av, fn_uc_names, uc_names_map, types, quiet);
+	if( ar ) return ar;
+	
 	if( 1 > ac ) {
-			usage(*av, fn_uc_names);
+			usage(me, fn_uc_names);
 			return(1);
 	}
 
@@ -67,35 +86,40 @@ int cluemain(int ac, char **av, vq::ivq_var & vq )
 	cdom_name2id dom_name2id;
 	vq::ivq::error_var ret;
 	vq::ivq::user_conf_info_list_var ucis;
-	conf::cmapconf::map_type uc_names_map( conf::cmapconf(fn_uc_names).val_map() );
-	conf::cmapconf::map_type::const_iterator name_itr;
 	std::deque< std::string > esplit;
+	types_array::const_iterator type_itr, type_end;
 	
 	for(int i=0; i < ac; i++ ) {
 			esplit = text::split(av[i], "@");
-			cout<<av[i]<<": ";
 			if( esplit.size() != 2 ) {
-					cout<<"invalid e-mail"<<endl;
+					cout<<av[i]<<": invalid e-mail"<<endl;
 					continue;
 			}
 			ret = dom_name2id(vq, esplit.back().c_str(), did);
 			if( vq::ivq::err_no != ret->ec ) {
-					cout<<error2str(ret)<<endl;
+					cout<<av[i]<<": "<<error2str(ret)<<endl;
 					continue;
 			}
-			ret = vq->user_conf_ls(did, esplit.front().c_str(), "", ucis);
-			if( vq::ivq::err_no != ret->ec ) {
-					cout<<error2str(ret)<<endl;
-					continue;
-			}
-			for( CORBA::ULong j = 0, size=ucis->length(); j<size; ++j ) {
-					cout<<ucis[j].id_conf;
-					name_itr = uc_names_map.find(
-						static_cast<const char *>(ucis[j].id_conf));
-					if( name_itr != uc_names_map.end() )
-							cout<<" ("<<name_itr->second<<')';
-					
-					cout<<": "<<ucis[j].type<<": "<<ucis[j].val<<endl;
+
+			if( types.empty() ) {
+					ret = vq->user_conf_ls(did, esplit.front().c_str(), "", ucis);
+					if( vq::ivq::err_no != ret->ec ) {
+							cout<<av[i]<<": "<<error2str(ret)<<endl;
+							continue;
+					}
+					ucis_print(cout, av[i], ucis, uc_names_map);
+			} else {
+					for( type_itr=types.begin(), type_end=types.end();
+								type_itr != type_end; ++type_itr ) {
+
+							ret = vq->user_conf_ls_by_type(did, 
+								esplit.front().c_str(), "", *type_itr, ucis );
+							if( vq::ivq::err_no != ret->ec ) {
+									cout<<av[i]<<": "<<error2str(ret);
+									continue;
+							}
+							ucis_print(cout, av[i], ucis, uc_names_map);
+					}
 			}
 	}
 	return 0;

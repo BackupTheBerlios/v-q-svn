@@ -33,9 +33,9 @@ const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-qa] domain (ip){1,}"<<endl
-		<<"\t-q\tquiet mode"<<endl
-		<<"\t-a\tremove all for domain"<<endl
+	cerr<<"usage: "<<me<< " [-qa] domain [ip ...]"<<endl
+		<<"-q\tquiet mode"<<endl
+		<<"-a\tremove all for domain"<<endl
 		<<endl
 		<<"Delete IP entries for specified domains. It changes only"<<endl
 		<<"internal database used by user_auth."<<endl;

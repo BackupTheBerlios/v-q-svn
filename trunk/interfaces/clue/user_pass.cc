@@ -32,9 +32,9 @@ static const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] [-s] (e-mail password){1,}"<<endl
-		<<"\t-s\tstdin mode - read e-mail addresses and passwords from stdin"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-qs] [e-mail password ...]"<<endl
+		<<"-s\tstdin mode - read e-mail addresses and passwords from stdin"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Change password for mailbox. In stdin mode you should supply 2 lines"<<endl
 		<<"for each mailbox: e-mail, password."<<endl;

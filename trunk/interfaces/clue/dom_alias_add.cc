@@ -32,8 +32,8 @@ const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] domain (alias){1,}"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-q] domain [alias ...]"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Add other names to domain."<<endl;
 }

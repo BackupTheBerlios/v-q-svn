@@ -32,8 +32,8 @@ const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] (alias){1,}"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-q] [alias ...]"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Remove specified aliases. Don't call it for domains."<<endl;
 }

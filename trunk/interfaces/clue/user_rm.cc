@@ -32,8 +32,8 @@ static const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] (e-mail){1,}"<<endl
-		<<"\t-q\tquiet mode"<<endl
+	cerr<<"usage: "<<me<< " [-q] [e-mail ...]"<<endl
+		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Delete users. It copies all files from users's mailbox to delete"<<endl
 		<<"directory in home dir. So it's possible to restore user's messages."<<endl;
