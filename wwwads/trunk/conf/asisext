@@ -1,0 +1,4 @@
+.asis
+
+extensio telling http server to forward file to client without adding
+headers.

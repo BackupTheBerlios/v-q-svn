@@ -1,0 +1,11 @@
+* configuration of HTMLOK chars
+* some configuration files ?
+* utf-8, utf-16 support in misc, etc. ?
+* statistics !!! maybe with webalizer ?
+* mail notification
+* correct english everywhere, i think i made many mistakes
+* look closer at code, try to optimise it 
+* maybe some more rules on showing/blocking
+* nonblockable ads.
+* clean wwwads.xslt
+* make documentation about protocol used in communication with adsd

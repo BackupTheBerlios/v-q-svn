@@ -1,0 +1,6 @@
+* why advertisement and groups are not removed from WWWDIR ?
+because of pages' caching, etc. i think it should be possible to
+get image and url after some time after downloading page's source, it's
+administrator's decision after what time. if ad. is removed file aid.rm
+is created, if group is removed file rm is created in group's directory.
+now you can write script to delete them after specified time (day,week,...).

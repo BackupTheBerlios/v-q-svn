@@ -1,0 +1,3 @@
+#
+
+chars disallowed by htmlok will be replaced with firts char from above string
