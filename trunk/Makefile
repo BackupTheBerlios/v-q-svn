@@ -31,10 +31,5 @@ install-dirs:
 
 install-conf: install-dirs
 	@echo "Installing default configuration..."
-	@if [ ! -f $(PREFIX)/etc/ivq/orb_conf ] ; then \
-		echo "-ORBInitRef NameService=corbaloc::127.0.0.1:12456/NameService" > $(PREFIX)/etc/ivq/orb_conf ; \
-		chmod 644 $(PREFIX)/etc/ivq/orb_conf ; \
-		echo "$(PREFIX)/etc/ivq/orb_conf: created" ; \
-	fi
 
 include Makefile.common

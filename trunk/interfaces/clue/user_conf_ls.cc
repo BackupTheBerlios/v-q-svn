@@ -34,7 +34,7 @@ using namespace clue;
  */
 void usage( const char *me, const std::string & uc_names )
 {
-	cerr<<"usage: "<<me<< "[-t type] [e-mail ...]"<<endl
+	cerr<<"usage: "<<me<< " [-t type] [e-mail ...]"<<endl
 		<<"\t-t type\tlist only configuration of specified type"<<endl
 		<<endl
 		<<"List options assiociated with specified mailboxes."<<endl

@@ -11,7 +11,7 @@
 //		before including this file:
 //
 //			P_USE_ORBIX     (for Orbix)
-//			P_USE_ORBABUS   (for Orbacus)
+//			P_USE_ORBACUS   (for Orbacus)
 //			P_USE_TAO       (for TAO)
 //			P_USE_OMNIORB   (for omniORB)
 //			P_USE_MICO      (for MICO)
