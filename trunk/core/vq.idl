@@ -199,21 +199,21 @@ module vq {
 			error dom_name(in string dom_id, out string dom_name )
 					raises (null_error, except, db_error);
 		//@}
-#if 0
+
 		/**
-		 * \defgroup dra Domains REGEX aliases
+		 * \defgroup dra Domain aliases
 		 */
 		//@{
-			error dra_add(in string dom_id, in string rea)
-					raises (null_error, except);
+			error da_add(in string dom_id, in string ali)
+					raises (null_error, except, db_error);
 			/// Removes IP address
-			error dra_rm(in string dom_id, in string rea)
-					raises (null_error, except);
+			error da_rm(in string ali)
+					raises (null_error, except, db_error);
 			/// Removes all IP addresses
-			error dra_rm_by_dom(in string dom_id)
-					raises (null_error, except);
+			error da_ls_by_dom(in string dom_id, out string_list alis )
+					raises (null_error, except, db_error);
 		//@}
-#endif // if 0
+
 		/**
 		 * \defgroup user User handling
 		 * @{

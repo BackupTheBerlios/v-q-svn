@@ -18,6 +18,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "iauth_common.hpp"
 #include "iauth_user_conf.hpp"
+#include "iauth_dom_alias.hpp"
 #include "../../../core/auth.hpp"
 
 #include <getlines.hpp>
@@ -373,58 +374,6 @@ struct auth_test {
 			BOOST_CHECK_EQUAL(aicur.flags, 0U);
 		}
 
-		/**
-		 * add regex aliases for domain created in case6
-		 * get list of regex aliases for domain created in case6
-		 * get list of regex aliases for not existing domain
-		 * remove regex aliases by pair: id_domain+re_alias
-		 * remove regex aliases by id_domain
-		 */
-		void case7() {
-			const char * dom = "case6.pl";
-			const char * reas[] = {
-				"test",
-				"^test.*",
-				"^oloo$"
-			};
-			unsigned reas_cnt = sizeof(reas)/sizeof(*reas);
-			CORBA::String_var dom_id;
-			err = auth->dom_id(dom, dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			BOOST_REQUIRE(*dom_id);
-			for( unsigned i=0; i<reas_cnt; ++i ) {
-					err = auth->dra_add(dom_id, reas[i]);
-					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			}
-			vq::iauth::string_list_var from_db, from_db1;
-			err = auth->dra_ls_by_dom(dom_id, from_db);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt);
-			// need to compare all of them
-			std::map<std::string, char> in_db;
-			for( unsigned i=0, s=from_db->length(); i<s; ++i ) {
-					in_db[static_cast<const char *>(from_db[i])] = 1;
-			}
-			for( unsigned i=0; i<reas_cnt; ++i ) {
-					BOOST_CHECK_EQUAL(in_db[reas[i]], 1);
-			}
-		
-			err = auth->dra_ls_by_dom(static_cast<const char *>("-1"), from_db1);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
-			BOOST_CHECK_EQUAL(from_db1->length(), 0U);
-
-			err = auth->dra_rm(dom_id, reas[0]);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
-			err = auth->dra_ls_by_dom(dom_id, from_db);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt-1);
-		
-			err = auth->dra_rm_by_dom(dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
-			err = auth->dra_ls_by_dom(dom_id, from_db);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			BOOST_CHECK_EQUAL(from_db->length(), 0U);
-		}
 
 		/**
 		 * Change default quota values for users,
@@ -531,14 +480,17 @@ struct auth_test_suite : test_suite {
 		};
 		
 		typedef user_conf_test<vq::iauth_var, auth_wrap> obj_user_conf_test;
+		typedef dom_alias_test<vq::iauth_var> obj_dom_alias_test;
 
 		boost::shared_ptr<auth_test> test;
 		boost::shared_ptr< obj_user_conf_test > uc_test;
+		boost::shared_ptr< obj_dom_alias_test > da_test;
 
 		auth_test_suite(int ac, char *av[]) 
 				: test_suite("pgsqlauthd tests"), 
 				test(new auth_test(ac, av)),
-				uc_test(new obj_user_conf_test(test->auth)) {
+				uc_test(new obj_user_conf_test(test->auth)),
+				da_test(new obj_dom_alias_test(test->auth)) {
 
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&auth_test::init, test );
@@ -575,7 +527,7 @@ struct auth_test_suite : test_suite {
 			add(ts_case6);
 
 			test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
-				&auth_test::case7, test );
+				&obj_dom_alias_test::case7, da_test );
 			ts_case7->depends_on(ts_init);
 			add(ts_case7);
 

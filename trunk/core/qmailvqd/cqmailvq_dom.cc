@@ -45,21 +45,6 @@ namespace POA_vq {
 	using namespace text;
 	using namespace sys;
 
-#if 0
-	/**
-	 * Remove aliass.
-	 * \param a alias name
-	 * \return ::vq::ivq::err_no on success
-	 */
-	cqmailvq::error * cqmailvq::dom_alias_rm( const char * a ) std_try {
-		auto_ptr<error> ret;
-		string alias(lower(a));
-		ret.reset( assign_ex(alias) );
-		if( ret->ec != ::vq::ivq::err_no ) return ret.release();
-		return virt_rm(alias);
-	} std_catch
-#endif // if 0
-
 	/**
 	 * Remove domain. It removes domain from qmail control file, authorization
 	 * then from filesystem. It ignores errors (so it may not remove something).
@@ -181,7 +166,20 @@ namespace POA_vq {
 				delete virt_rm(dom);
 				return ret.release();
 		}
-	
+
+		ret.reset(send_restart());
+		if( ::vq::ivq::err_no != ret->ec ) {
+				rmdirrec(dom_add_dir); 
+				delete auth->dom_rm(did);
+				delete virt_rm(dom);
+		}
+		return ret.release();
+	} std_catch
+
+	/**
+	 *
+	 */
+	cqmailvq::error * cqmailvq::send_restart() std_try {
 		string restart(this->home+"/bin/qmail-send-restart");
 		char *const args[] = {
 				const_cast<char *>(restart.c_str()),
@@ -189,55 +187,86 @@ namespace POA_vq {
 		};
 		int rr = run(args);
 		if( ! WIFEXITED(rr) || WEXITSTATUS(rr) ) {
-				rmdirrec(dom_add_dir); 
-				delete auth->dom_rm(did);
-				delete virt_rm(dom);
 				return lr(::vq::ivq::err_temp, "wrong exit value");
 		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
-#if 0
+	/**
+	 * Remove aliass.
+	 * \param a alias name
+	 * \return ::vq::ivq::err_no on success
+	 */
+	cqmailvq::error * cqmailvq::da_rm( const char * ali ) std_try {
+
+		if( ! ali )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
+		string alias(text::lower(ali));
+		auto_ptr<error> ret( assign_ex(alias) );
+		if( ret->ec != ::vq::ivq::err_no ) return ret.release();
+		ret.reset(auth->da_rm( alias.c_str() ));
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		
+		ret.reset(virt_rm(alias));
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+
+		ret.reset(send_restart());
+		return ret.release();
+	} std_catch
+
 	/**
 	 * Add alias for domain
 	 * \param d domain
 	 * \param a alias
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::dom_alias_add(const char *d, const char *a)
-	{
-		string dom(lower(d)), ali(lower(a));
-		if( virt_add(ali,dom) )
-				return lastret;
+	cqmailvq::error * cqmailvq::da_add(const char *dom_id, 
+			const char *ali) std_try {
+
+		if( ! dom_id || ! ali )
+				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		switch( rcpt_add(ali) ) {
+		string alias(text::lower(ali));
+		auto_ptr<error> ret( virt_add(alias, static_cast<const char *>(dom_id)) );
+		if( ::vq::ivq::err_no != ret->ec )
+				return ret.release();
+		
+		ret.reset( rcpt_add(alias) );
+		switch( ret->ec ) {
 		case ::vq::ivq::err_no: break;
 		case ::vq::ivq::err_over:
-				if(morercpt_add(dom) == ::vq::ivq::err_no) break;
+				ret.reset(morercpt_add(alias));
+				if( ::vq::ivq::err_no == ret->ec ) break;
 		default:
-				lastret_blkd = true;
-				virt_rm(ali);
-				lastret_blkd = false;
-				return lastret;
+				delete virt_rm(alias);
+				return ret.release();
+		}
+
+		ret.reset(auth->da_add(dom_id, alias.c_str()));
+		if( ::vq::ivq::err_no != ret->ec ) {
+				return ret.release();
 		}
 	
-		string restart(conf_home+"/bin/qmail_run");
-		char prog[] = { qp_send_restart, '\0' };
-		char *const args[] = {
-				const_cast<char *>(restart.c_str()),
-				prog,
-				NULL
+		ret.reset(send_restart());
+		if( ::vq::ivq::err_no != ret->ec ) {
+				delete virt_rm(alias);
 		}
-		int rr = run(args);
-		if( ! WIFEXITED(rr) || WEXITSTATUS(rr) ) {
-				lastret_blkd = true;
-				virt_rm(ali);
-				lastret_blkd = false;
-				return lr(::vq::ivq::err_exec, restart);
-		}
-		return lr(::vq::ivq::err_no, "");
+		return ret.release();
 	} std_catch
-	
+
+	/**
+	 *
+	 */
+	cqmailvq::error * cqmailvq::da_ls_by_dom( const char * dom_id,
+			string_list_out alis ) std_try {
+
+		if( ! dom_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		return auth->da_ls_by_dom( dom_id, alis );
+	} std_catch
+
+#if 0
 	/**
 	 * Adds IP address for domain
 	 * \param d domain

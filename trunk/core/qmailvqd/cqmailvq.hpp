@@ -78,11 +78,12 @@ namespace POA_vq {
 				    virtual error* user_get( user_info& ai );
 				    virtual error* user_ex( const char* dom_id, 
 							const char* login );
-#if 0
-				    virtual error* dra_add( const char* dom_id, const char* rea );
-				    virtual error* dra_rm( const char* dom_id, const char* rea );
-				    virtual error* dra_rm_by_dom( const char* dom_id );
-#endif // if 0
+
+					virtual error* da_add( const char* dom_id, const char* ali );
+					virtual error* da_rm( const char* ali );
+					virtual error* da_ls_by_dom( const char* dom_id, 
+							string_list_out alis );
+
 					virtual error* eb_add( const char* re_domain, 
 							const char* re_login );
 					virtual error* eb_rm( const char* re_domain, 
@@ -130,7 +131,8 @@ namespace POA_vq {
 					gid_t gid; //!< group's id.
 
 					::vq::iauth_var & auth; //!< authorization module
-	
+
+					error * send_restart();
 					error * assign_ex(const std::string &);
 					error * assign_add(const std::string &);
 					error * assign_rm(const std::string &);

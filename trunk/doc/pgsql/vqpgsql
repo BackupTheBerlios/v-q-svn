@@ -158,13 +158,13 @@ qt_bytes_max int not null default 0 check(qt_bytes_max>=0),
 qt_files_max int not null default 0 check(qt_files_max>=0),"
 ."PRIMARY KEY(id_domain, login))",
 
-"CREATE TABLE vq_domains_re_aliases (
+"CREATE TABLE vq_domains_aliases (
 id_domain int not null references vq_domains (id_domain),
-re_alias text not null,
-PRIMARY KEY(id_domain,re_alias))",
+alias text not null,
+PRIMARY KEY(id_domain,alias))",
 
-"CREATE INDEX vq_domains_re_aliases_id_domain_idx 
-ON vq_domains_re_aliases (id_domain)",
+"CREATE INDEX vq_domains_aliases_id_domain_idx 
+ON vq_domains_aliases (id_domain)",
 
 "CREATE TABLE vq_users_conf (
 id_conf SERIAL,
@@ -285,61 +285,48 @@ END;
 "CREATE TRIGGER vq_domains_qt_user_trig BEFORE INSERT ON vq_domains 
 FOR EACH ROW EXECUTE PROCEDURE vq_domains_qt_user_trig ();",
 
-"CREATE FUNCTION dra_add
-(vq_domains.id_domain\%TYPE, vq_domains_re_aliases.re_alias\%TYPE) 
+"CREATE FUNCTION da_add
+(vq_domains.id_domain\%TYPE, vq_domains_aliases.alias\%TYPE) 
 RETURNS INT4 AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
-	_re_alias ALIAS FOR \$2;
+	_alias ALIAS FOR \$2;
 	exists RECORD;
 BEGIN
-	SELECT ''1'' INTO exists FROM vq_domains_re_aliases
-		WHERE id_domain=_id_domain AND re_alias=_re_alias;
+	SELECT ''1'' INTO exists FROM vq_domains_aliases
+		WHERE id_domain=_id_domain AND alias=_alias;
 	IF FOUND THEN	
 		RETURN -1;
 	END IF;
 
-	INSERT INTO vq_domains_re_aliases (id_domain,re_alias) 
-		VALUES(_id_domain, _re_alias);
-	NOTIFY dra_add;
+	INSERT INTO vq_domains_aliases (id_domain,alias) 
+		VALUES(_id_domain, _alias);
+	NOTIFY da_add;
 	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION dra_ls_by_dom (vq_domains_re_aliases.id_domain\%TYPE) 
+"CREATE FUNCTION da_ls_by_dom (vq_domains_aliases.id_domain\%TYPE) 
 RETURNS SETOF TEXT AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
 	rea RECORD;
 BEGIN
-	FOR rea IN SELECT re_alias FROM vq_domains_re_aliases WHERE id_domain=_id_domain LOOP
-		RETURN NEXT rea.re_alias;
+	FOR rea IN SELECT alias FROM vq_domains_aliases WHERE id_domain=_id_domain LOOP
+		RETURN NEXT rea.alias;
 	END LOOP;
 	RETURN;
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION dra_rm
-(vq_domains_re_aliases.id_domain\%TYPE, vq_domains_re_aliases.re_alias\%TYPE) 
+"CREATE FUNCTION da_rm
+(vq_domains_aliases.alias\%TYPE) 
 RETURNS VOID AS '
 DECLARE
-    _id_domain alias for \$1;
-    _re_alias alias for \$2;
+    _alias alias for \$1;
 BEGIN
-	DELETE FROM vq_domains_re_aliases WHERE id_domain = _id_domain 
-		AND re_alias=_re_alias;
-	NOTIFY dra_rm;
-	RETURN;
-END;
-' LANGUAGE 'plpgsql';",
-
-"CREATE FUNCTION dra_rm_by_dom(vq_domains_re_aliases.id_domain\%TYPE) 
-RETURNS VOID AS '
-DECLARE
-    _id_domain alias for \$1;
-BEGIN
-	DELETE FROM vq_domains_re_aliases WHERE id_domain = _id_domain;
-	NOTIFY dra_rm;
+	DELETE FROM vq_domains_aliases WHERE alias=_alias;
+	NOTIFY da_rm;
 	RETURN;
 END;
 ' LANGUAGE 'plpgsql';",

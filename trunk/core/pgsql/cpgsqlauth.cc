@@ -174,25 +174,25 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::dra_add( const char* dom_id, 
+	cpgsqlauth::error * cpgsqlauth::da_add( const char* dom_id, 
 			const char* rea ) std_try {
 		if( ! dom_id || ! rea )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		Result res(NonTransaction(*pg).Exec(
-				"SELECT DRA_ADD("
+				"SELECT DA_ADD("
 				+Quote(static_cast<const char *>(dom_id))+','
 				+Quote(static_cast<const char *>(rea))+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
-				return lr(::vq::ivq::err_func_res, "DRA_ADD");
+				return lr(::vq::ivq::err_func_res, "DA_ADD");
 		}
 
 		const char *val = res[0][0].c_str();
 		if( '-' == *val ) {
 				return ( '1' == *(val+1) ) 
 						? lr(::vq::ivq::err_exists, "")
-						: lr(::vq::ivq::err_func_res, "DRA_ADD");
+						: lr(::vq::ivq::err_func_res, "DA_ADD");
 		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -200,15 +200,12 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::dra_rm( const char* dom_id, 
-			const char* rea ) std_try {
-		if( ! dom_id || ! rea )
+	cpgsqlauth::error * cpgsqlauth::da_rm( const char* rea ) std_try {
+		if( ! rea )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		NonTransaction(*pg).Exec(
-				"SELECT DRA_RM("
-				+Quote(static_cast<const char *>(dom_id))+','
-				+Quote(static_cast<const char *>(rea))+')');
+				"SELECT DA_RM("+Quote(static_cast<const char *>(rea))+')');
 
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -216,24 +213,10 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::dra_rm_by_dom( const char* dom_id ) std_try {
-		if( ! dom_id )
-				throw ::vq::null_error(__FILE__, __LINE__);
-		
-		NonTransaction(*pg).Exec(
-				"SELECT DRA_RM_BY_DOM("
-				+Quote(static_cast<const char *>(dom_id))+')');
-
-		return lr(::vq::ivq::err_no, "");
-	} std_catch
-
-	/**
-	 *
-	 */
-	cpgsqlauth::error * cpgsqlauth::dra_ls_by_dom( const char* dom_id, 
+	cpgsqlauth::error * cpgsqlauth::da_ls_by_dom( const char* dom_id, 
 			string_list_out reas ) std_try {
 
-		Result res(NonTransaction(*pg).Exec("SELECT * FROM dra_ls_by_dom("
+		Result res(NonTransaction(*pg).Exec("SELECT * FROM da_ls_by_dom("
 			+Quote(static_cast<const char *>(dom_id))+')'));
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 

@@ -58,10 +58,9 @@ namespace POA_vq {
     				virtual error * dom_name( const char* dom_id, 
 							CORBA::String_out domain );
 
-					virtual error * dra_add( const char* dom_id, const char* rea );
-    				virtual error * dra_rm( const char* dom_id, const char* rea );
-    				virtual error * dra_rm_by_dom( const char* dom_id );
-    				virtual error * dra_ls_by_dom( const char* dom_id, 
+					virtual error * da_add( const char* dom_id, const char* rea );
+    				virtual error * da_rm( const char* rea );
+    				virtual error * da_ls_by_dom( const char* dom_id, 
 							string_list_out rea );
 
 				    virtual error * user_add( const user_info & ai,

@@ -61,22 +61,14 @@ module vq {
 		 */
 		//@{
 			/// Adds domain's IP address
-			error dra_add(in string dom_id, in string rea)
+			error da_add(in string dom_id, in string rea)
 					raises (null_error, db_error, except);
 			/// Remove IP for domain
-			error dra_rm(in string dom_id, in string rea)
-					raises (null_error, db_error, except);
-			/// Removes all IP addresses asociated with domain
-			error dra_rm_by_dom(in string dom_id)
+			error da_rm(in string rea)
 					raises (null_error, db_error, except);
 			/// Lists all IP addresses asociated with domain
-			error dra_ls_by_dom(in string dom_id, out string_list rea)
+			error da_ls_by_dom(in string dom_id, out string_list rea)
 					raises (null_error, db_error, except);
-			/*
-			/// Lists domains having IP addresses
-			error dra_ip_ls_dom(out string_list doms)
-					raises (null_error);
-			*/
 		//@}
 		
 		/**
