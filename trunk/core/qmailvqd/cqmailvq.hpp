@@ -55,7 +55,8 @@ namespace POA_vq {
 					typedef ::vq::ivq::string_list_out string_list_out;
 					typedef ::vq::ivq::email_banned_list_out email_banned_list_out;
 
-					cqmailvq( const std::string &, ::vq::iauth_var &,
+					cqmailvq( const std::string &, const std::string &,
+						::vq::iauth_var &,
 						unsigned, unsigned, 
 						mode_t, mode_t, mode_t, 
 						const std::string &, uid_t, gid_t );
@@ -118,6 +119,7 @@ namespace POA_vq {
 					static const char tmp_end[]; //!< temporary file extension
 						
 					std::string home; //!< home directory
+					std::string domains; //!< maildirs are placed here
 					unsigned dom_split;
 					unsigned user_split;
 					mode_t fmode; //!< permissions of created files

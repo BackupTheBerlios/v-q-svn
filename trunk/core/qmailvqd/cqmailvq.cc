@@ -50,11 +50,12 @@ namespace POA_vq {
 	
 	/**
 	 */
-	cqmailvq::cqmailvq( const std::string & h, ::vq::iauth_var & auth,
+	cqmailvq::cqmailvq( const std::string & h, const std::string &d,
+				::vq::iauth_var & auth,
 				unsigned s_dom, unsigned s_user,
 				mode_t fm, mode_t mm, mode_t dm,
 				const std::string & user, uid_t uid, gid_t gid ) 
-			: home(h), dom_split(s_dom), user_split(s_user), 
+			: home(h), domains(d), dom_split(s_dom), user_split(s_user), 
 			fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), 
 			gid(gid), auth(auth) std_try {
 	} std_catch
@@ -166,8 +167,7 @@ namespace POA_vq {
 	 */
 	std::string cqmailvq::virt_prefix( const std::string & dom_id ) const {
 		ostringstream pre;
-		pre
-			<< home << "/domains/"
+		pre	<< this->domains << '/'
 			<< text::split_user(dom_id, this->dom_split) << '/' << dom_id;
 		return pre.str();
 	}
@@ -177,9 +177,8 @@ namespace POA_vq {
 	 * \param dom_id domain's id.
 	 */
 	std::string cqmailvq::dom_path( const std::string & dom_id ) const {
-		return home 
-			+ "/domains/" 
-			+ text::split_id(dom_id, this->dom_split) + '/' + dom_id;
+		return this->domains + '/' + text::split_id(dom_id, this->dom_split) 
+			+ '/' + dom_id;
 	}
 
 	/**
@@ -656,7 +655,8 @@ namespace POA_vq {
 	 */
 	string cqmailvq::maildir_path(const string &d, const string &u) std_try {
 		string dom(text::lower(d)), user(text::lower(u));
-		return home+"/domains/"+text::split_dom(dom, this->dom_split)+'/'+dom
+		return this->domains + '/' + text::split_dom(dom, this->dom_split)
+				+'/'+dom
 				+'/'+text::split_user(user, this->user_split)+'/'+user+"/Maildir/";
 	} std_catch
 

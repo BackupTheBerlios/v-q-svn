@@ -47,8 +47,8 @@ int vqmain(int ac, char **av) {
 			return 100;
 	}
 
-	string conf_dir(*(av+1));
-	conf_dir += "/etc/ivq/qmail/";
+	string base(*(av+1)); base += '/';
+	string conf_dir(base+"etc/ivq/qmail/");
 	conf::clnconf ivq_name(conf_dir+"ivq_name", "vq::ivq");
 	conf::clnconf iauth_name(conf_dir+"iauth_name", "vq::iauth");
 	conf::cintconf split_dom(conf_dir+"split_dom", "1");
@@ -63,6 +63,7 @@ int vqmain(int ac, char **av) {
 	os.str("");
 	os<<getegid();
 	conf::cgidconf gid(conf_dir+"gid", os.str());
+	conf::clnconf domains(conf_dir+"domains", base+"domains");
 
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
@@ -115,7 +116,7 @@ int vqmain(int ac, char **av) {
 	/*
 	 * Create authorization object
 	 */
-	auto_ptr<cqmailvq> vqimp(new cqmailvq(*(av+1), auth,
+	auto_ptr<cqmailvq> vqimp(new cqmailvq(base, domains.val_str(), auth,
 		split_dom.val_int(), split_user.val_int(),
 		fmode.val_int(), mmode.val_int(), dmode.val_int(),
 		user.val_str(), uid.val_int(), gid.val_int() ));

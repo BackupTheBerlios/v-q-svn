@@ -334,7 +334,7 @@ namespace POA_vq {
 	 * \return path (ie. /var/vq/domains/pl/org/test/test.org.pl)
 	 */
 	string cqmailvq::dompath(const std::string &dom) std_try {
-		return this->home+"/domains/"+split_dom(dom, this->dom_split)+dom;
+		return this->domains + '/' + split_dom(dom, this->dom_split)+dom;
 	} std_catch
 
 	/**
