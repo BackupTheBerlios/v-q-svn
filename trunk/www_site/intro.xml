@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<page menu="intro">
-	<p>
+<chapter>
+	<title>Introduction</title>
+	
+	<para>
 		Project goal is to create virtual domains managing system, it should
 		be easy to setup, create and maintain. It should be also very reliable and
 		fast - it's designed for big sites. It does not support real users and
 		it won't. 
-	</p>
+	</para>
 
-	<p>
+	<para>
 		What vq won't do at any time in the future: 
 		<ul>
 			<li>support POP3 authorization based relaying as vpopmail does - use SMTP-AUTH!</li>
 			<li>support real users</li>
 			<li>support any other mailboxes type than Maildir</li>
 		</ul>
-	</p>
+	</para>
 
-	<p>
+	<para>
 		Current futures:
 		<ul>
 			<li>PostgreSQL based authorization</li>
 			<li>PostgreSQL based logging of user's authorizations</li>
 		</ul>
-	</p>
+	</para>
 
-	<p>
+	<para>
 		If you think that some future is missing you're welcome to add it or
 		if you can't but think it should be implemented you can contact author.
-	</p>
+	</para>
 
-	<p>
+	<para>
 		Following is a list of programs in contrib directory:
-	</p>
+	</para>
 	
 	<sec tit="freemail">
 		This module will support options associated with free e-mail accounts.
