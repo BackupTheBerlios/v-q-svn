@@ -1,4 +1,4 @@
-SUBDIR=tools libconf libmain libsys libtext corbautil base interfaces pkg-rpm
+SUBDIR=tools libconf libmain libsys libtext corbautil base interfaces
 # First try BSD
 VERSION!=head -n 1 VERSION
 # If it doesn't work try GNU

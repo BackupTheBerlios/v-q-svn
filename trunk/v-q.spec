@@ -55,13 +55,13 @@ EOF
 cat > make-so << EOF
 #!/bin/sh
 main="\$1"; shift
-exec g++ -L. -shared -o "$main" \${1+"\$@"}
+exec g++ -L. -shared -o "\$main" \${1+"\$@"}
 EOF
 
 cat > load << EOF
 #!/bin/sh
 main="\$1"; shift
-exec g++ -L. -o "$main" "$main".o \${1+"\$@"}
+exec g++ -L. -o "\$main" "\$main".o \${1+"\$@"}
 EOF
 
 %build

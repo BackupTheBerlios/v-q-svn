@@ -23,8 +23,8 @@
  */ 
 //----------------------------------------------------------------------------// 
 
-#ifndef __PFSTREAM_H
-#define __PFSTREAM_H
+#ifndef VQ__PFSTREAM_H
+#define VQ__PFSTREAM_H
 
 #include <iosfwd>
 #include <fstream>
@@ -50,7 +50,7 @@ protected:
 
 public:
 		int fd() {
-				return _M_file.fd();
+				return this->_M_file.fd();
 		}
 
 		__filebuf_type* open( int, std::ios_base::openmode , 
@@ -68,19 +68,19 @@ template <typename charT, typename traits>
 			bool __del, typename basic_filebuf<charT, traits>::int_type __size ) {
 		__filebuf_type *__ret = NULL;
 		
-		_M_file.sys_open(__fd, __mode, __del);
+		this->_M_file.sys_open(__fd, __mode, __del);
 		if (this->is_open()) {
-				_M_mode = __mode;
+				this->_M_mode = __mode;
 				if (__size > 0 && __size < 4) {
 						// Specify unbuffered.
-						_M_buf = _M_unbuf;
-						_M_buf_size = __size;
-						_M_buf_size_opt = 0;
+						this->_M_buf = this->_M_unbuf;
+						this->_M_buf_size = __size;
+						this->_M_buf_size_opt = 0;
 				} else {
-						_M_buf_size_opt = __size;
-						_M_allocate_internal_buffer();
+						this->_M_buf_size_opt = __size;
+						this->_M_allocate_internal_buffer();
 				}
-				_M_set_indeterminate();
+				this->_M_set_indeterminate();
 				__ret = this;
 		}
 		return __ret;
@@ -110,27 +110,27 @@ public:                         // Constructors, destructor.
       this->init(&_M_buf);
   }
 
-  explicit basic_ipfstream(const char* __s, ios_base::openmode __mod = ios_base::in) : 
+  explicit basic_ipfstream(const char* __s, std::ios_base::openmode __mod = std::ios_base::in) : 
     std::basic_ios<_CharT, _Traits>(),  std::basic_istream<_CharT, _Traits>(0),
     _M_buf() {
       this->init(&_M_buf);
-      if (!_M_buf.open(__s, __mod | ios_base::in))
-	this->setstate(ios_base::failbit);
+      if (!_M_buf.open(__s, __mod | std::ios_base::in))
+	this->setstate(std::ios_base::failbit);
   }
 
 # ifndef _STLP_NO_EXTENSIONS
-  explicit basic_ipfstream(int __id, ios_base::openmode __mod = ios_base::in) : 
+  explicit basic_ipfstream(int __id, std::ios_base::openmode __mod = std::ios_base::in) : 
     std::basic_ios<_CharT, _Traits>(),  std::basic_istream<_CharT, _Traits>(0), _M_buf() {
     this->init(&_M_buf);
-    if (!_M_buf.open(__id, __mod | ios_base::in))
-      this->setstate(ios_base::failbit);
+    if (!_M_buf.open(__id, __mod | std::ios_base::in))
+      this->setstate(std::ios_base::failbit);
   }
-  basic_ipfstream(const char* __s, ios_base::openmode __m,
+  basic_ipfstream(const char* __s, std::ios_base::openmode __m,
 		 long __protection) : 
     std::basic_ios<_CharT, _Traits>(),  std::basic_istream<_CharT, _Traits>(0), _M_buf() {
     this->init(&_M_buf);
-    if (!_M_buf.open(__s, __m | ios_base::in, __protection))
-      this->setstate(ios_base::failbit);  
+    if (!_M_buf.open(__s, __m | std::ios_base::in, __protection))
+      this->setstate(std::ios_base::failbit);  
   }
   
 # endif
@@ -145,14 +145,14 @@ public:                         // File and buffer operations.
     return this->rdbuf()->is_open();
   }
 
-  void open(const char* __s, ios_base::openmode __mod = ios_base::in) {
-    if (!this->rdbuf()->open(__s, __mod | ios_base::in))
-      this->setstate(ios_base::failbit);
+  void open(const char* __s, std::ios_base::openmode __mod = std::ios_base::in) {
+    if (!this->rdbuf()->open(__s, __mod | std::ios_base::in))
+      this->setstate(std::ios_base::failbit);
   }
 
   void close() {
     if (!this->rdbuf()->close())
-      this->setstate(ios_base::failbit);
+      this->setstate(std::ios_base::failbit);
   }
 
   int fd() {
@@ -187,27 +187,27 @@ public:                         // Constructors, destructor.
     std::basic_ostream<_CharT, _Traits>(0), _M_buf() {
       this->init(&_M_buf);
   }
-  explicit basic_opfstream(const char* __s, ios_base::openmode __mod = ios_base::out) 
+  explicit basic_opfstream(const char* __s, std::ios_base::openmode __mod = std::ios_base::out) 
     : std::basic_ios<_CharT, _Traits>(), std::basic_ostream<_CharT, _Traits>(0),
       _M_buf() {
 	this->init(&_M_buf);
-	if (!_M_buf.open(__s, __mod | ios_base::out))
-	  this->setstate(ios_base::failbit);
+	if (!_M_buf.open(__s, __mod | std::ios_base::out))
+	  this->setstate(std::ios_base::failbit);
   }
 
 # ifndef _STLP_NO_EXTENSIONS
-  explicit basic_opfstream(int __id, ios_base::openmode __mod = ios_base::out) 
+  explicit basic_opfstream(int __id, std::ios_base::openmode __mod = std::ios_base::out) 
     : std::basic_ios<_CharT, _Traits>(), std::basic_ostream<_CharT, _Traits>(0),
     _M_buf() {
  	this->init(&_M_buf);
- 	if (!_M_buf.open(__id, __mod | ios_base::out))
- 	  this->setstate(ios_base::failbit);
+ 	if (!_M_buf.open(__id, __mod | std::ios_base::out))
+ 	  this->setstate(std::ios_base::failbit);
   }
-  basic_opfstream(const char* __s, ios_base::openmode __m, long __protection) : 
+  basic_opfstream(const char* __s, std::ios_base::openmode __m, long __protection) : 
     std::basic_ios<_CharT, _Traits>(),  std::basic_ostream<_CharT, _Traits>(0), _M_buf() {
     this->init(&_M_buf);
-    if (!_M_buf.open(__s, __m | ios_base::out, __protection))
-      this->setstate(ios_base::failbit);  
+    if (!_M_buf.open(__s, __m | std::ios_base::out, __protection))
+      this->setstate(std::ios_base::failbit);  
   }
 # endif
   
@@ -221,14 +221,14 @@ public:                         // File and buffer operations.
     return this->rdbuf()->is_open();
   }
 
-  void open(const char* __s, ios_base::openmode __mod= ios_base::out) {
-    if (!this->rdbuf()->open(__s, __mod | ios_base::out))
-      this->setstate(ios_base::failbit);
+  void open(const char* __s, std::ios_base::openmode __mod= std::ios_base::out) {
+    if (!this->rdbuf()->open(__s, __mod | std::ios_base::out))
+      this->setstate(std::ios_base::failbit);
   }
 
   void close() {
     if (!this->rdbuf()->close())
-      this->setstate(ios_base::failbit);
+      this->setstate(std::ios_base::failbit);
   }
 
   int fd() {
@@ -265,26 +265,26 @@ public:                         // Constructors, destructor.
   }
 
   explicit basic_pfstream(const char* __s,
-                         ios_base::openmode __mod = ios_base::in | ios_base::out) :
+                         std::ios_base::openmode __mod = std::ios_base::in | std::ios_base::out) :
     std::basic_ios<_CharT, _Traits>(), std::basic_iostream<_CharT, _Traits>(0), _M_buf() {
       this->init(&_M_buf);
       if (!_M_buf.open(__s, __mod))
-	this->setstate(ios_base::failbit);
+	this->setstate(std::ios_base::failbit);
   }
   
 # ifndef _STLP_NO_EXTENSIONS
   explicit basic_pfstream(int __id,
-                         ios_base::openmode __mod = ios_base::in | ios_base::out) :
+                         std::ios_base::openmode __mod = std::ios_base::in | std::ios_base::out) :
     std::basic_ios<_CharT, _Traits>(), std::basic_iostream<_CharT, _Traits>(0), _M_buf() {
     this->init(&_M_buf);
     if (!_M_buf.open(__id, __mod))
-      this->setstate(ios_base::failbit);
+      this->setstate(std::ios_base::failbit);
   }
-  basic_pfstream(const char* __s, ios_base::openmode __m, long __protection) : 
+  basic_pfstream(const char* __s, std::ios_base::openmode __m, long __protection) : 
     std::basic_ios<_CharT, _Traits>(),  std::basic_iostream<_CharT, _Traits>(0), _M_buf() {
     this->init(&_M_buf);
     if (!_M_buf.open(__s, __m, __protection))
-      this->setstate(ios_base::failbit);  
+      this->setstate(std::ios_base::failbit);  
   }
 # endif    
   ~basic_pfstream() {}
@@ -299,15 +299,15 @@ public:                         // File and buffer operations.
   }
 
   void open(const char* __s, 
-	    ios_base::openmode __mod = 
-	    ios_base::in | ios_base::out) {
+	    std::ios_base::openmode __mod = 
+	    std::ios_base::in | std::ios_base::out) {
     if (!this->rdbuf()->open(__s, __mod))
-      this->setstate(ios_base::failbit);
+      this->setstate(std::ios_base::failbit);
   }
   
   void close() {
     if (!this->rdbuf()->close())
-      this->setstate(ios_base::failbit);
+      this->setstate(std::ios_base::failbit);
   }
 
   int fd() {
