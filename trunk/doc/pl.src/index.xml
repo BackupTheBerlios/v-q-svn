@@ -32,12 +32,13 @@
 	</bookinfo>
 
 	<preface id="foreword">
-		<title>Foreword</title>
+		<title>S³owo wstêpne</title>
 
 		<para>
-			This is a guide to Virtual Qmail. I hope you'll enjoy
-			reading it. Please direct all questions, bug reports,
-			or suggestions for changes to Pawe³ Niewiadomski 
+			Oto podrêcznik dla Virtual Qmail. Mam nadziejê, ¿e
+			czytanie go sprawi Ci przyjemno¶æ. Wszelkie pytania,
+			b³edy, sugestie proszê przesy³aæ do
+			Paw³a Niewiadomskiego
 			&lt;<literal>new [__at__] foo-baz [__dot__] com</literal>&gt;.
 		</para>
 	</preface>
