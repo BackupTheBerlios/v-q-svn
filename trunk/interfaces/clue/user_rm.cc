@@ -95,7 +95,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 			return(1);
 	}
 
-	if(quiet) ac = 1;
+	if(quiet && ac > 0) ac = 1;
 	for(int i=0; i < ac; i++ ) {
 			if( user_rm(av[i], ce.vq, quiet) )
 					return 1;

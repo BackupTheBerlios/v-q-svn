@@ -69,7 +69,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 			return(1);
 	}
 
-	if(quiet) ac=3;
+	if(quiet && ac > 0) ac=3;
 			
 	::vq::ivq::user_conf_info ui;
 	std::deque< std::string > esplit;

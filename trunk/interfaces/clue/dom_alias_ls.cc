@@ -18,28 +18,27 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cluemain.hpp"
 #include "error2str.hpp"
+#include "cdom_name2id.hpp"
 
 using namespace std;
-using clue::error2str;
+using namespace clue;
 
-const char *me = NULL;
 /*
  *
  */
-void usage()
+void usage( const char * me )
 {
 	cerr<<"usage: "<<me<< " [-q] [domain ...]"<<endl
 		<<"-q\tquiet mode"<<endl
 		<<endl
-		<<"Remove domain and all entries assiociated with it."<<endl
-		<<"Warning: it removes users' mailboxes physically."<<endl;
+		<<"List aliases for all domains or only those specified"<<endl;
 }
 
 /*
  *
- */ 
-int cluemain(int ac, char **av, cluemain_env & ce ) {
-	me = *av;
+ */
+int cluemain( int ac, char **av, cluemain_env & ce ) {
+	const char *me = *av;
 	int opt;
 	bool quiet=false;
 	while( (opt=getopt(ac,av,"qh")) != -1 ) {
@@ -50,38 +49,61 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 			default:		
 			case '?':
 			case 'h':
-					usage();
+					usage( me );
 					return(1);
 			}
 	}
-	if( optind >= ac ) {
-			usage();
-			return(1);
-	}
 	ac -= optind;
 	av += optind;
+	if( ! ac ) {
+			usage( me );
+			return(1);
+	}
 
-	if(quiet && ac > 0) ac=1;
-	
 	::vq::ivq::error_var ret;
-	CORBA::String_var dom_id;
-	for(int i=0; i < ac; i++ ) {
-			if(!quiet) cout<<av[i]<<": ";
-			ret = ce.vq->dom_id(av[i], dom_id);
-			if( ::vq::ivq::err_no != ret->ec ) {
-					if( ! quiet )
-							cout<<error2str(ret)<<endl;
-					else return ret->ec;
-			}
+	if(quiet && ac > 0) ac = 1;
+
+	::vq::ivq::domain_info_list_var dis;
+	if( ac ) {
+			CORBA::String_var dom_id;
+			::vq::ivq::domain_info di;
+			dis = new ::vq::ivq::domain_info_list(ac);
 			
-			ret = ce.vq->dom_rm( dom_id );
+			for( CORBA::ULong i=0;  i < ac; ++i ) {
+					ret = ce.vq->dom_id( av[i], dom_id );
+					if( ::vq::ivq::err_no != ret->ec ) {
+							if( ! quiet )
+									cout<<av[i]<<": "<<error2str(ret)<<endl;
+							return 1;
+					}
+					dis->length(ac);
+					dis[i].domain_id = dom_id;
+					dis[i].domain = static_cast<const char *>(av[i]);
+			}
+	} else {
+			ret = ce.vq->dom_ls(dis);
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
-							cout<<error2str(ret)<< endl;
-					else return ret->ec;
-			} else {
-					if(!quiet)
-							cout<<"Domain was removed."<<endl;
+							cout<<"dom_ls: "<<error2str(ret)<<endl;
+					return 1;
+			}
+	}
+
+	for( CORBA::ULong i=0, s=dis->length(); i<s; ++i ) {
+			::vq::ivq::string_list_var alis;
+
+			ret = ce.vq->da_ls_by_dom( dis[i].domain_id, alis );
+			if( ::vq::ivq::err_no != ret->ec ) {
+					if( ! quiet )
+							cout<<av[i]<<": "<<error2str(ret)<<endl;
+					else 
+							return 1;
+			}
+
+			for( CORBA::ULong j=0, k=alis->length(); j<k; ++j ) {
+					if(!quiet) 
+							cout<<av[i]<<": ";
+					cout<< alis[j] <<endl;
 			}
 	}
 	return 0;

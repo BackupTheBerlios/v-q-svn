@@ -76,7 +76,7 @@ int cppmain(int ac, char **av)
 
 			uint8_t ret;
 			if( ! all ) {
-					if(quiet) ac = 2;
+					if(quiet && ac > 0) ac = 2;
 					for(int i=1; i < ac; i++ ) {
 							if(!quiet) cout<<av[i]<<": ";
 							if((ret=vq->dom_ip_rm(av[0],av[i]))) {

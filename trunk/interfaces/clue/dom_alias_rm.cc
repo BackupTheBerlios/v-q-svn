@@ -61,7 +61,7 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 	}
 
 	::vq::ivq::error_var ret;
-	if(quiet) ac = 1;
+	if(quiet && ac > 0) ac = 1;
 	for( int i=0;  i < ac; ++i ) {
 			if(!quiet) cout<<av[i]<<": ";
 			ret=ce.vq->da_rm(av[i]);

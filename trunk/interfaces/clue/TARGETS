@@ -5,3 +5,4 @@ user_conf_add user_conf_ls user_conf_rm
 dom_add dom_alias_add dom_alias_rm dom_ip_add dom_ip_ls dom_ip_rm dom_rm qt_def_get qt_def_set qt_get qt_set udot_add udot_ls udot_rm user_add user_auth user_pass user_rm .depend
 dom_id dom_id.o
 dom_alias_rm dom_alias_rm.o dom_alias_add dom_alias_add.o
+dom_ls dom_ls.o dom_alias_ls dom_alias_ls.o

@@ -74,7 +74,7 @@ int cppmain(int ac, char **av)
 			cvq *vq(cvq::alloc());
 
 			char ret;
-			if(quiet) ac=2;
+			if(quiet && ac > 0) ac=2;
 			for(int i=1; i < ac; i++ ) {
 					if(!quiet) cout<<av[i]<<": ";
 					if((ret=vq->dom_ip_add(av[0],av[i]))) {

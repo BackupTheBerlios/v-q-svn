@@ -70,7 +70,7 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 			return 1;
 	}
 
-	if(quiet) ac = 2;
+	if(quiet && ac > 0) ac = 2;
 	for( int i=1;  i < ac; ++i ) {
 			if(!quiet) cout<<av[i]<<": ";
 			ret=ce.vq->da_add(dom_id, av[i]);

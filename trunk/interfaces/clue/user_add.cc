@@ -137,7 +137,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 					if( user_add(e, p, flags, ce.vq, quiet, eb_chk) ) return 1;
 			} while(cin);
 	} else {
-			if(quiet) ac=1;
+			if(quiet && ac > 0) ac=1;
 			for(int i=0; i < ac; i+=2 ) {
 					if( user_add(av[i], av[i+1], flags, ce.vq, quiet, eb_chk) )
 							return 1;

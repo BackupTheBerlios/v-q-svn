@@ -62,7 +62,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 	ac -= optind;
 	av += optind;
 
-	if( quiet ) ac = 1;
+	if( quiet && ac > 0 ) ac = 1;
 
 	CORBA::String_var dom_id;
 	::vq::ivq::error_var ret;

@@ -68,7 +68,7 @@ int cluemain(int ac, char **av, cluemain_env & ce )
 	std::deque< std::string > esplit;
 	types_array::const_iterator type_itr, type_end;
 	
-	if(quiet) ac=2;
+	if(quiet && ac > 0) ac=2;
 	for(int i=0; i < ac && i+1 < ac; i++ ) {
 			esplit = text::split(av[i], "@");
 			if( esplit.size() != 2 ) {
