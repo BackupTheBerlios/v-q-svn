@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 Pawel Niewiadomski
+Copyright (c) 2002,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,34 +31,39 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
+#include "lock.hpp"
+#include "auto/hasflock.h"
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/file.h>
-#include "lock.h"
-#include "auto/hasflock.h"
 
-char lock_ex(int fd)
-{
+namespace sys {
+	
+	char lock_ex(int fd)
+	{
 #ifdef HASFLOCK
-	return flock(fd, LOCK_EX); 
+		return flock(fd, LOCK_EX); 
 #else
-	return lockf(fd,F_LOCK,0);
+		return lockf(fd,F_LOCK,0);
 #endif
-}
+	}
+	
+	char lock_exnb(int fd) {
+#ifdef HASFLOCK
+		return flock(fd, LOCK_EX|LOCK_NB);
+#else
+		return lockf(fd,F_TLOCK,0);
+#endif
+	}
+	
+	char unlock(int fd)
+	{
+#ifdef HASFLOCK
+		return flock(fd, LOCK_UN);
+#else
+		return lockf(fd,F_ULOCK,0);
+#endif
+	}
 
-char lock_exnb(int fd) {
-#ifdef HASFLOCK
-	return flock(fd, LOCK_EX|LOCK_NB);
-#else
-	return lockf(fd,F_TLOCK,0);
-#endif
-}
-
-char unlock(int fd)
-{
-#ifdef HASFLOCK
-	return flock(fd, LOCK_UN);
-#else
-	return lockf(fd,F_ULOCK,0);
-#endif
-}
+} // namespace sys

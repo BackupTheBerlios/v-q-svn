@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002,2003 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,15 +31,19 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef __DIRS_H
-#define __DIRS_H
+#ifndef __DIRS_HPP
+#define __DIRS_HPP
 
 #include <sys/types.h>
 #include <stdexcept>
 #include <string>
 
-bool mkdirhier( const char *, mode_t );
-bool mkdirhier( const char *, mode_t, int, int );
-bool rmdirrec( const std::string & n );
+namespace sys {
 
-#endif
+	bool mkdirhier( const char *, mode_t );
+	bool mkdirhier( const char *, mode_t, int, int );
+	bool rmdirrec( const std::string & n );
+
+} // namespace sys
+
+#endif // ifndef __DIRS_HPP

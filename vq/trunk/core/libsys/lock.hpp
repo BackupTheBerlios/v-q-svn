@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002,2003 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,15 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef __LOCK_H
-#define __LOCK_H
+#ifndef __LOCK_HPP
+#define __LOCK_HPP
 
-char lock_ex(int fd);
-char lock_exnb(int fd);
-char unlock_ex(int fd);
+namespace sys {
 
-#endif
+	char lock_ex(int );
+	char lock_exnb(int );
+	char unlock_ex(int );
+
+} // namespace sys
+
+#endif // ifndef __LOCK_HPP

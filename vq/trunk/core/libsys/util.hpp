@@ -31,8 +31,8 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef CUTIL_H
-#define CUTIL_H
+#ifndef __UTIL_HPP
+#define __UTIL_HPP
 
 #include <inttypes.h>
 #include <fstream>
@@ -40,30 +40,34 @@ SUCH DAMAGE.
 #include <string>
 #include <deque>
 
-/// write uint32_t to file
-bool dumpuint32_t(const std::string &, uint32_t);
+namespace sys {
 
-/// write std::string (including \0) to file
-bool dumpstring0( const std::string &, const std::string & );
+	/// write uint32_t to file
+	bool dumpuint32_t(const std::string &, uint32_t);
+	
+	/// write std::string (including \0) to file
+	bool dumpstring0( const std::string &, const std::string & );
+	
+	/// write std::string to file
+	bool dumpstring( const std::string &, const std::string & );
+	
+	bool dumpu32str( const std::string &, const std::string & );
+	
+	bool getu32str( const std::string &, std::string & );
+	
+	/// unlink files
+	bool unlink( const std::deque<std::string> & );
+	
+	/// touch files
+	bool touch( const std::deque<std::string> &, bool=false );
+	
+	/// replace all .,- to _
+	std::string str2tb(const std::string &);
+	
+	/// put \ before \, ", '
+	std::string escape(const std::string &);
+	void escape(std::string &);
+	
+} // namespace sys
 
-/// write std::string to file
-bool dumpstring( const std::string &, const std::string & );
-
-bool dumpu32str( const std::string &, const std::string & );
-
-bool getu32str( const std::string &, std::string & );
-
-/// unlink files
-bool unlink( const std::deque<std::string> & );
-
-/// touch files
-bool touch( const std::deque<std::string> &, bool=false );
-
-/// replace all .,- to _
-std::string str2tb(const std::string &);
-
-/// put \ before \, ", '
-std::string escape(const std::string &);
-void escape(std::string &);
-
-#endif
+#endif // ifndef __UTIL_HPP
