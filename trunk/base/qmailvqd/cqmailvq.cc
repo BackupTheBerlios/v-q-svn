@@ -129,8 +129,6 @@ namespace POA_vq {
 		if( ! enoent ) {
 				struct stat st;
 				if(!fstat(in.rdbuf()->fd(), &st)) {
-						if( chown(fntmp.c_str(), st.st_uid, st.st_gid) )
-								return lr(::vq::ivq::err_chown, fntmp);
 						if( chmod(fntmp.c_str(), st.st_mode & 07777 ) )
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else 
@@ -410,8 +408,6 @@ namespace POA_vq {
 	
 		struct stat st;
 		if(!fstat(in.rdbuf()->fd(), &st)) {
-				if( chown(fntmp.c_str(), st.st_uid, st.st_gid) )
-						return lr(::vq::ivq::err_chown, fntmp);
 				if( chmod(fntmp.c_str(), st.st_mode & 07777 ) )
 						return lr(::vq::ivq::err_chmod, fntmp);
 		} else 
@@ -558,8 +554,6 @@ namespace POA_vq {
 				// try to preserve all of file's information, ignore errors
 				struct stat st;
 				if(!fstat(in.rdbuf()->fd(), &st)) {
-						if( chown( fntmp.c_str(), st.st_uid, st.st_gid) )
-								return lr(::vq::ivq::err_chown, fntmp);
 						if( chmod( fntmp.c_str(), st.st_mode & 07777 ) )
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else
@@ -626,8 +620,6 @@ namespace POA_vq {
 				// try to preserve all of file's information, ignore errors
 				struct stat st;
 				if(!fstat(in.rdbuf()->fd(), &st)) {
-						if( chown( fntmp.c_str(), st.st_uid, st.st_gid) )
-								return lr(::vq::ivq::err_chown, fntmp);
 						if( chmod( fntmp.c_str(), st.st_mode & 07777 ) )
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else

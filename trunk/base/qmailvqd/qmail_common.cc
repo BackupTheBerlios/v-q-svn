@@ -103,7 +103,6 @@ char file_rm(const string &in_fn, const char *rm, bool rmempty) {
 	}
 			
 	if( fstat(in.rdbuf()->fd(), &st)
-		|| chown(out_fn.c_str(), st.st_uid, st.st_gid)
 		|| chmod(out_fn.c_str(), st.st_mode & 07777) ) {
 			unlink(out_fn.c_str());
 			return 111;
