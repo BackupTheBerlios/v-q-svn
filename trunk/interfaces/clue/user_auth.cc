@@ -282,7 +282,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	::av = av;
 	::ac = ac;
 	
-	conf::clnconf ilogger_import(VQ_HOME+"/etc/ilogger/ilogger_import", "Logger.ilogger");
+	conf::clnconf ilogger_import(VQ_HOME+"/etc/ilogger/ilogger_import", "name_service#Logger.ilogger");
 
 	CORBA::Object_var ilogobj;
 	try {
@@ -375,15 +375,8 @@ int vqmain( int ac, char ** av ) try {
 	/*
 	 * Initialize the ORB
 	 */
-	string orb_conf(VQ_HOME+"/etc/ivq/orb_conf");
-	char * orb_av[] = {
-			*av,
-			"-ORBConfFile",
-			 const_cast<char *>(orb_conf.c_str())
-	};
-	int orb_ac = sizeof orb_av/sizeof *orb_av;
 	cluemain_env ce;
-	ce.orb = CORBA::ORB_init (orb_ac, orb_av);
+	ce.orb = CORBA::ORB_init (ac, av);
 			
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
