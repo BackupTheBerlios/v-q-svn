@@ -179,7 +179,7 @@ namespace POA_vq {
 	std::string cqmailvq::dom_path( const std::string & dom_id ) const {
 		return home 
 			+ "/domains/" 
-			+ text::split_user(dom_id, this->dom_split) + '/' + dom_id;
+			+ text::split_id(dom_id, this->dom_split) + '/' + dom_id;
 	}
 
 	/**

@@ -86,9 +86,14 @@ namespace text {
 		return ret;
 	}
 	
+	string split_id( const string & u, string::size_type c )
+	{
+		return split(string(u.rbegin(), u.rend()), 1, "/", c, true);
+	}
+
 	string split_user( const string & u , string::size_type c )
 	{
-		return split(u,"","/",c);
+		return split(u,1,"/",c);
 	}
 
 	/**

@@ -36,6 +36,9 @@ namespace text {
 	std::string split_dom(const std::string &, 
 		std::string::size_type, const std::string & = "/" );
 
+	std::string split_id(const std::string &, 
+		std::string::size_type );
+
 	std::string split_user(const std::string &, 
 		std::string::size_type);
 

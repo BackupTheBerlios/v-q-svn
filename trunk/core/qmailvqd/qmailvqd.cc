@@ -51,7 +51,7 @@ int vqmain(int ac, char **av) {
 	conf_dir += "/etc/ivq/qmail/";
 	conf::clnconf ivq_name(conf_dir+"ivq_name", "vq::ivq");
 	conf::clnconf iauth_name(conf_dir+"iauth_name", "vq::iauth");
-	conf::cintconf split_dom(conf_dir+"split_dom", "3");
+	conf::cintconf split_dom(conf_dir+"split_dom", "1");
 	conf::cintconf split_user(conf_dir+"split_user", "3");
 	conf::cintconf fmode(conf_dir+"fmode", "0640");
 	conf::cintconf mmode(conf_dir+"mmode", "0750");
