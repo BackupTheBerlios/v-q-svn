@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="devs">
+	<title>Tworzenie aplikacji wykorzystujących v-q</title>
+
+	<para>
+		Na dzień dzisiejszy nie wiele tu jest. Ten rozdział będzie
+		rozszerzony w przyszłej wersji.
+	</para>
+
+	<para>
+		Aktualnie najobszerniejszym źródłem informacji oraz przykładów
+		są same źródła v-q. Warto obejrzeć pliki w
+		<filename>interfaces/clue</filename>,
+		<filename>tests</filename>.
+	</para>
+
+	<section id="devs.python">
+		<title>Używanie v-q z poziomu pythona</title>
+		<para>
+			<ulink url="http://www.python.org">Python</ulink> jest językiem,
+			który ostatnio zyskuje na popularności dlatego myślę, że warto
+			napisać kilka słów na temat łączenia go z v-q.
+		</para>
+
+		<para>
+			Aby móc rozpocząć tworzenie aplikacji wykorzystujących
+			v-q z pythona należy zainstalować translator IDL-a dla
+			tego języka. Ja użyłem
+			<ulink url="http://www.omniorb.org">omniORB 4.0.5</ulink>
+			oraz rozszerzenie omniORBpy 2.5. Instalacja jest łatwa.
+		</para>
+
+		<para>
+			Po zainstalowaniu czas wygenerować pliki dla pythona. Wykonaj
+			polecenie:
+<synopsis>omniidl -b python vq.idl</synopsis>
+			Wygenerowanych zostanie kilka plików i katalogów:
+<screen><computeroutput>
+./vq_idl.py
+./vq/__init__.py
+./vq__POA
+./vq__POA/__init__.py
+</computeroutput></screen>
+		</para>
+
+		<para>
+			Podczas tworzenia przykładu zauważyłem, że
+			<filename>vq_idl.py</filename> zawiera błędy
+			- musisz zamienić &quot;_d__except&quot; na
+			&quot;_d_except&quot;. Jeżeli tego nie zrobisz nie będziesz
+			mógł używać wygenerowanych plików. Jeżeli masz jakieś
+			inne problemy skontaktuj się z nami.
+		</para>
+
+		<para>
+			Oto przykład, który utworzyłem. Wywołuje on funkcję
+			vq::ivq::dom_val w celu sprawdzenia poprawności nazwy 
+			domeny:
+<!--INSERT:interfaces/python/dom_val.py-->
+<programlisting><![CDATA[
+#!/usr/bin/env python
+import sys
+from omniORB import CORBA
+import CosNaming
+import vq
+
+orb = CORBA.ORB_init(sys.argv, CORBA.ORB_ID)
+
+obj = orb.resolve_initial_references("NameService")
+rootCtx = obj._narrow(CosNaming.NamingContext)
+
+if rootCtx is None:
+	print "Failed to narrow the root naming context"
+	sys.exit(1)
+
+name = [ CosNaming.NameComponent("vq::ivq", "") ]
+
+try:
+	obj = rootCtx.resolve(name)
+
+except CosNaming.NamingContext.NotFound, ex:
+	print "Name not found"
+	sys.exit(1)
+
+vqo = obj._narrow(vq.ivq)
+
+if vqo is None:
+	print "Object reference is not an vq::ivq"
+	sys.exit(1)
+
+dom = "123123.asd.com.pl"
+err = vqo.dom_val(dom)
+
+if err.ec is vq.ivq.err_no:
+	print "It's a valid domain name"
+else:
+	print "It's an invalid domain name"
+]]></programlisting>
+			Poniższy skrypt uruchamia omniNames (serwer nazw),
+			iauth (pgsqlauthd) oraz ivq (qmailvqd), po czym dom_val.py 
+			(powyższy przykład). Skrypt można również znaleźć w
+			<filename>interfaces/python</filename>.
+<!--INSERT:interfaces/python/run-->
+<programlisting><![CDATA[
+#!/bin/sh
+export BASE=../..
+export VQ_HOME=.
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+rm -f /tmp/omninames-*
+omniNames -start 12456 -logdir /tmp &
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+./dom_val.py -ORBInitRef NameService=corbaloc::$host:12456/NameService
+]]></programlisting>
+			<note>
+				<para>
+					qmailvqd i pgsqlauthd skompilowałem używając MICO, a nie
+					omniORB, więc jest to również przykład współdziałania
+					różnych implementacji CORBA :-)
+				</para>
+			</note>
+		</para>
+	</section>
+</chapter>

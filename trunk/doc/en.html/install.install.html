@@ -22,7 +22,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-01-18T19:27:36"><META
+CONTENT="2005-02-17T19:29:04"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -163,6 +163,36 @@ CLASS="userinput"
 >
 </PRE
 ><P>
+			</P
+><P
+>&#13;				To compile PostgreSQL modules you should run in bash:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;make pgsql 2&#62;&#38;1 &#62; out.pgsql
+</B
+></TT
+>
+</PRE
+><P>
+				In tcsh run:
+</P><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;make pgsql &#62;&#38; out.pgsql
+</B
+></TT
+>
+</PRE
+><P>
+
+				Remember that pqxx-config must be in the path (if you don't have
+				this program it means eaither libpqxx is not installed or it's too old
+				version).
 			</P
 ><P
 >&#13;				To create objects in a database you can use PERL script
