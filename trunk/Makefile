@@ -1,4 +1,8 @@
 SUBDIR=tools libconf libmain libsys libtext corbautil base interfaces pkg-rpm
+# First try BSD
+VERSION!=head -n 1 VERSION
+# If it doesn't work try GNU
+VERSION?=$(shell head -n 1 VERSION)
 
 .PHONY: all clean pgsql install install-pgsql install-conf install-dirs
 
@@ -32,10 +36,13 @@ install-dirs:
 install-conf: install-dirs
 	@echo "Installing default configuration..."
 
-pkg-rpm:
+pkg-rpm: 
 	@if [ `id -u` != 0 ] ; then echo You must be root. ; exit 1; fi
-	rm -rf "/usr/src/redhat/SOURCES/v-q-`head -n 1 VERSION`"
-	svn export . "/usr/src/redhat/SOURCES/v-q-`head -n 1 VERSION`"
-	sed -e "s/VQ_VERSION/`head -n 1 VERSION`/" < v-q.spec > /usr/src/redhat/SPECS/v-q.spec
+	rm -rf "/usr/src/redhat/SOURCES/v-q-$(VERSION)"
+	svn export . "/usr/src/redhat/SOURCES/v-q-$(VERSION)"
+	cd /usr/src/redhat/SOURCES && tar -czf v-q-$(VERSION).tar.gz v-q-$(VERSION)
+	rm -rf "/usr/src/redhat/SOURCES/v-q-$(VERSION)"
+	sed -e "s/VQ_VERSION/$(VERSION)/" < v-q.spec > /usr/src/redhat/SPECS/v-q.spec
+	rpmbuild -bb /usr/src/redhat/SPECS/v-q.spec
 
 include Makefile.common
