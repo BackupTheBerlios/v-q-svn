@@ -16,21 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "main.hpp"
+#include "cluemain.hpp"
+#include "error2str.hpp"
 
-#include <inttypes.h>
-#include <unistd.h>
-
-#include <exception>
-#include <iostream>
-#include <cerrno>
+#include <map>
 
 using namespace std;
 
 static const char *me = NULL;
-static bool quiet = false;
-static cvq *vq = NULL;
 
 /*
  *
@@ -50,11 +43,15 @@ void usage()
 /*
  *
  */
-bool user_add(const string &e, const string &p, uint8_t flags)
+bool user_add(const string &e, const string &p, uint8_t flags, 
+		::vq::ivq_var & vq, bool quiet, bool eb_chk )
 {
+	typedef std::map< std::string, CORBA::String_var > domain2id_map;
+	static domain2id_map dom2id;
+	
 	string u, d;
 	string::size_type atpos;
-	
+
 	if(!quiet) cout<<e<<": ";
 	if( (atpos=e.find('@')) == string::npos
 		|| (u = e.substr(0,atpos)).empty()
@@ -63,10 +60,29 @@ bool user_add(const string &e, const string &p, uint8_t flags)
 					cout<<"invalid e-mail"<<endl;
 			return quiet;
 	}
-	char ret;
-	if((ret=vq->user_add(u,d,p,flags))) {
+	::vq::ivq::error_var ret;
+	
+	domain2id_map::const_iterator did_itr( dom2id.find(d) );
+	if( dom2id.end() == did_itr ) {
+			CORBA::String_var did;
+			ret = vq->dom_id(d.c_str(), did);
+			if( ::vq::ivq::err_no != ret->ec ) {
+					if( ! quiet )
+							cout<<error2str(ret)<<endl;
+					return quiet;
+			}
+			did_itr = dom2id.insert( dom2id.begin(), std::make_pair(d, did) );
+	}
+	
+	::vq::ivq::auth_info ai;
+	ai.flags = flags;
+	ai.id_domain = did_itr->second;
+	ai.login = u.c_str();
+	
+	ret = vq->user_add(ai, eb_chk ? TRUE : FALSE );
+	if( ::vq::ivq::err_no != ret->ec ) {
 			if(!quiet)
-					cout<<vq->err_report()<<endl;
+					cout<<error2str(ret)<<endl;
 			return quiet;
 	} else {
 			if(!quiet)
@@ -74,72 +90,66 @@ bool user_add(const string &e, const string &p, uint8_t flags)
 	}
 	return 0;
 }
+
 /*
  *
  */
-int cppmain(int ac, char **av)
-{
+int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 	me = *av;
-	try {
-			int opt;
-			bool sin = false;
-			uint8_t flags=0;
-			while( (opt=getopt(ac,av,"sqhl")) != -1 ) {
-					switch(opt) {
-					case 's':
-							sin = true;
-							break;
-					case 'q':
-							quiet=true;
-							break;
-					case 'l':
-							flags |= 1;
-							break;
-					default:		
-					case '?':
-					case 'h':
-							usage();
-							return(1);
-					}
-			}
-			if( ! sin && optind >= ac ) {
+	bool quiet = false, eb_chk = true;
+	int opt;
+	bool sin = false;
+	uint8_t flags=0;
+	while( (opt=getopt(ac,av,"sqhl")) != -1 ) {
+			switch(opt) {
+			case 's':
+					sin = true;
+					break;
+			case 'q':
+					quiet=true;
+					break;
+			case 'l':
+					eb_chk = false;
+					break;
+			default:		
+			case '?':
+			case 'h':
 					usage();
 					return(1);
 			}
-			ac -= optind;
-			av += optind;
-			if( ! sin && ac % 2 ) {
-					usage();
-					return(1);
-			}
+	}
+	if( ! sin && optind >= ac ) {
+			usage();
+			return(1);
+	}
+	ac -= optind;
+	av += optind;
+	if( ! sin && ac % 2 ) {
+			usage();
+			return(1);
+	}
 
-			vq = cvq::alloc();
-			
-			if( sin ) {
-					string e,p;
-					do {
-							if( ! quiet ) {
-									cout << "E-mail: ";
-									cout.flush();
-							}
-							if( ! getline(cin,e) ) break;
-							if( ! quiet ) {
-									cout << "Password: ";
-									cout.flush();
-							}
-							if( ! getline(cin,p) ) break;
-							if( user_add(e,p,flags) ) return 1;
-					} while(cin);
-			} else {
-					if(quiet) ac=1;
-					for(int i=0; i < ac; i+=2 ) {
-							if( user_add(av[i], av[i+1], flags) )
-									return 1;
+	if( sin ) {
+			string e,p;
+			do {
+					if( ! quiet ) {
+							cout << "E-mail: ";
+							cout.flush();
 					}
+					if( ! getline(cin,e) ) break;
+					if( ! quiet ) {
+							cout << "Password: ";
+							cout.flush();
+					}
+					if( ! getline(cin,p) ) break;
+					if( user_add(e, p, flags, vq, quiet, eb_chk) ) return 1;
+			} while(cin);
+	} else {
+			if(quiet) ac=1;
+			for(int i=0; i < ac; i+=2 ) {
+					if( user_add(av[i], av[i+1], flags, vq, quiet, eb_chk) )
+							return 1;
 			}
-	} catch( const exception & e ) {
-			cerr << "exception: " << e.what() << endl;
-			return 1;
 	}
 	return 0;
 }

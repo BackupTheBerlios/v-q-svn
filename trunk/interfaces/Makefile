@@ -1,18 +1,9 @@
-SUBDIR=tools libconf libmain libvqmain libsys libtext core interfaces
+SUBDIR=clue
 
-.PHONY: all clean pgsql
+.PHONY: all clean
 
 all::
 	@for entry in $(SUBDIR); do \
-		( \
-			echo "===> $$entry" ; \
-			cd $$entry ; \
-			$(MAKE) $@; \
-		); \
-	done
-
-pgsql::
-	@for entry in core/pgsql; do \
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \

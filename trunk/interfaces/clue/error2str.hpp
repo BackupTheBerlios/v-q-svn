@@ -16,34 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "vqmain.hpp"
+#ifndef __ERROR2STR_HPP
+#define __ERROR2STR_HPP
 
-#include <main.hpp>
+#include <string>
 
-#include <iostream>
-#include <cstdlib>
+#include <vq.hpp>
 
-std::string VQ_HOME("/var/vq/");
+std::string error2str( vq::ivq::error_var & );
 
-int cppmain( int ac, char ** av ) {
-	char * ptr;
-	ptr = getenv("VQ_HOME");
-	if(ptr) VQ_HOME = ptr;
-
-	for( int i=1; i<ac; ++i ) {
-		if( '-' != *av[i] ) continue;
-		switch( *(av[i]+1) ) {
-		case 'H':
-				if( i+1 == ac ) {
-						std::cerr<<"missing argument for -H option"<<std::endl;
-						return 1;
-				}
-				VQ_HOME = av[i+1];
-				break;
-		case '-':
-				i=ac;
-				break;
-		}
-	}
-	return vqmain(ac, av);
-}
+#endif // ifndef __ERROR2STR_HPP

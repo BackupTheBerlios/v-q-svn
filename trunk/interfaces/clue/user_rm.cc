@@ -16,20 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "main.hpp"
-
-#include <unistd.h>
-
-#include <exception>
-#include <iostream>
-#include <cerrno>
+#include "error2str.hpp"
+#include "cluemain.hpp"
 
 using namespace std;
 
 static const char *me = NULL;
-static bool quiet = false;
-static cvq *vq = NULL;
 
 /*
  *
@@ -43,10 +35,13 @@ void usage()
 		<<"directory in home dir. So it's possible to restore user's messages."<<endl;
 }
 
-bool user_rm(const string &e)
-{
+bool user_rm(const string &e, ::vq::ivq_var &vq, bool quiet ) {
+	typedef std::map< std::string, CORBA::String_var > domain2id_map;
+	static domain2id_map dom2id;
+	
 	string u, d;
 	string::size_type atpos;
+
 	if(!quiet) cout<<e<<": ";
 	if( (atpos=e.find('@')) == string::npos
 		|| (u = e.substr(0,atpos)).empty()
@@ -55,54 +50,61 @@ bool user_rm(const string &e)
 					cout<<"invalid e-mail"<<endl;
 			return quiet;
 	}
-	char ret;
-	if((ret=vq->user_rm(u,d))) {
+	::vq::ivq::error_var ret;
+	
+	domain2id_map::const_iterator did_itr( dom2id.find(d) );
+	if( dom2id.end() == did_itr ) {
+			CORBA::String_var did;
+			ret = vq->dom_id(d.c_str(), did);
+			if( ::vq::ivq::err_no != ret->ec ) {
+					if( ! quiet )
+							cout<<error2str(ret)<<endl;
+					return quiet;
+			}
+			did_itr = dom2id.insert( dom2id.begin(), std::make_pair(d, did) );
+	}
+	
+	ret = vq->user_rm(did_itr->second, u.c_str());
+	if( ::vq::ivq::err_no != ret->ec ) {
 			if(!quiet)
-					cout<<vq->err_report()<<endl;
+					cout<<error2str(ret)<<endl;
 			return quiet;
 	} else {
 			if(!quiet)
-					cout<<"user was removed."<<endl;
+					cout<<"user was removed"<<endl;
 	}
 	return 0;
 }
 /*
  *
  */
-int cppmain(int ac, char **av)
-{
+int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 	me = *av;
-	try {
-			int opt;
-			while( (opt=getopt(ac,av,"rqh")) != -1 ) {
-					switch(opt) {
-					case 'q':
-							quiet = true;
-							break;
-					default:		
-					case '?':
-					case 'h':
-							usage();
-							return(1);
-					}
-			}
-			ac -= optind;
-			av += optind;
-			if( ! ac ) {
+	int opt;
+	bool quiet;
+	while( (opt=getopt(ac,av,"qh")) != -1 ) {
+			switch(opt) {
+			case 'q':
+					quiet = true;
+					break;
+			default:		
+			case '?':
+			case 'h':
 					usage();
 					return(1);
 			}
+	}
+	ac -= optind;
+	av += optind;
+	if( ! ac ) {
+			usage();
+			return(1);
+	}
 
-			vq = cvq::alloc();
-
-			if(quiet) ac = 1;
-			for(int i=0; i < ac; i++ ) {
-					if( user_rm(av[i]) )
-							return 1;
-			}
-	} catch( const exception & e ) {
-			cerr << "exception: " << e.what() << endl;
-			return 1;
+	if(quiet) ac = 1;
+	for(int i=0; i < ac; i++ ) {
+			if( user_rm(av[i], vq, quiet) )
+					return 1;
 	}
 	return 0;
 }

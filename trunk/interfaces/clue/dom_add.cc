@@ -16,13 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "main.hpp"
-
-#include <exception>
-#include <iostream>
-#include <cerrno>
-#include <unistd.h>
+#include "cluemain.hpp"
+#include "error2str.hpp"
 
 using namespace std;
 
@@ -43,49 +38,44 @@ void usage()
 /*
  *
  */
-int cppmain(int ac, char **av)
-{
+int cluemain(int ac, char **av, vq::ivq_var & vq) {
 	me = *av;
-	try {
-			int opt;
-			bool quiet=false;
-			while( (opt=getopt(ac,av,"qh")) != -1 ) {
-					switch(opt) {
-					case 'q':
-							quiet=true;
-							break;
-					default:		
-					case '?':
-					case 'h':
-							usage();
-							return(1);
-					}
-			}
-			if( optind >= ac ) {
+	int opt;
+	bool quiet=false;
+	while( (opt=getopt(ac,av,"qh")) != -1 ) {
+			switch(opt) {
+			case 'q':
+					quiet=true;
+					break;
+			default:		
+			case '?':
+			case 'h':
 					usage();
 					return(1);
 			}
-			ac -= optind;
-			av += optind;
+	}
+	if( optind >= ac ) {
+			usage();
+			return(1);
+	}
+	ac -= optind;
+	av += optind;
 
-			cvq *vq(cvq::alloc());
+	if( quiet ) ac = 1;
 
-			char ret;
-			if( quiet ) ac = 1;
-			for(int i=0; i < ac; i++ ) {
-					if(!quiet) cout<<av[i]<<": ";
-					if((ret=vq->dom_add(av[i]))) {
-							if(!quiet)
-									cout<<vq->err_report()<<endl;
-							else return(ret);
-					} else {
-							if(!quiet)
-									cout<<"Domain was added."<<endl;
-					}
+	CORBA::String_var dom_id;
+	::vq::ivq::error_var ret;
+	for(int i=0; i < ac; i++ ) {
+			if(!quiet) cout<<av[i]<<": ";
+			ret=vq->dom_add(av[i], dom_id);
+			if( ::vq::ivq::err_no != ret->ec ) {
+					if(!quiet)
+							cout<<error2str(ret)<<endl;
+					else return ret->ec;
+			} else {
+					if(!quiet)
+							cout<<"Domain was added."<<endl;
 			}
-	} catch( const exception & e ) {
-			cerr << "exception: " << e.what() << endl;
-			return 1;
 	}
 	return 0;
 }
