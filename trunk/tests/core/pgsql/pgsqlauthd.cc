@@ -120,10 +120,11 @@ struct auth_test {
 		 * remove domain.
 		 */
 		void case1() {
-			const char * dom = "case1.pl";
-			const char *users[] = { "s", "asdasd", "vxcvcxvxcvxvcv" };
+			const char *dom = "case1.pl";
+			const char *users[] = { "s", "asdasd", "ZXCXZCZXC", "zxcxzADSDF", 
+					"vxcvcxvxcvxvcv" };
 			unsigned users_cnt= sizeof(users)/sizeof(*users);
-			
+		
 			CORBA::String_var dom_id;
 			err = auth->dom_add(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
@@ -137,15 +138,13 @@ struct auth_test {
 					ai.login = CORBA::string_dup(users[i]);
 					err = auth->user_add(ai, FALSE);
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-					BOOST_CHECK(*ai.id_user);
-					BOOST_CHECK(atoi(ai.id_user)>0);
+
+					err = auth->user_ex(ai.id_domain, ai.login);
+					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			}
 
-			CORBA::String_var id_user;
 			for( unsigned i=0; i<users_cnt; ++i ) {
-					err = auth->user_id(dom_id, users[i], id_user);
-					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-					err = auth->user_rm(dom_id, id_user);
+					err = auth->user_rm(dom_id, users[i]);
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			}
 			err = auth->dom_rm(dom_id);
@@ -239,8 +238,6 @@ struct auth_test {
 								
 							err = auth->user_add(ai, FALSE);
 							BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-							BOOST_CHECK(*ai.id_user);
-							BOOST_CHECK(atoi(ai.id_user)>0);
 					}
 			} std_catch
 
@@ -329,19 +326,19 @@ struct auth_test {
 			ai.login = CORBA::string_dup(dom);
 			ai.flags = 0;
 
-			err = auth->user_id(dom_id, dom, ai.id_user);
-			if( err->ec != vq::ivq::err_no ) {
+			err = auth->user_ex(dom_id, ai.login);
+			if( err->ec == vq::ivq::err_noent ) {
 					err = auth->user_add(ai, FALSE);
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			}
 			std::string now(boost::posix_time::to_iso_string(
 				boost::posix_time::second_clock::local_time()));
-			err = auth->user_pass(dom_id, ai.id_user, now.c_str());
+			err = auth->user_pass(dom_id, ai.login, now.c_str());
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
 
 			vq::iauth::auth_info aicur;
 			aicur.id_domain = ai.id_domain;
-			aicur.id_user = ai.id_user;
+			aicur.login = ai.login;
 			aicur.pass = now.c_str();
 			err = auth->user_auth(aicur);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
@@ -455,7 +452,7 @@ struct auth_test {
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 		
 					// check quota for created user
-					err = auth->qt_user_get(dom_id, ai.id_user,
+					err = auth->qt_user_get(dom_id, ai.login,
 						ubytes, ufiles);
 					BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
 					BOOST_CHECK_EQUAL(ubytes, bytes_max);
@@ -464,12 +461,12 @@ struct auth_test {
 					// change quotas for user
 					files_max += 501;
 					bytes_max += 501;
-					err = auth->qt_user_set(dom_id, ai.id_user,
+					err = auth->qt_user_set(dom_id, ai.login,
 						bytes_max, files_max);
 					BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
 			
 					// check quotas
-					err = auth->qt_user_get(dom_id, ai.id_user,
+					err = auth->qt_user_get(dom_id, ai.login,
 						ubytes, ufiles);
 					BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
 					BOOST_CHECK_EQUAL(ubytes, bytes_max);
@@ -477,10 +474,7 @@ struct auth_test {
 			} std_catch
 
 			// remove user
-			CORBA::String_var user_id;
-			err = auth->user_id(dom_id, "case8", user_id);
-			BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
-			err = auth->user_rm(dom_id, user_id);
+			err = auth->user_rm(dom_id, static_cast<const char *>("case8"));
 			BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
 
 			// revert to default values

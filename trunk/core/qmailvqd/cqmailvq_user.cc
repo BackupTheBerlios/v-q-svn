@@ -17,15 +17,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cqmailvq.hpp"
+#include "cqmailvq_common.hpp"
 #include "auto/d_namlen.h"
 
 #include <sys.hpp>
 #include <text.hpp>
 #include <pfstream.hpp>
 
-#include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -36,6 +35,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sstream>
 #include <algorithm>
 #include <cerrno>
+#include <memory>
 
 namespace POA_vq {
 
@@ -47,16 +47,16 @@ namespace POA_vq {
 	/**
 	@return 1 if user name is valid, 0 otherwise
 	*/
-	cqmailvq::error * cqmailvq::user_val(const char *ptr)
-	{
+	cqmailvq::error * cqmailvq::user_val(const char *ptr) std_try {
 		if( !ptr )
-				throw null_error(__FILE__, __LINE__);
+				throw ::vq::null_error(__FILE__, __LINE__);
 		for( ; *ptr; ptr++ ) {
 				if( (*ptr >= 'a' && *ptr <= 'z')
 					|| (*ptr >= 'A' && *ptr <= 'Z' )
 					|| (*ptr >= '0' && *ptr <= '9' ) )
 						continue;
-	
+
+#warning check following characters in RFC
 				switch(*ptr) {
 				case '$': case '%': case '&': case '\'':
 				case '*': case '+': case '-': case '/':
@@ -65,28 +65,52 @@ namespace POA_vq {
 				case '~': case '.': case '!': case '#':
 						continue;
 				default: 
-						return lr(::vq::ivq::err_no, "");
+						return lr(::vq::ivq::err_user_inv, "illegal chars");
 				}
 		}
-		return lr(::vq::ivq::err_user_inv, "illegal chars");
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
+	 * \return Path to directory where user's .qmail files are located
+	 */
+	std::string cqmailvq::user_root_path( const std::string &dom_id,
+			const std::string & login ) const {
+		return dom_path(dom_id)+'/'+split_user(lower(user), this->user_split);
+	}
+
+	/**
+	 * \return Path to user's directory
+	 */
+	std::string cqmailvq::user_dir_path( const std::string &dom_id,
+			const std::string & login ) const {
+		return user_root_path(dom_id, lower(login))+'/'+login;
+	}
+
+	/**
+	 * \return Path to user's maildir
+	 */
+	std::string cqmailvq::user_md_path( const std::string &dom_id,
+			const std::string & login ) const {
+		return user_dir_path(dom_id, login)+"/Maildir/";
 	}
 
 	/**
 	 * Add user
-	 * \param u user's name
-	 * \param d domain's name
-	 * \param p password
+	 * \param ai includes information about user
 	 * \param flags if (flags & 1) != 0 then don't check whether login is banned
 	 */
-#if 0
 	cqmailvq::error * cqmailvq::user_add( const auth_info & ai, 
-			CORBA::Boolean is_banned )
-	{
-		string user(lower(ai.login));
-	
-		string domdir(this->home+"/domains/"+split_dom(dom, this->dom_split)+'/'+dom+'/');
-		string spuser(split_user(user, this->user_split));
-		string user_add_dir(domdir + spuser + '/'+ u);
+			CORBA::Boolean is_banned ) std_try {
+
+		if(!ai.login || !ai.id_domain)
+				throw ::vq::null_error(__FILE__, __LINE__);
+
+		string user(lower(static_cast<const char *>(ai.login)));
+		string spuser(user_root_path(static_cast<const char *>(ai.id_domain), 
+				user));
+		string user_add_dir(user_dir_path(static_cast<const char *>(ai.id_domain), 
+				user));
 	
 		/* check wheter domain has default quota for users */
 	#warning Quota setting removed temporarily	
@@ -100,13 +124,15 @@ namespace POA_vq {
 		}
 	#endif	
 	
-		if(!mkdirhier(user_add_dir.c_str(), ac_vq_mode.val_int(),
-					ac_vq_uid.val_int(), ac_vq_gid.val_int())) 
+		if(!sys::mkdirhier(user_add_dir.c_str(), 777, geteuid(), getegid())) 
 				return lr(::vq::ivq::err_mkdir, user_add_dir);
-		
-		if(maildir_make(user_add_dir+"/Maildir")) {
-				rmdirrec(user_add_dir);
-				return lr(::vq::ivq::err_mkdir, user_add_dir+"/Maildir");
+	
+		auto_ptr<error> ret;
+		ret.reset(maildir_make(
+			user_md_path(static_cast<const char *>(ai.id_domain), user)));
+		if( ::vq::ivq::err_no != ret->ec ) {
+				sys::rmdirrec(user_add_dir);
+				return ret.release();
 		}
 	#if 0	
 		if( qm && (ret=qt_set(dom, user, qm)) != ::vq::ivq::err_no ) {
@@ -114,48 +140,46 @@ namespace POA_vq {
 				return lastret;
 		}
 	#endif
-		if( auth->user_add(u,d,p,flags) ) {
-				rmdirrec(user_add_dir);
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
+		ret.reset(auth->user_add(ai, is_banned));
+		if( ::vq::ivq::err_no != ret->ec ) {
+				sys::rmdirrec(user_add_dir);
+				return ret.release();
 		}
-		string dotuser = dotfile(dom, user, "");
-		if( ! dumpstring(dotuser, (string)"./"+user+"/Maildir/\n" )
-		   || chown(dotuser.c_str(), ac_vq_uid.val_int(), ac_vq_gid.val_int())
-		   || chmod(dotuser.c_str(), ac_vq_fmode.val_int()) ) {
-				lastret_blkd = true;
-				auth->user_rm(user,dom);
-				rmdirrec(user_add_dir);
-				lastret_blkd = false;
+		string dotuser(dotfile(static_cast<const char *>(ai.id_domain), 
+				user, ""));
+		if( ! sys::dumpstring(dotuser, user_md_path(
+					static_cast<const char *>(ai.id_domain), user)+"\n") ) {
+				delete auth->user_rm(ai.id_domain, user.c_str());
+				sys::rmdirrec(user_add_dir);
 				return lr(::vq::ivq::err_wr, dotuser);
 		}
 		return lr(::vq::ivq::err_no, "");
-	}
-#endif // if 0
+	} std_catch
 	
 	/**
 	 * Remove user
-	 * \param user_id user
 	 * \param dom_id domain's id
+	 * \param login
 	 * \return ::vq::ivq::err_no on success
 	 */
 	cqmailvq::error * cqmailvq::user_rm(const char * dom_id, 
-			const char *user_id)
-	{
-		if( ! dom_id || ! user_id ) 
-				throw ::vq::null_error(__FILE__, __LINE__);
+			const char *_login) std_try {
 
-		if( auth->user_rm(dom_id, user_id) ) 
-				return lr(::vq::ivq::err_auth, "");
+		if( ! dom_id || ! _login ) 
+				throw ::vq::null_error(__FILE__, __LINE__);
+		std::string login(lower(static_cast<const char *>(_login)));
+		auto_ptr<error> ret;
+		ret.reset(auth->user_rm(dom_id, login.c_str()));
+		if( ::vq::ivq::err_no != ret->ec ) 
+				return ret.release();
 	
-		string dir = this->home+"/domains/"
-				+split_dom(dom, this->dom_split)+'/'+dom+'/'
-				+split_user(user, this->user_split) + '/';
-		
+		string dir(user_root_path(dom_id, login)+'/');
 		ostringstream dir_mv;
 		struct timeval time_mv;
 		gettimeofday(&time_mv, NULL);
 		dir_mv<<this->home<<"/deleted/@"<<time_mv.tv_sec
-				<<'.'<<time_mv.tv_usec<<'.'<<user<<'@'<<dom;
+				<<'.'<<time_mv.tv_usec<<'.'<<user<<'@'
+				<<static_cast<const char *>(dom_id);
 	
 		if(rename((dir+user).c_str(), dir_mv.str().c_str())) 
 				return lr(::vq::ivq::err_ren, dir+user);
@@ -183,7 +207,7 @@ namespace POA_vq {
 		} else return lr(::vq::ivq::err_rd, dir);
 		
 		return lr(::vq::ivq::err_no, "");
-	}
+	} std_catch
 	
 	/**
 	 * Change password.
@@ -193,51 +217,46 @@ namespace POA_vq {
 	 * \return ::vq::ivq::err_no on success
 	 */
 	cqmailvq::error * cqmailvq::user_pass(const char * dom_id,
-			const char *user_id, const char * p ) {
-
-		if(!dom_id || !user_id || !p)
+			const char *login, const char * pass ) std_try {
+	
+		if(!dom_id || !login || !pass)
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		if(auth->user_pass(dom_id, user_id, p))
-				return lr(::vq::ivq::err_auth, "");
+		std::auto_ptr<error> ret;
+		ret.reset( auth->user_pass(dom_id, login, pass) );
+		if( ret->ec != ::vq::ivq::err_no )
+				return ret.release();
 
 		return lr(::vq::ivq::err_no, "");
-	}
+	} std_catch
+
 	/**
 	 * do user authorization, retrieve user's info
-	 * \param ai (ai.user should be set to user's name, ai.dom should be set to user's domain)
+	 * \param ai (ai.login should be set to user's name, ai.id_domain should be set to user's domain)
 	 * \return 0 true if information was retrieved successful
 	 */
-	cqmailvq::error * cqmailvq::user_auth(auth_info & ai)
-	{
-		if( ai.user.empty() )
-				return lr(::vq::ivq::err_user_inv, "it's empty");
-				
-		if( ai.dom.empty() ) 
-				return lr(::vq::ivq::err_dom_inv, "it's empty");
-		
-		ai.user=lower(ai.user);
-		ai.dom=lower(ai.dom);
-		switch( auth->user_auth(ai) ) {
-		case ::vq::ivq::err_no: 
-				ai.dir = this->home+"/domains/"
-						+split_dom(ai.dom, this->dom_split)+'/'+ai.dom+'/'
-						+split_user(ai.user, this->user_split)+'/'+ai.user;
+	cqmailvq::error * cqmailvq::user_auth(auth_info & ai) std_try {
+		if( ! ai.login || ! ai.id_domain ) 
+				throw ::vq::null_error(__FILE__, __LINE__);
+
+		auto_ptr<error> ret(auth->user_auth(ai));
+		if( ::vq::ivq::err_no == ret->ec ) {
+				ai.dir = user_dir_path(static_cast<const char *>(ai.id_domain), 
+					lower(static_cast<const char *>(ai.login))).c_str();
 				return lr(::vq::ivq::err_no, "");
-		case ::vq::ivq::err_user_nf: 
-				return lr(::vq::ivq::err_user_nf, ai.user+"@"+ai.dom);
 		}
-		return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
-	}
+		return ret.release();
+	} std_catch
 	
 	/**
 	 * Checks whether user exists.
-	 * \param dom domain
-	 * \param user user
+	 * \param dom_id domain's id.
+	 * \param login user
 	 * \return ::vq::ivq::err_no if user exists
 	 */
-	cqmailvq::error * cqmailvq::user_ex( const string &dom, const string &user ) {
-		return lr(auth->user_ex(dom, user), user+'@'+dom);
-	}
+	cqmailvq::error * cqmailvq::user_ex( const char * dom_id, 
+			const char *login ) std_try {
+		return auth->user_ex(dom_id, login);
+	} std_catch
 
 } // namespace POA_vq

@@ -16,8 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "qmail_progs.h"
-#include "main.h"
+#include "qmail_progs.hpp"
+
+#include <vqmain.hpp>
+#include <conf.hpp>
 
 #include <unistd.h>
 
@@ -29,7 +31,7 @@ using std::ios;
 using std::cerr;
 using std::endl;
 
-int cppmain( int ac , char ** av ) {
+int vqmain( int ac , char ** av ) {
 		try {
 				if( ac != 2 ) {
 						cerr<<"usage: "<<*av<<" program's_code"<<endl
@@ -40,7 +42,10 @@ int cppmain( int ac , char ** av ) {
 				setgid(getegid());
 				setuid(geteuid());
 
-				string fn(qp2prog(static_cast<qmail_prog>(*av[1])));
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
+					"/var/qmail/");
+
+				string fn(qhome.val_str()+qp2prog(static_cast<qmail_prog>(*av[1])));
 
 				char * const args[2] = {
 						const_cast<char *>(fn.c_str()),

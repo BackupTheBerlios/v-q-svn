@@ -18,6 +18,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "../../../core/vq.hpp"
 
+#include <text.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
@@ -39,6 +41,15 @@ using namespace boost::unit_test_framework;
 	BOOST_ERROR(e.what); \
 } }
 	
+#define IVQ_ERROR_EQUAL(eptr, ecmp) \
+do { \
+	::vq::ivq::error_var ev(eptr); \
+	::vq::ivq::err_code ec = ecmp; \
+	BOOST_CHECK_EQUAL(ev->ec, ec); \
+	if( ec != ev->ec ) \
+		BOOST_ERROR(error2str(ev)); \
+} while(0)
+
 /**
  * 
  */
@@ -71,9 +82,19 @@ void et_corba_exception( const CORBA::Exception & e ) {
 
 /**
  *
+ */
+std::string error2str( const vq::ivq::error * err ) {
+	std::ostringstream os;
+	os<<"error: "<<err->what<<" in "<<err->file<<" at "<<err->line;
+	return os.str();
+}
+
+/**
+ *
  */ 
 struct vq_test {
 		vq::ivq_var vq;
+		vq::ivq::error_var err;
 		int ac;
 		char **av;
 		
@@ -126,7 +147,6 @@ struct vq_test {
 			ev = vq->dom_name(did, dom_name);
 			BOOST_CHECK_EQUAL(ev->ec, ::vq::ivq::err_noent);
 		}
-#if 0
 		/**
 		 * 1. Adding domain, adding the same domain again (err_exists),
 		 * 2. getting id from domain's name
@@ -140,22 +160,27 @@ struct vq_test {
 			CORBA::String_var dom_id1;
 
 			// 1.
-			BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id), vq::iauth::err_no);
-			BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id1), vq::iauth::err_exists);
+			err = vq->dom_add(dom, dom_id);
+			IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
+			err = vq->dom_add(dom, dom_id1);
+			IVQ_ERROR_EQUAL(err, vq::ivq::err_exists);
 
 			// 2.
 			CORBA::String_var dom_id2;
-			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id2), vq::iauth::err_no);
+			err = vq->dom_id(dom, dom_id2);
+			IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
 			BOOST_CHECK( *dom_id2 && atoi(dom_id2) > 0);
+			dom_id = dom_id2;
 
 			// 3.
 			CORBA::String_var dom_id3;
-			BOOST_CHECK_EQUAL(auth->dom_id(dom_mixed, dom_id3), vq::iauth::err_no);
+			err = vq->dom_id(dom_mixed, dom_id3);
+			IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
 			BOOST_CHECK( !strcmp(dom_id2, dom_id3) );
 
 			// 4.
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+			err = vq->dom_rm(dom_id);
+			IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
 		}
 
 		/**
@@ -175,13 +200,56 @@ struct vq_test {
 			if( doms_cnt-- ) {
 				CORBA::String_var id;
 				do {
-						BOOST_CHECK_EQUAL(auth->dom_id(doms[doms_cnt], id),
-							vq::iauth::err_noent);
+						IVQ_ERROR_EQUAL(vq->dom_id(doms[doms_cnt], id),
+							vq::ivq::err_noent);
 						BOOST_CHECK(!*id);
 				} while(doms_cnt --);
 			}
 		}
 
+		/**
+		 * trying to get name of existing domains
+		 */
+		void case_dom_name1() {
+			const char * doms[] = {
+					"teADSFSCdf.dfDFGf.dfdf.fd",
+					"cx",
+					"xcvxc.xcv.xcvxcvDFGDFGcvADcADSASDASD.xcv.v.cv.sdf.gg.dfg.dfg.fdg",
+					"xcv.xcv",
+					"xcv.x-c-234234234.989v"
+			};
+			unsigned doms_cnt = sizeof doms/sizeof *doms;
+			typedef std::map<CORBA::String_var, std::string> id_name_map;
+			id_name_map id2name;
+			CORBA::String_var dom_id, dom_name;
+
+			for( unsigned i=0; i<doms_cnt; ++i ) {
+					err = vq->dom_add(doms[i], dom_id);
+					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
+					id2name[dom_id] = text::lower(doms[i]);
+			}
+
+			for( id_name_map::const_iterator beg=id2name.begin(), end=id2name.end();
+						beg!=end; ++beg ) {
+					err = vq->dom_name(beg->first, dom_name);
+					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
+					BOOST_CHECK_EQUAL(beg->second, 
+						static_cast<const char *>(dom_name));
+			}
+
+			for( id_name_map::const_iterator beg=id2name.begin(), end=id2name.end();
+						beg!=end; ++beg ) {
+					err = vq->dom_name(beg->first, dom_name);
+					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
+					BOOST_CHECK_EQUAL(beg->second, 
+						static_cast<const char *>(dom_name));
+					
+					err = vq->dom_rm(beg->first);
+					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
+			}
+		}	
+
+#if 0
 		/**
 		 * Add domain, 
 		 * add users, 
@@ -196,7 +264,7 @@ struct vq_test {
 					unsigned users_cnt= sizeof(users)/sizeof(*users);
 			
 					BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id),
-						vq::iauth::err_no);
+						vq::ivq::err_no);
 
 					vq::iauth::auth_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
@@ -207,43 +275,42 @@ struct vq_test {
 							ai.login = CORBA::string_dup(users[i]);
 								
 							BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
-								vq::iauth::err_no);
+								vq::ivq::err_no);
 							BOOST_CHECK(*ai.id_user);
 							BOOST_CHECK(atoi(ai.id_user)>0);
 					}
 			} std_catch
 
-			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), vq::iauth::err_no);
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), vq::ivq::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::ivq::err_no);
 		}
 
 		/**
 		 * Get all banned emails, remove all of them
-		 * 
 		 */
 		void case5() {
 			CORBA::String_var dom_id;
 
 			std_try {
 					::vq::iauth::email_banned_list_var ebs;
-					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::iauth::err_no);
+					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::ivq::err_no);
 					CORBA::ULong s = ebs->length();
 					for( CORBA::ULong i=0; i<s; ++i ) {
 							BOOST_CHECK_EQUAL(
 								auth->eb_rm(ebs[i].re_domain, ebs[i].re_login), 
-								vq::iauth::err_no);
+								vq::ivq::err_no);
 					}
 					BOOST_CHECK_EQUAL(auth->dom_add("case5.pl", dom_id), 
-						vq::iauth::err_no);
+						vq::ivq::err_no);
 			
 					BOOST_CHECK_EQUAL(auth->eb_add(
 						static_cast<const char *>(".*"),
-						static_cast<const char *>("root")), vq::iauth::err_no);
+						static_cast<const char *>("root")), vq::ivq::err_no);
 					BOOST_CHECK_EQUAL(auth->eb_add(
 						static_cast<const char *>("case5"),
-						static_cast<const char *>(".*")), vq::iauth::err_no);
+						static_cast<const char *>(".*")), vq::ivq::err_no);
 
-					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::iauth::err_no);
+					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::ivq::err_no);
 					BOOST_CHECK_EQUAL(ebs->length(), 2U);
 					if( !strcmp(ebs[0U].re_domain, ".*") ) {
 							BOOST_CHECK(!strcmp(ebs[1U].re_domain, "case5"));
@@ -264,16 +331,16 @@ struct vq_test {
 					ai.flags = 0;
 			
 					BOOST_CHECK_EQUAL(auth->user_add(ai, TRUE), 
-						vq::iauth::err_user_inv);
+						vq::ivq::err_user_inv);
 					BOOST_CHECK_EQUAL(auth->user_add(ai, TRUE), 
-						vq::iauth::err_user_inv);
+						vq::ivq::err_user_inv);
 
 					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
-						vq::iauth::err_no);
+						vq::ivq::err_no);
 			} std_catch
 
-			BOOST_CHECK_EQUAL(auth->dom_id("case5.pl", dom_id), vq::iauth::err_no );
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_id("case5.pl", dom_id), vq::ivq::err_no );
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::ivq::err_no);
 		}
 
 		/**
@@ -283,9 +350,9 @@ struct vq_test {
 		void case6() {
 			const char * dom = "case6.pl";
 			CORBA::String_var dom_id;
-			if( auth->dom_id(dom, dom_id) != vq::iauth::err_no ) {
+			if( auth->dom_id(dom, dom_id) != vq::ivq::err_no ) {
 					BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id), 
-						vq::iauth::err_no);
+						vq::ivq::err_no);
 			}
 
 			vq::iauth::auth_info ai;
@@ -295,24 +362,24 @@ struct vq_test {
 			ai.login = CORBA::string_dup(dom);
 			ai.flags = 0;
 
-			if( auth->user_id(dom_id, dom, ai.id_user) != vq::iauth::err_no ) {
+			if( auth->user_id(dom_id, dom, ai.id_user) != vq::ivq::err_no ) {
 					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
-						vq::iauth::err_no);
+						vq::ivq::err_no);
 			}
 			std::string now(boost::posix_time::to_iso_string(
 				boost::posix_time::second_clock::local_time()));
 			BOOST_CHECK_EQUAL(auth->user_pass(dom_id, ai.id_user, now.c_str()),
-				vq::iauth::err_no );
+				vq::ivq::err_no );
 
 			vq::iauth::auth_info aicur;
 			aicur.id_domain = ai.id_domain;
 			aicur.id_user = ai.id_user;
 			aicur.pass = now.c_str();
-			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(aicur.flags, 0);
 
 			aicur.pass = CORBA::string_dup("");
-			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::iauth::err_pass_inv);
+			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::ivq::err_pass_inv);
 		}
 
 		/**
@@ -332,15 +399,15 @@ struct vq_test {
 			unsigned reas_cnt = sizeof(reas)/sizeof(*reas);
 			CORBA::String_var dom_id;
 			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), 
-				vq::iauth::err_no);
+				vq::ivq::err_no);
 			BOOST_REQUIRE(*dom_id);
 			for( unsigned i=0; i<reas_cnt; ++i ) {
 					BOOST_CHECK_EQUAL(auth->dra_add(dom_id, reas[i]),
-						vq::iauth::err_no );
+						vq::ivq::err_no );
 			}
 			vq::iauth::string_list_var from_db, from_db1;
 			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(dom_id, from_db),
-				vq::iauth::err_no);
+				vq::ivq::err_no);
 			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt);
 			// need to compare all of them
 			std::map<std::string, char> in_db;
@@ -353,18 +420,18 @@ struct vq_test {
 			
 			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(
 				static_cast<const char *>("-1"), from_db1), 
-				vq::iauth::err_no );
+				vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(from_db1->length(), 0U);
 
 			BOOST_CHECK_EQUAL(auth->dra_rm(dom_id, reas[0]),
-				vq::iauth::err_no );
+				vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(dom_id, from_db),
-				vq::iauth::err_no);
+				vq::ivq::err_no);
 			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt-1);
 			
-			BOOST_CHECK_EQUAL(auth->dra_rm_by_dom(dom_id), vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(auth->dra_rm_by_dom(dom_id), vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(dom_id, from_db),
-				vq::iauth::err_no);
+				vq::ivq::err_no);
 			BOOST_CHECK_EQUAL(from_db->length(), 0U);
 		}
 
@@ -383,13 +450,13 @@ struct vq_test {
 
 			std_try {
 					BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), 
-						vq::iauth::err_no);
+						vq::ivq::err_no);
 					BOOST_REQUIRE(*dom_id);
 		
 					::vq::iauth::quota_type bytes_max, files_max;
 					::vq::iauth::quota_type ubytes, ufiles;
 					BOOST_CHECK_EQUAL(auth->qt_user_def_get(dom_id, 
-						bytes_max, files_max), ::vq::iauth::err_no );
+						bytes_max, files_max), ::vq::ivq::err_no );
 					BOOST_CHECK_EQUAL(bytes_max, 0U);
 					BOOST_CHECK_EQUAL(files_max, 0U);
 		
@@ -397,9 +464,9 @@ struct vq_test {
 					bytes_max = 1000;
 					files_max = 500;
 					BOOST_CHECK_EQUAL(auth->qt_user_def_set(dom_id,
-						bytes_max, files_max), ::vq::iauth::err_no);
+						bytes_max, files_max), ::vq::ivq::err_no);
 					BOOST_CHECK_EQUAL(auth->qt_user_def_get(dom_id,
-						ubytes, ufiles), ::vq::iauth::err_no );
+						ubytes, ufiles), ::vq::ivq::err_no );
 					BOOST_CHECK_EQUAL(files_max, ufiles);
 					BOOST_CHECK_EQUAL(bytes_max, ubytes);
 		
@@ -412,11 +479,11 @@ struct vq_test {
 					ai.flags = 0;
 		
 					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
-						vq::iauth::err_no);
+						vq::ivq::err_no);
 		
 					// check quota for created user
 					BOOST_CHECK_EQUAL(auth->qt_user_get(dom_id, ai.id_user,
-						ubytes, ufiles), ::vq::iauth::err_no );
+						ubytes, ufiles), ::vq::ivq::err_no );
 					BOOST_CHECK_EQUAL(ubytes, bytes_max);
 					BOOST_CHECK_EQUAL(ufiles, files_max);
 		
@@ -424,11 +491,11 @@ struct vq_test {
 					files_max += 501;
 					bytes_max += 501;
 					BOOST_CHECK_EQUAL(auth->qt_user_set(dom_id, ai.id_user,
-						bytes_max, files_max), ::vq::iauth::err_no );
+						bytes_max, files_max), ::vq::ivq::err_no );
 			
 					// check quotas
 					BOOST_CHECK_EQUAL(auth->qt_user_get(dom_id, ai.id_user,
-						ubytes, ufiles), ::vq::iauth::err_no );
+						ubytes, ufiles), ::vq::ivq::err_no );
 					BOOST_CHECK_EQUAL(ubytes, bytes_max);
 					BOOST_CHECK_EQUAL(ufiles, files_max);
 			} std_catch
@@ -436,17 +503,141 @@ struct vq_test {
 			// remove user
 			CORBA::String_var user_id;
 			BOOST_CHECK_EQUAL(auth->user_id(dom_id, "case8", user_id), 
-				::vq::iauth::err_no );
+				::vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(auth->user_rm(dom_id, user_id), 
-				::vq::iauth::err_no );
+				::vq::ivq::err_no );
 
 			// revert to default values
 			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id),
-				::vq::iauth::err_no );
+				::vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(auth->qt_user_def_set(dom_id, 0U, 0U),
-				::vq::iauth::err_no );
+				::vq::ivq::err_no );
 		}
 #endif // if 0
+
+		/**
+		 * Trying to add domains which have invalid name.
+		 * All calls should return err_dom_inv
+		 */
+		void case9() {
+			const char * doms[] = {
+					"asd asd", // space
+					"azxc-@zxc.zc", // @
+					"42534%^&asdasd.c", // %^&
+					"   ", // space
+					"\"", // "
+					"asdasd	asdasdasd", // tabulator
+					"()~~~~~~xaxczxv.xcv", // ()~
+					"zxcxc.zxczxc.z///", // /
+			};
+			unsigned doms_cnt = sizeof doms/sizeof *doms;
+			CORBA::String_var id;
+			if( doms_cnt -- ) {
+					do {
+							IVQ_ERROR_EQUAL(vq->dom_add(doms[doms_cnt], id),
+								vq::ivq::err_dom_inv);
+					} while( doms_cnt -- );
+			}
+		}
+
+		/**
+		 * Validating invalid domains' names
+		 * All calls should return err_dom_inv
+		 */
+		void case10() {
+			const char * doms[] = {
+					"asd asd", // space
+					"azxc-@zxc.zc", // @
+					"42534%^&asdasd.c", // %^&
+					"   ", // space
+					"\"", // "
+					"asdasd	asdasdasd", // tabulator
+					"()~~~~~~xaxczxv.xcv", // ()~
+					"zxcxc.zxczxc.z///", // /
+			};
+			unsigned doms_cnt = sizeof doms/sizeof *doms;
+			if( doms_cnt -- ) {
+					do {
+							IVQ_ERROR_EQUAL(vq->dom_val(doms[doms_cnt]),
+								vq::ivq::err_dom_inv);
+					} while( doms_cnt -- );
+			}
+		}
+
+		/**
+		 * Checking if users exist (none of them exists)
+		 * First we create domains (using doms as names), then
+		 * we try to:
+		 * - get users from created domains (no users),
+		 * - change password for users
+		 * - authorize users
+		 * then we remove created domains, then we check for all of them 
+		 * again all those actions (no domains and no users)
+		 */
+		void case11() {
+				CORBA::String_var doms[] = {
+						"123",
+						"234",
+						"23445",
+						"34"
+				};
+				int doms_cnt = sizeof doms/sizeof *doms;
+				CORBA::String_var users[] = {
+						"aaSDAD",
+						"z",
+						"123324",
+						"SDFWERCvvcxvxcvcv",
+						"erfdgdfgdfgdfgdfgfdgfdgdfgdfgXCVCBCVXBESFDSG-DFGSFDG"
+				};
+				int users_cnt = sizeof users/sizeof *users;
+				typedef std::vector<CORBA::String_var> dom_ids_array;
+				dom_ids_array dom_ids;
+				dom_ids.reserve(doms_cnt);
+
+				CORBA::String_var id;
+				for( int i=0; i < doms_cnt; ++i ) {
+					err = vq->dom_id(doms[i], id);
+					if( ::vq::ivq::err_noent == err->ec ) {
+						IVQ_ERROR_EQUAL(err=vq->dom_add(doms[i], id), 
+								::vq::ivq::err_no);
+					}
+					if( ::vq::ivq::err_no == err->ec )
+							dom_ids.push_back(id);
+				}
+
+				::vq::ivq::auth_info ai;
+				for( dom_ids_array::size_type i=0, s=dom_ids.size(); i<s; ++i ) {
+						ai.id_domain = dom_ids[i];
+						for( int j=0; j < users_cnt; ++j ) {
+								IVQ_ERROR_EQUAL(vq->user_ex(dom_ids[i], 
+									users[j]), ::vq::ivq::err_noent);
+								IVQ_ERROR_EQUAL(vq->user_pass(dom_ids[i], 
+									users[j], static_cast<const char *>("zx")), 
+									::vq::ivq::err_noent);
+								ai.login = users[j];
+								IVQ_ERROR_EQUAL(vq->user_auth(ai), 
+									::vq::ivq::err_noent);
+						}
+				}
+
+				for( dom_ids_array::size_type i=0, s=dom_ids.size(); i<s; ++i ) {
+					IVQ_ERROR_EQUAL(vq->dom_rm(dom_ids[i]), ::vq::ivq::err_no);
+				}
+
+				for( dom_ids_array::size_type i=0, s=dom_ids.size(); i<s; ++i ) {
+						ai.id_domain = dom_ids[i];
+						for( int j=0; j < users_cnt; ++j ) {
+								IVQ_ERROR_EQUAL(vq->user_ex(dom_ids[i], 
+										users[j]), ::vq::ivq::err_noent);
+								IVQ_ERROR_EQUAL(vq->user_pass(dom_ids[i], 
+									users[j], static_cast<const char *>("zx")), 
+									::vq::ivq::err_noent);
+								ai.login = users[j];
+								IVQ_ERROR_EQUAL(vq->user_auth(ai), 
+									::vq::ivq::err_noent);
+						}
+				}
+		}
 };
 
 /**
@@ -465,7 +656,7 @@ struct vq_test_suite : test_suite {
 				&vq_test::case1, test );
 			ts_case1->depends_on(ts_init);
 			add(ts_case1);
-#if 0		
+
 			test_case * ts_case2 = BOOST_CLASS_TEST_CASE( 
 				&vq_test::case2, test );
 			ts_case2->depends_on(ts_init);
@@ -476,6 +667,11 @@ struct vq_test_suite : test_suite {
 			ts_case3->depends_on(ts_init);
 			add(ts_case3);
 
+			test_case * ts_case_dom_name1 = BOOST_CLASS_TEST_CASE( 
+				&vq_test::case_dom_name1, test );
+			ts_case_dom_name1->depends_on(ts_init);
+			add(ts_case_dom_name1);
+#if 0		
 			test_case * ts_case4 = BOOST_CLASS_TEST_CASE( 
 				&vq_test::case4, test );
 			ts_case4->depends_on(ts_init);
@@ -501,6 +697,21 @@ struct vq_test_suite : test_suite {
 			ts_case8->depends_on(ts_case6);
 			add(ts_case8);
 #endif // if 0
+
+			test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
+				&vq_test::case9, test );
+			ts_case9->depends_on(ts_init);
+			add(ts_case9);
+
+			test_case * ts_case10 = BOOST_CLASS_TEST_CASE( 
+				&vq_test::case10, test );
+			ts_case10->depends_on(ts_init);
+			add(ts_case10);
+
+			test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
+				&vq_test::case11, test );
+			ts_case11->depends_on(ts_init);
+			add(ts_case11);
 		}
 };
 

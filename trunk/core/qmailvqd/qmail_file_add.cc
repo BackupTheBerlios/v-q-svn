@@ -16,12 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "pfstream.h"
-#include "vq_conf.h"
-#include "lock.h"
-#include "uniq.h"
-#include "qmail_files.h"
-#include "main.h"
+#include "qmail_files.hpp"
+
+#include <pfstream.hpp>
+#include <conf.hpp>
+#include <vqmain.hpp>
+#include <sys.hpp>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -39,9 +39,9 @@ using std::endl;
 using posix::ipfstream;
 using posix::opfstream;
 using std::rename;
-using namespace vq;
+using namespace sys;
 
-char file_add(const string &in_fn, const char *rm) {
+char file_add(const string &in_fn, const char *rm, mode_t qmode) {
 	ipfstream in(in_fn.c_str());
 	bool enoent = false;
 	if( ! in ) {
@@ -85,7 +85,7 @@ char file_add(const string &in_fn, const char *rm) {
 					unlink(out_fn.c_str());
 					return 111;
 			}
-	} else if( chmod(out_fn.c_str(), ac_qmail_mode.val_int()) ) {
+	} else if( chmod(out_fn.c_str(), qmode) ) {
 			unlink(out_fn.c_str());
 			return 111;
 	}
@@ -93,7 +93,7 @@ char file_add(const string &in_fn, const char *rm) {
 	return rename(out_fn.c_str(), in_fn.c_str()) ? 111 : 0;
 }
 
-int cppmain( int ac , char ** av ) {
+int vqmain( int ac , char ** av ) {
 		try {
 				if( ac != 3 ) {
 						cerr<<"usage: "<<*av<<" file's_code line_to_add"<<endl
@@ -104,8 +104,12 @@ int cppmain( int ac , char ** av ) {
 							<<"Files codes are set up during compilation in qmail_files.h"<<endl;
 						return 2;
 				}
+				
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
+					"/var/qmail/");
+				conf::cintconf qmode(VQ_HOME+"/etc/ivq/qmail/qmode", "0644");
 
-				string fn(ac_qmail.val_str()+'/'
+				string fn(qhome.val_str()+'/'
 					+qf2file(static_cast<qmail_file>(*av[1])));
 
 				opfstream lck((fn+".lock").c_str());
@@ -113,7 +117,7 @@ int cppmain( int ac , char ** av ) {
 		
 				if( lock_exnb(lck.rdbuf()->fd()) ) return 4;
 	
-				return file_add(fn, av[2]);
+				return file_add(fn, av[2], qmode.val_int());
 		} catch(...) {
 				return 111;
 		}

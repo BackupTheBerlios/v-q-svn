@@ -64,16 +64,13 @@ namespace POA_vq {
     				virtual error * dra_ls_by_dom( const char* dom_id, 
 							string_list_out rea );
 
-				    virtual error * user_add( auth_info & ai,
+				    virtual error * user_add( const auth_info & ai,
 							CORBA::Boolean is_banned );
 				    virtual error * user_rm( const char* dom, const char* user );
 				    virtual error * user_pass( const char* dom, const char* user, 
 							const char* pass );
-					virtual error * user_id( const char* dom_id, 
-							const char* login, CORBA::String_out user_id );
-    				virtual error * user_name( const char* dom_id, 
-							const char* uid, CORBA::String_out name );
 					virtual error * user_auth( auth_info& ai );
+					virtual error * user_ex( const char *dom, const char *user);
 					
 				    virtual error * eb_add( const char * re_domain, 
 							const char * re_login );

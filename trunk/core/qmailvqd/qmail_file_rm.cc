@@ -16,13 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "pfstream.h"
-#include "vq_conf.h"
-#include "lock.h"
-#include "uniq.h"
-#include "qmail_files.h"
-#include "qmail_common.h"
-#include "main.h"
+#include "qmail_files.hpp"
+#include "qmail_common.hpp"
+
+#include <pfstream.hpp>
+#include <conf.hpp>
+#include <vqmain.hpp>
+#include <sys.hpp>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -39,9 +39,9 @@ using std::cerr;
 using std::endl;
 using posix::ipfstream;
 using posix::opfstream;
-using namespace vq;
+using namespace sys;
 
-int cppmain( int ac , char ** av ) {
+int vqmain( int ac , char ** av ) {
 		try {
 				if( ac != 3 ) {
 						cerr<<"usage: "<<*av<<" file's_code line_to_remove"<<endl
@@ -52,7 +52,10 @@ int cppmain( int ac , char ** av ) {
 						return 111;
 				}
 
-				string fn(ac_qmail.val_str()+'/'
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
+					"/var/qmail/");
+
+				string fn(qhome.val_str()+'/'
 					+qf2file(static_cast<qmail_file>(*av[1])));
 
 				opfstream lck((fn+".lock").c_str());

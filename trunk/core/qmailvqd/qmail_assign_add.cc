@@ -40,8 +40,7 @@ using posix::opfstream;
 using std::rename;
 using namespace sys;
 
-char assign_add(const string &in_fn, const char *dom, const char *ln_add,
-		mode_t qmode) {
+char assign_add(const string &in_fn, const char *ln_add, mode_t qmode) {
 	bool enoent = false;
 	ipfstream in(in_fn.c_str());
 	if( ! in ) {
@@ -53,17 +52,15 @@ char assign_add(const string &in_fn, const char *dom, const char *ln_add,
 	if( ! out ) return 111;
 	if( ! enoent ) {
 			string ln, dot(".");
-			string::size_type ln_len, doml = strlen(dom);
+			string::size_type ln_len, ln_add_len = strlen(ln_add);
 			
 			while(getline(in, ln)) {
 					ln_len = ln.length();
 					if( ! ln_len ) continue;
 					if( ln==dot ) break;
 
-					if( ln[0] == '+'
-						&& ln_len > doml+2
-						&& ln[doml+1] == '-'
-						&& ! memcmp(ln.data()+1, dom, doml) ) {
+					if( ln_len == ln_add_len
+						&& ! memcmp(ln.data(), ln_add, ln_add_len) ) {
 							unlink(out_fn.c_str());
 							return 1;
 					}
@@ -101,10 +98,10 @@ char assign_add(const string &in_fn, const char *dom, const char *ln_add,
 
 int vqmain( int ac , char ** av ) {
 		try {
-				if( ac != 3 ) {
-						cerr<<"usage: "<<*av<<" domain line_to_add"<<endl
+				if( ac != 2 ) {
+						cerr<<"usage: "<<*av<<" line_to_add"<<endl
 							<<"Program adds a line to qmail/users/assign file."
-							<<"Program returns 0 on success, 1 if entry for given domain exists,"
+							<<"Program returns 0 on success, 1 if entry exists,"
 							<<"anything else on error."<<endl;
 						return 111;
 				}
@@ -113,14 +110,14 @@ int vqmain( int ac , char ** av ) {
 					"/var/qmail/");
 				conf::cintconf qmode(VQ_HOME+"/etc/ivq/qmail/qmode", "0644");
 
-				string in_fn(qmode.val_str()+"/users/assign");
+				string in_fn(qhome.val_str()+"/users/assign");
 				
 				opfstream lck((in_fn+".lock").c_str());
 				if( ! lck ) return 111;
 		
 				if( lock_exnb(lck.rdbuf()->fd()) ) return 4;
 	
-				char ret=assign_add(in_fn, av[1], av[2], qmode.val_int());
+				char ret=assign_add(in_fn, av[1], qmode.val_int());
 				switch (ret) {
 				case 1: return 1;
 				case 0: break;

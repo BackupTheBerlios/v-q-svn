@@ -60,22 +60,26 @@ namespace POA_vq {
 						const std::string &, uid_t, gid_t );
 					virtual ~cqmailvq() {}
 
-					virtual error* dom_add( const char* dom );
-				    virtual error* dom_rm( const char* dom );
+					virtual error* dom_add( const char* dom, CORBA::String_out dom_id );
+				    virtual error* dom_rm( const char* dom_id );
 				    virtual error* dom_val( const char* dom );
 				    virtual error* dom_id( const char* dom, CORBA::String_out dom_id );
     				virtual error* dom_name( const char* dom_id, CORBA::String_out dom_name );
+
+				    virtual error* user_add( const auth_info& ai, 
+							CORBA::Boolean is_banned );
+				    virtual error* user_rm( const char* dom_id, 
+							const char* login );
+				    virtual error* user_pass( const char* dom_id, 
+							const char* login, const char* pass );
+				    virtual error* user_val( const char* user );
+				    virtual error* user_auth( auth_info& ai );
+				    virtual error* user_ex( const char* dom_id, 
+							const char* login );
 #if 0
 				    virtual error* dra_add( const char* dom_id, const char* rea );
 				    virtual error* dra_rm( const char* dom_id, const char* rea );
 				    virtual error* dra_rm_by_dom( const char* dom_id );
-				    virtual error* user_add( auth_info& ai, CORBA::Boolean is_banned );
-				    virtual error* user_rm( const char* dom_id, const char* user_id );
-				    virtual error* user_pass( const char* dom_id, const char* user_id, const char* pass );
-				    virtual error* user_val( const char* user );
-				    virtual error* user_auth( auth_info& ai );
-				    virtual error* user_id( const char* dom_id, const char* login, CORBA::String_out uid );
-    				virtual error* user_name( const char* dom_id, const char* uid, CORBA::String_out login );
 				    virtual error* eb_add( const char* re_domain, const char* re_login );
 				    virtual error* eb_rm( const char* re_domain, const char* re_login );
 				    virtual error* eb_ls( email_banned_list_out ebs );
@@ -99,6 +103,8 @@ namespace POA_vq {
 					error * assign_ex(const std::string &);
 					error * assign_add(const std::string &);
 					error * assign_rm(const std::string &);
+					std::string assign_ln(const std::string &) const;
+					std::string dom_path( const std::string & ) const;
 					error * rcpt_add(const std::string &);
 					error * rcpt_rm(const std::string &);
 					error * morercpt_add(const std::string &);
@@ -106,6 +112,15 @@ namespace POA_vq {
 					error * locals_rm(const std::string &);
 					error * virt_add(const std::string &,const std::string &);
 					error * virt_rm(const std::string &);
+					std::string virt_prefix(const std::string &) const;
+					std::string user_root_path(const std::string &, 
+							const std::string &) const;
+					std::string user_dir_path(const std::string &, 
+							const std::string &) const;
+					std::string user_md_path(const std::string &, 
+							const std::string &) const;
+
+
 					int run( char * const [] );
 				
 					/// path to maildir

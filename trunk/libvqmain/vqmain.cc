@@ -22,8 +22,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <cstdlib>
 
+std::string VQ_HOME("/var/vq/");
+
 int cppmain( int ac, char ** av ) {
-	VQ_HOME = std::getenv("VQ_HOME");
-	if(!VQ_HOME) VQ_HOME = "/var/vq/";
+	char * ptr;
+	ptr = getenv("VQ_HOME");
+	if(ptr) VQ_HOME = ptr;
 	return vqmain(ac, av);
 }

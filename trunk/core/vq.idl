@@ -36,7 +36,6 @@ module vq {
 			unsigned long line;
 	};
 	 
-
 	/**
 	 * Argument was NULL but it's not allowed
 	 */
@@ -59,53 +58,51 @@ module vq {
 		/*@{*/
 			enum err_code {
 					/// no error
-					err_no, 
+					err_no,  // 0
 					/// temporary error
-					err_temp,
+					err_temp, // 1
 					/// invalid domain name
 					err_dom_inv,
 					/// invalid user name
-					err_user_inv,
+					err_user_inv, // 3
 					/// user not found
-					err_user_nf,
+					err_user_nf, 
 					/// error in authorization module
-					err_auth,
+					err_auth, // 5
 					/// dot file - type is not supported
 					err_udot_tns,
 					/// can't open sth
-					err_open,
+					err_open, //  7
 					/// can't write
 					err_wr,
 					/// can't read
-					err_rd,
+					err_rd, // 9
 					/// can't stat
 					err_stat,
 					/// not a directory
-					err_notdir,
+					err_notdir, // 11
 					/// chmod failed
 					err_chmod,
 					/// file's locked
-					err_lckd,
+					err_lckd, // 13
 					/// can't rename
 					err_ren,
 					/// can't change owner
-					err_chown,
+					err_chown, // 15
 					/// overflow
 					err_over,
 					/// child crashed or returned something unexpected
-					err_exec,
+					err_exec, // 17
 					/// can't create directory
 					err_mkdir,
 					/// entry exists
-					err_exists,
+					err_exists, // 19
 					/// no such element/entry
 					err_noent,
 					/// can't remove
-					err_unlink,
-					/// domain doesn't exist
-					err_dom_nf,
+					err_unlink, // 21
 					/// invalid password
-					err_pass_inv,
+					err_pass_inv, 
 					/// internal function returned unexpected value
 					err_func_res
 			};
@@ -142,9 +139,8 @@ module vq {
 			 * user's information.
 			 */
 			struct auth_info {
-					string login;
 					string id_domain; //!< domain
-					string id_user; //!< user name
+					string login;
 					string pass; //!< password
 					string dir; //!< mailbox directory
 					aif_type flags; //!< additional flags
@@ -185,20 +181,20 @@ module vq {
 		 */
 		 //@{
 			/// Add domain
-			error dom_add(in string dom) 
-					raises (null_error, except); 
+			error dom_add(in string dom, out string dom_id) 
+					raises (null_error, except, db_error); 
 			/// Removes domain
-			error dom_rm(in string dom)
-					raises (null_error, except);
+			error dom_rm(in string dom_id)
+					raises (null_error, except, db_error);
 			/// Validates domain name
 			error dom_val(in string dom)
-					raises (null_error, except);
+					raises (null_error, except, db_error);
 			/// Gets ID of domain
 			error dom_id(in string dom, out string dom_id)
-					raises (null_error, except);
+					raises (null_error, except, db_error);
 			/// Gets name of a domain
 			error dom_name(in string dom_id, out string dom_name )
-					raises (null_error, except);
+					raises (null_error, except, db_error);
 		//@}
 #if 0
 		/**
@@ -214,35 +210,31 @@ module vq {
 			error dra_rm_by_dom(in string dom_id)
 					raises (null_error, except);
 		//@}
-
+#endif // if 0
 		/**
 		 * \defgroup user User handling
 		 * @{
 		 */
 			/// Adds user
-			error user_add(inout auth_info ai, in boolean is_banned )
-					raises (null_error, except);
+			error user_add(in auth_info ai, in boolean is_banned )
+					raises (null_error, except, db_error);
 			/// Removes user
-			error user_rm(in string dom_id, in string user_id)
-					raises (null_error, except);
+			error user_rm(in string dom_id, in string login)
+					raises (null_error, except, db_error);
 			/// Changes password
-			error user_pass(in string dom_id, in string user_id, in string pass)
-					raises (null_error, except);
+			error user_pass(in string dom_id, in string login, in string pass)
+					raises (null_error, except, db_error);
 			/// Checks if user name is valid (not if user exists)
 			error user_val(in string user)
-					raises (null_error, except);
+					raises (null_error, except, db_error);
 			/// Gets authorization info. for user
 			error user_auth(inout auth_info ai)
-					raises (null_error, except);
-			/// Gets ID of given user
-			error user_id(in string dom_id, in string login, 
-					out string uid )
-					raises (null_error, except);
-			error user_name(in string dom_id, in string uid,
-					out string login )
-					raises (null_error, except);
+					raises (null_error, except, db_error);
+			/// Checks whether user exists
+			error user_ex(in string dom_id, in string login)
+					raises (null_error, except, db_error);
 		//@}
-
+#if 0
 		/**
 		 * \defgroup eb Emails banned
 		 */

@@ -147,7 +147,7 @@ sub v6_tables {
 ."re_login text not null,"
 ."PRIMARY KEY(re_domain, re_login))",
 
-"CREATE TABLE vq_users (id_user serial,".
+"CREATE TABLE vq_users (".
 "id_domain int not null references vq_domains (id_domain) ON UPDATE CASCADE"
 	." ON DELETE CASCADE,"
 ."login text not null check(login<>''),"
@@ -155,9 +155,7 @@ sub v6_tables {
 ."flags int not null default 0 check(flags>=0),
 qt_bytes_max int not null default 0 check(qt_bytes_max>=0),
 qt_files_max int not null default 0 check(qt_files_max>=0),"
-."PRIMARY KEY(id_user),"
-."CONSTRAINT vq_users_id_domain_id_domain_idx UNIQUE (id_domain,id_user),"
-."CONSTRAINT vq_users_id_domain_login UNIQUE (id_domain, login))",
+."PRIMARY KEY(id_domain, login))",
 
 "CREATE TABLE vq_domains_re_aliases (
 id_domain int not null references vq_domains (id_domain),
@@ -391,14 +389,14 @@ END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE FUNCTION qt_user_get
-(vq_users.id_domain\%TYPE, vq_users.id_user\%TYPE) RETURNS RECORD AS '
+(vq_users.id_domain\%TYPE, vq_users.login\%TYPE) RETURNS RECORD AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
-	_id_user ALIAS FOR \$2;
+	_login ALIAS FOR \$2;
 	qt RECORD;
 BEGIN
 	SELECT INTO qt qt_bytes_max,qt_files_max FROM vq_users
-		WHERE id_domain=_id_domain AND id_user=_id_user LIMIT 1;
+		WHERE id_domain=_id_domain AND login=_login LIMIT 1;
 	IF NOT FOUND THEN
 		SELECT INTO qt null::int,null::int; 
 	END IF;
@@ -407,16 +405,16 @@ END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE FUNCTION qt_user_set
-(vq_users.id_domain\%TYPE, vq_users.id_user\%TYPE,
+(vq_users.id_domain\%TYPE, vq_users.login\%TYPE,
 vq_users.qt_bytes_max\%TYPE, vq_users.qt_files_max\%TYPE) RETURNS VOID AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
-	_id_user ALIAS FOR \$2;
+	_login ALIAS FOR \$2;
 	bytes_max ALIAS FOR \$3;
 	files_max ALIAS FOR \$4;
 BEGIN
 	UPDATE vq_users SET qt_bytes_max=bytes_max,qt_files_max=files_max
-		WHERE id_domain=_id_domain AND id_user=_id_user;
+		WHERE id_domain=_id_domain AND login=_login;
 	NOTIFY qt_user_set;
 	RETURN;
 END;
@@ -464,7 +462,6 @@ DECLARE
 
 	domain RECORD;
 	exists RECORD;
-    user_id RECORD;
     ban RECORD;
 BEGIN
     IF is_banned = ''t''::boolean THEN
@@ -480,28 +477,26 @@ BEGIN
 		RETURN -1;
 	END LOOP;
 	
-    SELECT NEXTVAL(''vq_users_id_user_seq'') INTO user_id;
-	
-    INSERT INTO vq_users (id_user,id_domain,login,pass,flags) 
-		VALUES(user_id.nextval,_id_domain,_login,_pass,_flags);
+    INSERT INTO vq_users (id_domain,login,pass,flags) 
+		VALUES(_id_domain,_login,_pass,_flags);
 
 	NOTIFY user_add;
-	RETURN user_id.nextval;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE FUNCTION user_auth
 (vq_users.id_domain\%TYPE,
-vq_users.id_user\%TYPE,
+vq_users.login\%TYPE,
 vq_users.pass\%TYPE) RETURNS vq_users.flags\%TYPE AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
-	_id_user ALIAS FOR \$2;
+	_login ALIAS FOR \$2;
 	_pass ALIAS FOR \$3;
 	ai RECORD;
 BEGIN
 	SELECT INTO ai pass,flags FROM vq_users 
-		WHERE id_domain=_id_domain AND id_user=_id_user LIMIT 1;
+		WHERE id_domain=_id_domain AND login=_login LIMIT 1;
 	IF NOT FOUND THEN
 		RETURN -1;
 	END IF;
@@ -512,61 +507,49 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION user_id
-(vq_users.id_domain\%TYPE, vq_users.login\%TYPE) 
-RETURNS vq_users.id_user\%TYPE AS '
+"CREATE FUNCTION user_ex
+(vq_users.id_domain\%TYPE,
+vq_users.login\%TYPE) RETURNS int AS '
 DECLARE
-    _id_domain alias for \$1;
-    _login alias for \$2;
-	id RECORD;
+	_id_domain ALIAS FOR \$1;
+	_login ALIAS FOR \$2;
+	ai RECORD;
 BEGIN
-	SELECT id_user INTO id FROM vq_users 
+	SELECT INTO ai ''1'' FROM vq_users 
 		WHERE id_domain=_id_domain AND login=_login LIMIT 1;
 	IF NOT FOUND THEN
-		RETURN -1;
+		RETURN 1;
 	END IF;
-	RETURN id.id_user;
-END;
-' LANGUAGE 'plpgsql';",
-
-"CREATE FUNCTION user_name
-(vq_users.id_domain\%TYPE, vq_users.id_user\%TYPE) 
-RETURNS vq_users.login\%TYPE AS '
-DECLARE
-    _id_domain alias for \$1;
-    _uid alias for \$2;
-	name RECORD;
-BEGIN
-	SELECT login INTO name FROM vq_users 
-		WHERE id_domain=_id_domain AND id_user=_uid LIMIT 1;
-	IF NOT FOUND THEN
-		RETURN -1;
-	END IF;
-	RETURN id.login;
+	RETURN 0; 
 END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE FUNCTION user_pass
-(vq_users.id_domain\%TYPE, vq_users.id_user\%TYPE, vq_users.pass\%TYPE) 
-RETURNS VOID AS '
+(vq_users.id_domain\%TYPE, vq_users.login\%TYPE, vq_users.pass\%TYPE) 
+RETURNS INT AS '
 DECLARE
     _id_domain alias for \$1;
-    _id_user alias for \$2;
+    _login alias for \$2;
     _pass alias for \$3;
+	rows int;
 BEGIN
-	UPDATE vq_users SET pass=_pass WHERE id_domain=_id_domain AND id_user=_id_user;
+	UPDATE vq_users SET pass=_pass WHERE id_domain=_id_domain AND login=_login;
+	GET DIAGNOSTICS rows = ROW_COUNT;
 	NOTIFY user_pass;
-	RETURN;
+	IF rows = 1 THEN
+		RETURN 0;
+	END IF;
+	RETURN -1;
 END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE FUNCTION user_rm
-(vq_users.id_domain\%TYPE, vq_users.id_user\%TYPE) RETURNS VOID AS '
+(vq_users.id_domain\%TYPE, vq_users.login\%TYPE) RETURNS VOID AS '
 DECLARE
     _id_domain alias for \$1;
-    _id_user alias for \$2;
+    _login alias for \$2;
 BEGIN
-	DELETE FROM vq_users WHERE id_domain=_id_domain AND id_user=_id_user;
+	DELETE FROM vq_users WHERE id_domain=_id_domain AND login=_login;
 	NOTIFY user_rm;
 	RETURN;
 END;
