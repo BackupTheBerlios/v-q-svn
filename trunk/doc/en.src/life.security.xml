@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<section id="life.security">
+	<title>Security not by obscurity</title>
+
+	<para>
+	Security is one of most important things in enterprise systems nowadays.
+	It's also very important for me. That's way I performed some steps 
+	to make this system secure.
+	</para>
+
+	<section id="life.security.steps">
+		<title>Steps done to make this system secure</title>
+
+		<para>
+		From the beginning v-q is developed using C++ and Standard Template
+		Library. I try not to reinvent wheel, when possible I use 
+		known and checked software. STL and C++ include common
+		algorithms and data structures which have been checked by many
+		developers.
+		</para>
+
+		<para>
+		I try to keep this code as simple as possible, don't use any
+		obfuscation techniques :-) It's simple in design, it's coded
+		in a simple way. I try to maintain decent comments in code but
+		I think that simpler code is better that larger documentation.
+		</para>
+
+		<para>
+		I use automates to create code. For example I decided to use
+		CORBA because it automates creation of communication protocol
+		between daemons.
+		</para>
+
+		<para>
+		From version 5 I started creating and performing unit testing as
+		often as I can. For every bug found I create test before I fix
+		it, that way I prevent it to be introduced again in next version.
+		</para>
+
+		<para>
+		The most important thing I do to make this system stable
+		and secure is using it on my own servers.
+		</para>
+	</section>
+
+	<section id="life.security.sockets">
+		<title>Limiting access to sockets</title>
+
+		<para>
+		One of the steps that can be performed to secure system is to
+		limit access to sockets used by daemons during communication.
+		</para>
+
+		<para>
+		Directory <filename>contrib/service</filename> includes sample
+		scripts to run daemons under <application>daemontools</application> 
+		(see <ulink url="http://cr.yp.to">http://cr.yp.to</ulink> for
+		informations about package). As you can see all daemons are
+		executed with:
+<screen><userinput>-ORBIIOPAddr "unix:/var/vq/sockets/$PROG.sock"</userinput></screen>
+		This argument tells CORBA implementation to use Unix sockets
+		as a communication channel. Unix sockets are stored in
+		a file system so you can limit access i.e. using 
+		<application>chmod</application>. Use
+<screen><userinput>chmod 700 /var/vq/sockets</userinput></screen>
+		to limit access only to all processes run by owner of 
+		<filename>/var/vq/sockets</filename> directory.
+		</para>
+
+		<para>
+		If you want to allow processes run by different users to access
+		daemons it's advised to create special group which will have
+		access to Unix sockets and run all those processes with this
+		group.
+		</para>
+	</section>
+
+</section>

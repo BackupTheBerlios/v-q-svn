@@ -12,6 +12,7 @@
 	<!ENTITY com.support SYSTEM "com.support.xml">
 	<!ENTITY life SYSTEM "life.xml">
 	<!ENTITY life.conf SYSTEM "life.conf.xml">
+	<!ENTITY life.security SYSTEM "life.security.xml">
 	]
 >
 <book lang="en">

@@ -37,14 +37,12 @@
 				<listitem>
 					<para>
 						CORBA implementation with IDL to C++ mapping, 
-						for example <ulink url="http://www.mico.org">MICO</ulink>
+						for example <ulink url="http://www.mico.org">MICO</ulink> 
+						or <ulink url="http://www.omniorb.org">OmniORB</ulink>
 					</para>
 				</listitem>
 				<listitem>
 					<para>compatible mail transfer agent</para>
-				</listitem>
-				<listitem>
-					<para>Sablotron if you want to compile WWW interface. It must be at least version 1.0.</para>
 				</listitem>
 				<listitem>
 					<para><ulink url="http://www.boost.org">boost</ulink> library</para>
@@ -53,13 +51,16 @@
 					<para>DocBook and doxygen if you want to generate new version of documentation</para>
 				</listitem>
 				<listitem>
-					<para>Iconv if you want to generate WWW interface</para>
-				</listitem>
-				<listitem>
 					<para>compatible database client libraries</para>
 				</listitem>
 				<listitem>
 					<para>Cgicc library if you want to generate WWW interface</para>
+				</listitem>
+				<listitem>
+					<para>Iconv if you want to generate WWW interface</para>
+				</listitem>
+				<listitem>
+					<para>Sablotron if you want to compile WWW interface. It must be at least version 1.0.</para>
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -110,8 +111,14 @@
 			<title>Creating user and group</title>
 
 			<para>
-			V-q daemon can work as any user, but it is suggested
+			V-q daemons can work as any user, but it is suggested
 			to run them under _vq group and _vq user.
+				<warning>
+					<para>
+						For security reasons you should not run it
+						as root. It's better to prevent than cure.
+					</para>
+				</warning>
 			</para>
 
 			<para>
@@ -231,7 +238,7 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 				Next step is to edit files with extensions:
 				<filename>.inc</filename> and <filename>.lib</filename>.
 				First are used during compilation, they include informations
-				about directories used in searching included files.
+				about directories used in searching for included files.
 				Second are used while linking, they include references
 				to libraries.
 			</para>
@@ -243,7 +250,7 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 		
 		<para>Now it's time to compile sources. If you configured
 		everything properly you should be able to successfully
-		compile it.</para>
+		compile Virual Qmail.</para>
 
 		<para>
 			To compile program use <application>make</application>.
@@ -327,7 +334,7 @@ make PREFIX=/var/v-q install
 			<title>Special steps for PostgreSQL</title>
 
 			<para>
-				First you need to create user for v-q. Default
+				First you need to create user for v-q in PostgreSQL. Default
 				user is &quot;mail&quot;, but you can use any name. 
 				To create user you can use following command:
 <screen>

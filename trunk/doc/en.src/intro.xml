@@ -61,6 +61,7 @@
 				<listitem><para>manager of extended addresses known from Qmail</para></listitem>
 				<listitem><para>WWW interface for administrators</para></listitem>
 				<listitem><para>Postfix and Sendmail support.</para></listitem>
+				<listitem><para>remote configuration - another CORBA interface allowing to configure system</para></listitem>
 			</itemizedlist>
 		</para>
 	</section>

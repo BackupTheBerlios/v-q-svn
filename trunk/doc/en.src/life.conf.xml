@@ -123,10 +123,11 @@
 						</entry>
 					</row>
 					<row>
-						<entry><filename>domains</filename></entry>
-						<entry>base/domains</entry>
+						<entry><filename>data</filename></entry>
+						<entry>/var/vq</entry>
 						<entry>
-							Directory where domains are stored.
+							Directory where Virtual Qmail stores
+							domains and users' mailboxes.
 						</entry>
 					</row>
 					<row>

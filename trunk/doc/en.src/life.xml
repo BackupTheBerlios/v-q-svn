@@ -8,14 +8,7 @@
 	</para>
 
 	&life.conf;
-
-	<section id="life.security">
-		<title>Security not by obscurity</title>
-
-		<para>
-		...
-		</para>
-	</section>
+	&life.security;
 
 	<section id="life.integration">
 		<title>Integration with other software</title>

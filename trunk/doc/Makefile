@@ -4,7 +4,8 @@ JADE?=openjade
 
 .PHONY: all all-doc clean subdirs
 
-all-doc: doc-html doc-rtf
+all-doc: doc-html 
+#doc-rtf
 
 include $(BASE)/Makefile.common
 
@@ -20,6 +21,7 @@ doc-html:
 		cp -f $$l.src/arch.en.png $$l.html ; \
 		cp -f $$l.src/GPL.txt $$l.html ; \
 		cp -f $$l.src/stylesheet.css $$l.html ; \
+		(cd $$l.html && ../mime-type.sh) || exit 1; \
 	done
 
 doc-rtf:
