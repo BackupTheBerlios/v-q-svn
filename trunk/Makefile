@@ -21,7 +21,7 @@ pgsql::
 	done
 
 clean:
-	@for entry in $(SUBDIR); do \
+	@for entry in tests $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \
