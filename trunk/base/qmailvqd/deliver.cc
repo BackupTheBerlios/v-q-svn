@@ -22,6 +22,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <text.hpp>
 #include <conf.hpp>
 
+#include <unistd.h>
+
 #include <exception>
 #include <iostream>
 #include <cerrno>
