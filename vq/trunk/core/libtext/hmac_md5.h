@@ -3,8 +3,8 @@
 
 /* prototypes */
 
-void hmac_md5( const unsigned char* , int , const unsigned char* , int , 
-				unsigned char* );
+void hmac_md5( const unsigned char* , 
+		int , const unsigned char* , int , unsigned char* );
 
 /* pointer to data stream */
 /* length of data stream */

@@ -30,27 +30,31 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
-#include "lower.h"
+#include "lower.hpp"
 
 #include <ctype.h>
 #include <string.h>
 
-using namespace std;
+namespace text {
+		
+	using namespace std;
 
-string lower(const string &s) {
-	string ret;
-	string::size_type i, len=s.length();
-	ret.reserve(len);
-	for( i=0; i<len; ++i ) 
-		ret+= tolower(s[i]);
-	return ret;
-}
+	string lower(const string &s) {
+		string ret;
+		string::size_type i, len=s.length();
+		ret.reserve(len);
+		for( i=0; i<len; ++i ) 
+			ret+= tolower(s[i]);
+		return ret;
+	}
 
-string upper(const string &s) {
-	string ret;
-	string::size_type i, len = s.length();
-	ret.reserve(len);
-	for( i=0; i<len; ++i )
-		ret += toupper(s[i]);
-	return ret;
-}
+	string upper(const string &s) {
+		string ret;
+		string::size_type i, len = s.length();
+		ret.reserve(len);
+		for( i=0; i<len; ++i )
+			ret += toupper(s[i]);
+		return ret;
+	}
+
+} // namespace text
