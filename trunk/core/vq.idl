@@ -131,9 +131,9 @@ module vq {
 			 * user's information.
 			 */
 			struct auth_info {
+					string dom; //!< domain
 					string user; //!< user name
 					string pass; //!< password
-					string dom; //!< domain
 					string dir; //!< mailbox directory
 					aif_type flags; //!< additional flags
 			};
@@ -216,8 +216,7 @@ module vq {
 	 * @{
 	 */
 			/// Adds user
-			error user_add(in string dom, in string user, in string pass, 
-				in error eex )
+			error user_add(in auth_info ai, in error eex )
 					raises (null_error, runtime_error, logic_error);
 			/// Removes user
 			error user_rm(in string dom, in string user)

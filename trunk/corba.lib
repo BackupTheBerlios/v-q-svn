@@ -1,1 +1,1 @@
--L/usr/local/lib -lmico2.3.11
+-L/usr/local/lib -lmico2.3.11 -lssl -lcrypto

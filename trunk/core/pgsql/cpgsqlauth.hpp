@@ -19,6 +19,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "../auth.hpp"
 #include "pgsqlcommon.hpp"
 
+#include <memory>
+
 namespace POA_vq {
 
 	/**
@@ -39,24 +41,26 @@ namespace POA_vq {
 					typedef ::vq::iauth::size_type size_type;
 					typedef ::vq::iauth::size_type_out size_type_out;
 
-					cpgsqlauth();
+					cpgsqlauth( const char *pginfo );
 					virtual ~cpgsqlauth();
 					
 	
 				    virtual error dom_add( const char* dom );
+					/*
 				    virtual error dom_ip_add( const char* dom, const char* ip );
 				    virtual error dom_ip_rm( const char* dom, const char* ip );
 				    virtual error dom_ip_rm_all( const char* dom );
 				    virtual error dom_ip_ls( const char* dom, 
 							string_list_out ips );
 				    virtual error dom_ip_ls_dom( string_list_out doms );
-				    virtual error dom_rm( const char* dom );
-				    virtual error user_add( const char* dom, const char* user, 
-							const char* pass, error errex );
+				    */
+					virtual error dom_rm( const char* dom );
+				    virtual error user_add( const auth_info & ai );
 				    virtual error user_rm( const char* dom, const char* user );
 				    virtual error user_pass( const char* dom, const char* user, 
 							const char* pass );
-				    virtual error user_auth( auth_info& ai );
+				    /*
+					virtual error user_auth( auth_info& ai );
 				    virtual error user_ex( const char* dom, const char* user );
 				    virtual error qt_get( const char* dom, const char* user, 
 							quota_type_out bytes_max, quota_type_out files_max );
@@ -93,16 +97,15 @@ namespace POA_vq {
 				    virtual char* err_info();
 				    virtual CORBA::Long err_sys();
 				    virtual char* err_report();
-				
+					*/
 	
 			protected:
-					void setup();
-	
 					/// pgsql
-					pqxx::Connection *pg;
-	
+					std::auto_ptr<pqxx::Connection> pg;
+					/*
 					void qt_def_get(const std::string &);
 					void qt_def_set(const std::string &);
+					*/
 	};
 
 } // namespace POA_vq

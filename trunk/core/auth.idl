@@ -32,10 +32,13 @@ module vq {
 			typedef ivq::udot_info udot_info;
 			typedef ivq::udot_info_list udot_info_list;
 			typedef ivq::udot_type udot_type;
+			typedef ivq::aif_type aif_type;
 
 			enum error {
 				err_no, //!< no errors
-				err_func_res //!< incorrect return from function
+				err_func_res, //!< incorrect return from function
+				err_user_ex, //!< user exists
+				err_user_inv //!< invalid user name
 			};
 
 		/**
@@ -45,6 +48,7 @@ module vq {
 			/// Adds domain to database
 			error dom_add(in string dom)
 					raises (null_error);
+			/*
 			/// Adds domain's IP address
 			error dom_ip_add(in string dom, in string ip)
 					raises (null_error);
@@ -60,6 +64,7 @@ module vq {
 			/// Lists domains having IP addresses
 			error dom_ip_ls_dom(out string_list doms)
 					raises (null_error);
+			*/
 			/// Removes domain.
 			error dom_rm(in string dom)
 					raises (null_error);
@@ -70,8 +75,7 @@ module vq {
 		 */
 		//@{
 			/// Adds user
-			error user_add(in string dom, in string user, in string pass, 
-				in error errex )
+			error user_add(in auth_info ai )
 					raises (null_error);
 			/// Removes user
 			error user_rm(in string dom, in string user)
@@ -79,14 +83,16 @@ module vq {
 			/// Changes password for user
 			error user_pass(in string dom, in string user, in string pass )
 					raises (null_error);
+			/*
 			/// Gets authorization information for user
 			error user_auth( inout auth_info ai )
 					raises (null_error);
 			/// Checks whether user exists
 			error user_ex(in string dom, in string user)
 					raises (null_error);
+			*/
 		//@}
-		
+#if 0
 		/**
 		 * \ingroup qt_user
 		 */
@@ -172,6 +178,7 @@ module vq {
 			/// return description of error from lastret
 			string err_report();
 		/*@}*/
+#endif // if 0
 	}; // interface iauth
 
 }; // module vq

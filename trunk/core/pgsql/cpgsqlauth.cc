@@ -21,20 +21,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <text.hpp>
 #include <util.hpp>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <ctime>
-#include <unistd.h>
-#include <cerrno>
-#include <fcntl.h>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
-#include <vector>
-
-
 namespace POA_vq {
 	
 	using namespace std;
@@ -44,26 +30,21 @@ namespace POA_vq {
 	
 	
 	/**
-	 *
+	 * \param pginfo Connection configuration
 	 */
-	cpgsqlauth::cpgsqlauth() : pg(0) {
+	cpgsqlauth::cpgsqlauth( const char *pginfo ) {
+		pg.reset(new Connection(pginfo));
+		if( ! pg.get() ) {
+				throw ::vq::runtime_error(
+						static_cast<const char*>("can't create connection"),
+						__FILE__, __LINE__ ); 
+		}
 	}
 	
 	/**
 	 *
 	 */
 	cpgsqlauth::~cpgsqlauth() {
-		delete pg;
-	}
-	
-	/**
-	 * \exception runtime_error if it can't create socket
-	 */
-	void cpgsqlauth::setup() {
-		if( !(pg = new Connection(ac_pgsql.val_str().c_str())) ) 
-				throw ::vq::runtime_error(
-						static_cast<const char*>("setup: no memory"),
-						__FILE__, __LINE__ ); 
 	}
 	
 	/**
@@ -103,89 +84,75 @@ namespace POA_vq {
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::user_add() {
-		uint8_t flags;
-		if( fdrdstr(cso, user) != -1
-			&& fdrdstr(cso, dom) != -1
-			&& fdrdstr(cso, pass) != -1 
-			&& fdread(cso, &flags, sizeof(flags)) == sizeof(flags) ) {
-				dom = lower(str2tb(dom));
-				user = lower(user);
-				ostringstream sflags;
-				sflags<<(int)flags;
+	cpgsqlauth::error cpgsqlauth::user_add( const auth_info & ai ) {
+		if( !ai.dom || !ai.user || !ai.pass || !ai.dir )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
+		string dom(lower(str2tb(string(ai.dom))));
+		string user(lower(string(ai.user)));
 	
-				Result res(NonTransaction(*pg).Exec(
-						"SELECT USER_ADD("+Quote(user, false)+","
-						+Quote(dom, false)+","
-						+Quote(pass, false)+","
-						+Quote(sflags.str(), false)+")"));
+		Result res(NonTransaction(*pg).Exec(
+				"SELECT USER_ADD("+Quote(user, false)+","
+				+Quote(dom, false)+","
+				+Quote(string(ai.pass), false)+","
+				+Quote(ToString(ai.flags), false)+")"));
 	
-				if(res.empty() || res[0][0].is_null() ) {
-						if( fdwrite(cso, &"E", 1) != 1 ) throw wr_error();
-						return;
+		if(res.empty() || res[0][0].is_null() ) {
+				return ::vq::iauth::err_func_res;
+		}
+
+		const char *val = res[0][0].c_str();
+		if( *(val+1) == '\0' ) {
+				if( *val == '1' ) {
+						return ::vq::iauth::err_user_inv;
+				} else if( *val == '0' ) {
+						return ::vq::iauth::err_no;
 				}
-				const char *val = res[0][0].c_str();
-				if( *(val+1) == '\0' ) {
-						if( *val == '1' ) {
-								if( fdwrite(cso, &"D", 1) != 1 ) throw wr_error();
-								return;
-						} else if( *val == '0' ) {
-								if( fdwrite(cso, &"K", 1) != 1 ) throw wr_error();
-								return;
-						}
-				}
-				if( fdwrite(cso, &"E", 1) != 1 ) throw wr_error();
-		} else 
-				throw rd_error();
+		}
+		return ::vq::iauth::err_func_res;
 	}
 	
 	/**
 	 * 
 	 */
-	cpgsqlauth::error cpgsqlauth::user_pass() {
-		if( fdrdstr(cso, user) != -1
-			&& fdrdstr(cso, dom) != -1
-			&& fdrdstr(cso, pass) != -1 ) {
-				dom = lower(str2tb(dom));
-				user = lower(user);
+	cpgsqlauth::error cpgsqlauth::user_pass( const char *_dom, 
+			const char *_user, const char *_pass ) {
+		if( ! _dom || ! _user || ! _pass )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
+		string dom(lower(str2tb(_dom)));
+		string user(lower(_user));
 	
-				Result res(NonTransaction(*pg).Exec(
-						"SELECT USER_PASS("+Quote(user, false)+","
-						+Quote(dom, false)+","+Quote(pass, false)+")"));
-	
-				if(res.empty() || res[0][0].is_null() 
-					|| strcmp(res[0][0].c_str(), "t") ) {
-						if( fdwrite(cso, &"E", 1) != 1 ) throw wr_error();
-						return;
-				}
-	
-				if( fdwrite(cso, &"K", 1) != 1 ) throw wr_error();
-		} else 
-				throw wr_error();
+		Result res(NonTransaction(*pg).Exec(
+				"SELECT USER_PASS("+Quote(user, false)+","
+				+Quote(dom, false)+","+Quote(_pass, false)+")"));
+
+		if(res.empty() || res[0][0].is_null() 
+			|| strcmp(res[0][0].c_str(), "t") ) {
+				return ::vq::iauth::err_func_res;
+		}
+		return ::vq::iauth::err_no;
 	}
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::user_rm() {
-		if( fdrdstr(cso, user) != -1
-			&& fdrdstr(cso, dom) != -1 ) {
-				dom = lower(str2tb(dom));
-				user = lower(user);
-				Result res(NonTransaction(*pg).Exec(
-						"SELECT USER_RM("+Quote(user, false)+","
-						+Quote(dom, false)+")"));
-	
-				if(res.empty() || res[0][0].is_null() 
-					|| strcmp(res[0][0].c_str(), "t") ) {
-						if( fdwrite(cso, &"E", 1) != 1 ) throw wr_error();
-						return;
-				}
-	
-				if( fdwrite(cso, &"K", 1) != 1 ) throw wr_error();
-		} else 
-				throw rd_error();
+	cpgsqlauth::error cpgsqlauth::user_rm( const char *_dom, const char *_user) {
+		if( ! _dom || ! _user )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
+		string dom(lower(str2tb(_dom)));
+		string user(lower(_user));
+		Result res(NonTransaction(*pg).Exec(
+				"SELECT USER_RM("+Quote(user, false)+","
+				+Quote(dom, false)+")"));
+
+		if(res.empty() || res[0][0].is_null() 
+			|| strcmp(res[0][0].c_str(), "t") ) {
+				return ::vq::iauth::err_func_res;
+		}
+		return ::vq::iauth::err_no;
 	}
-	
+#if 0
 	/**
 	*/
 	cpgsqlauth::error cpgsqlauth::user_auth() {
@@ -751,5 +718,5 @@ namespace POA_vq {
 				qt_def_set(dom);
 		} else throw rd_error();
 	}
-	
+#endif // if 0	
 } // namespace POA_vq

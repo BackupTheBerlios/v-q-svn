@@ -1,1 +1,1 @@
--L/usr/local/lib -lpqxx -lpq
+-L/usr/local/lib -L/usr/local/progs/pqxx-gcc3/lib -lpqxx -lpq

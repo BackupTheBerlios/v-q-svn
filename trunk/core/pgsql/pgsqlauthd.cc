@@ -16,35 +16,66 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "vq_conf.h"
-#include "sig.h"
-#include "fd.h"
-#include "fdstr.h"
-#include "util.h"
-#include "lock.h"
-#include "pgsqlcommon.h"
-#include "sys.h"
-#include "cvq.h"
-#include "cdaemonauth.h"
-#include "cdaemonchild.h"
-#include "cdaemonmaster.h"
-#include "lower.h"
+#include "cpgsqlauth.hpp"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <ctime>
-#include <unistd.h>
-#include <cerrno>
-#include <fcntl.h>
-#include <stdexcept>
+#include "main.hpp"
+
+#include <memory>
 #include <iostream>
-#include <sstream>
-#include <algorithm>
-#include <vector>
-
+#include <fstream>
 
 using namespace std;
-using namespace vq;
+using namespace POA_vq;
 
-
+int cppmain(int ac, char **av) {
+	/*
+	 * Initialize the ORB
+	 */
+	
+	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
+	
+	/*
+	 * Obtain a reference to the RootPOA and its Manager
+	 */
+	
+	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
+	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
+	PortableServer::POAManager_var mgr = poa->the_POAManager();
+	
+	/*
+	 * Create authorization object
+	 */
+	auto_ptr<cpgsqlauth> pgauth(new cpgsqlauth("pgsql.conf"));
+	
+	/*
+	 * Activate the Servant
+	 */
+	
+	PortableServer::ObjectId_var oid = poa->activate_object (pgauth.get());
+	
+	/*
+	 * Write reference to file
+	 */
+	
+	ofstream of ("pgsqlauthd.ref");
+	CORBA::Object_var ref = poa->id_to_reference (oid.in());
+	CORBA::String_var str = orb->object_to_string (ref.in());
+	of << str.in() << endl;
+	of.close ();
+	
+	/*
+	 * Activate the POA and start serving requests
+	 */
+	
+	cout << "Running." << endl;
+	
+	mgr->activate ();
+	orb->run();
+	
+	/*
+	 * Shutdown (never reached)
+	 */
+	
+	poa->destroy (TRUE, TRUE);
+	return 0;
+}
