@@ -1,8 +1,10 @@
-BASE=../..
+BASE=..
 
 .PHONY: auto-mkdir
 
 all: auto-mkdir .depend libtext.so
+
+include $(BASE)/Makefile.common
 
 #######################
 
@@ -43,9 +45,5 @@ split.o: $(BASE)/comp-so split.cc
 	$(BASE)/comp-so split.cc
 
 #####################
-.depend: auto/lmd5.h
-	echo '# Module dependencies' > .depend
-	$(BASE)/tools/mkdep *.cc >> .depend
-	
 clean:
 		rm -rf `cat TARGETS`

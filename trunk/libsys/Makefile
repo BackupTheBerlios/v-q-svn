@@ -1,4 +1,4 @@
-BASE=../..
+BASE=..
 
 .PHONY: auto-mkdir
 
@@ -6,6 +6,8 @@ all: auto-mkdir .depend libsys.so
 
 auto-mkdir:
 	mkdir -p auto
+
+include $(BASE)/Makefile.common
 
 ##################
 
@@ -53,9 +55,5 @@ util.o: $(BASE)/comp-so util.cc
 	$(BASE)/comp-so util.cc
 
 #################
-.depend:
-	echo '# Module dependencies' > .depend
-	$(BASE)/tools/mkdep *.cc >> .depend
-	
 clean:
 		rm -rf `cat TARGETS`
