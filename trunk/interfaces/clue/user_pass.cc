@@ -78,7 +78,7 @@ bool user_pass(const string &e, const string &p,
 /*
  *
  */
-int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
+int cluemain(int ac, char **av, cluemain_env & ce ) {
 	me = *av;
 	int opt;
 	bool sin = false, quiet = false;
@@ -121,12 +121,12 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 							cout.flush();
 					}
 					if( ! getline(cin,p) ) break;
-					if( user_pass(e, p, vq, quiet) ) return 1;
+					if( user_pass(e, p, ce.vq, quiet) ) return 1;
 			} while(cin);
 	} else {
 			if(quiet) ac = 1;
 			for(int i=0; i < ac; i+=2 ) {
-					if( user_pass(av[i], av[i+1], vq, quiet) )
+					if( user_pass(av[i], av[i+1], ce.vq, quiet) )
 							return 1;
 			}
 	}

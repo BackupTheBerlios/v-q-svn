@@ -49,7 +49,8 @@ module vq {
 					re_data, //!< invalid data (domain, username, password)
 					re_pass, //!< invalid password, description includes given password
 					re_int, //!< internal error
-					re_blk //!< user's blocked
+					re_blk, //!< user's blocked
+					re_unknown
 			};
 	
 			/// information stored in log db
@@ -67,31 +68,84 @@ module vq {
 			typedef sequence< log_entry > log_entry_list;
 				
 			/// sets client address
-			void ip_set( in string ip );
+			void ip_set( in string ip )
+				raises (null_error, db_error, except);
 	
 			/// set service type
-			void service_set( in service_type ser );
+			void service_set( in service_type ser )
+				raises (null_error, db_error, except);
 	
 			/// set domain
-			void domain_set( in string dom );
+			void domain_set( in string dom )
+				raises (null_error, db_error, except);
 	
 			/// set user
-			void login_set( in string log );
+			void login_set( in string log )
+				raises (null_error, db_error, except);
 					
 			/// Write information
-			error write( in result r, in string msg );
+			error write( in result r, in string msg )
+				raises (null_error, db_error, except);
 	
 			/**
-			 * Read all entries from global log (log table) where domain and
-			 * login match.
+			 * Read all entries from global log (log table)
 			 */ 
 			error read( in size_type start, in size_type cnt,
-					out log_entry_list les );
+					out log_entry_list les )
+				raises (null_error, db_error, except);
 
 			/**
-			 *
+			 * Count all entries from global log table
 			 */
-			error count( out size_type cnt );
+			error count( out size_type cnt )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Read all entries for domain. In this case res[i].domain will be
+			 * empty.
+			 */
+			error read_by_dom( in size_type start, in size_type cnt,
+					out log_entry_list les )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Count all entries for domain.
+			 */
+			error count_by_dom( out size_type cnt )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Read all entries for login@domain. In this case res[i].domain
+			 * and res[i].login will be empty.
+			 */
+			error read_by_user( in size_type start, in size_type cnt,
+					out log_entry_list les )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Count all entries for login@domain
+			 */
+			error count_by_user( out size_type cnt )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Removes all entries from log table.
+			 */
+			error rm_all()
+				raises (null_error, db_error, except);
+
+			/**
+			 * Removes all entries for a domain.
+			 */
+			error rm_by_dom()
+				raises (null_error, db_error, except);
+
+			/**
+			 * Removes all entries for a user.
+			 */
+			error rm_by_user()
+				raises (null_error, db_error, except);
+
 	};
 
 }; // module vq

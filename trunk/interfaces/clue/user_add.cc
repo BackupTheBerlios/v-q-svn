@@ -86,7 +86,7 @@ bool user_add(const string &e, const string &p, uint8_t flags,
 /*
  *
  */
-int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
+int cluemain(int ac, char **av, cluemain_env & ce ) {
 	me = *av;
 	bool quiet = false, eb_chk = true;
 	int opt;
@@ -134,12 +134,12 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 							cout.flush();
 					}
 					if( ! getline(cin,p) ) break;
-					if( user_add(e, p, flags, vq, quiet, eb_chk) ) return 1;
+					if( user_add(e, p, flags, ce.vq, quiet, eb_chk) ) return 1;
 			} while(cin);
 	} else {
 			if(quiet) ac=1;
 			for(int i=0; i < ac; i+=2 ) {
-					if( user_add(av[i], av[i+1], flags, vq, quiet, eb_chk) )
+					if( user_add(av[i], av[i+1], flags, ce.vq, quiet, eb_chk) )
 							return 1;
 			}
 	}

@@ -45,7 +45,7 @@ void usage(const char * me, const std::string & uc_names)
 /*
  *
  */
-int cluemain(int ac, char **av, ::vq::ivq_var & vq )
+int cluemain(int ac, char **av, cluemain_env & ce )
 {
 	const char * me = *av;
 	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
@@ -77,7 +77,7 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq )
 							continue;
 					} else return 1;
 			}
-			ret = dom_name2id(vq, esplit.back().c_str(), did);
+			ret = dom_name2id(ce.vq, esplit.back().c_str(), did);
 			if( vq::ivq::err_no != ret->ec ) {
 					if( ! quiet ) {
 							cout<<av[i]<<": "<<error2str(ret)<<endl;
@@ -86,7 +86,7 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq )
 			}
 
 			if( types.empty() ) {
-					ret = vq->user_conf_rm(did, esplit.front().c_str(), "", 
+					ret = ce.vq->user_conf_rm(did, esplit.front().c_str(), "", 
 						static_cast<const char *>(av[i+1]) );
 					if( vq::ivq::err_no != ret->ec ) {
 							if( ! quiet ) {
@@ -99,7 +99,7 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq )
 					for( type_itr=types.begin(), type_end=types.end();
 								type_itr != type_end; ++type_itr ) {
 
-							ret = vq->user_conf_rm_by_type(did, 
+							ret = ce.vq->user_conf_rm_by_type(did, 
 								esplit.front().c_str(), "", *type_itr );
 							if( vq::ivq::err_no != ret->ec ) {
 									if( ! quiet ) {

@@ -31,8 +31,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqllog::cpgsqllog( const char * pginfo ) 
-			: ser(static_cast<cpgsqllog::service_type>(0)) std_try {
+	cpgsqllog::cpgsqllog( const char * pginfo ) std_try {
 		pg.reset(new Connection(pginfo));
 		if( ! pg.get() || ! pg->is_open() ) {
 				throw ::vq::except(
@@ -47,26 +46,38 @@ namespace POA_vq {
 	cpgsqllog::~cpgsqllog() std_try {
 	} std_catch
 
+	/**
+	 *
+	 */
 	void cpgsqllog::ip_set( const char* ip ) std_try {
 		if( ! ip )
 				throw ::vq::null_error(__FILE__, __LINE__);
-		this->ip = ip;
+		this->ip = text::lower(ip);
 	} std_catch
 	
+	/**
+	 *
+	 */
 	void cpgsqllog::service_set( service_type ser ) std_try {
-		this->ser = ser;
+		this->ser = pqxx::ToString(ser);
 	} std_catch
 
+	/**
+	 *
+	 */
     void cpgsqllog::domain_set( const char* dom ) std_try {
 		if( ! dom )
 				throw ::vq::null_error(__FILE__, __LINE__);
-		this->dom = dom;
+		this->dom = text::lower(dom);
 	} std_catch
 
+	/**
+	 *
+	 */
     void cpgsqllog::login_set( const char* log ) std_try {
 		if( ! log )
 				throw ::vq::null_error(__FILE__, __LINE__);
-		this->log = log;
+		this->log = text::lower(log);
 	} std_catch
  
 	/**
@@ -75,14 +86,16 @@ namespace POA_vq {
 	cpgsqllog::error * cpgsqllog::write( result res, const char * msg ) std_try {
 		if( ! msg )
 				throw ::vq::null_error(__FILE__, __LINE__);
-		/*
-	
-		pqxx::Result x(pqxx::NonTransaction(*pg).Exec(
-			"SELECT INSERT INTO log (LOGIN,SERVICE,RESULT,IP,MSG)"
-			" VALUES("+pqxx::Quote(log, false)+","
-			+pqxx::Quote(ser, false)+","+pqxx::Quote(res, false)+","
-			+pqxx::Quote(ip, false)+","+pqxx::Quote(msg, false)+")"));
-		*/
+		
+		pqxx::NonTransaction(*pg).Exec(
+			"SELECT log_write("
+			+pqxx::Quote(this->ip)+","
+			+this->ser+","
+			+pqxx::Quote(this->dom)+","
+			+pqxx::Quote(this->log)+","
+			+pqxx::ToString(static_cast<unsigned>(res))+","
+			+pqxx::Quote(msg));
+		
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
@@ -90,7 +103,37 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count( size_type & cnt ) std_try {
-		return lr(::vq::ivq::err_no, "");
+		return count_by_func( "log_count()" , cnt);
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::count_by_dom( size_type & cnt ) std_try {
+  		return count_by_func( "log_count_by_dom("+pqxx::Quote(this->dom)+")", 
+			cnt);
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::count_by_user( size_type & cnt ) std_try {
+  		return count_by_func( "log_count_by_user("+pqxx::Quote(this->dom)
+			+','+pqxx::Quote(this->log)+")", cnt);
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::count_by_func( const std::string & func,
+			size_type & cnt ) std_try {
+
+		string qr("SELECT "+func);
+		Result res(pqxx::NonTransaction(*pg).Exec(qr));
+		if( res.empty() ) return lr(::vq::ivq::err_func_res, func.c_str());
+		
+		cnt = res[0][0].as< size_type >(0);
+  		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
 	/**
@@ -98,138 +141,116 @@ namespace POA_vq {
 	 */
 	cpgsqllog::error * cpgsqllog::read( size_type start, size_type end,
 			log_entry_list_out les ) std_try {
+		return read_by_func(make_pair(0, "log_read()"), start, end, les);
+	} std_catch
+	
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::read_by_dom( size_type start, size_type end,
+			log_entry_list_out les ) std_try {
+		return read_by_func(
+			make_pair(rbf_ignore_domain, "log_read_by_dom("+pqxx::Quote(this->dom)+")"), 
+			start, end, les);
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::read_by_user( size_type start, size_type end,
+			log_entry_list_out les ) std_try {
+		return read_by_func(
+			make_pair(rbf_ignore_domain | rbf_ignore_login,
+				"log_read_by_user("+pqxx::Quote(this->dom)
+				+','+pqxx::Quote(this->log)+")" ), 
+			start, end, les);
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::read_by_func(const rbf_func_desc_type &func, 
+			size_type start, size_type cnt, log_entry_list_out les ) std_try {
+
+		string qr( "SELECT id_log,time,ip,service,result,msg" );
+		if( ! (func.first & rbf_ignore_domain) ) qr += ",domain"; 
+		if( ! (func.first & rbf_ignore_login) ) qr += ",login"; 
+		qr += " FROM "+func.second+" ORDER BY time DESC";
+		
+		if( cnt ) {
+				qr += " LIMIT "+ToString(cnt);
+		}
+		if( start ) {
+				qr+= " OFFSET "+ToString(start);
+		}
+	
+		Result res(pqxx::NonTransaction(*pg).Exec(qr));
+		Result::size_type s = res.size();
+
+		les = new log_entry_list(static_cast<CORBA::ULong>(s));
+		les->length(s);
+		for( Result::size_type i=0, idx=0; i<s; ++i, idx=0 ) {
+				les[i].id_log = CORBA::string_dup(
+					res[i][idx].is_null() ? "" : res[i][idx].c_str() );
+				++idx;
+				les[i].time = CORBA::string_dup(
+					res[i][idx].is_null() ? "" : res[i][idx].c_str() );
+				++idx;
+				les[i].ip = CORBA::string_dup(
+					res[i][idx].is_null() ? "" : res[i][idx].c_str() );
+				++idx;
+				les[i].ser = res[i][idx].as< ::vq::ilogger::service_type >
+						(::vq::ilogger::ser_unknown);
+				++idx;
+				les[i].ser = res[i][idx].as< CORBA::ULong >
+						(static_cast<CORBA::ULong>(::vq::ilogger::re_unknown));
+				++idx;
+				les[i].msg = CORBA::string_dup(
+					res[i][idx].is_null() ? "" : res[i][idx].c_str() );
+				++idx;
+				if( ! (func.first & rbf_ignore_domain) ) { 
+						les[i].domain = CORBA::string_dup(
+							res[i][idx].is_null() ? "" : res[i][idx].c_str() );
+						++idx;
+				}
+				if( ! (func.first & rbf_ignore_login) ) {
+						les[i].login = CORBA::string_dup(
+							res[i][idx].is_null() ? "" : res[i][idx].c_str() );
+						++idx;
+				}
+		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	
-#if 0	
 	/**
 	 *
 	 */
-	pqxx::Result cpgsqllog::dom_log_read_log(const string &dom, const string &log, 
-			cdaemonlog::size_type start, cdaemonlog::size_type cnt ) {
-		string qr("SELECT id,time,service,msg,ip,result FROM \""+str2tb(dom)+"_log\""
-				" WHERE login="+pqxx::Quote(log,false)
-				+" ORDER BY time DESC");
-		
-		ostringstream os;
-		if( cnt ) {
-				os.str("");
-				os<<cnt;
-				qr += " LIMIT "+os.str();
-		}
-		if( start ) {
-				os.str("");
-				os<<start;
-				qr+= " OFFSET "+os.str();
-		}
-	
-		return pqxx::Result(pqxx::NonTransaction(*pg).Exec(qr));
+	cpgsqllog::error * cpgsqllog::rm_all() std_try {
+		return rm_by_func( "log_rm_all()");
 	} std_catch
-	
+
 	/**
 	 *
 	 */
-	pqxx::Result cpgsqllog::log_read_dom_log(const string &dom, const string &log, 
-			cdaemonlog::size_type start, cdaemonlog::size_type cnt ) {
-		string tb(str2tb(dom));
-	
-		string qr("SELECT id,time,service,msg,ip,result FROM log WHERE domain="
-			+pqxx::Quote(dom,false)
-			+" AND login="+pqxx::Quote(log,false)
-			+" ORDER BY time DESC");
-		
-		ostringstream os;
-		if( cnt ) {
-				os.str("");
-				os<<cnt;
-				qr += " LIMIT "+os.str();
-		}
-		if( start ) {
-				os.str("");
-				os<<start;
-				qr+= " OFFSET "+os.str();
-		}
-	
-		return pqxx::Result(pqxx::NonTransaction(*pg).Exec(qr));
+	cpgsqllog::error * cpgsqllog::rm_by_dom() std_try {
+  		return rm_by_func( "log_rm_by_dom("+pqxx::Quote(this->dom)+")" );
 	} std_catch
-	
-	/**
-	 * read informations from database 
-	 */
-	void cpgsqllog::cmd_log_read_dom_log() {
-		cdaemonlog::size_type start, cnt;
-	
-		if( fdrdstr(cso, dom) != -1
-			&& fdrdstr(cso, login) != -1
-			&& fdread(cso, &start, sizeof(start)) == sizeof(start)
-			&& fdread(cso, &cnt, sizeof(cnt)) == sizeof(cnt) ) {
-	
-				read_res_send(log_read_dom_log(dom, login, start, cnt));
-		} else 
-				throw rd_error();
-	} std_catch
-	
-	/**
-	 * read informations from database 
-	 */
-	void cpgsqllog::cmd_dom_log_read_log() {
-		cdaemonlog::size_type start, cnt;
-	
-		if( fdrdstr(cso, dom) != -1
-			&& fdrdstr(cso, login) != -1
-			&& fdread(cso, &start, sizeof(start)) == sizeof(start)
-			&& fdread(cso, &cnt, sizeof(cnt)) == sizeof(cnt) ) {
-	
-				read_res_send(dom_log_read_log(dom, login, start, cnt));
-		} else 
-				throw rd_error();
-	} std_catch
-	
+
 	/**
 	 *
 	 */
-	void cpgsqllog::cnt_res_send( const pqxx::Result & res ) {
-		cdaemonlog::size_type cnt = res.size();
-		if( cnt != 1 ) {
-				if( fdwrite(cso, &"E", 1) != 1 ) throw wr_error();
-				return;
-		} else if( fdwrite(cso, &"F", 1) != 1 )
-				throw wr_error();
-			
-		const char *tmp;
-		tmp = res[0][0].c_str();
-		if( ! tmp ) tmp = "0";
-		pqxx::FromString<cdaemonlog::size_type>(tmp, cnt);
-		if( fdwrite(cso, &cnt, sizeof(cnt)) == -1 ) throw wr_error(); 
+	cpgsqllog::error * cpgsqllog::rm_by_user() std_try {
+  		return rm_by_func( "log_rm_by_user("+pqxx::Quote(this->dom)
+			+','+pqxx::Quote(this->log)+")" );
 	} std_catch
-	
+
 	/**
-	 * read informations from database 
+	 *
 	 */
-	void cpgsqllog::cmd_log_cnt_dom_log() {
-		if( fdrdstr(cso, dom) != -1
-			&& fdrdstr(cso, login) != -1 ) {
-	
-				cnt_res_send(pqxx::NonTransaction(*pg).Exec(
-					"SELECT COUNT(*) FROM log WHERE domain="
-					+pqxx::Quote(dom,false)+" AND login="+pqxx::Quote(login,false)));
-		} else 
-				throw rd_error();
+	cpgsqllog::error * cpgsqllog::rm_by_func( const std::string & func ) std_try {
+		pqxx::NonTransaction(*pg).Exec("SELECT "+func);
+  		return lr(::vq::ivq::err_no, "");
 	} std_catch
-	
-	/**
-	 * read informations from database 
-	 */
-	void cpgsqllog::cmd_dom_log_cnt_log() {
-		if( fdrdstr(cso, dom) != -1
-			&& fdrdstr(cso, login) != -1 ) {
-				cnt_res_send(pqxx::NonTransaction(*pg).Exec(
-					"SELECT COUNT(*) FROM \""+str2tb(dom)+"_log\" WHERE login="
-					+pqxx::Quote(login,false)));
-		} else 
-				throw rd_error();
-	} std_catch
-#endif // #if 0
 
 	/**
 	 *

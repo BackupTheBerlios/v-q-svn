@@ -16,16 +16,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "getline.hpp"
-#include "vq_conf.hpp"
-#include "lower.hpp"
 #include "hmac_md5.hpp"
 #include "auto/lmd5.h"
-#include "clogger.hpp"
-#include "sys.hpp"
-#include "main.hpp"
-#include "text.hpp"
+#include "cluemain.hpp"
+#include "error2str.hpp"
+
+#include <logger.hpp>
+#include <text.hpp>
+#include <sys.hpp>
+#include <conf.hpp>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -120,8 +119,7 @@ char read_env() {
 	if( !locip || *locip == '\0' ) {
 			locip = getenv("TCPLOCALIP");
 			if(!locip || *locip == '\0') {
-					cerr<<me<<": TCPLOCALIP is not set"<<endl;
-					return(1);
+					locip = "127.0.0.1";
 			}
 	}			
 	if( !(tmp=getenv("TCPLOCALPORT")) ) {
@@ -259,12 +257,28 @@ char proc_auth_info() {
 /*
  *
  */
-int cppmain(int ac, char **av)
-{
+int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	me = *av;
 	::av = av;
 	::ac = ac;
 	
+	conf::clnconf ilogger_name(VQ_HOME+"/etc/ilogger/ilogger_name", "vq::ilogger");
+	/*
+	 * Get iauth object
+	 */
+	CosNaming::Name obj_name;
+	obj_name.length(1);
+	obj_name[0].id = ilogger_name.val_str().c_str();
+	obj_name[0].kind = static_cast<const char *>("");
+
+	CORBA::Object_var ilogobj;
+	vq::ilogger_var log;
+	ilogobj = ce.ns->resolve(obj_name);
+	//ce.vq = vq::ilogger::_narrow(ivqobj);
+	//if( CORBA::is_nil(ce.vq) ) {
+	//		return 1;
+	//}
+
 	sig_pipe_ign();
 
 	try {
@@ -286,10 +300,11 @@ int cppmain(int ac, char **av)
 			}
 
 			return proc_auth_info();
-	} catch( const exception & ) {
-			return 1;
 	} catch( ... ) {
+			olog->...
 			return(1);
 	}
-	return(0);
+	return 0;
+} catch( ... ) {
+	return 1;
 }

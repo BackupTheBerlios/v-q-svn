@@ -46,7 +46,7 @@ void usage( const char *me, const std::string & uc_names )
 /*
  *
  */
-int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
+int cluemain(int ac, char **av, cluemain_env & ce ) {
 	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
 	int opt;
 	bool quiet=false;
@@ -89,7 +89,7 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 							return 1;
 			}
 			
-			ret = dom_name2id(vq, esplit.back(), did);
+			ret = dom_name2id(ce.vq, esplit.back(), did);
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
 							cout<<error2str(ret)<<endl;
@@ -112,7 +112,7 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 			}
 
 			ui.val = static_cast<const char *>(av[i+2]);
-			ret = vq->user_conf_add( did, esplit.front().c_str(), "", ui);
+			ret = ce.vq->user_conf_add( did, esplit.front().c_str(), "", ui);
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if(!quiet)
 							cout<<error2str(ret)<<endl;

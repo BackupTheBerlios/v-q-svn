@@ -39,7 +39,7 @@ void usage()
 /*
  *
  */
-int cluemain(int ac, char **av, vq::ivq_var & vq) {
+int cluemain(int ac, char **av, cluemain_env & ce ) {
 	me = *av;
 	int opt;
 	bool quiet=false;
@@ -68,7 +68,7 @@ int cluemain(int ac, char **av, vq::ivq_var & vq) {
 	::vq::ivq::error_var ret;
 	for(int i=0; i < ac; i++ ) {
 			if(!quiet) cout<<av[i]<<": ";
-			ret=vq->dom_add(av[i], dom_id);
+			ret=ce.vq->dom_add(av[i], dom_id);
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if(!quiet)
 							cout<<error2str(ret)<<endl;

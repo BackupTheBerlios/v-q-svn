@@ -175,8 +175,25 @@ val TEXT NOT NULL,
 PRIMARY KEY(id_conf),
 FOREIGN KEY(id_domain, login) REFERENCES vq_users (id_domain, login) 
 ON DELETE CASCADE ON UPDATE CASCADE 
-)"
+)",
 
+"CREATE TABLE vq_log (
+id_log serial not null,
+time timestamp not null default localtimestamp,
+ip text not null default '',
+service int not null default 0,
+domain text not null default '',
+login text not null default '',
+result int not null default 0,
+msg text not null default '',
+primary key(id_log)
+)",
+
+"CREATE INDEX vq_log_time_idx ON vq_log (time)",
+
+"CREATE INDEX vq_log_domain_idx ON vq_log (domain)",
+
+"CREATE INDEX vq_log_domain_login_idx ON vq_log(domain, login)"
 ); # funcs
 
 	for( my $i=0; $i < @funcs.""; ++$i ) {
@@ -713,7 +730,87 @@ END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE TRIGGER vq_users_qt_user_trig BEFORE INSERT ON vq_users 
-FOR EACH ROW EXECUTE PROCEDURE vq_USERS_QT_USER_TRIG ();"
+FOR EACH ROW EXECUTE PROCEDURE vq_USERS_QT_USER_TRIG ();",
+
+"CREATE or replace FUNCTION log_write
+(vq_log.ip\%TYPE,
+vq_log.service\%TYPE,
+vq_log.domain\%TYPE,
+vq_log.login\%TYPE,
+vq_log.result\%TYPE,
+vq_log.msg\%TYPE) RETURNS VOID AS '
+DECLARE
+    _ip alias for \$1;
+    _service alias for \$2;
+    _domain alias for \$3;
+    _login alias for \$4;
+    _result alias for \$5;
+    _msg alias for \$6;
+BEGIN
+    INSERT INTO vq_log (ip,service,domain,login,result,msg) 
+		VALUES(_ip, _service, _domain, _login, _result, _msg);
+
+	NOTIFY log_write;
+	RETURN;
+END;
+' LANGUAGE 'plpgsql';",
+
+"CREATE OR REPLACE FUNCTION log_rm_all() RETURNS VOID AS '
+BEGIN
+	DELETE FROM vq_log;
+	NOTIFY log_rm;
+	RETURN;
+END;' LANGUAGE 'plpgsql'",
+
+"CREATE OR REPLACE FUNCTION log_rm_by_dom(vq_log.domain\%TYPE) RETURNS VOID AS '
+DECLARE
+	_domain ALIAS FOR \$1;
+BEGIN
+	DELETE FROM vq_log WHERE domain=_domain;
+	NOTIFY log_rm_by_dom;
+	RETURN;
+END;' LANGUAGE 'plpgsql'",
+
+"CREATE OR REPLACE FUNCTION log_rm_by_user(
+vq_log.domain\%TYPE,vq_log.login\%TYPE) RETURNS VOID AS '
+DECLARE
+	_domain ALIAS FOR \$1;
+	_login ALIAS FOR \$2;
+BEGIN
+	DELETE FROM vq_log WHERE domain=_domain AND login=_login;
+	NOTIFY log_rm_by_user;
+	RETURN;
+END;' LANGUAGE 'plpgsql'",
+
+"CREATE OR REPLACE FUNCTION log_count() RETURNS INT AS '
+DECLARE
+	cnt INT;
+BEGIN
+	cnt:=(SELECT COUNT(*) FROM vq_log);
+	RETURN cnt;
+END;' LANGUAGE 'plpgsql'",
+
+"CREATE OR REPLACE FUNCTION log_count_by_dom(vq_log.domain\%TYPE) RETURNS INT AS '
+DECLARE
+	_domain ALIAS FOR \$1;
+	cnt INT;
+BEGIN
+	cnt:=(SELECT COUNT(*) FROM vq_log WHERE domain=_domain);
+	RETURN cnt;
+END;' LANGUAGE 'plpgsql'",
+
+"CREATE OR REPLACE FUNCTION log_count_by_user(
+vq_log.domain\%TYPE,vq_log.login\%TYPE) RETURNS INT AS '
+DECLARE
+	_domain ALIAS FOR \$1;
+	_login ALIAS FOR \$2;
+	cnt INT;
+BEGIN
+	cnt:=(SELECT COUNT(*) FROM vq_log WHERE domain=_domain AND login=_login);
+	RETURN cnt;
+END;' LANGUAGE 'plpgsql'"
+
+
 );
 
 	for( my $i=0; $i < @funcs.""; ++$i ) {

@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "pgsqlcommon.hpp"
 
 #include <memory>
+#include <algorithm>
 
 namespace POA_vq {
 	
@@ -33,6 +34,7 @@ namespace POA_vq {
 					typedef ::vq::ilogger::error error;
 					typedef ::vq::ilogger::size_type size_type;
 					typedef ::vq::ilogger::log_entry_list_out log_entry_list_out;
+					typedef ::vq::ilogger::log_entry_list log_entry_list;
 					typedef ::vq::ilogger::err_code err_code;
 					
 					virtual void ip_set( const char* ip );
@@ -43,6 +45,15 @@ namespace POA_vq {
     				virtual error* read( size_type start, size_type cnt, 
 							log_entry_list_out les );
 					virtual error* count( size_type & cnt );
+    				virtual error* read_by_dom( size_type start, size_type cnt, 
+							log_entry_list_out les );
+					virtual error* count_by_dom( size_type & cnt );
+    				virtual error* read_by_user( size_type start, size_type cnt, 
+							log_entry_list_out les );
+					virtual error* count_by_user( size_type & cnt );
+					virtual error* rm_all();
+					virtual error* rm_by_dom();
+					virtual error* rm_by_user();
 
 					cpgsqllog( const char * );
 					virtual ~cpgsqllog();
@@ -54,7 +65,25 @@ namespace POA_vq {
 					std::string ip;
 					std::string dom;
 					std::string log;
-					service_type ser;
+					std::string ser;
+
+		
+					typedef int rbf_ignore_type;
+					const static rbf_ignore_type rbf_ignore_domain = 1;
+					const static rbf_ignore_type rbf_ignore_login = 1<<1;
+
+					typedef std::pair<rbf_ignore_type, std::string> 
+							rbf_func_desc_type;
+					
+					virtual error* read_by_func( 
+							const rbf_func_desc_type &,
+							size_type start, size_type cnt, 
+							log_entry_list_out les );
+
+					virtual error* count_by_func( const std::string &,
+							size_type & cnt );
+
+					virtual error * rm_by_func( const std::string & );
 	
 				/**
 				 * \defgroup err Errors handling

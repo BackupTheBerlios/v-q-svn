@@ -167,6 +167,32 @@ struct logger_test {
 					BOOST_CHECK_NO_THROW(obj->domain_set(ibeg->c_str()));
 			}
 		}
+
+		/**
+		 * Removing all entries and call all functions that retrieve
+		 * informations from log.
+		 */
+		void case2() {
+			::vq::ilogger::size_type cnt;
+			IVQ_ERROR_EQUAL(obj->rm_all(), ::vq::ivq::err_no);
+			IVQ_ERROR_EQUAL(obj->count(cnt), ::vq::ivq::err_no);
+			BOOST_CHECK_EQUAL(cnt, 0U);
+	
+			BOOST_CHECK_NO_THROW(obj->domain_set(""));
+			BOOST_CHECK_NO_THROW(obj->login_set(""));
+			IVQ_ERROR_EQUAL(obj->count_by_dom(cnt), ::vq::ivq::err_no);
+			BOOST_CHECK_EQUAL(cnt, 0U);
+			IVQ_ERROR_EQUAL(obj->count_by_user(cnt), ::vq::ivq::err_no);
+			BOOST_CHECK_EQUAL(cnt, 0U);
+			
+			BOOST_CHECK_NO_THROW(obj->domain_set("Asdasd"));
+			BOOST_CHECK_NO_THROW(obj->login_set("Asdasd"));
+			IVQ_ERROR_EQUAL(obj->count_by_dom(cnt), ::vq::ivq::err_no);
+			BOOST_CHECK_EQUAL(cnt, 0U);
+			IVQ_ERROR_EQUAL(obj->count_by_user(cnt), ::vq::ivq::err_no);
+			BOOST_CHECK_EQUAL(cnt, 0U);
+		}
+		
 	
 }; // struct logger_test
 
@@ -189,6 +215,12 @@ struct logger_test_suite : test_suite {
 				&logger_test::case1, test );
 			ts_case1->depends_on(ts_init);
 			add(ts_case1);
+
+			test_case * ts_case2 = BOOST_CLASS_TEST_CASE(
+				&logger_test::case2, test );
+			ts_case2->depends_on(ts_init);
+			add(ts_case2);
+
 		}
 };
 

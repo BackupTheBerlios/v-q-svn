@@ -37,8 +37,8 @@ void usage()
 
 /*
  *
- */
-int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
+ */ 
+int cluemain(int ac, char **av, cluemain_env & ce ) {
 	me = *av;
 	int opt;
 	bool quiet=false;
@@ -67,14 +67,14 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 	CORBA::String_var dom_id;
 	for(int i=0; i < ac; i++ ) {
 			if(!quiet) cout<<av[i]<<": ";
-			ret = vq->dom_id(av[i], dom_id);
+			ret = ce.vq->dom_id(av[i], dom_id);
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
 							cout<<error2str(ret)<<endl;
 					else return ret->ec;
 			}
 			
-			ret = vq->dom_rm( dom_id );
+			ret = ce.vq->dom_rm( dom_id );
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
 							cout<<error2str(ret)<< endl;

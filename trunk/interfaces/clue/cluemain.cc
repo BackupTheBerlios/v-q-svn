@@ -21,18 +21,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <vqmain.hpp>
 #include <conf.hpp>
 
-// CORBA
-#include <coss/CosNaming.h>
-
 #include <iostream>
 #include <cstdlib>
-
-#define corba_catch(x) catch( CORBA::Exception & e ) { \
-		std::cerr<<"CORBA exception"<< (x) <<": "; \
-		e._print(std::cerr); \
-		std::cerr<<std::endl; \
-		return 10; \
-}
 
 		
 int vqmain( int ac, char ** av ) try {
@@ -57,7 +47,9 @@ int vqmain( int ac, char ** av ) try {
 	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
 	PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
 	PortableServer::POAManager_var mgr = poa->the_POAManager();
-		
+
+	cluemain_env ce;
+
 	/* 
 	 * Get NameService object
 	 */
@@ -65,9 +57,9 @@ int vqmain( int ac, char ** av ) try {
 	CosNaming::NamingContext_var nc;
 	try {
 			nsobj = orb->resolve_initial_references ("NameService");
-			nc = CosNaming::NamingContext::_narrow (nsobj);
+			ce.ns = CosNaming::NamingContext::_narrow (nsobj);
 		
-			if (CORBA::is_nil (nc)) {
+			if (CORBA::is_nil (ce.ns)) {
 					cerr << "oops, I cannot access the Naming Service!" << endl;
 					return 100;
 			}
@@ -84,14 +76,14 @@ int vqmain( int ac, char ** av ) try {
 	CORBA::Object_var ivqobj;
 	vq::ivq_var vq;
 	try {
-			ivqobj = nc->resolve(obj_name);
-			vq = vq::ivq::_narrow(ivqobj);
-			if( CORBA::is_nil(vq) ) {
+			ivqobj = ce.ns->resolve(obj_name);
+			ce.vq = vq::ivq::_narrow(ivqobj);
+			if( CORBA::is_nil(ce.vq) ) {
 					cout<<"can't narrow "<<ivq_name.val_str()<<endl;
 					return 100;
 			}
 	} corba_catch(" while resolving "+ivq_name.val_str());	
 	
-	return cluemain(ac, av, vq);
+	return cluemain(ac, av, ce);
 } corba_catch("")
 

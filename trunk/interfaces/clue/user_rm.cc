@@ -72,7 +72,7 @@ bool user_rm(const string &e, ::vq::ivq_var &vq, bool quiet ) {
 /*
  *
  */
-int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
+int cluemain(int ac, char **av, cluemain_env & ce ) {
 	me = *av;
 	int opt;
 	bool quiet;
@@ -97,7 +97,7 @@ int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 
 	if(quiet) ac = 1;
 	for(int i=0; i < ac; i++ ) {
-			if( user_rm(av[i], vq, quiet) )
+			if( user_rm(av[i], ce.vq, quiet) )
 					return 1;
 	}
 	return 0;

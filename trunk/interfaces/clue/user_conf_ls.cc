@@ -66,7 +66,7 @@ void ucis_print( ostream & cout, const char * email,
 /*
  *
  */
-int cluemain(int ac, char **av, vq::ivq_var & vq )
+int cluemain(int ac, char **av, cluemain_env & ce )
 {
 	const char * me = *av;
 	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
@@ -95,14 +95,14 @@ int cluemain(int ac, char **av, vq::ivq_var & vq )
 					cout<<av[i]<<": invalid e-mail"<<endl;
 					continue;
 			}
-			ret = dom_name2id(vq, esplit.back().c_str(), did);
+			ret = dom_name2id(ce.vq, esplit.back().c_str(), did);
 			if( vq::ivq::err_no != ret->ec ) {
 					cout<<av[i]<<": "<<error2str(ret)<<endl;
 					continue;
 			}
 
 			if( types.empty() ) {
-					ret = vq->user_conf_ls(did, esplit.front().c_str(), "", ucis);
+					ret = ce.vq->user_conf_ls(did, esplit.front().c_str(), "", ucis);
 					if( vq::ivq::err_no != ret->ec ) {
 							cout<<av[i]<<": "<<error2str(ret)<<endl;
 							continue;
@@ -112,7 +112,7 @@ int cluemain(int ac, char **av, vq::ivq_var & vq )
 					for( type_itr=types.begin(), type_end=types.end();
 								type_itr != type_end; ++type_itr ) {
 
-							ret = vq->user_conf_ls_by_type(did, 
+							ret = ce.vq->user_conf_ls_by_type(did, 
 								esplit.front().c_str(), "", *type_itr, ucis );
 							if( vq::ivq::err_no != ret->ec ) {
 									cout<<av[i]<<": "<<error2str(ret);
