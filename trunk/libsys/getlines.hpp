@@ -17,15 +17,24 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __GETLINE_HPP
-#define __GETLINE_HPP
+#ifndef __GETLINES_HPP
+#define __GETLINES_HPP
 
 #include <string>
+#include <istream>
 
 namespace sys {
 
-	bool getline(int,std::string&,char = '\n');
+	template< typename STR, typename STREAM, typename T >
+		bool getlines( STREAM & in, T & lns ) {
+
+		if( ! in.good() ) return false;
+
+		STR ln;
+		while( std::getline(in, ln) )
+			lns.push_back(ln);
+		return ! in.bad();
+	}
 
 }
-
 #endif

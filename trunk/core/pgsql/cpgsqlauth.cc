@@ -543,7 +543,7 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT id_conf,val,kind FROM udot_ls("
+			"SELECT id_conf,val,type FROM udot_ls("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
 			+ Quote(lower(pfix), false)+')'));
@@ -573,7 +573,7 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT id_conf,val,kind FROM udot_ls_by_type("
+			"SELECT id_conf,val,type FROM udot_ls_by_type("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
 			+ Quote(lower(pfix), false)+','

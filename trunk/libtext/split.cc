@@ -90,6 +90,22 @@ namespace text {
 	{
 		return split(u,"","/",c);
 	}
+
+	/**
+	 *
+	 */
+	std::deque< std::string > split( const std::string &ln, 
+			const std::string &sep ) {
+
+		std::string::size_type pos, beg=0, sepl=sep.length();
+		std::deque< std::string > fields;
+		while( (pos=ln.find(sep, beg)) != std::string::npos ) {
+				fields.push_back(ln.substr(beg, pos-beg));
+				beg = pos+sepl;
+		}
+		fields.push_back(ln.substr(beg));
+		return fields;
+	}
 	
 #ifdef SPLITTEST
 #include <iostream>

@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef __SPLIT_HPP
 #define __SPLIT_HPP
 
+#include <deque>
 #include <string>
 
 namespace text {
@@ -37,6 +38,8 @@ namespace text {
 
 	std::string split_user(const std::string &, 
 		std::string::size_type);
+
+	std::deque<std::string> split( const std::string &, const std::string & );
 
 } // namespace text
 

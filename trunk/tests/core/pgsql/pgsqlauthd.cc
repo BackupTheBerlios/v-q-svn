@@ -18,17 +18,23 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "../../../core/auth.hpp"
 
-#include <boost/test/unit_test.hpp>
+#include <getlines.hpp>
+#include <split.hpp>
+
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include <coss/CosNaming.h>
 
 #include <memory>
 #include <sstream>
 #include <map>
+#include <fstream>
 
 using namespace boost::unit_test_framework;
+using boost::lexical_cast;
 
 #define std_try { try
 #define std_catch catch( vq::null_error & e ) { \
@@ -39,6 +45,15 @@ using namespace boost::unit_test_framework;
 	BOOST_ERROR(e.what); \
 } }
 	
+#define IVQ_ERROR_EQUAL(eptr, ecmp) \
+do { \
+	::vq::ivq::error_var ev(eptr); \
+	::vq::ivq::err_code ec = ecmp; \
+	BOOST_CHECK_EQUAL(ev->ec, ec); \
+	if( ec != ev->ec ) \
+		BOOST_ERROR(error2str(ev)); \
+} while(0)
+
 /**
  * 
  */
@@ -68,6 +83,16 @@ void et_corba_exception( const CORBA::Exception & e ) {
 	e._print(os);
 	BOOST_ERROR(os.str());
 }
+
+/**
+ *
+ */
+std::string error2str( const vq::ivq::error * err ) {
+	std::ostringstream os;
+	os<<"error: "<<err->what<<" in "<<err->file<<" at "<<err->line;
+	return os.str();
+}
+
 
 /**
  *
@@ -111,7 +136,35 @@ struct auth_test {
 
 			BOOST_REQUIRE( !CORBA::is_nil(auth) );
 		}
+	
+		/**
+		 *
+		 */
+		void test_dom_rm(const char * dom) {
+			CORBA::String_var dom_id;
+			err = auth->dom_id(dom, dom_id);
+			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
+			err = auth->dom_rm(dom_id);
+			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+		}
 
+		/**
+		 *
+		 */
+		void test_dom_user_add( const char * dom, CORBA::String_var & dom_id ) {
+			err = auth->dom_add(dom, dom_id);
+			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+		
+			vq::iauth::auth_info ai;
+			ai.id_domain = CORBA::string_dup(dom_id);
+			ai.pass = CORBA::string_dup("pass");
+			ai.dir = CORBA::string_dup("dir");
+			ai.login = CORBA::string_dup(dom);
+			ai.flags = 0;
+		
+			err = auth->user_add(ai, FALSE);
+			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+		}
 
 		/**
 		 * Add domain, 
@@ -147,8 +200,7 @@ struct auth_test {
 					err = auth->user_rm(dom_id, users[i]);
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			}
-			err = auth->dom_rm(dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+			test_dom_rm(dom);
 		}
 
 		/**
@@ -182,10 +234,7 @@ struct auth_test {
 			BOOST_CHECK( !strcmp(dom_id2, dom_id3) );
 
 			// 4.
-			err = auth->dom_rm(dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			err = auth->dom_rm(dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+			test_dom_rm(dom_mixed);
 		}
 
 		/**
@@ -240,11 +289,7 @@ struct auth_test {
 							BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 					}
 			} std_catch
-
-			err = auth->dom_id(dom, dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			err = auth->dom_rm(dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+			test_dom_rm(dom);
 		}
 
 		/**
@@ -253,6 +298,7 @@ struct auth_test {
 		 */
 		void case5() {
 			CORBA::String_var dom_id;
+			const char * dom = "case5.pl";
 
 			std_try {
 					::vq::iauth::email_banned_list_var ebs;
@@ -263,7 +309,7 @@ struct auth_test {
 							err = auth->eb_rm(ebs[i].re_domain, ebs[i].re_login);
 							BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 					}
-					err = auth->dom_add("case5.pl", dom_id);
+					err = auth->dom_add(dom, dom_id);
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			
 					err = auth->eb_add(static_cast<const char *>(".*"),
@@ -300,10 +346,7 @@ struct auth_test {
 					err = auth->user_add(ai, FALSE);
 					BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			} std_catch
-			err = auth->dom_id("case5.pl", dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
-			err = auth->dom_rm(dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+			test_dom_rm(dom);
 		}
 
 		/**
@@ -483,6 +526,215 @@ struct auth_test {
 			err = auth->qt_user_def_set(dom_id, 0U, 0U);
 			BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
 		}
+
+		/**
+		 * Add domain. Create users as specified in configuration file.
+		 * For each users create many configuration entries as specified
+		 * in configuration files. When adding entries remeber their id.
+		 * Remove all entries by id. Get all entries for ids. Should return
+		 * err_noent. In the mean-time
+		 * call udot_type_has, udot_type_cnt (when user, pfix has entries, and
+		 * after removing them).
+		 */
+		void case9() {
+			const char * dom = "case9.pl";
+			CORBA::String_var dom_id;
+			std_try {
+					typedef std::deque< std::string > string_array;
+					test_dom_user_add(dom, dom_id);
+
+					string_array users, pfixs;
+					std::ifstream ifs("data/case9/users");
+					BOOST_REQUIRE(sys::getlines<std::string>(ifs, users));
+					ifs.close();
+					ifs.clear();
+					ifs.open("data/case9/pfixs");
+					BOOST_REQUIRE(sys::getlines<std::string>(ifs, pfixs));
+					
+					string_array::const_iterator ubeg, uend, pbeg, pend;
+					::vq::ivq::udot_info ui;
+					::vq::ivq::auth_info ai;
+					ui.type = ::vq::ivq::ut_redir;
+					typedef std::vector<CORBA::String_var> id_array;
+					id_array ids;
+					ids.reserve(users.size()*pfixs.size());
+					for( ubeg=users.begin(), uend=users.end(); 
+								ubeg!=uend; ++ubeg) {
+
+							ai.id_domain = dom_id;
+							ai.pass = dom_id;
+							ai.flags = 0;
+							ai.login = ubeg->c_str(); 
+							IVQ_ERROR_EQUAL(auth->user_add(ai, FALSE),
+								::vq::ivq::err_no);
+
+							for( pbeg=pfixs.begin(), pend=pfixs.end();
+										pbeg!=pend; ++pbeg ) {
+
+									ui.val = pbeg->c_str();
+									ui.id_conf = static_cast<const char *>("");
+									IVQ_ERROR_EQUAL(auth->udot_add(dom_id,
+										ubeg->c_str(), pbeg->c_str(), ui),
+										::vq::ivq::err_no);
+									BOOST_CHECK(*ui.id_conf);
+									ids.push_back(ui.id_conf);
+
+									// Check if user,pfix has entries for
+									// type ui.type (should have them)
+									IVQ_ERROR_EQUAL(auth->udot_type_has(
+										dom_id, ubeg->c_str(), pbeg->c_str(), 
+										ui.type), ::vq::ivq::err_no);
+
+									// Check number of entries for user,pfix
+									CORBA::ULong cnt;
+									IVQ_ERROR_EQUAL(auth->udot_type_cnt(
+										dom_id, ubeg->c_str(), pbeg->c_str(), 
+										ui.type, cnt), ::vq::ivq::err_no);
+									BOOST_CHECK_EQUAL( cnt, 1U );
+
+									// Get entry and compare
+									::vq::ivq::udot_info uicmp;
+									uicmp.id_conf = ui.id_conf;
+									IVQ_ERROR_EQUAL(auth->udot_get(uicmp),
+										::vq::ivq::err_no);
+									BOOST_CHECK_EQUAL(uicmp.id_conf, ui.id_conf);
+									BOOST_CHECK_EQUAL(uicmp.type, ui.type);
+									BOOST_CHECK_EQUAL(uicmp.val, ui.val);
+							}
+					}
+					// remove entries
+					for( id_array::const_iterator beg=ids.begin(), end=ids.end();
+								beg!=end; ++beg ) {
+							IVQ_ERROR_EQUAL(auth->udot_rm(*beg),
+								::vq::ivq::err_no);
+					}
+					// get entries
+					for( id_array::const_iterator beg=ids.begin(), end=ids.end();
+								beg!=end; ++beg ) {
+							ui.id_conf = *beg;
+							IVQ_ERROR_EQUAL(auth->udot_get(ui),
+								::vq::ivq::err_noent);
+					}
+			} std_catch
+			test_dom_rm(dom);
+		}
+
+		/**
+		 * Add domain. Create users as specified in configuration file.
+		 * For each users create many configuration entries as specified
+		 * in configuration file. For each pair user,pfix call udot_ls
+		 * and check whether it returns all entries as in configuration
+		 * file. Also for each pair call udot_ls_by_type and check results.
+		 * Remove domain.
+		 */
+		void case10() {
+			const char * dom = "case10.pl";
+			CORBA::String_var dom_id;
+			std_try {
+					typedef std::deque< std::string > string_array;
+					test_dom_user_add(dom, dom_id);
+
+					string_array conf;
+					std::ifstream ifs("data/case10/conf");
+					BOOST_REQUIRE(sys::getlines<std::string>(ifs, conf));
+					ifs.close();
+
+					::vq::ivq::auth_info ai;
+					ai.id_domain = dom_id;
+					ai.pass = "asdasd";
+					ai.flags = 0;
+
+					string_array::const_iterator bc, be, fc, fe, pfix;
+					string_array fields, uia;
+					::vq::ivq::udot_info ui;
+					
+					for( bc=conf.begin(), be=conf.end(); bc!=be; ++bc ) {
+							if( '#' == (*bc)[0] ) continue;
+							fields = text::split(*bc, " ");
+							fc = fields.begin();
+							fe = fields.end();
+							BOOST_REQUIRE(fc != fe);
+							ai.login = fc->c_str();
+							
+							err = auth->user_add(ai, FALSE);
+							BOOST_CHECK( err->ec == ::vq::ivq::err_no 
+								|| err->ec == ::vq::ivq::err_exists );
+							++fc;
+							if( fc == fe ) continue;
+							
+							for( pfix=fc, ++fc; fc!=fe; ++fc )  {
+									uia = text::split(*fc, ",");
+									BOOST_REQUIRE(uia.size() == 2);
+									ui.type = lexical_cast<CORBA::UShort>
+										(uia[0].c_str());
+									ui.val = uia[1].c_str();
+									IVQ_ERROR_EQUAL( auth->udot_add(dom_id,
+										ai.login, pfix->c_str(), ui), 
+										::vq::ivq::err_no);
+							}
+					}
+
+					for( bc=conf.begin(), be=conf.end(); bc!=be; ++bc ) {
+							if( '#' == (*bc)[0] ) continue;
+							fields = text::split(*bc, " ");
+							fc = fields.begin();
+							fe = fields.end();
+							ai.login = fc->c_str();
+							
+							++fc;
+							if( fc == fe ) continue;
+
+							pfix = fc++;
+
+							::vq::ivq::udot_info_list_var uis;
+							IVQ_ERROR_EQUAL(auth->udot_ls(dom_id,
+								ai.login, pfix->c_str(), uis ),
+								::vq::ivq::err_no );
+
+							BOOST_CHECK_EQUAL(uis->length(), fields.size()-2);
+						
+							for( ; fc!=fe; ++fc )  {
+									uia = text::split(*fc, ",");
+									ui.type = lexical_cast<CORBA::UShort>
+										(uia[0].c_str());
+									ui.val = uia[1].c_str();
+									bool has = false;
+									CORBA::ULong type_cnt=0;
+									for( CORBA::ULong i=0, s=uis->length();
+												i<s; ++i ) {
+											if( uis[i].type == ui.type ) {
+													++type_cnt;
+													if(  uis[i].val == ui.val )
+															has = true;
+											}
+									}
+									BOOST_CHECK(has);
+
+									::vq::ivq::udot_info_list_var uistype;
+									IVQ_ERROR_EQUAL(auth->udot_ls_by_type(dom_id,
+										ai.login, pfix->c_str(), ui.type, uistype ),
+										::vq::ivq::err_no );
+
+									BOOST_CHECK_EQUAL(uistype->length(), type_cnt);
+									has = false;
+									for( CORBA::ULong i=0, s=uistype->length();
+												i<s; ++i ) {
+											if( uistype[i].type == ui.type 
+												&& uistype[i].val == ui.val ) {
+													has = true;
+													break;
+											}
+									}
+									BOOST_CHECK(has);
+							}
+					}
+
+			} std_catch
+			test_dom_rm(dom);
+		}
+
+		brakuje testów: udot_rm_by_type, udot_rep
+
 };
 
 /**
@@ -529,13 +781,23 @@ struct auth_test_suite : test_suite {
 
 			test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
 				&auth_test::case7, test );
-			ts_case7->depends_on(ts_case6);
+			ts_case7->depends_on(ts_init);
 			add(ts_case7);
 
 			test_case * ts_case8 = BOOST_CLASS_TEST_CASE( 
 				&auth_test::case8, test );
-			ts_case8->depends_on(ts_case6);
+			ts_case8->depends_on(ts_init);
 			add(ts_case8);
+
+			test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case9, test );
+			ts_case9->depends_on(ts_init);
+			add(ts_case9);
+
+			test_case * ts_case10 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case10, test );
+			ts_case10->depends_on(ts_init);
+			add(ts_case10);
 
 		}
 };

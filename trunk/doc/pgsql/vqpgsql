@@ -170,7 +170,7 @@ id_conf SERIAL,
 id_domain INT NOT NULL,
 login TEXT NOT NULL,
 ext TEXT NOT NULL,
-kind INT NOT NULL,
+type INT NOT NULL,
 val TEXT NOT NULL,
 PRIMARY KEY(id_conf),
 FOREIGN KEY(id_domain, login) REFERENCES vq_users (id_domain, login) 
@@ -195,10 +195,8 @@ sub v6_funcs {
 DECLARE
     _domain ALIAS FOR \$1;
 	id RECORD;
-	exists RECORD;
 BEGIN
-	SELECT ''1'' INTO exists FROM vq_domains WHERE domain=_domain;
-	IF FOUND THEN	
+	IF EXISTS (SELECT * FROM vq_domains WHERE domain=_domain) THEN
 		RETURN -1;
 	END IF;
 
@@ -433,22 +431,23 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION udot_add(vq_users.id_domain\%TYPE,vq_users.login\%TYPE,
-	vq_users_conf.ext\%TYPE,vq_users_conf.kind\%TYPE,vq_users_conf.val\%TYPE) 
+"CREATE FUNCTION udot_add(vq_users_conf.id_domain\%TYPE,
+	vq_users_conf.login\%TYPE,
+	vq_users_conf.ext\%TYPE,vq_users_conf.type\%TYPE,vq_users_conf.val\%TYPE) 
 	RETURNS int AS '
 DECLARE
-    dom_id alias for \$1;
-    user alias for \$2;
-    ext alias for \$3;
-    kind alias for \$4;
-    val alias for \$5;
+    _id_domain ALIAS FOR \$1;
+    _login ALIAS FOR \$2;
+    _ext ALIAS FOR \$3;
+    _type ALIAS FOR \$4;
+    _val ALIAS FOR \$5;
     id RECORD;
 BEGIN
 
 	SELECT NEXTVAL(''vq_users_conf_id_conf_seq'') INTO id;
 
-	INSERT INTO ''vq_users_conf'' (ID_CONF,ID_DOMAIN,LOGIN,EXT,KIND,VALUE) 
-		VALUES(id.nextval, dom_id, user, ext, kind, val);
+	INSERT INTO vq_users_conf (ID_CONF,ID_DOMAIN,LOGIN,EXT,TYPE,VAL) 
+		VALUES(id.nextval,_id_domain,_login,_ext,_type,_val);
 
 	NOTIFY udot_add;
 	RETURN id.nextval;
@@ -473,17 +472,17 @@ END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE FUNCTION udot_ls_by_type (vq_users_conf.id_domain\%TYPE,vq_users_conf.login\%TYPE,
-	vq_users_conf.ext\%TYPE,vq_users_conf.kind\%TYPE) 
+	vq_users_conf.ext\%TYPE,vq_users_conf.type\%TYPE) 
 	RETURNS SETOF vq_users_conf AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
 	_login ALIAS FOR \$2;
 	_ext ALIAS FOR \$3;
-	_kind ALIAS FOR \$4;
+	_type ALIAS FOR \$4;
 	ban RECORD;
 BEGIN
 	FOR ban IN SELECT * FROM vq_users_conf WHERE id_domain=_id_domain
-			AND login=_login AND ext=_ext AND kind=_kind LOOP
+			AND login=_login AND ext=_ext AND type=_type LOOP
 		RETURN NEXT ban;
 	END LOOP;
 	RETURN;
@@ -502,15 +501,15 @@ END;
 
 "CREATE FUNCTION udot_rm_by_type (vq_users_conf.id_domain\%TYPE,
 	vq_users_conf.login\%TYPE, vq_users_conf.ext\%TYPE,
-	vq_users_conf.kind\%TYPE) RETURNS VOID AS '
+	vq_users_conf.type\%TYPE) RETURNS VOID AS '
 DECLARE
     _id_domain alias for \$1;
     _login alias for \$2;
 	_ext ALIAS FOR \$3;
-    _kind alias for \$4;
+    _type alias for \$4;
 BEGIN
 	DELETE FROM vq_users_conf WHERE id_domain = _id_domain
-		AND login=_login AND ext=_ext AND kind=_kind;
+		AND login=_login AND ext=_ext AND type=_type;
 	NOTIFY udot_rm;
 	RETURN;
 END;
@@ -531,15 +530,15 @@ END;
 ' LANGUAGE 'plpgsql';",
 
 "CREATE FUNCTION udot_rep
-(vq_users_conf.id_conf\%TYPE, vq_users_conf.kind\%TYPE, vq_users_conf.val\%TYPE) 
+(vq_users_conf.id_conf\%TYPE, vq_users_conf.type\%TYPE, vq_users_conf.val\%TYPE) 
 RETURNS INT AS '
 DECLARE
     _id_conf alias for \$1;
-    _kind alias for \$2;
+    _type alias for \$2;
     _val alias for \$3;
 	rows int;
 BEGIN
-	UPDATE vq_users_conf SET kind=_kind,val=_val WHERE id_conf=_id_conf;
+	UPDATE vq_users_conf SET type=_type,val=_val WHERE id_conf=_id_conf;
 	GET DIAGNOSTICS rows = ROW_COUNT;
 	IF rows = 1 THEN
 		NOTIFY udot_rep;
@@ -553,16 +552,16 @@ END;
 (vq_users_conf.id_domain\%TYPE,
 vq_users_conf.login\%TYPE,
 vq_users_conf.ext\%TYPE,
-vq_users_conf.kind\%TYPE) RETURNS int AS '
+vq_users_conf.type\%TYPE) RETURNS int AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
 	_login ALIAS FOR \$2;
 	_ext ALIAS FOR \$3;
-	_kind ALIAS FOR \$4;
+	_type ALIAS FOR \$4;
 BEGIN
 	IF EXISTS (SELECT * FROM vq_users_conf
 		WHERE id_domain=_id_domain AND login=_login 
-		AND ext=_ext AND kind=_kind) THEN
+		AND ext=_ext AND type=_type) THEN
 		RETURN 0;
 	END IF;
 	RETURN 1;
@@ -573,17 +572,17 @@ END;
 (vq_users_conf.id_domain\%TYPE,
 vq_users_conf.login\%TYPE,
 vq_users_conf.ext\%TYPE,
-vq_users_conf.kind\%TYPE) RETURNS int AS '
+vq_users_conf.type\%TYPE) RETURNS int AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
 	_login ALIAS FOR \$2;
 	_ext ALIAS FOR \$3;
-	_kind ALIAS FOR \$4;
+	_type ALIAS FOR \$4;
 	cnt RECORD;
 BEGIN
 	SELECT COUNT(*) INTO cnt FROM vq_users_conf
 		WHERE id_domain=_id_domain AND login=_login 
-		AND ext=_ext AND kind=_kind;
+		AND ext=_ext AND type=_type;
 	RETURN cnt.count;
 END;
 ' LANGUAGE 'plpgsql';",
@@ -621,7 +620,6 @@ DECLARE
 	is_banned alias for \$5;
 
 	domain RECORD;
-	exists RECORD;
     ban RECORD;
 BEGIN
     IF is_banned = ''t''::boolean THEN
@@ -632,10 +630,10 @@ BEGIN
       END LOOP;
     END IF;
 
-	FOR exists IN SELECT 1 FROM vq_users 
-			WHERE id_domain=_id_domain AND login=_login LOOP
+	IF EXISTS (SELECT * FROM vq_users 
+			WHERE id_domain=_id_domain AND login=_login) THEN
 		RETURN -1;
-	END LOOP;
+	END IF;
 	
     INSERT INTO vq_users (id_domain,login,pass,flags) 
 		VALUES(_id_domain,_login,_pass,_flags);

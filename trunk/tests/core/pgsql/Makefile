@@ -1,9 +1,9 @@
 BASE=../../..
 OBJS=pgsqlauthd.o
-INCS=`cat $(BASE)/boost.inc` `cat $(BASE)/corba.inc`
-LIBS=`cat $(BASE)/boost.lib` `cat $(BASE)/corba.lib` -L$(BASE)/core -lvq
-#`cat $(BASE)/corba.lib` `cat pgsql.lib` \
-#-Wl,-rpath=$(BASE)/libsys,-rpath=$(BASE)/libtext,-rpath=/usr/local/progs/pqxx-gcc2/lib
+INCS=`cat $(BASE)/boost.inc` `cat $(BASE)/corba.inc` -I$(BASE)/libsys \
+-I$(BASE)/libtext
+LIBS=`cat $(BASE)/boost.lib` `cat $(BASE)/corba.lib` -L$(BASE)/core -lvq \
+-L$(BASE)/libtext -ltext
 
 all: .depend pgsqlauthd
 

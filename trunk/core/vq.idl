@@ -50,6 +50,7 @@ module vq {
 			typedef unsigned long quota_type; //!< Type for holding quota values
 			typedef unsigned long size_type; //!< Type for holding sizes
 			typedef unsigned short aif_type;
+			typedef unsigned short udot_type;
 			typedef sequence<string> string_list;
 
 		/**
@@ -147,12 +148,9 @@ module vq {
 			};
 
 			/// Mailbox options
-			enum udot_type {
-					ut_redir, //!< redirection
-					ut_maildir, //!< maildir
-					ut_sms, //!< sms notification
-					ut_autoresp //!< autorespond
-			};
+			const udot_type ut_redir = 1; //!< redirection
+			const udot_type ut_maildir = 2; //!< maildir
+			const udot_type ut_autoresp = 3; //!< autorespond
 
 			/// user's dot file info
 			struct udot_info {
