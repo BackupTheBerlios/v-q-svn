@@ -39,7 +39,7 @@ namespace clue {
 			const std::string & dom, CORBA::String_var & id ) {
 
 		domain2id_map::const_iterator did_itr( this->dom2id.find(dom) );
-		::vq::ivq::error_var ret;
+		::vq::ivq::error_var ret(new ::vq::ivq::error);
 		if( this->dom2id.end() == did_itr ) {
 				CORBA::String_var did;
 				ret = vq->dom_id(dom.c_str(), did);

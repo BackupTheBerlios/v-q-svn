@@ -23,9 +23,14 @@ dom_add dom_rm: \
 $(BASE)/load $(BASE)/corba.lib $@.o error2str.o libcluemain.a
 	$(BASE)/load $@ $(LIBS) error2str.o `cat $(BASE)/corba.lib`
 	
-user_add user_rm user_pass user_conf_add user_conf_ls user_conf_rm user_auth: \
+user_add user_rm user_pass user_conf_add user_conf_ls user_conf_rm: \
 $(BASE)/load $(BASE)/corba.lib $@.o error2str.o cdom_name2id.o libcluemain.a
 	$(BASE)/load $@ $(LIBS) -L$(BASE)/libtext -ltext \
+	error2str.o cdom_name2id.o `cat $(BASE)/corba.lib`
+
+user_auth: \
+$(BASE)/load $(BASE)/corba.lib $@.o error2str.o cdom_name2id.o libcluemain.a
+	$(BASE)/load $@ $(LIBS) -L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys \
 	error2str.o cdom_name2id.o `cat $(BASE)/corba.lib`
 
 $(OBJS): $(BASE)/compile

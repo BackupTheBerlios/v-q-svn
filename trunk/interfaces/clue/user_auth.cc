@@ -37,12 +37,14 @@ using namespace text;
 using namespace sys;
 using clue::error2str;
 
-char *me = NULL, **av;
+char **av;
 int ac;
 const char *remip = NULL, *locip = NULL, *defdom = NULL;
 bool quiet = false;
 string resp, pass, login;
 enum { smtp, pop3 } contype;
+
+string atchars("@%");
 
 ::vq::ilogger_var olog;
 ::vq::ivq_var ovq;
@@ -56,18 +58,14 @@ enum { smtp, pop3 } contype;
  *
  */
 char read_auth_info() {
-	if( ! getline(3,login,'\0')
-		|| ! getline(3,pass,'\0')
-		|| ! getline(3,resp,'\0')) {
+	if( ! getline(3, login, '\0')
+		|| ! getline(3, pass, '\0')
+		|| ! getline(3, resp, '\0')) {
 			LOG( ::vq::ilogger::re_read, strerror(errno));
 			return(1);
 	}
 	login = lower(login);
-	if( ac_atchars.val_str().empty() ) {
-			LOG( ::vq::ilogger::re_int, "ac_atchars empty");
-			return(1);
-	}
-	string::size_type atpos = login.find_last_of(ac_atchars.val_str());
+	string::size_type atpos = login.find_last_of(atchars);
 	string dom;
 	if( atpos != login.npos ) {
 			dom = login.substr(atpos+1);
@@ -106,10 +104,13 @@ char read_auth_info() {
 char read_env() {
 	const char *tmp;
 	int itmp;
-	while((itmp=getopt(ac, av, "D:")) != -1) {
+	while((itmp=getopt(ac, av, "@:D:")) != -1) {
 			switch(itmp) {
 			case 'D':
 					defdom = optarg;
+					break;
+			case '@':
+					atchars = optarg;
 					break;
 			}
 	}
@@ -131,18 +132,29 @@ char read_env() {
 			is.str(tmp);
 			is >> itmp;
 			if( ! is || itmp<0 || itmp>0xffff ) {
-					cerr<<me<<": TCPLOCALPORT is not a valid port number"<<endl;
+					LOG( ::vq::ilogger::re_int, 
+						"TCPLOCALPORT is not a valid port number");
 					return(1);
 			}
 	} else {
 			itmp = -1;
 	}
 
+	if( (tmp=getenv("VQ_ATCHARS")) ) {
+			atchars = tmp;
+	}
+
+	if( atchars.empty() ) {
+			LOG( ::vq::ilogger::re_int, "atchars empty");
+			return 1;
+	}
+
 	switch(itmp) {
 	case 995:
 	case 110:
 			if(ac<1) {
-					cerr<<me<<": no command was given"<<endl;
+					LOG( ::vq::ilogger::re_int, 
+						"no command was given");
 					return(1);
 			}
 			contype = pop3;
@@ -265,7 +277,6 @@ char proc_auth_info() {
  *
  */
 int cluemain(int ac, char **av, cluemain_env & ce ) try {
-	me = *av;
 	::av = av;
 	::ac = ac;
 	
@@ -287,8 +298,6 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	olog = ::vq::ilogger::_narrow(ilogobj);
 	ovq = ce.vq;
 
-	sig_pipe_ign();
-
 	try {
 			if(read_env()) return 3;
 			
@@ -304,6 +313,9 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 			}
 
 			return proc_auth_info();
+	} catch( exception & e ) {
+			LOG( ::vq::ilogger::re_int, e.what());
+			return 1;
 	} catch( ... ) {
 			LOG( ::vq::ilogger::re_int, "exception" );
 			return(1);
