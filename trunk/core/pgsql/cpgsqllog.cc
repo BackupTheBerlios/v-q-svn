@@ -32,6 +32,7 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::cpgsqllog( const char * pginfo ) std_try {
+		clear();
 		pg.reset(new Connection(pginfo));
 		if( ! pg.get() || ! pg->is_open() ) {
 				throw ::vq::except(
@@ -46,6 +47,15 @@ namespace POA_vq {
 	cpgsqllog::~cpgsqllog() std_try {
 	} std_catch
 
+	/**
+	 *
+	 */
+	void cpgsqllog::clear() std_try {
+		this->ip.clear();
+		this->ser = pqxx::ToString(service_type());
+		this->dom.clear();
+		this->log.clear();
+	} std_catch
 	/**
 	 *
 	 */
@@ -83,7 +93,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqllog::error * cpgsqllog::write( result res, const char * msg ) std_try {
+	cpgsqllog::error * cpgsqllog::write( result_type res, const char * msg ) std_try {
 		if( ! msg )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
@@ -94,7 +104,7 @@ namespace POA_vq {
 			+pqxx::Quote(this->dom)+","
 			+pqxx::Quote(this->log)+","
 			+pqxx::ToString(static_cast<unsigned>(res))+","
-			+pqxx::Quote(msg));
+			+pqxx::Quote(msg)+')');
 		
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -202,8 +212,8 @@ namespace POA_vq {
 				les[i].ser = res[i][idx].as< ::vq::ilogger::service_type >
 						(::vq::ilogger::ser_unknown);
 				++idx;
-				les[i].ser = res[i][idx].as< CORBA::ULong >
-						(static_cast<CORBA::ULong>(::vq::ilogger::re_unknown));
+				les[i].res = res[i][idx].as< ::vq::ilogger::result_type >
+						(::vq::ilogger::re_unknown);
 				++idx;
 				les[i].msg = CORBA::string_dup(
 					res[i][idx].is_null() ? "" : res[i][idx].c_str() );

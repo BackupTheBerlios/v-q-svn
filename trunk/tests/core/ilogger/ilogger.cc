@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sstream>
 #include <map>
 #include <fstream>
+#include <algorithm>
 
 using namespace boost::unit_test_framework;
 using boost::lexical_cast;
@@ -82,6 +83,7 @@ std::string error2str( const vq::ivq::error * err ) {
  */ 
 struct logger_test {
 		typedef std::deque<std::string> string_array;
+		typedef std::deque< string_array > fields_array;
 
 		vq::ilogger_var obj;
 		vq::ivq::error_var err;
@@ -178,8 +180,7 @@ struct logger_test {
 			IVQ_ERROR_EQUAL(obj->count(cnt), ::vq::ivq::err_no);
 			BOOST_CHECK_EQUAL(cnt, 0U);
 	
-			BOOST_CHECK_NO_THROW(obj->domain_set(""));
-			BOOST_CHECK_NO_THROW(obj->login_set(""));
+			BOOST_CHECK_NO_THROW(obj->clear());
 			IVQ_ERROR_EQUAL(obj->count_by_dom(cnt), ::vq::ivq::err_no);
 			BOOST_CHECK_EQUAL(cnt, 0U);
 			IVQ_ERROR_EQUAL(obj->count_by_user(cnt), ::vq::ivq::err_no);
@@ -192,7 +193,177 @@ struct logger_test {
 			IVQ_ERROR_EQUAL(obj->count_by_user(cnt), ::vq::ivq::err_no);
 			BOOST_CHECK_EQUAL(cnt, 0U);
 		}
-		
+
+		/**
+		 * Reset object. Write log without setting any properties.
+		 * Read log. Remove entries.
+		 */
+		void case3() {
+			BOOST_CHECK_NO_THROW(obj->clear());
+			IVQ_ERROR_EQUAL(obj->write(::vq::ilogger::re_unknown, ""), 
+				::vq::ivq::err_no);
+			IVQ_ERROR_EQUAL(obj->write(::vq::ilogger::re_ok, "re_ok"), 
+				::vq::ivq::err_no);
+			IVQ_ERROR_EQUAL(obj->write(::vq::ilogger::re_read, "re_read"), 
+				::vq::ivq::err_no);
+			::vq::ilogger::size_type cnt;
+			IVQ_ERROR_EQUAL(obj->count(cnt), ::vq::ivq::err_no);
+			BOOST_CHECK_EQUAL(cnt, 3U);
+			
+			::vq::ilogger::log_entry_list_var les;
+			IVQ_ERROR_EQUAL(obj->read(0, 0, les), ::vq::ivq::err_no);
+
+			CORBA::ULong s = les->length();
+			BOOST_CHECK_EQUAL(s, 3U);
+			if( s > 0U ) {
+					BOOST_CHECK(!strcmp(les[0U].msg, "re_read"));
+					BOOST_CHECK_EQUAL(les[0U].res, ::vq::ilogger::re_read);
+
+					if( s > 1U ) {
+							BOOST_CHECK(!strcmp(les[1U].msg, "re_ok"));
+							BOOST_CHECK_EQUAL(les[1U].res, ::vq::ilogger::re_ok);
+
+							if( s > 2U ) {
+									BOOST_CHECK(!strcmp(les[2U].msg, ""));
+									BOOST_CHECK_EQUAL(les[2U].res, 
+										::vq::ilogger::re_unknown);
+							}
+					}
+			}
+			IVQ_ERROR_EQUAL(obj->rm_all(), ::vq::ivq::err_no);
+		}
+
+		/**
+		 *
+		 */
+
+		void fields_log_entry_cmp( const string_array & fb, 
+				const ::vq::ilogger::log_entry & les, 
+				bool dom_ign = false, bool log_ign = false) {
+
+			string_array::size_type idx=0;
+			BOOST_CHECK_EQUAL( fb[idx++], static_cast<const char *>(les.ip) );
+			BOOST_CHECK_EQUAL( fb[idx++], 
+				boost::lexical_cast<std::string>(les.ser) );
+			if( ! dom_ign )
+					BOOST_CHECK_EQUAL( fb[idx], 
+						static_cast<const char *>(les.domain) );
+			++idx;
+			if( ! log_ign )
+					BOOST_CHECK_EQUAL( fb[idx], 
+						static_cast<const char *>(les.login) );
+			++idx;
+			BOOST_CHECK_EQUAL( fb[idx++],
+				boost::lexical_cast<std::string>(les.res) );
+			BOOST_CHECK_EQUAL( fb[idx++], static_cast<const char *>(les.msg) );
+		}
+
+		/**
+		 * Reset object. Write logs based on file. Use read, 
+		 * read_by_dom, read_by_user
+		 */
+		void case4() {
+			typedef std::map< std::string, fields_array > doms_map_type;
+			typedef std::map< std::pair<std::string, std::string>, 
+					fields_array > users_map_type;
+				
+			BOOST_CHECK_NO_THROW(obj->rm_all());
+				
+			std::ifstream ifs("data/case4/logs");
+			string_array logs;
+			BOOST_REQUIRE(sys::getlines<std::string>(ifs, logs));
+			ifs.close();
+			ifs.clear();
+			fields_array fields;
+			std::transform( logs.begin(), logs.end(), 
+				std::back_inserter(fields),
+				std::bind2nd( text::split_t(), "|") );
+
+			fields_array::const_iterator fb, fe;
+			CORBA::ULong wcnt;
+			doms_map_type doms_map;
+			users_map_type users_map;
+			for( wcnt = 0, fb=fields.begin(), fe=fields.end(); fb!=fe; ++fb ) {
+					if( fb->size() < 6 || 
+						( ! (*fb)[0].empty() && '#' == (*fb)[0][0] ) ) continue;
+					
+					BOOST_CHECK_NO_THROW(obj->clear());
+					BOOST_CHECK_NO_THROW(obj->ip_set((*fb)[0].c_str()));
+					BOOST_CHECK_NO_THROW(obj->service_set(
+						boost::lexical_cast< ::vq::ilogger::service_type >
+							((*fb)[1]) ));
+					BOOST_CHECK_NO_THROW(obj->domain_set((*fb)[2].c_str()));
+					BOOST_CHECK_NO_THROW(obj->login_set((*fb)[3].c_str()));
+					IVQ_ERROR_EQUAL(obj->write( 
+						boost::lexical_cast< ::vq::ilogger::result_type >
+							( (*fb)[4] ), (*fb)[5].c_str() ), ::vq::ivq::err_no);
+					++wcnt;
+
+					// create maps for calling read_by_dom, read_by_user
+					doms_map[(*fb)[2]].push_back(*fb);
+					users_map[ std::make_pair((*fb)[2], (*fb)[3]) ].push_back(*fb);
+			}
+
+			::vq::ilogger::log_entry_list_var les;
+			IVQ_ERROR_EQUAL(obj->read(0, 0, les), ::vq::ivq::err_no);
+			CORBA::ULong rcnt = les->length(), i;
+
+			BOOST_CHECK_EQUAL( rcnt, wcnt );
+			for( i=1, fb=fields.begin(), fe=fields.end(); 
+						rcnt == wcnt && fb!=fe; ++fb ) {
+					if( fb->size() < 6 || 
+						( ! (*fb)[0].empty() && '#' == (*fb)[0][0] ) ) continue;
+					fields_log_entry_cmp(*fb, les[rcnt-i]);
+					++i;
+			}
+
+			// check read_by_dom
+			BOOST_CHECK_NO_THROW(obj->clear());
+			for( doms_map_type::const_iterator db=doms_map.begin(), de=doms_map.end();
+						db != de; ++db ) {
+					
+					BOOST_CHECK_NO_THROW(obj->domain_set(db->first.c_str()));
+					IVQ_ERROR_EQUAL(obj->read_by_dom(0, 0, les), ::vq::ivq::err_no);
+					rcnt = les->length();
+
+					wcnt = db->second.size();
+					BOOST_CHECK_EQUAL( rcnt, wcnt );
+					for( i=1, fb=db->second.begin(), fe=db->second.end(); 
+								rcnt == wcnt && fb!=fe; ++fb ) {
+							fields_log_entry_cmp(*fb, les[rcnt-i], true);
+							++i;
+					}
+			}
+
+			// check read_by_user
+			BOOST_CHECK_NO_THROW(obj->clear());
+			for( users_map_type::const_iterator db=users_map.begin(), de=users_map.end();
+						db != de; ++db ) {
+					
+					BOOST_CHECK_NO_THROW(obj->domain_set(db->first.first.c_str()));
+					BOOST_CHECK_NO_THROW(obj->login_set(db->first.second.c_str()));
+					IVQ_ERROR_EQUAL(obj->read_by_user(0, 0, les), ::vq::ivq::err_no);
+					rcnt = les->length();
+
+					wcnt = db->second.size();
+					BOOST_CHECK_EQUAL( rcnt, wcnt );
+					for( i=1, fb=db->second.begin(), fe=db->second.end(); 
+								rcnt == wcnt && fb!=fe; ++fb ) {
+							fields_log_entry_cmp(*fb, les[rcnt-i], true, true);
+							++i;
+					}
+			}
+
+			BOOST_CHECK_NO_THROW(obj->rm_all());
+		}
+
+		/**
+		 * Check if start and count arguments in read functions are
+		 * supported correctly.
+		 */
+		void case5() {
+				BOOST_REQUIRE(0);
+		}
 	
 }; // struct logger_test
 
@@ -220,6 +391,21 @@ struct logger_test_suite : test_suite {
 				&logger_test::case2, test );
 			ts_case2->depends_on(ts_init);
 			add(ts_case2);
+
+			test_case * ts_case3 = BOOST_CLASS_TEST_CASE(
+				&logger_test::case3, test );
+			ts_case3->depends_on(ts_init);
+			add(ts_case3);
+
+			test_case * ts_case4 = BOOST_CLASS_TEST_CASE(
+				&logger_test::case4, test );
+			ts_case4->depends_on(ts_init);
+			add(ts_case4);
+
+			test_case * ts_case5 = BOOST_CLASS_TEST_CASE(
+				&logger_test::case5, test );
+			ts_case5->depends_on(ts_init);
+			add(ts_case5);
 
 		}
 };

@@ -30,18 +30,19 @@ namespace POA_vq {
 	 class cpgsqllog : public ilogger {
 			public:
 					typedef ::vq::ilogger::service_type service_type;
-					typedef ::vq::ilogger::result result;
+					typedef ::vq::ilogger::result_type result_type;
 					typedef ::vq::ilogger::error error;
 					typedef ::vq::ilogger::size_type size_type;
 					typedef ::vq::ilogger::log_entry_list_out log_entry_list_out;
 					typedef ::vq::ilogger::log_entry_list log_entry_list;
 					typedef ::vq::ilogger::err_code err_code;
-					
+				
+					virtual void clear();
 					virtual void ip_set( const char* ip );
     				virtual void service_set( service_type ser );
     				virtual void domain_set( const char* dom );
     				virtual void login_set( const char* log );
-    				virtual error* write( result r, const char* msg );
+    				virtual error* write( result_type r, const char* msg );
     				virtual error* read( size_type start, size_type cnt, 
 							log_entry_list_out les );
 					virtual error* count( size_type & cnt );

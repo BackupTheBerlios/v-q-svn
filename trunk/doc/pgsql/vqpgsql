@@ -808,8 +808,44 @@ DECLARE
 BEGIN
 	cnt:=(SELECT COUNT(*) FROM vq_log WHERE domain=_domain AND login=_login);
 	RETURN cnt;
-END;' LANGUAGE 'plpgsql'"
+END;' LANGUAGE 'plpgsql'",
 
+"CREATE FUNCTION log_read() RETURNS SETOF vq_log AS '
+DECLARE
+	ban RECORD;
+BEGIN
+	FOR ban IN SELECT * FROM vq_log LOOP
+		RETURN NEXT ban;
+	END LOOP;
+	RETURN;
+END;
+' LANGUAGE 'plpgsql';",
+
+"CREATE FUNCTION log_read_by_dom(vq_log.domain\%TYPE) RETURNS SETOF vq_log AS '
+DECLARE
+	_domain ALIAS FOR \$1;
+	ban RECORD;
+BEGIN
+	FOR ban IN SELECT * FROM vq_log WHERE domain=_domain LOOP
+		RETURN NEXT ban;
+	END LOOP;
+	RETURN;
+END;
+' LANGUAGE 'plpgsql';",
+
+"CREATE FUNCTION log_read_by_user(vq_log.domain\%TYPE,
+	vq_log.login\%TYPE) RETURNS SETOF vq_log AS '
+DECLARE
+	_domain ALIAS FOR \$1;
+	_login ALIAS FOR \$2;
+	ban RECORD;
+BEGIN
+	FOR ban IN SELECT * FROM vq_log WHERE domain=_domain AND login=_login LOOP
+		RETURN NEXT ban;
+	END LOOP;
+	RETURN;
+END;
+' LANGUAGE 'plpgsql';"
 
 );
 

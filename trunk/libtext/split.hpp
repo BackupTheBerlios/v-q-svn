@@ -22,14 +22,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <deque>
 #include <string>
+#include <algorithm>
 
 namespace text {
 
-	std::string split(const std::string &, const std::string &, 
+	std::string split_path(const std::string &, const std::string &, 
 		const std::string &, 
 		std::string::size_type, bool rev = false );
 
-	std::string split(const std::string &, std::string::size_type, 
+	std::string split_path(const std::string &, std::string::size_type, 
 		const std::string &, 
 		std::string::size_type, bool rev = false );
 		
@@ -42,7 +43,17 @@ namespace text {
 	std::string split_user(const std::string &, 
 		std::string::size_type);
 
-	std::deque<std::string> split( const std::string &, const std::string & );
+	struct split_t : public std::binary_function< std::string, std::string, 
+				std::deque<std::string> > {
+			
+			result_type operator() ( const first_argument_type &,
+					const second_argument_type & ) const;
+	};
+
+	inline split_t::result_type split( const split_t::first_argument_type & a1,
+			const split_t::second_argument_type & a2 ) {
+		return split_t()(a1, a2);
+	}
 
 } // namespace text
 

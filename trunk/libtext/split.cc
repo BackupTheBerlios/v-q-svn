@@ -33,7 +33,7 @@ namespace text {
 	 * \param rev ret is in reverse order
 	 * \return prefix of string
 	 */
-	string split(const string &str, const string &sep, 
+	string split_path(const string &str, const string &sep, 
 		const string &rep, string::size_type cnt, bool rev ) {
 		string ret;
 		string::size_type i, len=str.length(), beg=0, pos=0, slen = sep.length();
@@ -61,7 +61,7 @@ namespace text {
 	 * \param rev ret is in reverse order
 	 * \return prefix of string
 	 */
-	string split(const string &str, string::size_type len, 
+	string split_path(const string &str, string::size_type len, 
 		const string &rep, string::size_type cnt, bool rev ) {
 		string ret;
 		string::size_type i, slen=str.length(), beg=0;
@@ -88,19 +88,19 @@ namespace text {
 	
 	string split_id( const string & u, string::size_type c )
 	{
-		return split(string(u.rbegin(), u.rend()), 1, "/", c, true);
+		return split_path(string(u.rbegin(), u.rend()), 1, "/", c, true);
 	}
 
 	string split_user( const string & u , string::size_type c )
 	{
-		return split(u,1,"/",c);
+		return split_path(u,1,"/",c);
 	}
 
 	/**
 	 *
 	 */
-	std::deque< std::string > split( const std::string &ln, 
-			const std::string &sep ) {
+	split_t::result_type split_t::operator() ( const first_argument_type &ln, 
+			const second_argument_type &sep ) const {
 
 		std::string::size_type pos, beg=0, sepl=sep.length();
 		std::deque< std::string > fields;

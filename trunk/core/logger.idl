@@ -29,6 +29,7 @@ module vq {
 			typedef ivq::error error;
 			typedef ivq::err_code err_code;
 			typedef unsigned short service_type;
+			typedef unsigned short result_type;
 
 			/// Size
 			typedef ivq::size_type size_type;
@@ -43,15 +44,14 @@ module vq {
 			const service_type ser_external = 127;
 			
 			/// status of authorization/login
-			enum result {
-					re_ok, //!< success
-					re_read, //!< can't read data
-					re_data, //!< invalid data (domain, username, password)
-					re_pass, //!< invalid password, description includes given password
-					re_int, //!< internal error
-					re_blk, //!< user's blocked
-					re_unknown
-			};
+			const result_type re_unknown = 0;
+			const result_type re_ok = 1; //!< success
+			const result_type re_read = 2; //!< can't read data
+			const result_type re_data = 3; //!< invalid data (domain, username, password)
+			const result_type re_pass = 4; //!< invalid password, description includes given password
+			const result_type re_int = 5; //!< internal error
+			const result_type re_blk = 6; //!< user's blocked
+			const result_type re_external = 127;
 	
 			/// information stored in log db
 			struct log_entry {
@@ -62,10 +62,14 @@ module vq {
 					string login; //!< user's id
 					string domain; //!< domain
 					string ip; //!< client's ip
-					result res; //!< login status, i.e.: ok, error, blocked
+					result_type res; //!< login status, i.e.: ok, error, blocked
 			};
 
 			typedef sequence< log_entry > log_entry_list;
+
+			/// Clears all settings
+			void clear()
+				raises (null_error, db_error, except);
 				
 			/// sets client address
 			void ip_set( in string ip )
@@ -84,7 +88,7 @@ module vq {
 				raises (null_error, db_error, except);
 					
 			/// Write information
-			error write( in result r, in string msg )
+			error write( in result_type r, in string msg )
 				raises (null_error, db_error, except);
 	
 			/**
