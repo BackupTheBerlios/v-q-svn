@@ -1,0 +1,15 @@
+#!/bin/sh
+	
+# mkdepend is from MICO
+which mkdepend 2>&1 > /dev/null
+if [ "X${?}" = X"0" ] ; then
+	exec mkdepend $@
+fi
+
+which omkdepend 2>&1 > /dev/null
+if [ "X${?}" = X"0" ] ; then
+	exec omkdepend $@
+fi
+
+echo "Can't find any of: mkdepend omkdepend"
+exit 1
