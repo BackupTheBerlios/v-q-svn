@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
-<chapter lang="en">
+<chapter id="doc.gen">
 	<title>Generating documentation</title>
 
 	<para>
@@ -7,7 +7,7 @@
 		into other formats such as: HTML, RTF.
 	</para>
 
-	<section>
+	<section id="doc.gen.openbsd">
 		<title>OpenBSD</title>
 
 		<para>
@@ -26,6 +26,8 @@
 			<filename>usr/share/</filename> to 
 			<filename>/usr/local/share/sgml/redhat</filename>. Then
 			added following lines:
+<example>
+	<title>Content of <filename>catalog</filename> file</title>
 <screen>
 <userinput>
 CATALOG "redhat/sgml/docbook/xml-dtd-4.1.2-1.0-22.1/catalog"
@@ -33,6 +35,7 @@ CATALOG "redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/catalog"
 CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog" 
 </userinput>
 </screen>
+</example>
 			to <filename>/usr/local/share/sgml/catalog</filename>.
 		</para>
 
@@ -43,7 +46,8 @@ CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog"
 env <envar>SGML_CATALOG_FILES</envar>=/usr/local/share/sgml/catalog 
 openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
 /usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
-</synopsis>. Changing RTF to SGML produces HTML files.
+</synopsis>
+			Changing RTF to SGML produces HTML files.
 			<note>
 				<para>
 					<application>openjade</application> may print warnings
@@ -54,7 +58,7 @@ openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl
 		</para>
 	</section>
 
-	<section>
+	<section id="doc.gen.makefile">
 		<title>Using makefile</title>
 
 		<para>

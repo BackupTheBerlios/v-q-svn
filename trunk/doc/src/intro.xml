@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<chapter>
+<chapter id="intro">
 	<title>Introduction</title>
 
 	<para>
 		What this project is all about.
 	</para>
 	
-	<section>
+	<section id="intro.goal">
 		<title>Project goal</title>
 
 		<para>
@@ -18,7 +18,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="intro.features">
 		<title>Current main features</title>
 	
 		<para>
@@ -44,7 +44,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="intro.todo">
 		<title>Planned features</title>
 		
 		<para>
@@ -65,7 +65,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="intro.missing">
 		<title>Missing features</title>
 	
 		<para>

@@ -10,19 +10,23 @@
 	<!ENTITY arch SYSTEM "arch.xml">
 	<!ENTITY license SYSTEM "license.xml">
 	<!ENTITY devs SYSTEM "devs.xml">
+	<!ENTITY com.support SYSTEM "com.support.xml">
+	<!ENTITY life SYSTEM "life.xml">
 	]
 >
 <book lang="en">
 	<bookinfo>
 		<title>Virtual Qmail - Guide</title>
-		<author>
-			<firstname>Pawe³</firstname>
-			<surname>Niewiadomski</surname>
-		</author>
-		<copyright><year>2005</year><holder>Pawe³ Niewiadomski</holder></copyright>
+		<authorgroup>
+			<author>
+				<firstname>Pawe³</firstname>
+				<surname>Niewiadomski</surname>
+			</author>
+		</authorgroup>
+		<copyright><year>2005</year><holder>foo-baz.com</holder></copyright>
 	</bookinfo>
 
-	<preface>
+	<preface id="foreword">
 		<title>Foreword</title>
 
 		<para>
@@ -35,8 +39,10 @@
 	
 	&intro;
 	&arch;
+	&life;
 	&devs;
 	&community;
+	&com.support;
 	&install;
 	&doc.gen;
 </book>

@@ -120,7 +120,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="community.authors">
 		<title>Authors</title>
 
 		<para>
@@ -143,12 +143,12 @@
 
 			<para>
 				In short I'm an Unix guy which loves creating good
-				applications. I work as a developer and maganer of a
+				applications. I work as a developer and manager of a
 				programming division. I live in a small city called
 				Koszalin in Poland. I try to run small company
 				called <ulink url="http://foo-baz.com">foo-baz.com</ulink>.
 				At this time my only product is my knowledge about
-				v-q, Linux, OpenBSD and databases. May be some
+				v-q, qmail, apache, Linux, OpenBSD and databases. May be some
 				day it will make foo-baz.com a profitable company :-)
 			</para>
 		</section>

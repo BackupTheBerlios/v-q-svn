@@ -64,7 +64,7 @@
 			</itemizedlist>
 		</para>
 
-		<section>
+		<section id="install.mta">
 			<title>Mail transfer agent</title>
 
 			<para>
@@ -83,7 +83,7 @@
 			</para>
 		</section>
 
-		<section>
+		<section id="install.pgsql">
 			<title>PostgreSQL version</title>
 
 			<para>
@@ -122,7 +122,7 @@ useradd -g _vq -d /var/vq _vq</synopsis>
 			</para>
 		</section>
 
-		<section>
+		<section id="install.unpack">
 			<title>Unpacking sources</title>
 
 			<para>
@@ -166,7 +166,7 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 			</para>
 		</section>
 
-		<section>
+		<section id="install.conf">
 			<title>Configuration before compilation</title>
 
 			<para>
@@ -242,7 +242,7 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 		</section>
 	</section>
 
-	<section>
+	<section id="install.comp">
 		<title>Compilation</title>
 		
 		<para>Now it's time to compile sources. If you configured
@@ -287,7 +287,7 @@ make >&amp; out
 		</para>
 	</section>
 
-	<section>
+	<section id="install.install">
 		<title>Installation</title>
 
 		<para>
@@ -300,7 +300,7 @@ make >&amp; out
 </screen>
 		</para>
 
-		<section>
+		<section id="install.steps.qmail">
 			<title>Special steps for Qmail</title>
 		
 			<para>
@@ -314,7 +314,7 @@ make >&amp; out
 			</para>
 		</section>
 
-		<section>
+		<section id="install.steps.pgsql">
 			<title>Special steps for PostgreSQL</title>
 
 			<para>
@@ -363,7 +363,7 @@ createdb -E utf-8 -O mail mail
 			</para>
 		</section>
 
-		<section>
+		<section id="install.problems">
 			<title>What if I have problems?</title>
 
 			<para>
