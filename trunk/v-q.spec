@@ -5,15 +5,16 @@
 
 Summary: Virtual Qmail
 Name: v-q
-Version: 5pre6
+Version: VQ_VERSION
 Release: 1
 URL: http://v-q.foo-baz.com/
 Vendor: http://foo-baz.com/
+Packager: Pawel Niewiadomski <new@foo-baz.com>
 Source0: %{name}-%{version}
 License: GPL
 Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{name}-root
-BuildPrereq: findutils, perl
+BuildPrereq: findutils, perl, boost
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv
 Prereq: sh-utils, textutils, /usr/sbin/useradd
 
@@ -23,7 +24,7 @@ Virtual Qmail
 %prep
 rm -rf $RPM_BUILD_DIR/%{name}-%{version}
 cp -R $RPM_SOURCE_DIR/%{name}-%{version} $RPM_BUILD_DIR/
-%setup -T -n %{name}-%{version}
+%setup -D -T -n %{name}-%{version}
 
 %build
 
