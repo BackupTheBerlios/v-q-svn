@@ -39,6 +39,7 @@ $(OBJS): $(BASE)/compile $(BASE)/corba.inc
 install:
 
 install-pgsql: pgsql
+	$(INSTALL) -d -m 0755 $(PREFIX)/bin
 	for p in pgsqllogd pgsqlauthd install.pgsql ; do \
-		$(INSTALL) -d -m 0755 $$p $(PREFIX)/bin/$$p ; \
+		$(INSTALL) -m 0755 $$p $(PREFIX)/bin/$$p ; \
 	done

@@ -82,11 +82,13 @@ clean:
 
 #################
 install: all
+	$(INSTALL) -d -m 0755 $(PREFIX)/bin
 	for p in libcluemain.a dom_add dom_rm user_add user_rm user_pass \
 			user_conf_add user_conf_ls \
 			user_conf_rm user_auth dom_id dom_alias_add dom_alias_rm dom_ls dom_alias_ls \
 			dom_ip_ls dom_ip_rm dom_ip_add ; do \
-		$(INSTALL) -d -m 0755 $$p $(PREFIX)/bin/$$p ; \
+		$(INSTALL) -m 0755 $$p $(PREFIX)/bin/$$p ; \
 	done
-	$(INSTALL) -d -m 0644 cluemain.hpp $(PREFIX)/include/v-q/interfaces/clue/cluemain.hpp
+	$(INSTALL) -d -m 0755 $(PREFIX)/include/v-q/interfaces/clue
+	$(INSTALL) -m 0644 cluemain.hpp $(PREFIX)/include/v-q/interfaces/clue/cluemain.hpp
 

@@ -1,3 +1,4 @@
 #!/bin/sh
 exec 2>&1
-exec /var/vq/bin/pgsqlauthd
+export PATH="$PATH":/usr/local/bin:/usr/local/progs/v-q/bin:/var/vq/bin:/var/v-q/bin 
+exec pgsqlauthd

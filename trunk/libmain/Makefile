@@ -22,5 +22,6 @@ clean:
 
 #################
 install: all
-	$(INSTALL) -d -m 0644 main.hpp $(PREFIX)/include/v-q/libmain/main.hpp
-	$(INSTALL) -d -m 0755 libmain.a $(PREFIX)/lib/v-q/libmain.a
+	$(INSTALL) -d -m 0755 $(PREFIX)/include/v-q/libmain
+	$(INSTALL) -m 0644 main.hpp $(PREFIX)/include/v-q/libmain/main.hpp
+	$(INSTALL) -m 0755 libmain.a $(PREFIX)/lib/v-q/libmain.a
