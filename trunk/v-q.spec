@@ -1,3 +1,5 @@
+%define datadir /var/vq
+
 %ifarch ia64
 # disable debuginfo on IA64
 %define debug_package %{nil}
@@ -5,7 +7,7 @@
 
 Summary: Virtual Qmail
 Name: v-q
-Version: VQ_VERSION
+Version: @VERSION@
 Release: 1
 URL: http://v-q.foo-baz.com/
 Vendor: http://foo-baz.com/
@@ -69,24 +71,12 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
+make PREFIX=$RPM_BUILD_ROOT/usr install
 
 %pre
-# Add the "apache" user
-/usr/sbin/useradd -c "Apache" -u 48 \
-	-s /sbin/nologin -r -d %{contentdir} apache 2> /dev/null || :
-
-%triggerpostun -- apache < 2.0
-/sbin/chkconfig --add httpd
-
-%post
-# Register the httpd service
-/sbin/chkconfig --add httpd
-
-%preun
-if [ $1 = 0 ]; then
-	/sbin/service httpd stop > /dev/null 2>&1
-	/sbin/chkconfig --del httpd
-fi
+# Add the "_vq" user
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+	-s /sbin/nologin -r -d %{datadir} _vq 2> /dev/null || :
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -94,59 +84,19 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 
-%doc ABOUT_APACHE README CHANGES LICENSE
+%doc INSTALL VERSION README README.pl_PL doc/en.html doc/pl.html
 
-%dir %{_sysconfdir}/httpd
-%{_sysconfdir}/httpd/modules
-%{_sysconfdir}/httpd/logs
-%{_sysconfdir}/httpd/run
-%dir %{_sysconfdir}/httpd/conf
-%config(noreplace) %{_sysconfdir}/httpd/conf/*.conf
-%config(noreplace) %{_sysconfdir}/httpd/conf/magic
-%config(noreplace) %{_sysconfdir}/httpd/conf/mime.types
+%dir %{_sysconfdir}/ivq
+%dir %{_sysconfdir}/iauth
+%dir %{_sysconfdir}/ilogger
 
-%config %{_sysconfdir}/logrotate.d/httpd
-%config %{_sysconfdir}/rc.d/init.d/httpd
+%{_bindir}/*
+#%attr(4510,root,%{suexec_caller}) %{_sbindir}/suexec
 
-#%dir %{_sysconfdir}/httpd/conf
+%dir %{_libdir}/vq
+%{_libdir}/vq/*
 
-%{_bindir}/ab
-%{_bindir}/ht*
-%{_bindir}/logresolve
-%{_sbindir}/httpd
-%{_sbindir}/httpd.worker
-%{_sbindir}/apachectl
-%{_sbindir}/rotatelogs
-%attr(4510,root,%{suexec_caller}) %{_sbindir}/suexec
-
-%{_libdir}/libapr-0.so.*
-%{_libdir}/libaprutil-0.so.*
-
-%dir %{_libdir}/httpd
-%dir %{_libdir}/httpd/modules
-# everything but mod_ssl.so:
-%{_libdir}/httpd/modules/mod_[a-r]*.so
-%{_libdir}/httpd/modules/mod_s[petu]*.so
-%{_libdir}/httpd/modules/mod_[t-z]*.so
-
-%dir %{contentdir}
-%dir %{contentdir}/cgi-bin
-%dir %{contentdir}/html
-%dir %{contentdir}/icons
-%dir %{contentdir}/error
-%dir %{contentdir}/error/include
-%{contentdir}/icons/*
-%config(noreplace) %{contentdir}/error/*.var
-%config(noreplace) %{contentdir}/error/include/*.html
-
-%attr(0700,root,root) %dir %{_localstatedir}/log/httpd
-
-%attr(0700,apache,apache) %dir %{_localstatedir}/lib/dav
-
-%{_mandir}/man1/*
-
-%{_mandir}/man8/rotatelogs*
-%{_mandir}/man8/suexec*
+%attr(0700,_vq,_vq) %dir %{_localstatedir}/vq
 
 %changelog
 * Fri Mar 25 2005 Pawel Niewiadomski <new@foo-baz.com> 6

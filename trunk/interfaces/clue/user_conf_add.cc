@@ -47,7 +47,7 @@ void usage( const char *me, const std::string & uc_names )
  *
  */
 int cluemain(int ac, char **av, cluemain_env & ce ) {
-	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
+	std::string fn_uc_names(VQ_ETC_DIR+"/ivq/user_conf_names");
 	int opt;
 	bool quiet=false;
 	while( (opt=getopt(ac,av,"qh")) != -1 ) {

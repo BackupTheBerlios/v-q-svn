@@ -64,7 +64,7 @@ cpoa_hier::cpoa_hier( CORBA::ORB_ptr orb, const std::string & depMod,
 }
 
 void usage( const char * me ) {
-	cerr<<"usage: "<<me<<" [ORB options] base_dir"<<endl;
+	cerr<<"usage: "<<me<<" [ORB options] [-e export|E] [-r|R]"<<endl;
 }
 
 int vqmain(int ac, char **av) {
@@ -74,21 +74,16 @@ int vqmain(int ac, char **av) {
 	
 	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
 	
-	if( ac < 2 ) {
-			usage(*av);
-			return 100;
-	}
-
 	int opt;
 	bool run = true, exp = true;
 	const char * exp_ins = "name_service#Auth.iauth";
 	
-	while( (opt=getopt(ac, av, "e:ErR")) != -1 ) switch(opt) {
-	case 'e':
+	while( (opt=getopt(ac, av, "x:XrR")) != -1 ) switch(opt) {
+	case 'x':
 			exp = true;
 			exp_ins = optarg;
 			break;
-	case 'E':
+	case 'X':
 			exp = false;
 			break;
 	case 'r':
@@ -103,8 +98,7 @@ int vqmain(int ac, char **av) {
 			return 111;
 	}
 
-	string conf_dir(*(av+1));
-	conf_dir += "/etc/iauth/pgsql/";
+	string conf_dir(VQ_ETC_DIR + "/iauth/pgsql/");
 	conf::clnconf pgsql(conf_dir+"pgsql", "dbname=mail password=mail user=mail");
 	conf::clnconf dep_mod(conf_dir+"dep_mod", "fixed_ports_no_imr");
 	conf::clnconf policy(conf_dir+"policy", "single_thread_model");

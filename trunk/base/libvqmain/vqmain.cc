@@ -24,13 +24,17 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <iostream>
 #include <cstdlib>
 
-std::string VQ_HOME("/var/vq/");
+std::string VQ_HOME;
+std::string VQ_ETC_DIR;
 
 int cppmain( int ac, char ** av ) try {
 	char * ptr;
 	ptr = getenv("VQ_HOME");
-	if(ptr) VQ_HOME = ptr;
+	VQ_HOME = ptr ? ptr : "/var/vq/";
 
+	ptr = getenv("VQ_ETC_DIR");
+	VQ_ETC_DIR = ptr ? ptr : (VQ_HOME+"/etc");
+	
 	for( int i=1; i<ac; ++i ) {
 		if( '-' != *av[i] ) continue;
 		switch( *(av[i]+1) ) {
@@ -40,6 +44,13 @@ int cppmain( int ac, char ** av ) try {
 						return 1;
 				}
 				VQ_HOME = av[i+1];
+				break;
+		case 'E':
+				if( i+1 == ac ) {
+						std::cerr<<"missing argument for -E option"<<std::endl;
+						return 1;
+				}
+				VQ_ETC_DIR = av[i+1];
 				break;
 		case '-':
 				i=ac;

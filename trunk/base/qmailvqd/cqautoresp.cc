@@ -53,7 +53,7 @@ cqautoresp::cqautoresp() {
 		| REG_EXTENDED ) )
 			throw regex_comp("re_x_remark");
 
-	conf::cintconf ar_ttl(VQ_HOME+"/etc/ivq/qmail/autoresp_ttl", "3600" );
+	conf::cintconf ar_ttl(VQ_ETC_DIR+"/ivq/qmail/autoresp_ttl", "3600" );
 	this->autoresp_ttl = ar_ttl.val_int();
 }
 /**

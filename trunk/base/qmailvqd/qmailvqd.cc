@@ -67,7 +67,7 @@ cpoa_hier::cpoa_hier( CORBA::ORB_ptr orb, const std::string & depMod,
 
 
 void usage(const char * me) {
-	cout<<"usage: "<<me<<" [ORB options] base_dir"<<endl;
+	cout<<"usage: "<<me<<" [ORB options] [-e export|E] [-r|R]"<<endl;
 }
 
 int vqmain(int ac, char **av) {
@@ -77,21 +77,16 @@ int vqmain(int ac, char **av) {
 	
 	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
 	
-	if( ac < 2 ) {
-			usage(*av);
-			return 100;
-	}
-
 	int opt;
 	bool run = true, exp = true;
 	const char * exp_ins = "name_service#VQ.ivq";
 	
-	while( (opt=getopt(ac, av, "e:ErR")) != -1 ) switch(opt) {
-	case 'e':
+	while( (opt=getopt(ac, av, "x:XrR")) != -1 ) switch(opt) {
+	case 'x':
 			exp = true;
 			exp_ins = optarg;
 			break;
-	case 'E':
+	case 'X':
 			exp = false;
 			break;
 	case 'r':
@@ -106,8 +101,7 @@ int vqmain(int ac, char **av) {
 			return 111;
 	}
 
-	string base(*(av+1)); base += '/';
-	string conf_dir(base+"etc/ivq/qmail/");
+	string conf_dir(VQ_ETC_DIR+"/ivq/qmail/");
 	conf::clnconf iauth_import(conf_dir+"iauth_import", "name_service#Auth.iauth");
 	conf::cintconf split_dom(conf_dir+"split_dom", SPLIT_DOM);
 	conf::cintconf split_user(conf_dir+"split_user", SPLIT_USER);
@@ -149,7 +143,7 @@ int vqmain(int ac, char **av) {
 
 	/*
 	 */
-	auto_ptr<cqmailvq> vqimp(new cqmailvq(base, data.val_str()+"/domains", auth,
+	auto_ptr<cqmailvq> vqimp(new cqmailvq(VQ_HOME, data.val_str()+"/domains", auth,
 		split_dom.val_int(), split_user.val_int(),
 		fmode.val_int(), mmode.val_int(), dmode.val_int(),
 		user.val_str(), uid.val_int(), gid.val_int() ));
@@ -157,7 +151,6 @@ int vqmain(int ac, char **av) {
 	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(vqimp.get());
 	CORBA::Object_var ref = poa->core_poa()->id_to_reference (oid.in());
 	vqimp->_remove_ref(); // ???
-
 
 	if( exp ) {
 			try {

@@ -24,6 +24,15 @@
 						<filename>/var/vq</filename>.
 					</para>
 				</listitem>
+				<listitem id="life.vq_etc_dir">
+					<para>
+						<envar>VQ_ETC_DIR</envar> points to a directory
+						where configuration files are stored.
+						Default value is set
+						during compilation, usually it is
+						<filename>/var/vq/etc</filename>.
+					</para>
+				</listitem>
 			</itemizedlist>
 		</para>
 	</section>
@@ -33,7 +42,7 @@
 
 		<para>
 			Configurations files are stored in
-			<filename><link linkend="life.vq_home">VQ_HOME</link>/etc/ivq/qmail/</filename>.
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ivq/qmail/</filename>.
 		</para>
 
 		<table frame="all">
@@ -154,7 +163,7 @@
 
 		<para>
 			Configurations files are stored in
-			<filename><link linkend="life.vq_home">VQ_HOME</link>/etc/iauth/pgsql/</filename>.
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/iauth/pgsql/</filename>.
 		</para>
 
 		<table frame="all">
@@ -193,7 +202,7 @@
 
 		<para>
 			Configurations files are stored in
-			<filename><link linkend="life.vq_home">VQ_HOME</link>/etc/ilogger/pgsql/</filename>.
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ilogger/pgsql/</filename>.
 		</para>
 
 		<table frame="all">

@@ -29,7 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 int vqmain( int ac, char ** av ) {
 	using namespace std;
 
-	conf::clnconf ivq_import(VQ_HOME+"/etc/ivq/ivq_import", "name_service#VQ.ivq");
+	conf::clnconf ivq_import(VQ_ETC_DIR+"/ivq/ivq_import", "name_service#VQ.ivq");
 	
 	cluemain_env ce;
 	ce.orb = CORBA::ORB_init (ac, av);

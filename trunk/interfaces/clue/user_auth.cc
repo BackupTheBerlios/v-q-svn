@@ -283,7 +283,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	::av = av;
 	::ac = ac;
 	
-	conf::clnconf ilogger_import(VQ_HOME+"/etc/ilogger/ilogger_import", "name_service#Logger.ilogger");
+	conf::clnconf ilogger_import(VQ_ETC_DIR+"/ilogger/ilogger_import", "name_service#Logger.ilogger");
 
 	CORBA::Object_var ilogobj;
 	try {
@@ -372,7 +372,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 int vqmain( int ac, char ** av ) try {
 	using namespace std;
 
-	conf::clnconf ivq_import(VQ_HOME+"/etc/ivq/ivq_import", "name_service#VQ.ivq");
+	conf::clnconf ivq_import(VQ_ETC_DIR+"/ivq/ivq_import", "name_service#VQ.ivq");
 	/*
 	 * Initialize the ORB
 	 */

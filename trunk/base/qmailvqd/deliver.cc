@@ -39,8 +39,8 @@ int vqmain(int ac, char **av)
 {
 	char *args[11], *host, *tmp;
 
-	string conf_dir(VQ_HOME+"/etc/ivq/qmail/");
-	conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home", QMAIL_HOME);
+	string conf_dir(VQ_ETC_DIR+"/ivq/qmail/");
+	conf::clnconf qhome(VQ_ETC_DIR+"/ivq/qmail/qmail_home", QMAIL_HOME);
 	conf::cintconf split_user(conf_dir+"split_user", SPLIT_USER);
 	conf::cintconf split_dom(conf_dir+"split_dom", SPLIT_DOM);
 	conf::clnconf data(conf_dir+"data", DATA);

@@ -69,7 +69,7 @@ void ucis_print( ostream & cout, const char * email,
 int cluemain(int ac, char **av, cluemain_env & ce )
 {
 	const char * me = *av;
-	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
+	std::string fn_uc_names(VQ_ETC_DIR+"/ivq/user_conf_names");
 	conf::cmapconf::map_type uc_names_map( conf::cmapconf(fn_uc_names).val_map() );
 	types_array types;
 
