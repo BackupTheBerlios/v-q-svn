@@ -2,7 +2,7 @@ BASE=../..
 
 .PHONY: auto-mkdir
 
-all: auto-mkdir libtext.so
+all: auto-mkdir .depend libtext.so
 
 #######################
 
@@ -30,18 +30,22 @@ split.o
 	$(BASE)/make-so libtext.so.6.0 lower.o hex.o hmac_md5.o auto/lmd5.o \
 	split.o
 
-hex.o: $(BASE)/comp-so hex.cc hex.hpp
+hex.o: $(BASE)/comp-so hex.cc
 	$(BASE)/comp-so hex.cc
 
-hmac_md5.o: $(BASE)/comp-so hmac_md5.cc auto/lmd5.h hmac_md5.hpp
+hmac_md5.o: $(BASE)/comp-so hmac_md5.cc auto/lmd5.h
 	$(BASE)/comp-so hmac_md5.cc
 
-lower.o: $(BASE)/comp-so lower.cc lower.hpp 
+lower.o: $(BASE)/comp-so lower.cc
 	$(BASE)/comp-so lower.cc
 
-split.o: $(BASE)/comp-so split.cc split.hpp
+split.o: $(BASE)/comp-so split.cc
 	$(BASE)/comp-so split.cc
 
 #####################
+.depend:
+	echo '# Module dependencies' > .depend
+	$(BASE)/tools/mkdep *.cc >> .depend
+	
 clean:
 		rm -rf `cat TARGETS`
