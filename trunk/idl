@@ -1,0 +1,2 @@
+#!/bin/sh
+exec idl --no-boa --hh-suffix=hpp $@

@@ -43,7 +43,7 @@ namespace {
 	}
 } // namespace
 
-int  main( int ac, char ** av ) {
+int main( int ac, char ** av ) {
 	std::ios::sync_with_stdio(false);
 	std::set_terminate(term);
 	std::set_unexpected(unexp);
