@@ -1,21 +1,104 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
-<page menu="install">
-	<sec tit="Common part">
-		<p>
-			First you need to install MTA (at this time only qmail is supported).
-			I created patch for qmail including most needed stuff like
-			smtp-auth, ssl, etc., more informations are located at 
-			<a href="http://new.foo-baz.com/proj/q-p/">http://new.foo-baz.com/proj/q-p/</a>.
-		</p>
+<chapter id="install">
+	<title>Installation</title>
 
-		<p>
-			Following installation procedure was created using OpenBSD 3.4 box, but
-			it will work also for Linux. Commands are executed as root:
-		</p>
+	<para>
+		Step-by-step installation guide.
+	</para>
 	
-		<ol>
-			<li>groupadd vq</li>
-			<li>useradd -g vq -d /var/vq vq</li>
+	<section id="install.download">
+		<title>Downloading</title>
+
+		<para>
+			First it is good to check project's 
+			<ulink url="http://v-q.foo-baz.com">home page</ulink>.
+		</para>
+
+		<para>
+			<ulink url="http://sf.net/project/showfiles.php?group_id=87916">Download page</ulink>
+			at SourceForge includes all files released by this project.
+			You can go there and get the newest version.
+		</para>
+	</section>
+
+	<section id="install.deps">
+		<title>Dependencies</title>
+
+		<para>
+			This is a sophisticated software that depends on few other
+			projects.
+		</para>
+
+		<para>
+			Common dependencies are:
+
+			<itemizedlist>
+				<listitem><para>C++ compiler</para></listitem>
+				<listitem>
+					<para>
+						CORBA implementation with IDL to C++ mapping, 
+						for example <ulink url="http://www.mico.org">MICO</ulink>
+					</para>
+				</listitem>
+				<listitem>
+					<para>compatible mail transfer agent</para>
+				</listitem>
+				<listitem>
+					<para>Sablotron if you want to compile WWW interface</para>
+				</listitem>
+				<listitem>
+					<para><ulink url="http://www.boost.org">boost</ulink> library</para>
+				</listitem>
+				<listitem>
+					<para>DocBook and doxygen if you want to generate new version of documentation</para>
+				</listitem>
+				<listitem>
+					<para>Iconv if you want to generate WWW interface</para>
+				</listitem>
+				<listitem>
+					<para>compatible database client libraries</para>
+				</listitem>
+				<listitem>
+					<para>Cgicc library if you want to generate WWW interface</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="install.prep">
+		<title>Preparation</title>
+
+		<para>
+			First step is to download and install
+			all software pointed out in <xref linkend="install.download"/> 
+			and <xref linkend="install.deps"/>.
+		</para>
+
+		<section>
+			<title>Creating user and group</title>
+
+			<para>
+			V-q daemon can work as any user, but it is suggested
+			to run them under _vq group and _vq user.
+			</para>
+
+			<para>
+			You can use following commands to do that (works under
+			Linux and OpenBSD):
+				<command>groupadd _vq</command>
+				<command>useradd -g _vq -d /var/vq _vq</command>
+			</para>
+		</section>
+
+		<section>
+			<title>Unpacking sources</title>
+
+			<para>
+				If source
+			</para>
+		</section>
+			
+<!--
 			<li>bunzip2 -c vq-*.tar.bz2 | tar -xf -</li>
 			<li>cd vq</li>
 			<li>
@@ -42,6 +125,25 @@
 				vim conf/*<br/>
 				Edit you configuration files.
 			</li>
+
+-->	
+	</section>
+	
+<!--
+	<sec tit="Common part">
+		<p>
+			First you need to install MTA (at this time only qmail is supported).
+			I created patch for qmail including most needed stuff like
+			smtp-auth, ssl, etc., more informations are located at 
+			<a href="http://new.foo-baz.com/proj/q-p/">http://new.foo-baz.com/proj/q-p/</a>.
+		</p>
+
+		<p>
+			Following installation procedure was created using OpenBSD 3.4 box, but
+			it will work also for Linux. Commands are executed as root:
+		</p>
+	
+		<ol>
 			<li>
 				make<br/>
 				This starts compilation. I'm using gcc 2.95.5 and 3.2.2.
@@ -105,4 +207,5 @@
 			on your site you can contact me, I'll try to help.
 		</p>
 	</sec>
-</page>
+-->
+</chapter>

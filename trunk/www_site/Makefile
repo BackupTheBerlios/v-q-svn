@@ -1,26 +1,12 @@
-BASE=.
-FILES=$(wildcard *.xml)
-HTML=$(FILES:.xml=.html)
+BASE=..
+JADE?=openjade
 
 .PHONY: all clean subdirs
 
-all: $(HTML) subdirs
-	chmod a+r style.css
+all: 
 
-subdirs:
-	cd xslt && $(MAKE)
-	cd docs && $(MAKE)
-	cd dev && $(MAKE)
-	cd sf && $(MAKE)
-
-clean:
-	cd docs && $(MAKE) clean
-	cd dev && $(MAKE) clean
-	cd sf && $(MAKE) clean
-	rm -rf *.html
-	
-%.html: %.xml $(BASE)/xsltproc $(BASE)/xslt/page.xslt
-	$(BASE)/xsltproc $(BASE)/xslt/page.xslt $< '$$base='$(BASE) > $@.tmp \
-	&& mv -f $@{.tmp,}
-	chmod 644 $@
-	rm -f $@.tmp
+doc-html:
+	(cd html/ && env SGML_CATALOG_FILES=/usr/local/share/sgml/catalog \
+	openjade -t sgml -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl \
+	/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl \
+	../index.xml )

@@ -1,31 +1,95 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <chapter>
 	<title>Introduction</title>
+
+	<para>
+		What this project is all about.
+	</para>
 	
-	<para>
-		Project goal is to create virtual domains managing system, it should
-		be easy to setup, create and maintain. It should be also very reliable and
-		fast - it's designed for big sites. It does not support real users and
-		it won't. 
-	</para>
+	<section>
+		<title>Project goal</title>
 
-	<para>
-		What vq won't do at any time in the future: 
-		<ul>
-			<li>support POP3 authorization based relaying as vpopmail does - use SMTP-AUTH!</li>
-			<li>support real users</li>
-			<li>support any other mailboxes type than Maildir</li>
-		</ul>
-	</para>
+		<para>
+			Main goal is to create virtual domains managing system, which
+			will be easy to setup, maintain and integrate with
+			other enterprise software. 
+			It should also work very reliable, fast and secure - it's designed 
+			for big sites.
+		</para>
+	</section>
 
-	<para>
-		Current futures:
-		<ul>
-			<li>PostgreSQL based authorization</li>
-			<li>PostgreSQL based logging of user's authorizations</li>
-		</ul>
-	</para>
+	<section>
+		<title>Current main features</title>
+	
+		<para>
+			The most important thing is that thanks to modularized
+			architecture it's easy to replace any part of a system.
+			You can change database, or MTA part easily. Software
+			can be configured without the need of compilation.
+		</para>
 
+		<para>
+			Main features are:
+			
+			<itemizedlist>
+				<listitem><para>PostgreSQL support for authorization and logging</para></listitem>
+				<listitem><para>Qmail integration</para></listitem>
+				<listitem><para>CORBA based communication, which means you can use it from any language having IDL mapping</para></listitem>
+				<listitem><para>can be used easily from: C, C++, PHP, Java, Smalltalk, python</para></listitem>
+				<listitem><para>distributed hosting</para></listitem>
+				<listitem><para>all processes can run without root</para></listitem>
+				<listitem><para>written using C++, STL and boost</para></listitem>
+				<listitem><para>WWW interface for users</para></listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section>
+		<title>Planned features</title>
+		
+		<para>
+			This is not a closed list. If you have any suggestions
+			please contact <link linkend="pniewiadomski">Pawe³ Niewiadomski</link>.
+		</para>
+
+		<para>
+			Planned features are:
+
+			<itemizedlist>
+				<listitem><para>quota support</para></listitem>
+				<listitem><para>i18n support</para></listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section>
+		<title>Missing features</title>
+	
+		<para>
+			Things that are popular but missing in v-q:
+		
+			<itemizedlist>
+				<listitem>
+					<para>
+						support POP3 before SMTP relaying 
+						(vpopmail does have such thing) - people use SMTP-AUTH!
+					</para>
+				</listitem>
+				<listitem>
+					<para>support real users, authorization based on /etc/passwd</para>
+				</listitem>
+				<listitem>
+					<para>support for any other mailboxes type than Maildir</para>
+				</listitem>
+				<listitem>
+					<para>quota support</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+
+<!--
 	<para>
 		If you think that some future is missing you're welcome to add it or
 		if you can't but think it should be implemented you can contact author.
@@ -34,7 +98,7 @@
 	<para>
 		Following is a list of programs in contrib directory:
 	</para>
-	
+
 	<sec tit="freemail">
 		This module will support options associated with free e-mail accounts.
 		At this time it include only option to change informations about
@@ -85,4 +149,5 @@
 		It support dynamic loading of shared libraries, so it may be easily
 		extended.
 	</sec>
-</page>
+-->
+</chapter>
