@@ -50,8 +50,8 @@ namespace POA_vq {
 	
 	/**
 	 */
-	cqmailvq::cqmailvq( const std::string & h, unsigned s_dom ) 
-			: home(h), dom_split(s_dom) {
+	cqmailvq::cqmailvq( const std::string & h, unsigned s_dom, unsigned s_user ) 
+			: home(h), dom_split(s_dom), user_split(s_user) {
 	}
 	
 	/**
@@ -641,9 +641,10 @@ namespace POA_vq {
 	string cqmailvq::maildir_path(const string &d, const string &u) {
 		string dom(text::lower(d)), user(text::lower(u));
 		return home+"/domains/"+text::split_dom(dom, this->dom_split)+'/'+dom
-				+'/'+text::split_user(user)+'/'+user+"/Maildir/";
+				+'/'+text::split_user(user, this->user_split)+'/'+user+"/Maildir/";
 	}
-	
+
+#if 0
 	/**
 	 * Set current usage of mailbox.
 	 * \param d domain
@@ -981,7 +982,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
 	}
-	
+#endif // if 0	
 	/**
 	 * Create path for dot-qmail file
 	 * \param d domain
@@ -998,7 +999,7 @@ namespace POA_vq {
 		dotfile.append("/", 1);
 		dotfile.append(dom);
 		dotfile.append("/", 1);
-		dotfile.append(text::split_user(user));
+		dotfile.append(text::split_user(user, this->user_split));
 		dotfile.append("/.qmail-");
 		replace(user.begin(),user.end(), '.', ':');
 		dotfile.append(user);
@@ -1008,7 +1009,7 @@ namespace POA_vq {
 		}
 		return dotfile;
 	}
-	
+#if 0
 	/**
 	 * \return 0 if type is not supported
 	 */
@@ -1092,7 +1093,7 @@ namespace POA_vq {
 		ui.val = "./"+text::lower(u)+"/Maildir/";
 		return udot_add(d, u, e, ui);
 	}
-	
+#endif // if 0	
 	/**
 	 * creates temporary file, chown(vq), chmod(vq_mode)
 	 */
@@ -1111,7 +1112,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_chmod, fnout);
 		return lr(::vq::ivq::err_no, "");
 	}
-	
+#if 0
 	/**
 	 * Remove all entries of given type
 	 * \param d domain
@@ -1177,32 +1178,34 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report() );
 		return lr(::vq::ivq::err_no, "");
 	}
-
+#endif // if 0
 	/**
 	@return 1 on valid domain name, 0 otherwise
 	\note I assume specific order of characters in code page.
 	*/
-	uint8_t cqmailvq::dom_val(const string & d)
+	cqmailvq::error * cqmailvq::dom_val(const char * ptr)
 	{
-		const char *ptr = d.c_str();
-		if( d.empty() ) return 0;
+		if( ! ptr )
+				throw null_error(__FILE__, __LINE__);
+
 		for( ; *ptr; ptr++ ) {
 				if( ! ( ( *ptr >= 'A' && *ptr <= 'Z' )
 					|| ( *ptr >= 'a' && *ptr <= 'z' )
 					|| ( *ptr >= '0' && *ptr <='9' )
 					|| *ptr == '.' || *ptr == '-' ) )
-						return 0;
+						return lr(::vq::ivq::err_no, "");
 		}
-		return 1;
+
+		return lr(::vq::ivq::err_dom_inv, "illegal chars");
 	}
 	
 	/**
 	@return 1 if user name is valid, 0 otherwise
 	*/
-	uint8_t cqmailvq::user_val(const string &u)
+	cqmailvq::error * cqmailvq::user_val(const char *ptr)
 	{
-		if( u.empty() ) return 0;
-		const char *ptr = u.c_str();
+		if( !ptr )
+				throw null_error(__FILE__, __LINE__);
 		for( ; *ptr; ptr++ ) {
 				if( (*ptr >= 'a' && *ptr <= 'z')
 					|| (*ptr >= 'A' && *ptr <= 'Z' )
@@ -1217,108 +1220,13 @@ namespace POA_vq {
 				case '~': case '.': case '!': case '#':
 						continue;
 				default: 
-						return 0;
+						return lr(::vq::ivq::err_no, "");
 				}
 		}
-		return 1;
+		return lr(::vq::ivq::err_user_inv, "illegal chars");
 	}
 	
-	/**
-	 *
-	 */
-	string cqmailvq::err_str( uint8_t e ) {
-		return err_str( static_cast<error>(e) );
-	}
-	
-	/**
-	 *
-	 */
-	string cqmailvq::err_str( error e ) {
-		switch(e) {
-		case ::vq::ivq::err_no:
-				return "Success";
-		case ::vq::ivq::err_temp:
-				return "Temporary error";
-		case ::vq::ivq::err_dom_inv:
-				return "Invalid domain name";
-		case ::vq::ivq::err_user_inv:
-				return "Invalid user name";
-		case ::vq::ivq::err_user_nf:
-				return "No such user";
-		case ::vq::ivq::err_auth:
-				return "Error in authorization module";
-		case ::vq::ivq::err_udot_tns:
-				return "Type's not supported";
-		case ::vq::ivq::err_open:
-				return "Open failed";
-		case ::vq::ivq::err_wr:
-				return "Write failed";
-		case ::vq::ivq::err_rd:
-				return "Read failed";
-		case ::vq::ivq::err_stat:
-				return "Stat failed";
-		case ::vq::ivq::err_notdir:
-				return "Not a directory";
-		case ::vq::ivq::err_chmod:
-				return "Chmod failed";
-		case ::vq::ivq::err_lckd:
-				return "It's locked";
-		case ::vq::ivq::err_ren:
-				return "Rename failed";
-		case ::vq::ivq::err_chown:
-				return "Chown failed";
-		case ::vq::ivq::err_over:
-				return "Overflow";
-		case ::vq::ivq::err_exec:
-				return "Child crashed or returned something unexpected";
-		case ::vq::ivq::err_mkdir:
-				return "Mkdir failed";
-		case ::vq::ivq::err_exists:
-				return "Entry exists";
-		case ::vq::ivq::err_noent:
-				return "Entry does not exist";
-		case ::vq::ivq::err_unlink:
-				return "Can't remove";
-		case ::vq::ivq::err_dom_nf:
-				return "Domains does not exist";
-		default:
-				return "Unknown error";
-		}
-	}
-	
-	/**
-	 *
-	 */
-	string cqmailvq::::vq::ivq::err_info() const {
-		return lr_info.c_str();
-	}
-	
-	/**
-	 *
-	 */
-	cqmailvq::error * cqmailvq::lr( error ret, const std::string & msg ) { 
-			if( ret != ::vq::ivq::err_no && ret != lastret && ! lastret_blkd ) {
-					lastret = ret;
-					lr_info = msg;
-					lr_errno = errno;
-			}
-			return ret;
-	}
-	
-	/**
-	 *
-	 */
-	int cqmailvq::::vq::ivq::err_sys() const {
-		return lr_errno;
-	}
-	
-	/**
-	 *
-	 */
-	string cqmailvq::err_report() const {
-		return err_str(lastret)+"# "+lr_info+"# "+strerror(lr_errno);
-	}
-	
+#if 0
 	/**
 	 * Parse string into quota values.
 	 * \param str string including quota values separated by coma, i.e. 12C,34S
@@ -1357,6 +1265,7 @@ namespace POA_vq {
 		
 		return is.eof() ? lr(::vq::ivq::err_no,"") : lr(::vq::ivq::err_temp,"Invalid quota");
 	}
+#endif // if 0
 
 	/**
 	 *

@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cqmailvq.hpp"
-#include "auto/d_namlen.h"
+//#include "auto/d_namlen.h"
 
 #include <sys.hpp>
 #include <text.hpp>
@@ -49,7 +49,9 @@ namespace POA_vq {
 	 * \param p password
 	 * \param flags if (flags & 1) != 0 then don't check whether login is banned
 	 */
-	cqmailvq::error * cqmailvq::user_add( const auth_info & ai )
+#if 0
+	cqmailvq::error * cqmailvq::user_add( const auth_info & ai, 
+			CORBA::Boolean is_banned )
 	{
 		assert_auth();
 		string user(lower(ai.login));
@@ -100,22 +102,24 @@ namespace POA_vq {
 		}
 		return lr(::vq::ivq::err_no, "");
 	}
+#endif // if 0
 	
 	/**
 	 * Remove user
-	 * \param u user
+	 * \param user_id user
 	 * \param dom_id domain's id
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::user_rm(const char * dom_id, const char *u)
+	cqmailvq::error * cqmailvq::user_rm(const char * dom_id, 
+			const char *user_id)
 	{
-		if( ! dom_id || ! u ) 
-				throw ::vq::ivq::null_error(__FILE__, __LINE__);
+		if( ! dom_id || ! user_id ) 
+				throw ::vq::null_error(__FILE__, __LINE__);
 
 		assert_auth();
 	
-		string user(lower(u)), dom(lower(d));
-		if( auth->user_rm(u,d) ) return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
+		if( auth->user_rm(dom_id, user_id) ) 
+				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 	
 		string dir = conf_home+"/domains/"+split_dom(dom)+'/'+dom+'/'
 				+split_user(user) + '/';
@@ -164,13 +168,13 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::user_pass(const char * dom_id,
 			const char *user_id, const char * p ) {
 
-		if(!dom_id || !u || !p)
-				throw ::vq::ivq::null_error(__FILE__, __LINE__);
+		if(!dom_id || !user_id || !p)
+				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		assert_auth();
 
 		if(auth->user_pass(dom_id, user_id, p))
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
+				return lr(::vq::ivq::err_auth, "");
 
 		return lr(::vq::ivq::err_no, "");
 	}

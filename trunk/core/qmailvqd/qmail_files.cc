@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "qmail_files.h"
+#include "qmail_files.hpp"
 
 const char *qf2file( qmail_file qf ) throw (std::runtime_error) {
 	// we check each value, minimaze the risk

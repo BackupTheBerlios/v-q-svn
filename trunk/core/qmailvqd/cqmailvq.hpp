@@ -52,7 +52,7 @@ namespace POA_vq {
 					typedef ::vq::ivq::string_list_out string_list_out;
 					typedef ::vq::ivq::email_banned_list_out email_banned_list_out;
 
-					cqmailvq( const std::string &, unsigned );
+					cqmailvq( const std::string &, unsigned, unsigned );
 					virtual ~cqmailvq() {}
 
 					virtual error* dom_add( const char* dom );
@@ -75,6 +75,7 @@ namespace POA_vq {
 			protected:
 					std::string home; //!< home directory
 					unsigned dom_split;
+					unsigned user_split;
 
 
 					static const char tmp_end[]; //!< temporary file extension

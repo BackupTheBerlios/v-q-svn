@@ -43,6 +43,7 @@ int cppmain(int ac, char **av) {
 	//conf::clnconf pgsql(conf_dir+"pgsql", "dbname=mail password=mail user=mail");
 	conf::clnconf objname(conf_dir+"objname", "vq::ivq");
 	conf::cintconf split_dom(conf_dir+"split_dom", "3");
+	conf::cintconf split_user(conf_dir+"split_user", "3");
 
 	/*
 	 * Initialize the ORB
@@ -61,7 +62,8 @@ int cppmain(int ac, char **av) {
 	/*
 	 * Create authorization object
 	 */
-	auto_ptr<cqmailvq> vqimp(new cqmailvq(*(av+1), split_dom.val_int()));
+	auto_ptr<cqmailvq> vqimp(new cqmailvq(*(av+1), 
+		split_dom.val_int(), split_user.val_int()));
 	
 	/*
 	 * Activate the Servant

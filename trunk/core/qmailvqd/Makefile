@@ -1,5 +1,5 @@
 BASE=../..
-OBJS=qmailvqd.o cqmailvq_dom.o cqmailvq.o cqmailvq_user.o 
+OBJS=qmailvqd.o cqmailvq_dom.o cqmailvq.o cqmailvq_user.o qmail_files.o
 INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf `cat $(BASE)/corba.inc`
 LIBS=-Wl,-rpath,`cd $(BASE) && echo \`pwd\`/libsys` \
