@@ -9,6 +9,7 @@
 	<!ENTITY install SYSTEM "install.xml">
 	<!ENTITY arch SYSTEM "arch.xml">
 	<!ENTITY license SYSTEM "license.xml">
+	<!ENTITY devs SYSTEM "devs.xml">
 	]
 >
 <book lang="en">
@@ -34,6 +35,7 @@
 	
 	&intro;
 	&arch;
+	&devs;
 	&community;
 	&install;
 	&doc.gen;
