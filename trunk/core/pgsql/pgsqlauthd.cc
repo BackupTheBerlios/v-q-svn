@@ -20,6 +20,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "main.hpp"
 
+// CORBA
+#include <coss/CosNaming.h>
+
 #include <memory>
 #include <iostream>
 #include <fstream>
@@ -52,17 +55,37 @@ int cppmain(int ac, char **av) {
 	 */
 	
 	PortableServer::ObjectId_var oid = poa->activate_object (pgauth.get());
-	
-	/*
-	 * Write reference to file
-	 */
-	
-	ofstream of ("pgsqlauthd.ref");
 	CORBA::Object_var ref = poa->id_to_reference (oid.in());
-	CORBA::String_var str = orb->object_to_string (ref.in());
-	of << str.in() << endl;
-	of.close ();
 	
+
+	CORBA::Object_var nsobj = orb->resolve_initial_references ("NameService");
+
+	CosNaming::NamingContext_var nc =
+			CosNaming::NamingContext::_narrow (nsobj);
+
+	if (CORBA::is_nil (nc)) {
+			cerr << "oops, I cannot access the Naming Service!" << endl;
+			return 100;
+	}
+
+	/*
+	 * Construct Naming Service name for our Bank
+	 */
+	CosNaming::Name name;
+	name.length (1);
+	name[0].id = CORBA::string_dup ("vq::iauth");
+	name[0].kind = CORBA::string_dup ("");
+
+    /*
+	 * Store a reference to our Bank in the Naming Service. We use 'rebind'
+	 * here instead of 'bind', because rebind does not complain if the desired
+	 * name "Bank" is already registered, but silently overwrites it (the
+	 * existing reference is probably from an old incarnation of this server).
+	 */
+	cout << "Binding vq::iauth in the Naming Service ... " << flush;
+	nc->rebind (name, ref);
+	cout << "done." << endl;
+
 	/*
 	 * Activate the POA and start serving requests
 	 */

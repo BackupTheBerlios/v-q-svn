@@ -20,6 +20,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <boost/test/unit_test.hpp>
 
+#include <coss/CosNaming.h>
+
+#include <memory>
+
 using boost::unit_test_framework::test_suite;
 using boost::unit_test_framework::test_case;
 
@@ -31,12 +35,35 @@ struct auth_test {
 		int ac;
 		char **av;
 		
-		auth_test( int ac, char ** av ) : ac(ac), av(av) {
+		auth_test( int ac, char **av ) : ac(ac), av(av) {
 		}
 
 		void init() {
-			CORBA::ORB_var orb = CORBA::ORB_init(ac, av);
-			CORBA::Object_var obj = orb->string_to_object("file:///home/new/kody/vq/trunk/tests/core/pgsql/ref");
+			CORBA::ORB_var orb = CORBA::ORB_init(this->ac, this->av);
+			CORBA::Object_var nsobj = 
+					orb->resolve_initial_references ("NameService");
+			
+			CosNaming::NamingContext_var nc =
+					CosNaming::NamingContext::_narrow (nsobj);
+
+			BOOST_REQUIRE( !CORBA::is_nil(nc) );
+
+			CosNaming::Name name;
+			name.length (1);
+			name[0].id = CORBA::string_dup ("vq::iauth");
+			name[0].kind = CORBA::string_dup ("");
+
+			CORBA::Object_var obj;
+			try {
+					obj = nc->resolve (name);
+			} catch (CosNaming::NamingContext::NotFound &exc) {
+					BOOST_FAIL("NotFound exception.");
+			} catch (CosNaming::NamingContext::CannotProceed &exc) {
+					BOOST_FAIL("CannotProceed exception.");
+			} catch (CosNaming::NamingContext::InvalidName &exc) {
+					BOOST_FAIL("InvalidName exception.");
+			}
+
 			auth = vq::iauth::_narrow(obj);
 
 			BOOST_REQUIRE( !CORBA::is_nil(auth) );
@@ -57,7 +84,7 @@ struct auth_test {
  * 
  */
 struct auth_test_suite : test_suite {
-		auth_test_suite(int ac, char **av) 
+		auth_test_suite(int ac, char *av[]) 
 				: test_suite("pgsqlauthd tests") {
 			boost::shared_ptr<auth_test> test(new auth_test(ac, av));
 
@@ -76,6 +103,10 @@ struct auth_test_suite : test_suite {
  *
  */
 test_suite* init_unit_test_suite( int ac, char* av[] ) {
-    return new auth_test_suite(ac, av);
+	std::auto_ptr<test_suite> test(BOOST_TEST_SUITE("pgsqlauthd tests"));
+
+	test->add(new auth_test_suite(ac, av));
+
+    return test.release();
 }
  

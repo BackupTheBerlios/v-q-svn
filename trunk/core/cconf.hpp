@@ -17,8 +17,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __CCONF_H
-#define __CCONF_H
+#ifndef __CCONF_HPP
+#define __CCONF_HPP
 
 #include <string>
 #include <stdexcept>
@@ -206,4 +206,4 @@ class cmapconf : public cconf {
 
 };
 
-#endif
+#endif // ifndef __CCONF_HPP

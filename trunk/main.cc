@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <exception>
 #include <iostream>
+//#include <locale>
 
 namespace {
 	void term() {
@@ -49,6 +50,15 @@ int main( int ac, char ** av ) {
 	std::set_unexpected(unexp);
 
 	try {
+/*
+ * only in gcc > 3
+ * 
+			std::locale el("");
+			std::locale::global(el);
+			std::cin.imbue(el);
+			std::cerr.imbue(el);
+			std::clog.imbue(el);
+*/
 			return cppmain(ac, av);
 	} catch( const std::exception & e ) {
 			std::cerr<<"Exception caugth: "<<e.what()<<std::endl;
