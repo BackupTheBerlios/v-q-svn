@@ -148,7 +148,7 @@ namespace POA_vq {
 							const std::string &) const;
 					std::string user_md_path(const std::string &, 
 							const std::string &) const;
-
+					std::string user_md_subpath(const std::string &) const;
 
 					int run( char * const [] );
 				

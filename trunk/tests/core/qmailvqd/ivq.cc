@@ -17,10 +17,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "../iauth/iauth_common.hpp"
-#include "../iauth/iauth_user_conf.hpp"
 #include "../../../core/vq.hpp"
 
 #include <text.hpp>
+#include <pfstream.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -145,6 +145,24 @@ struct vq_test {
 		}
 
 		/**
+		 * Check if path to Maildir is relative
+		 */
+		void uc_case2() {
+				std::string path("./domains/"
+					+text::split_id(
+						static_cast<const char *>(this->uc_dom_id), 1)
+					+'/'+static_cast<const char *>(this->uc_dom_id)
+					+'/'+text::split_user(this->uc_user, 3)
+					+"/.qmail-"+this->uc_user);
+				posix::ipfstream in(path.c_str());
+				if(! in) BOOST_ERROR(path);
+				BOOST_REQUIRE(in.good());
+				std::string ln;
+				BOOST_REQUIRE(std::getline(in, ln));
+				BOOST_CHECK_EQUAL(ln, (std::string)"./"+this->uc_user+"/Maildir/");
+		}
+
+		/**
 		 *
 		 */
 		void uc_cleanup() {
@@ -178,15 +196,11 @@ struct vq_test_suite : test_suite {
 				}
 		};
 
-		typedef user_conf_test<vq::ivq_var, obj_wrap> obj_user_conf_test;
-
 		boost::shared_ptr<vq_test> test;
-		boost::shared_ptr< obj_user_conf_test > uc_test;
 
 		vq_test_suite(int ac, char *av[]) 
 				: test_suite("qmailvqd tests"),
-				test(new vq_test(ac, av)),
-				uc_test(new obj_user_conf_test(test->vq)) {
+				test(new vq_test(ac, av)) {
 
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&vq_test::init, test );
@@ -196,6 +210,11 @@ struct vq_test_suite : test_suite {
 				&vq_test::uc_case1, test );
 			ts_uc1->depends_on(ts_init);
 			add(ts_uc1);
+
+			test_case * ts_uc2 = BOOST_CLASS_TEST_CASE( 
+				&vq_test::uc_case2, test );
+			ts_uc2->depends_on(ts_init);
+			add(ts_uc2);
 
 			test_case * ts_uc_cleanup = BOOST_CLASS_TEST_CASE( 
 				&vq_test::uc_cleanup, test );

@@ -34,7 +34,7 @@ sleep 2
 echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
 echo "starting ivq(qmailvqd) server ..."
 ../../../core/qmailvqd/qmailvqd \
--ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+-ORBInitRef NameService=corbaloc::$host:12456/NameService `pwd` &
 ivq_pid=$!
 
 trap "kill $nsd_pid $iauth_pid $ivq_pid" 0

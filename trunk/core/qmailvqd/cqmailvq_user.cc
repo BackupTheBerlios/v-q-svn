@@ -88,6 +88,13 @@ namespace POA_vq {
 	}
 
 	/**
+	 *
+	 */
+	std::string cqmailvq::user_md_subpath( const std::string & login ) const {
+		return "./"+login+"/Maildir/";
+	}
+	
+	/**
 	 * \return Path to user's maildir
 	 */
 	std::string cqmailvq::user_md_path( const std::string &dom_id,
@@ -149,8 +156,7 @@ namespace POA_vq {
 		}
 		string dotuser(dotfile(static_cast<const char *>(ai.id_domain), 
 				user, ""));
-		if( ! sys::dumpstring(dotuser, user_md_path(
-					static_cast<const char *>(ai.id_domain), user)+"\n") ) {
+		if( ! sys::dumpstring(dotuser, user_md_subpath(user)+"\n") ) {
 				delete auth->user_rm(ai.id_domain, user.c_str());
 				sys::rmdirrec(user_add_dir);
 				return lr(::vq::ivq::err_wr, dotuser);
