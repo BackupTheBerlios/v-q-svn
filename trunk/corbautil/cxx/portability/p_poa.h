@@ -14,6 +14,7 @@
 //			P_USE_ORBABUS   (for Orbacus)
 //			P_USE_TAO       (for TAO)
 //			P_USE_OMNIORB   (for omniORB)
+//			P_USE_MICO      (for MICO)
 //----------------------------------------------------------------------
 
 #ifndef P_POA_H_
@@ -36,8 +37,11 @@ using namespace IT_WorkQueue;
 #include <omniORB4/CORBA.h>
 #include "p_omniorb_fix.h"
 
+#elif defined(P_USE_MICO)
+#include <CORBA.h>
+
 #else
-#error "You must #define P_USE_ORBIX, P_USE_ORBACUS, P_USE_TAO or P_USE_OMNIORB"
+#error "You must #define P_USE_ORBIX, P_USE_ORBACUS, P_USE_TAO, P_USE_OMNIORB, P_USE_MICO"
 #endif
 
 #endif /* P_POA_H_ */

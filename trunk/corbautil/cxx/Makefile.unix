@@ -1,0 +1,31 @@
+#-----------------------------------------------------------------------
+# Copyright IONA Technologies 2002-2003.  All rights reserved.
+# This software is provided "as is".
+#-----------------------------------------------------------------------
+
+#include "../Makefile.unix.inc"
+
+#--------
+# Lists of files used by make rules.
+#--------
+LIB_OBJ =	PoaUtility/PoaUtility.o import_export/import_export.o
+
+#--------
+# Rules
+#--------
+
+default:	all
+
+all:		../libcorbautil.a
+
+../libcorbautil.a:	make_in_subdirs
+	ar cr ../libcorbautil.a $(LIB_OBJ)
+
+make_in_subdirs:
+	cd PoaUtility && $(MAKE)
+	cd import_export && $(MAKE)
+
+clean:
+	cd PoaUtility && $(MAKE) $@
+	cd import_export && $(MAKE) $@
+	-rm ../*.a
