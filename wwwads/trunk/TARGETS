@@ -1,5 +1,0 @@
-adsd.o cdiskads.o cdiskadstest.o conf_adsalt.o conf_adsd.o conf_adsdir.o conf_adswwwdir.o conf_asisext.o conf_htmlbadrep.o conf_htmlok.o conf_wwwdir.o conf_xmlstart.o conf_xsltsheet.o cutil.o dirs.o fd.o fdstr.o getline.o html.o is_uint32_t.o sig.o str2cc.o test.o util.o wwwads-conf.o wwwads.o
-adsd wwwads wwwads-conf
-conf_adsalt.cc conf_adsd.cc conf_adsdir.cc conf_adswwwdir.cc conf_asisext.cc conf_htmlbadrep.cc conf_htmlok.cc conf_wwwdir.cc conf_xmlstart.cc conf_xsltsheet.cc
-cdiskads.a
-conf_socket_mode.cc conf_socket_mode.o
