@@ -20,7 +20,7 @@ BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
 BuildPrereq: postgresql-libs >= 7.4.6, libpqxx-devel >= 2.5.0
 BuildPrereq: postgresql-devel >= 7.4.6
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
-Prereq: sh-utils, textutils
+Prereq: sh-utils, textutils, /sbin/ldconfig
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0
 Requires: %{name}-iauth = %{version}, %{name}-ilogger = %{version}
 Provides: %{name}-ivq = %{version}
@@ -140,6 +140,9 @@ foreach p (/etc/sysconfig/vq \$HOME/.vq)
 end
 EOF
 
+# make /etc/ld.so.conf.d/vq.conf
+echo %{_libdir}/vq > $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/vq.conf
+
 # make %{datadir} and %{datadir}/domains
 mkdir -p $RPM_BUILD_ROOT/%{datadir}
 mkdir -p $RPM_BUILD_ROOT/%{datadir}/domains
@@ -154,6 +157,9 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 /usr/sbin/useradd -c "Virtual Qmail" -u 111 \
 	-s /sbin/nologin -r -d %{datadir} _vq 2> /dev/null || :
 
+%post
+/sbin/ldconfig
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -167,11 +173,11 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/vq/iauth
 %dir %{_sysconfdir}/vq/ilogger
 
-%dir %{_sysconfdir}/profile.d
 %{_sysconfdir}/profile.d/*
 
-%dir %{_sysconfdir}/sysconfig/
 %config(noreplace) %{_sysconfdir}/sysconfig/vq
+
+%config %{_sysconfdir}/ld.so.conf.d/vq.conf
 
 %{_bindir}/*_*
 %{_bindir}/qmailvqd
