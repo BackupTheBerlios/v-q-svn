@@ -27,7 +27,7 @@ clean:
 
 ##################
 
-libvq.a: $(BASE)/make-lib auth.o vq.o logger.o .depend
+libvq.a: $(BASE)/make-lib auth.o vq.o logger.o
 	$(BASE)/make-lib libvq.a auth.o vq.o logger.o
 
 auth.cc auth.hpp: $(BASE)/idl auth.idl vq.idl vq.hpp
@@ -39,7 +39,7 @@ logger.cc logger.hpp: $(BASE)/idl logger.idl vq.idl vq.hpp
 vq.cc vq.hpp: $(BASE)/idl vq.idl
 	$(BASE)/idl vq.idl
 
-$(OBJS): $(BASE)/comp-so $(BASE)/corba.inc
+$(OBJS): $(BASE)/comp-so $(BASE)/corba.inc .depend
 
 .cc.o:
 	$(BASE)/comp-so $(INCS) $<

@@ -44,11 +44,16 @@ char *me = NULL, **av;
 int ac;
 const char *remip = NULL, *locip = NULL, *defdom = NULL;
 bool quiet = false;
-cvq *vqo = NULL;
 string resp, pass;
 enum { smtp, pop3 } contype;
-cvq::auth_info vqai;
-clogger *olog = NULL;
+
+::vq::ilogger_var olog;
+::vq::ivq_var ovq;
+
+::vq::ivq::auth_info vqai;
+::vq::ivq::error_var ret;
+
+#define LOG(x,y) delete olog->write(x,y)
 
 /*
  *
@@ -57,12 +62,12 @@ char read_auth_info() {
 	if( ! getline(3,vqai.user,'\0')
 		|| ! getline(3,pass,'\0')
 		|| ! getline(3,resp,'\0')) {
-			olog->write( clogger::re_read, strerror(errno));
+			LOG( ::ivq::ilogger::re_read, strerror(errno));
 			return(1);
 	}
 	vqai.user = lower(vqai.user);
 	if( ac_atchars.val_str().empty() ) {
-			olog->write( clogger::re_int, "ac_atchars empty");
+			LOG( ::ivq::ilogger::re_int, "ac_atchars empty");
 			return(1);
 	}
 	string::size_type atpos = vqai.user.find_last_of(ac_atchars.val_str());
@@ -73,16 +78,16 @@ char read_auth_info() {
 
 	if( vqai.dom.empty() ) vqai.dom = defdom ? defdom : locip;
 	
-	if( vqai.dom.empty() || !vqo->dom_val(vqai.dom) ) {
-			olog->write(clogger::re_data, 
+	if( vqai.dom.empty() || !ovq->dom_val(vqai.dom) ) {
+			LOG(::ivq::ilogger::re_data, 
 				(string)"invalid domain name: "+vqai.dom);
 			return 1;
 	}
 	
 	olog->domain_set(vqai.dom);
 
-	if( vqai.user.empty() || !vqo->user_val(vqai.user) ) {
-			olog->write(clogger::re_data, 
+	if( vqai.user.empty() || !ovq->user_val(vqai.user) ) {
+			LOG(::ivq::ilogger::re_data, 
 				(string)"invalid user name: "+vqai.user );
 			return(1);
 	}
@@ -90,7 +95,7 @@ char read_auth_info() {
 	olog->login_set(vqai.user);
 	
 	if( pass.empty() ) {
-			olog->write(clogger::re_data, "empty password");
+			LOG(::ivq::ilogger::re_data, "empty password");
 			return(1);
 	}
 	return 0;
@@ -143,7 +148,7 @@ char read_env() {
 					return(1);
 			}
 			contype = pop3;
-			olog->service_set(clogger::ser_pop3);
+			olog->service_set(::ivq::ilogger::ser_pop3);
 			break;
 	case 80: // HTTP
 	case 443: // HTTPS
@@ -154,16 +159,16 @@ char read_env() {
 
 			switch(itmp) {
 			case 80:
-					olog->service_set(clogger::ser_http);
+					olog->service_set(::ivq::ilogger::ser_http);
 					break;
 			case 443:
-					olog->service_set(clogger::ser_https);
+					olog->service_set(::ivq::ilogger::ser_https);
 					break;
 			case 250:
-					olog->service_set(clogger::ser_emtp);
+					olog->service_set(::ivq::ilogger::ser_emtp);
 					break;
 			default:
-					olog->service_set(clogger::ser_smtp);
+					olog->service_set(::ivq::ilogger::ser_unknown);
 			}
 			break;
 	}
@@ -201,7 +206,7 @@ char auth_cram() {
  *
  */
 char login_smtp() {
-	olog->write( clogger::re_ok, "" );
+	LOG( ::ivq::ilogger::re_ok, "" );
 	return(0);
 }
 
@@ -219,10 +224,10 @@ char login_pop() {
 		|| setuid(ac_vq_uid.val_int()) || seteuid(getuid()) ) {
 			return(1);
 	}
-	olog->write(clogger::re_ok, "" );
+	LOG(::ivq::ilogger::re_ok, "" );
 
 	delete olog; olog = NULL;
-	delete vqo; vqo = NULL;
+	delete ovq; ovq = NULL;
 	execvp(*av,av);
 	return(1);
 } 
@@ -233,7 +238,7 @@ char login_pop() {
 char proc_auth_info() {
 	if(contype==smtp) {
 			if( vqai.flags & cvq::smtp_blk ) {
-					olog->write(clogger::re_blk, "" );
+					LOG(::ivq::ilogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_cram())
@@ -242,7 +247,7 @@ char proc_auth_info() {
 			}
 	} else {
 			if( vqai.flags & cvq::pop3_blk ) {
-					olog->write(clogger::re_blk, "" );
+					LOG(::ivq::ilogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_apop())
@@ -250,7 +255,7 @@ char proc_auth_info() {
 					return login_pop();
 			}
 	}
-	olog->write( clogger::re_pass, pass );
+	LOG( ::ivq::ilogger::re_pass, pass );
 	return(1);
 }
 
@@ -274,10 +279,11 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 	CORBA::Object_var ilogobj;
 	vq::ilogger_var log;
 	ilogobj = ce.ns->resolve(obj_name);
-	//ce.vq = vq::ilogger::_narrow(ivqobj);
-	//if( CORBA::is_nil(ce.vq) ) {
-	//		return 1;
-	//}
+	if( CORBA::is_nil( ilogobj ) ) {
+			return 1;
+	}
+	olog = ::vq::ilogger::_narrow(ilogobj);
+	ovq = ce.vq;
 
 	sig_pipe_ign();
 
@@ -288,20 +294,16 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 
 			if(read_auth_info()) return 2;
 
-			char ret;
-			switch( (ret=vqo->user_auth(vqai)) ) {
-			case 0: break;
-			case cvq::err_user_nf:
-					olog->write( clogger::re_data, "no such user" );
-					return(1);
-			default:
-					olog->write( clogger::re_int, vqo->err_report());
-					return 1;
+			ret = ovq->user_get(vqai);
+			if( ::vq::ivq::err_no != ret->ec ) {
+					LOG( ret->ec == ::vq::ivq::err_noent 
+						? ::vq::ilogger::re_data : ::vq::ilogger::re_int, 
+						error2str(ret) );
 			}
 
 			return proc_auth_info();
 	} catch( ... ) {
-			olog->...
+			LOG( ::vq::ilogger::re_int, "exception" );
 			return(1);
 	}
 	return 0;

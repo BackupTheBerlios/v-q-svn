@@ -92,8 +92,8 @@ module vq {
 			/// Changes password for user
 			error user_pass(in string dom_id, in string login, in string pass )
 					raises (null_error, db_error, except);
-			/// Gets authorization information for user
-			error user_auth( inout auth_info ai )
+			/// Gets informations about user
+			error user_get( inout auth_info ai )
 					raises (null_error, db_error, except);
 			/// check if user exists (err_noent if not, err_no if exists)
 			error user_ex( in string dom_id, in string login )

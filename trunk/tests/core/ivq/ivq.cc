@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/regex.hpp>
 
 #include <coss/CosNaming.h>
 
@@ -364,12 +365,12 @@ struct vq_test {
 			vq::ivq::auth_info aicur;
 			aicur.id_domain = ai.id_domain;
 			aicur.login = ai.login;
-			aicur.pass = now.c_str();
-			IVQ_ERROR_EQUAL(vq->user_auth(aicur), vq::ivq::err_no );
-			BOOST_CHECK_EQUAL(aicur.flags, 0);
-
-			aicur.pass = CORBA::string_dup("");
-			IVQ_ERROR_EQUAL(vq->user_auth(aicur), vq::ivq::err_pass_inv);
+			IVQ_ERROR_EQUAL(vq->user_get(aicur), vq::ivq::err_no );
+			BOOST_CHECK_EQUAL(aicur.flags, ai.flags);
+			BOOST_CHECK_EQUAL(now, static_cast<const char *>(aicur.pass));
+			BOOST_CHECK(boost::regex_match(
+				static_cast<const char *>(aicur.dir), 
+				boost::regex("./domains/[0-9]*//[0-9]*/c/a/s//case6.pl")));
 		}
 #if 0
 		/**
@@ -560,7 +561,7 @@ struct vq_test {
 		 * we try to:
 		 * - get users from created domains (no users),
 		 * - change password for users
-		 * - authorize users
+		 * - get informations about users
 		 * then we remove created domains, then we check for all of them 
 		 * again all those actions (no domains and no users)
 		 */
@@ -605,7 +606,7 @@ struct vq_test {
 									users[j], static_cast<const char *>("zx")), 
 									::vq::ivq::err_noent);
 								ai.login = users[j];
-								IVQ_ERROR_EQUAL(vq->user_auth(ai), 
+								IVQ_ERROR_EQUAL(vq->user_get(ai), 
 									::vq::ivq::err_noent);
 						}
 				}
@@ -623,7 +624,7 @@ struct vq_test {
 									users[j], static_cast<const char *>("zx")), 
 									::vq::ivq::err_noent);
 								ai.login = users[j];
-								IVQ_ERROR_EQUAL(vq->user_auth(ai), 
+								IVQ_ERROR_EQUAL(vq->user_get(ai), 
 									::vq::ivq::err_noent);
 						}
 				}

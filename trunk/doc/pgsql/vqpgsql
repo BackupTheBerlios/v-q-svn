@@ -152,6 +152,7 @@ sub v6_tables {
 	." ON DELETE CASCADE,"
 ."login text not null check(login<>''),"
 ."pass text not null,"
+."dir text not null default '',"
 ."flags int not null default 0 check(flags>=0),
 qt_bytes_max int not null default 0 check(qt_bytes_max>=0),
 qt_files_max int not null default 0 check(qt_files_max>=0),"
@@ -660,25 +661,20 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION user_auth
+"CREATE FUNCTION user_get
 (vq_users.id_domain\%TYPE,
-vq_users.login\%TYPE,
-vq_users.pass\%TYPE) RETURNS vq_users.flags\%TYPE AS '
+vq_users.login\%TYPE) RETURNS SETOF vq_users AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
 	_login ALIAS FOR \$2;
-	_pass ALIAS FOR \$3;
-	ai RECORD;
+	ai vq_users\%ROWTYPE;
 BEGIN
-	SELECT INTO ai pass,flags FROM vq_users 
+	SELECT id_domain,login,pass,dir,flags INTO ai FROM vq_users 
 		WHERE id_domain=_id_domain AND login=_login LIMIT 1;
-	IF NOT FOUND THEN
-		RETURN -1;
+	IF FOUND THEN
+		RETURN NEXT ai;
 	END IF;
-	IF ai.pass != _pass THEN
-		RETURN -2;
-	END IF;
-	RETURN ai.flags;
+	RETURN;
 END;
 ' LANGUAGE 'plpgsql';",
 

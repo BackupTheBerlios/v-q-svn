@@ -238,14 +238,17 @@ namespace POA_vq {
 	 * \param ai (ai.login should be set to user's name, ai.id_domain should be set to user's domain)
 	 * \return 0 true if information was retrieved successful
 	 */
-	cqmailvq::error * cqmailvq::user_auth(auth_info & ai) std_try {
+	cqmailvq::error * cqmailvq::user_get(auth_info & ai) std_try {
 		if( ! ai.login || ! ai.id_domain ) 
 				throw ::vq::null_error(__FILE__, __LINE__);
 
-		auto_ptr<error> ret(auth->user_auth(ai));
+		auto_ptr<error> ret(auth->user_get(ai));
 		if( ::vq::ivq::err_no == ret->ec ) {
-				ai.dir = user_dir_path(static_cast<const char *>(ai.id_domain), 
-					lower(static_cast<const char *>(ai.login))).c_str();
+				if( '\0' == *ai.dir ) {
+						ai.dir = user_dir_path(
+							static_cast<const char *>(ai.id_domain),
+							lower(static_cast<const char *>(ai.login))).c_str();
+				}
 				return lr(::vq::ivq::err_no, "");
 		}
 		return ret.release();

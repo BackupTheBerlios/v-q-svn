@@ -380,34 +380,28 @@ namespace POA_vq {
 	/**
 	 * 
 	 */
-	cpgsqlauth::error * cpgsqlauth::user_auth( auth_info & ai ) std_try {
+	cpgsqlauth::error * cpgsqlauth::user_get( auth_info & ai ) std_try {
 		if( ! ai.id_domain || ! ai.login )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT user_auth("
+			"SELECT * FROM user_get("
 			+Quote(static_cast<const char *>(ai.id_domain))+','
-			+Quote(lower(static_cast<const char *>(ai.login)))+','
-			+Quote(static_cast<const char *>(ai.pass))+')' ));
+			+Quote(lower(static_cast<const char *>(ai.login)))+')' ));
 		
-		if( res.empty() || res[0][0].is_null() ) 
-				return lr(::vq::ivq::err_func_res, "USER_AUTH");
+		if( res.empty() ) 
+				return lr(::vq::ivq::err_noent, "");
+		if( res.size() != 1 )
+				return lr(::vq::ivq::err_func_res, "");
 
-		const char *val = res[0][0].c_str();
-		if( '-' == *val ) {
-				switch( *(val+1) ) {
-				case '2':
-						return lr(::vq::ivq::err_pass_inv, "");
-				case '1':
-						return lr(::vq::ivq::err_noent, "");
-				default:
-						return lr(::vq::ivq::err_func_res, "USER_AUTH");
-				} 
-		}
-
-		ai.flags = res[0][0].as< ::vq::iauth::aif_type >(0);
+		ai.id_domain = res[0][0].c_str();
+		ai.login = res[0][1].c_str();
+		ai.pass = res[0][2].c_str();
+		ai.dir = res[0][3].c_str();
+		ai.flags = res[0][4].as< ::vq::iauth::aif_type >(0);
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
+
 #if 0	
 	/**
 	 *

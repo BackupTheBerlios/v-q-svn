@@ -2,14 +2,16 @@ BASE=../../..
 OBJS=ivq.o
 INCS=`cat $(BASE)/boost.inc` `cat $(BASE)/corba.inc` -I$(BASE)/libtext \
 -I$(BASE)/libsys
-LIBS=`cat $(BASE)/boost.lib` `cat $(BASE)/corba.lib` -L$(BASE)/core -lvq \
+LIBS=`cat $(BASE)/boost.lib` `cat $(BASE)/corba.lib` \
+`cat $(BASE)/boost_regex.lib` -L$(BASE)/core -lvq \
 -L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys
 
 all: .depend ivq
 
 include $(BASE)/Makefile.common
 
-ivq: $(BASE)/load $(BASE)/boost.lib $(BASE)/corba.lib ivq.o
+ivq: $(BASE)/load $(BASE)/boost.lib $(BASE)/boost_regex.lib \
+$(BASE)/corba.lib ivq.o
 	$(BASE)/load ivq $(LIBS)
 
 ##################

@@ -366,14 +366,11 @@ struct auth_test {
 			vq::iauth::auth_info aicur;
 			aicur.id_domain = ai.id_domain;
 			aicur.login = ai.login;
-			aicur.pass = now.c_str();
-			err = auth->user_auth(aicur);
+			err = auth->user_get(aicur);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
-			BOOST_CHECK_EQUAL(aicur.flags, 0);
-
-			aicur.pass = CORBA::string_dup("");
-			err = auth->user_auth(aicur);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_pass_inv);
+			BOOST_CHECK_EQUAL(now, static_cast<const char *>(aicur.pass));
+			BOOST_CHECK(!strcmp(aicur.dir, ""));
+			BOOST_CHECK_EQUAL(aicur.flags, 0U);
 		}
 
 		/**

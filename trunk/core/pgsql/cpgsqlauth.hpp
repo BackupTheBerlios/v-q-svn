@@ -69,7 +69,7 @@ namespace POA_vq {
 				    virtual error * user_rm( const char* dom, const char* user );
 				    virtual error * user_pass( const char* dom, const char* user, 
 							const char* pass );
-					virtual error * user_auth( auth_info& ai );
+					virtual error * user_get( auth_info& ai );
 					virtual error * user_ex( const char *dom, const char *user);
 					
 				    virtual error * eb_add( const char * re_domain, 

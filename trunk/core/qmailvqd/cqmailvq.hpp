@@ -74,7 +74,7 @@ namespace POA_vq {
 				    virtual error* user_pass( const char* dom_id, 
 							const char* login, const char* pass );
 				    virtual error* user_val( const char* user );
-				    virtual error* user_auth( auth_info& ai );
+				    virtual error* user_get( auth_info& ai );
 				    virtual error* user_ex( const char* dom_id, 
 							const char* login );
 #if 0
