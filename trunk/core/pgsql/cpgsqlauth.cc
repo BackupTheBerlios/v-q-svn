@@ -41,27 +41,27 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauthd::cpgsqlauthd() : pg(0) {
+	cpgsqlauth::cpgsqlauth() : pg(0) {
 	}
 	
 	/**
 	 *
 	 */
-	cpgsqlauthd::~cpgsqlauthd() {
+	cpgsqlauth::~cpgsqlauth() {
 		delete pg;
 	}
 	
 	/**
 	 * \exception runtime_error if it can't create socket
 	 */
-	void cpgsqlauthd::setup() {
+	void cpgsqlauth::setup() {
 		if( !(pg = new Connection(ac_pgsql.val_str().c_str())) ) 
 				throw runtime_error((string)"setup: no memory"); 
 	}
 	
 	/**
 	*/
-	void cpgsqlauthd::cmd_dom_add() {
+	void cpgsqlauth::cmd_dom_add() {
 		if( fdrdstr(cso, dom) != -1 ) {
 				dom = lower(dom);
 				Result res(NonTransaction(*pg).Exec(
@@ -82,7 +82,7 @@ namespace POA_vq {
 	
 	/**
 	*/
-	void cpgsqlauthd::cmd_dom_rm() {
+	void cpgsqlauth::cmd_dom_rm() {
 		if( fdrdstr(cso, dom) != -1 ) {
 				dom = str2tb(lower(dom));
 				Result res(NonTransaction(*pg).Exec(
@@ -101,7 +101,7 @@ namespace POA_vq {
 	
 	/**
 	*/
-	void cpgsqlauthd::cmd_user_add() {
+	void cpgsqlauth::cmd_user_add() {
 		uint8_t flags;
 		if( fdrdstr(cso, user) != -1
 			&& fdrdstr(cso, dom) != -1
@@ -140,7 +140,7 @@ namespace POA_vq {
 	/**
 	 * 
 	 */
-	void cpgsqlauthd::cmd_user_pass() {
+	void cpgsqlauth::cmd_user_pass() {
 		if( fdrdstr(cso, user) != -1
 			&& fdrdstr(cso, dom) != -1
 			&& fdrdstr(cso, pass) != -1 ) {
@@ -164,7 +164,7 @@ namespace POA_vq {
 	
 	/**
 	*/
-	void cpgsqlauthd::cmd_user_rm() {
+	void cpgsqlauth::cmd_user_rm() {
 		if( fdrdstr(cso, user) != -1
 			&& fdrdstr(cso, dom) != -1 ) {
 				dom = lower(str2tb(dom));
@@ -186,7 +186,7 @@ namespace POA_vq {
 	
 	/**
 	*/
-	void cpgsqlauthd::cmd_user_auth() {
+	void cpgsqlauth::cmd_user_auth() {
 		if( fdrdstr(cso, user) != -1
 		   && fdrdstr(cso, dom) != -1 ) {
 				dom = lower(dom);
@@ -228,7 +228,7 @@ namespace POA_vq {
 	
 	/**
 	 */
-	void cpgsqlauthd::cmd_user_ex() {
+	void cpgsqlauth::cmd_user_ex() {
 		if( -1 != fdrdstr(cso, dom)
 			&& -1 != fdrdstr(cso, user) ) {
 				uint8_t ret=0xff;
@@ -275,7 +275,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_dom_ip_add() {
+	void cpgsqlauth::cmd_dom_ip_add() {
 		if( fdrdstr(cso,dom) != -1
 			&& fdrdstr(cso,ip) != -1 ) {
 				Result res(NonTransaction(*pg).Exec(
@@ -289,7 +289,7 @@ namespace POA_vq {
 	
 	/**
 	*/
-	void cpgsqlauthd::cmd_dom_ip_rm() {
+	void cpgsqlauth::cmd_dom_ip_rm() {
 		if( fdrdstr(cso,dom) != -1
 			&& fdrdstr(cso,ip) != -1 ) {
 				Result res(NonTransaction(*pg).Exec(
@@ -302,7 +302,7 @@ namespace POA_vq {
 	}
 	/**
 	*/
-	void cpgsqlauthd::cmd_dom_ip_rm_all() {
+	void cpgsqlauth::cmd_dom_ip_rm_all() {
 		if( fdrdstr(cso,dom) != -1 ) {
 				Result res(NonTransaction(*pg).Exec(
 					"DELETE FROM ip2domain WHERE DOMAIN="
@@ -314,7 +314,7 @@ namespace POA_vq {
 	/**
 	 * 
 	 */
-	void cpgsqlauthd::cmd_dom_ip_ls() {
+	void cpgsqlauth::cmd_dom_ip_ls() {
 		if( fdrdstr(cso,dom) == -1 )
 				throw rd_error();
 	
@@ -341,7 +341,7 @@ namespace POA_vq {
 	}
 	/**
 	*/
-	void cpgsqlauthd::cmd_dom_ip_ls_dom() {
+	void cpgsqlauth::cmd_dom_ip_ls_dom() {
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT DISTINCT DOMAIN FROM ip2domain ORDER BY DOMAIN"));
 	
@@ -364,7 +364,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_add() throw (out_of_range) {
+	void cpgsqlauth::cmd_udot_add() throw (out_of_range) {
 		string val;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
@@ -394,7 +394,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_ls() {
+	void cpgsqlauth::cmd_udot_ls() {
 		string ext;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
@@ -433,7 +433,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_ls_type() {
+	void cpgsqlauth::cmd_udot_ls_type() {
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
 		   || fdrdstr(cso, ext) == -1
@@ -471,7 +471,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_rm() {
+	void cpgsqlauth::cmd_udot_rm() {
 		string id;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, id) == -1 )
@@ -486,7 +486,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_rm_type() {
+	void cpgsqlauth::cmd_udot_rm_type() {
 		if( fdrdstr(cso, dom) == -1 
 			|| fdrdstr(cso, user) == -1 
 			|| fdrdstr(cso, ext) == -1
@@ -506,7 +506,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_get() {
+	void cpgsqlauth::cmd_udot_get() {
 		string id;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, id) == -1 )
@@ -537,7 +537,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_rep() {
+	void cpgsqlauth::cmd_udot_rep() {
 		cvq::udot_info ui;
 	
 		if( fdrdstr(cso, dom) == -1
@@ -560,7 +560,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_has() {
+	void cpgsqlauth::cmd_udot_has() {
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
 		   || fdrdstr(cso, ext) == -1
@@ -583,7 +583,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_udot_type_cnt() {
+	void cpgsqlauth::cmd_udot_type_cnt() {
 		if( fdrdstr(cso, dom) == -1 
 			|| fdrdstr(cso, user) == -1 
 			|| fdrdstr(cso, ext) == -1
@@ -617,7 +617,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::qt_def_set( const string & d ) {
+	void cpgsqlauth::qt_def_set( const string & d ) {
 		dom = lower(d);
 		if( -1 != fdread(cso, &qb, sizeof qb)
 			&& -1 != fdread(cso, &qf, sizeof qf) ) {
@@ -641,7 +641,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	void cpgsqlauthd::cmd_qt_global_def_set() {
+	void cpgsqlauth::cmd_qt_global_def_set() {
 		qt_def_set("-");
 	}
 	
@@ -649,7 +649,7 @@ namespace POA_vq {
 	 * Gets default quota for new users and sends it via cso
 	 * \param dom domain
 	 */
-	void cpgsqlauthd::qt_def_get( const string & d ) {
+	void cpgsqlauth::qt_def_get( const string & d ) {
 		qb = qf = 0;
 		dom = lower(d);
 		Result res(NonTransaction(*pg).Exec(
@@ -676,7 +676,7 @@ namespace POA_vq {
 	/**
 	 * Gets limits for specified user
 	 */
-	void cpgsqlauthd::cmd_qt_get() {
+	void cpgsqlauth::cmd_qt_get() {
 		if( -1 == fdrdstr(cso, dom)
 			|| -1 == fdrdstr(cso, user))
 				throw rd_error();
@@ -709,7 +709,7 @@ namespace POA_vq {
 	/**
 	 * Sets limits for specified user
 	 */
-	void cpgsqlauthd::cmd_qt_set() {
+	void cpgsqlauth::cmd_qt_set() {
 		if( -1 == fdrdstr(cso, dom)
 			|| -1 == fdrdstr(cso, user)
 			|| -1 == fdread(cso, &qb, sizeof qb)
@@ -730,13 +730,13 @@ namespace POA_vq {
 	
 	/**
 	 */
-	void cpgsqlauthd::cmd_qt_global_def_get() {
+	void cpgsqlauth::cmd_qt_global_def_get() {
 		qt_def_get("-");
 	}
 	
 	/**
 	 */
-	void cpgsqlauthd::cmd_qt_def_get() {
+	void cpgsqlauth::cmd_qt_def_get() {
 		if( -1 != fdrdstr(cso, dom) ) {
 				qt_def_get(dom);
 		} else throw rd_error();
@@ -744,7 +744,7 @@ namespace POA_vq {
 	
 	/**
 	 */
-	void cpgsqlauthd::cmd_qt_def_set() {
+	void cpgsqlauth::cmd_qt_def_set() {
 		if( -1 != fdrdstr(cso, dom) ) {
 				qt_def_set(dom);
 		} else throw rd_error();
@@ -752,62 +752,62 @@ namespace POA_vq {
 	
 	/**
 	*/
-	void (cpgsqlauthd::* cpgsqlauthd::cmd_proc( char cmd )) () {
+	void (cpgsqlauth::* cpgsqlauth::cmd_proc( char cmd )) () {
 		switch(cmd) {
 		case cdaemonauth::cmd_dom_add: 
-			return &cpgsqlauthd::cmd_dom_add;
+			return &cpgsqlauth::cmd_dom_add;
 		case cdaemonauth::cmd_dom_rm:
-			return &cpgsqlauthd::cmd_dom_rm;
+			return &cpgsqlauth::cmd_dom_rm;
 		case cdaemonauth::cmd_user_add:
-			return &cpgsqlauthd::cmd_user_add;
+			return &cpgsqlauth::cmd_user_add;
 		case cdaemonauth::cmd_user_rm:
-			return &cpgsqlauthd::cmd_user_rm;
+			return &cpgsqlauth::cmd_user_rm;
 		case cdaemonauth::cmd_user_pass:
-			return &cpgsqlauthd::cmd_user_pass;
+			return &cpgsqlauth::cmd_user_pass;
 		case cdaemonauth::cmd_user_auth:
-			return &cpgsqlauthd::cmd_user_auth;
+			return &cpgsqlauth::cmd_user_auth;
 		case cdaemonauth::cmd_dom_ip_add:
-			return &cpgsqlauthd::cmd_dom_ip_add;
+			return &cpgsqlauth::cmd_dom_ip_add;
 		case cdaemonauth::cmd_dom_ip_rm:
-			return &cpgsqlauthd::cmd_dom_ip_rm;
+			return &cpgsqlauth::cmd_dom_ip_rm;
 		case cdaemonauth::cmd_dom_ip_rm_all:
-			return &cpgsqlauthd::cmd_dom_ip_rm_all;
+			return &cpgsqlauth::cmd_dom_ip_rm_all;
 		case cdaemonauth::cmd_dom_ip_ls:
-			return &cpgsqlauthd::cmd_dom_ip_ls;
+			return &cpgsqlauth::cmd_dom_ip_ls;
 		case cdaemonauth::cmd_dom_ip_ls_dom:
-			return &cpgsqlauthd::cmd_dom_ip_ls_dom;
+			return &cpgsqlauth::cmd_dom_ip_ls_dom;
 		case cdaemonauth::cmd_udot_add:
-			return &cpgsqlauthd::cmd_udot_add;
+			return &cpgsqlauth::cmd_udot_add;
 		case cdaemonauth::cmd_udot_rm:
-			return &cpgsqlauthd::cmd_udot_rm;
+			return &cpgsqlauth::cmd_udot_rm;
 		case cdaemonauth::cmd_udot_rm_type:
-			return &cpgsqlauthd::cmd_udot_rm_type;
+			return &cpgsqlauth::cmd_udot_rm_type;
 		case cdaemonauth::cmd_udot_ls:
-			return &cpgsqlauthd::cmd_udot_ls;
+			return &cpgsqlauth::cmd_udot_ls;
 		case cdaemonauth::cmd_udot_ls_type:
-			return &cpgsqlauthd::cmd_udot_ls_type;
+			return &cpgsqlauth::cmd_udot_ls_type;
 		case cdaemonauth::cmd_udot_get:
-			return &cpgsqlauthd::cmd_udot_get;
+			return &cpgsqlauth::cmd_udot_get;
 		case cdaemonauth::cmd_udot_rep:
-			return &cpgsqlauthd::cmd_udot_rep;
+			return &cpgsqlauth::cmd_udot_rep;
 		case cdaemonauth::cmd_udot_has:
-			return &cpgsqlauthd::cmd_udot_has;
+			return &cpgsqlauth::cmd_udot_has;
 		case cdaemonauth::cmd_udot_type_cnt:
-			return &cpgsqlauthd::cmd_udot_type_cnt;
+			return &cpgsqlauth::cmd_udot_type_cnt;
 		case cdaemonauth::cmd_user_ex:
-			return &cpgsqlauthd::cmd_user_ex;
+			return &cpgsqlauth::cmd_user_ex;
 		case cdaemonauth::cmd_qt_def_set:
-			return &cpgsqlauthd::cmd_qt_def_set;
+			return &cpgsqlauth::cmd_qt_def_set;
 		case cdaemonauth::cmd_qt_def_get:
-			return &cpgsqlauthd::cmd_qt_def_get;
+			return &cpgsqlauth::cmd_qt_def_get;
 		case cdaemonauth::cmd_qt_global_def_get:
-			return &cpgsqlauthd::cmd_qt_global_def_get;
+			return &cpgsqlauth::cmd_qt_global_def_get;
 		case cdaemonauth::cmd_qt_global_def_set:
-			return &cpgsqlauthd::cmd_qt_global_def_set;
+			return &cpgsqlauth::cmd_qt_global_def_set;
 		case cdaemonauth::cmd_qt_get:
-			return &cpgsqlauthd::cmd_qt_get;
+			return &cpgsqlauth::cmd_qt_get;
 		case cdaemonauth::cmd_qt_set:
-			return &cpgsqlauthd::cmd_qt_set;
+			return &cpgsqlauth::cmd_qt_set;
 		default:
 			return NULL;
 		}
@@ -815,10 +815,10 @@ namespace POA_vq {
 	/**
 	 * \return 0 - ok, 1 - eof, 2 - error
 	 */
-	int cpgsqlauthd::child(int fd) {
+	int cpgsqlauth::child(int fd) {
 		try {
 				char cmd;
-				void (cpgsqlauthd::* run)();
+				void (cpgsqlauth::* run)();
 	
 				cso = fd;
 		
@@ -852,6 +852,6 @@ namespace POA_vq {
 	/**
 	 * Plugin structure.
 	 */
-	cdaemonmaster::daemon_info pgsqlauthd_info = { & cpgsqlauthd::alloc };
+	cdaemonmaster::daemon_info pgsqlauthd_info = { & cpgsqlauth::alloc };
 
 } // namespace POA_vq

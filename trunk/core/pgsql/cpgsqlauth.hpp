@@ -23,12 +23,12 @@ namespace POA_vq {
 	/**
 	 * 
 	 */
-	class cpgsqlauthd : public cdaemonchild {
+	class cpgsqlauth : public cdaemonchild {
 			public:
 					typedef ::vq::iauth::error error;
 
-					cpgsqlauthd();
-					virtual ~cpgsqlauthd();
+					cpgsqlauth();
+					virtual ~cpgsqlauth();
 					
 	
 				    virtual error dom_add( const char* dom );
