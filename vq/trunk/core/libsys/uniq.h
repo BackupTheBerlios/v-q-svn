@@ -1,8 +1,12 @@
-#ifndef __UNIQ_H
-#define __UNIQ_H
+#ifndef __UNIQ_HPP
+#define __UNIQ_HPP
 
 #include <string>
 
-std::string uniq();
+namespace sys {
+		
+	std::string uniq();
 
-#endif // ifndef __UNIQ_H
+} // namespace sys 
+
+#endif // ifndef __UNIQ_HPP

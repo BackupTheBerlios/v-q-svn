@@ -31,22 +31,26 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef SIG_H
-#define SIG_H
+#ifndef SIG_HPP
+#define SIG_HPP
 
-bool sig_catch( int, void (*)(int) ); 
-bool sig_default( int );
+namespace sys {
 
-bool sig_pipe( void (*)(int) );
-bool sig_pipe_ign();
-bool sig_term( void (*)(int) );
-bool sig_int( void (*)(int) );
+	bool sig_catch( int, void (*)(int) ); 
+	bool sig_default( int );
 
-bool sig_child( void (*)(int) );
+	bool sig_pipe( void (*)(int) );
+	bool sig_pipe_ign();
+	bool sig_term( void (*)(int) );
+	bool sig_int( void (*)(int) );
 
-void sig_pause();
+	bool sig_child( void (*)(int) );
 
-bool sig_block( int );
-bool sig_unblock( int );
+	void sig_pause();
 
-#endif // ifndef SIG_H
+	bool sig_block( int );
+	bool sig_unblock( int );
+
+} // namespace sys
+
+#endif // ifndef SIG_HPP
