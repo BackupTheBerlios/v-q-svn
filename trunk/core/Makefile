@@ -1,5 +1,5 @@
 BASE=..
-OBJS=vq.o auth.o
+OBJS=vq.o auth.o logger.o
 INCS=`cat $(BASE)/corba.inc`
 LIBS=`cat $(BASE)/corba.lib`
 SUBDIR=pgsql qmailvqd
@@ -32,6 +32,9 @@ libvq.a: $(BASE)/make-lib auth.o vq.o .depend
 
 auth.cc auth.hpp: $(BASE)/idl auth.idl vq.idl vq.hpp
 	$(BASE)/idl auth.idl
+
+logger.cc logger.hpp: $(BASE)/idl logger.idl vq.idl vq.hpp
+	$(BASE)/idl logger.idl
 
 vq.cc vq.hpp: $(BASE)/idl vq.idl
 	$(BASE)/idl vq.idl
