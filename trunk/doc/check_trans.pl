@@ -24,12 +24,12 @@ foreach $tran (@trans) {
 
 	my %tfiles = &lns2hash(@lns);
 	foreach $file (keys(%files)) {
-		if( exists($tfiles[$file]) 
+		if( exists($tfiles{$file}) 
 			&& $tfiles{$file} >= $files{$file} ) {
 			delete $tfiles{$file};
 			next;
 		}
-		print "Old: $file\n";
+		print "Old: $file: ".int($tfiles{$file})."<".int($files{$file})."\n";
 		delete $tfiles{$file};
 	}
 	foreach $file (keys(%tfiles)) {
