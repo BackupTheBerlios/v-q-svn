@@ -6,3 +6,4 @@ cqmailvq_eb.o cqmailvq_user.o cqmailvq_user_conf.o qmail_assign_add.o qmail_assi
 cqmailvq_eb cqmailvq_user cqmailvq_user_conf qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_common qmail_file_add qmail_file_rm qmail_mrh_rm qmail_progs
 .depend
 autoresp autoresp.o cqautoresp.o
+deliver.o deliver

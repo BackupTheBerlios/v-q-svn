@@ -10,6 +10,8 @@ INCS=-I$(BASE)/base -I$(BASE) -I$(BASE)/libsys -I$(BASE)/libtext \
 LIBS=-L$(BASE)/libmain -lmain -L$(BASE)/base/libvqmain -lvqmain -L. -lcluemain \
 	-L$(BASE)/libconf -lconf -L$(BASE)/base -lvq
 
+.PHONY: all clean install
+
 all: .depend libcluemain.a dom_add dom_rm user_add user_rm user_pass \
 user_conf_add user_conf_ls \
 user_conf_rm user_auth dom_id dom_alias_add dom_alias_rm dom_ls dom_alias_ls \
@@ -76,5 +78,15 @@ user_conf_rm.o: user_conf_rm.cc
 
 #################
 clean:
-		rm -rf `cat TARGETS`
+	rm -rf `cat TARGETS`
+
+#################
+install: all
+	for p in libcluemain.a dom_add dom_rm user_add user_rm user_pass \
+			user_conf_add user_conf_ls \
+			user_conf_rm user_auth dom_id dom_alias_add dom_alias_rm dom_ls dom_alias_ls \
+			dom_ip_ls dom_ip_rm dom_ip_add ; do \
+		$(INSTALL) -D -m 0755 $$p $(PREFIX)/bin/$$p ; \
+	done
+	$(INSTALL) -D -m 0644 cluemain.hpp $(PREFIX)/include/v-q/interfaces/clue/cluemain.hpp
 

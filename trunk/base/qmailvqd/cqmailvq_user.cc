@@ -71,36 +71,6 @@ namespace POA_vq {
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
-	/**
-	 * \return Path to directory where user's .qmail files are located
-	 */
-	std::string cqmailvq::user_root_path( const std::string &dom_id,
-			const std::string & login ) const {
-		return dom_path(dom_id)+'/'+split_user(lower(login), this->user_split);
-	}
-
-	/**
-	 * \return Path to user's directory
-	 */
-	std::string cqmailvq::user_dir_path( const std::string &dom_id,
-			const std::string & login ) const {
-		return user_root_path(dom_id, lower(login))+'/'+login;
-	}
-
-	/**
-	 *
-	 */
-	std::string cqmailvq::user_md_subpath( const std::string & login ) const {
-		return "./"+login+"/Maildir/";
-	}
-	
-	/**
-	 * \return Path to user's maildir
-	 */
-	std::string cqmailvq::user_md_path( const std::string &dom_id,
-			const std::string & login ) const {
-		return user_dir_path(dom_id, login)+"/Maildir/";
-	}
 
 	/**
 	 * Add user
@@ -114,9 +84,9 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		string user(lower(static_cast<const char *>(ai.login)));
-		string spuser(user_root_path(static_cast<const char *>(ai.id_domain), 
+		string spuser(paths.user_root_path(static_cast<const char *>(ai.id_domain), 
 				user));
-		string user_add_dir(user_dir_path(static_cast<const char *>(ai.id_domain), 
+		string user_add_dir(paths.user_dir_path(static_cast<const char *>(ai.id_domain), 
 				user));
 	
 		/* check wheter domain has default quota for users */
@@ -138,7 +108,7 @@ namespace POA_vq {
 	
 		auto_ptr<error> ret;
 		ret.reset(maildir_make(
-			user_md_path(static_cast<const char *>(ai.id_domain), user)));
+			paths.user_md_path(static_cast<const char *>(ai.id_domain), user)));
 		if( ::vq::ivq::err_no != ret->ec ) {
 				sys::rmdirrec(user_add_dir);
 				return ret.release();
@@ -156,7 +126,7 @@ namespace POA_vq {
 		}
 		string dotuser(dotfile(static_cast<const char *>(ai.id_domain), 
 				user, ""));
-		if( ! sys::dumpstring(dotuser, user_md_subpath(user)+"\n") ) {
+		if( ! sys::dumpstring(dotuser, paths.user_md_subpath(user)+"\n") ) {
 				delete auth->user_rm(ai.id_domain, user.c_str());
 				sys::rmdirrec(user_add_dir);
 				return lr(::vq::ivq::err_wr, dotuser);
@@ -181,7 +151,7 @@ namespace POA_vq {
 		if( ::vq::ivq::err_no != ret->ec ) 
 				return ret.release();
 	
-		string dir(user_root_path(dom_id, login)+'/');
+		string dir(paths.user_root_path(dom_id, login)+'/');
 		ostringstream dir_mv;
 		struct timeval time_mv;
 		gettimeofday(&time_mv, NULL);
@@ -245,7 +215,7 @@ namespace POA_vq {
 		auto_ptr<error> ret(auth->user_get(ai));
 		if( ::vq::ivq::err_no == ret->ec ) {
 				if( '\0' == *ai.dir ) {
-						ai.dir = user_dir_path(
+						ai.dir = paths.user_dir_path(
 							static_cast<const char *>(ai.id_domain),
 							lower(static_cast<const char *>(ai.login))).c_str();
 				}

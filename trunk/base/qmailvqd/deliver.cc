@@ -16,13 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "split.h"
-#include "vq_conf.h"
+#include "cpaths.hpp"
 
 #include <vqmain.hpp>
-
-#include <sys/types.h>
-#include <unistd.h>
+#include <text.hpp>
+#include <conf.hpp>
 
 #include <exception>
 #include <iostream>
@@ -31,14 +29,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string>
 
 using namespace std;
-using namespace vq;
+
 /*
  *
  */
 int vqmain(int ac, char **av)
 {
 	char *args[11], *host, *tmp;
-	string ql = ac_qmail.val_str()+"/bin/qmail-local";
+
+	string conf_dir(VQ_HOME+"/etc/ivq/qmail/");
+	conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home", QMAIL_HOME);
+	conf::cintconf split_user(conf_dir+"split_user", SPLIT_USER);
+	conf::cintconf split_dom(conf_dir+"split_dom", SPLIT_DOM);
+	conf::clnconf data(conf_dir+"data", DATA);
+	cpaths paths(data.val_str()+"/domains", split_dom.val_int(), split_user.val_int());
+
+	string ql = qhome.val_str()+"/bin/qmail-local";
 	args[0] = (char*) ql.c_str();
 	args[1] = "--";
 	args[2] = getenv("USER");
@@ -63,12 +69,12 @@ int vqmain(int ac, char **av)
 			cout<<"chdir: " << home << ": " << strerror(errno) << endl;
 			return 111;
 	}
-	if( chdir(split_user(ext).c_str()) ) {
+	if( chdir(paths.user_root_subpath(ext).c_str()) ) {
 			cout<<"deliver: Sorry, no mailbox here by that name. (#5.1.1)"<<endl;
 			return 100;
 	}
 	home+='/';
-	home+=split_user(ext);
+	home+=paths.user_root_subpath(ext);
 	home+='/';
 	args[3] = (char*) home.c_str();
 

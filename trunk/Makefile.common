@@ -1,3 +1,6 @@
+PREFIX?=/tmp/v-q
+INSTALL=install
+
 .PHONY: auto-mkdir
 
 auto-mkdir:

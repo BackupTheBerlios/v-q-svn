@@ -111,7 +111,7 @@ int vqmain( int ac , char ** av ) {
 				}
 
 				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
-					"/var/qmail/");
+					QMAIL_HOME);
 				conf::cintconf qmode(VQ_HOME+"/etc/ivq/qmail/qmode", "0644");
 
 				string fn(qhome.val_str()+"/control/rcpthosts");

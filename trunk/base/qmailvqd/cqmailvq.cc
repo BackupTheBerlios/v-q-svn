@@ -55,9 +55,9 @@ namespace POA_vq {
 				unsigned s_dom, unsigned s_user,
 				mode_t fm, mode_t mm, mode_t dm,
 				const std::string & user, uid_t uid, gid_t gid ) 
-			: home(h), domains(d), dom_split(s_dom), user_split(s_user), 
+			: home(h), domains(d),
 			fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), 
-			gid(gid), auth(auth) std_try {
+			gid(gid), auth(auth), paths(d, s_dom, s_user) std_try {
 	} std_catch
 	
 	/**
@@ -166,19 +166,7 @@ namespace POA_vq {
 	 * \param dom_id domain's id.
 	 */
 	std::string cqmailvq::virt_prefix( const std::string & dom_id ) const {
-		ostringstream pre;
-		pre	<< this->domains << '/'
-			<< text::split_user(dom_id, this->dom_split) << '/' << dom_id;
-		return pre.str();
-	}
-
-	/**
-	 * \return Path for domain that will be put into assign
-	 * \param dom_id domain's id.
-	 */
-	std::string cqmailvq::dom_path( const std::string & dom_id ) const {
-		return this->domains + '/' + text::split_id(dom_id, this->dom_split) 
-			+ '/' + dom_id;
+		return paths.dom_path(dom_id);
 	}
 
 	/**
@@ -191,7 +179,7 @@ namespace POA_vq {
 		domln 
 			<< '+' << virt_prefix(dom_id) << "-:" 
 			<< this->user << ':' << this->uid << ':' << this->gid << ':'
-			<< dom_path(dom_id) << ":-::";
+			<< paths.dom_path(dom_id) << ":-::";
 		return domln.str();
 	}
 
@@ -696,18 +684,6 @@ namespace POA_vq {
 		return lr(::vq::ivq::err_no, dir);
 	} std_catch
 	
-	/**
-	 * Create path to user's maildir (always with / at the end)
-	 * \return path to maildir of specified user\@domain
-	 */
-	string cqmailvq::maildir_path(const string &d, const string &u) 
-			const std_try {
-		string dom(text::lower(d)), user(text::lower(u));
-		return this->domains + '/' + text::split_dom(dom, this->dom_split)
-				+'/'+dom
-				+'/'+text::split_user(user, this->user_split)+'/'+user+"/Maildir/";
-	} std_catch
-
 #if 0
 	/**
 	 * Set current usage of mailbox.
@@ -735,10 +711,10 @@ namespace POA_vq {
 		string dom(text::lower(d)), user(text::lower(u));
 	
 		if( ! qb && ! qf ) {
-				string fn(maildir_path(dom, user)+"maildirquota");
+				string fn(user_md_path(dom, user)+"maildirquota");
 				if( unlink(fn.c_str()) && errno != ENOENT )
 						return lr(::vq::ivq::err_unlink, fn);
-				fn = maildir_path(dom, user)+"maildirsize";
+				fn = user_md_path(dom, user)+"maildirsize";
 				if( unlink(fn.c_str()) && errno != ENOENT )
 						return lr(::vq::ivq::err_unlink, fn);
 				if( auth->qt_set(dom, user, qb, qf) )
@@ -746,9 +722,9 @@ namespace POA_vq {
 		} else {
 				ostringstream qtstr;
 				qtstr<<qb<<'S'<<','<<qf<<'C';
-				string mdqfn(maildir_path(dom, user)+"maildirquota");
+				string mdqfn(user_md_path(dom, user)+"maildirquota");
 				string mdqtmp, mdstmp;
-				string mdsfn(maildir_path(dom, user)+"maildirsize");
+				string mdsfn(user_md_path(dom, user)+"maildirsize");
 				quota_type qbcur, qfcur;
 	
 				if( auth->qt_get(dom, user, qbcur, qfcur) )

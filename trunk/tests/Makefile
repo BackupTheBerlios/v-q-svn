@@ -1,6 +1,6 @@
 SUBDIR=base
 
-.PHONY: all clean
+.PHONY: all clean tests install
 
 all::
 	@for entry in $(SUBDIR); do \
@@ -29,3 +29,4 @@ clean:
 		) || exit 1; \
 	done
 
+install:

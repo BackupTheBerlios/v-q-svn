@@ -6,7 +6,7 @@ OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o \
 	qmail_file_rm.o qmail_files.o qmail_mrh_add.o qmail_mrh_rm.o \
 	qmail_rcpthosts_add.o \
 	qmail_virtualdomains_add.o qmail_virtualdomains_rm.o qmailvqd.o \
-	cqautoresp.o autoresp.o
+	cqautoresp.o autoresp.o deliver.o
 INCS=-I$(BASE)/base -I$(BASE) -I../libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf `cat $(BASE)/corba.inc`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
@@ -14,12 +14,17 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L$(BASE)/libconf -lconf \
 	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext `cat $(BASE)/corba.lib`
 
+.PHONY: all clean install
+
 all: .depend auto-mkdir auto/d_namlen.h qmailvqd qmail_virtualdomains_add \
 qmail_virtualdomains_rm qmail_rcpthosts_add qmail_mrh_add qmail_mrh_rm \
 qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_file_add \
-qmail_file_rm autoresp
+qmail_file_rm autoresp deliver
 
 include $(BASE)/Makefile.common
+
+deliver: $(BASE)/load deliver.o $(BASE)/corba.lib
+	$(BASE)/load deliver $(LIBS)
 
 qmailvqd: $(BASE)/load $(BASE)/corba.lib qmail_files.o qmailvqd.o \
 cqmailvq_dom.o cqmailvq.o cqmailvq_user.o cqmailvq_eb.o cqmailvq_user_conf.o
@@ -70,14 +75,35 @@ auto/d_namlen.h: $(BASE)/compile try/d_namlen.cc d_namlen.h1 d_namlen.h2
 qmail_files.o qmailvqd.o cqmailvq_dom.o cqmailvq.o cqmailvq_user.o \
 cqmailvq_eb.o cqmailvq_user_conf.o: $(BASE)/corba.inc
 
-$(OBJS): $(BASE)/compile
+$(OBJS): $(BASE)/compile conf/qmail_home 
+
+qmailvqd.o deliver.o: conf/split_user conf/split_dom conf/data
 
 cqmailvq_user.o: auto/d_namlen.h
 
+qmailvqd.o: qmailvqd.cc
+	$(BASE)/compile $(INCS) $< -DQMAIL_HOME=`head -n 1 conf/qmail_home` \
+	-DSPLIT_USER=`head -n 1 conf/split_user` -DSPLIT_DOM=`head -n 1 conf/split_dom` \
+	-DDATA=`head -n 1 conf/data`
+
+deliver.o: deliver.cc
+	$(BASE)/compile $(INCS) $< -DQMAIL_HOME=`head -n 1 conf/qmail_home` \
+	-DSPLIT_USER=`head -n 1 conf/split_user` -DSPLIT_DOM=`head -n 1 conf/split_dom` \
+	-DDATA=`head -n 1 conf/data`
+
 .cc.o:
-	$(BASE)/compile $(INCS) $<
+	$(BASE)/compile $(INCS) $< -DQMAIL_HOME=`head -n 1 conf/qmail_home`
 
 #################
 clean:
 		rm -rf `cat TARGETS`
+
+#################
+install: all
+	for p in qmailvqd qmail_virtualdomains_add \
+			qmail_virtualdomains_rm qmail_rcpthosts_add qmail_mrh_add qmail_mrh_rm \
+			qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_file_add \
+			qmail_file_rm autoresp deliver; do \
+		$(INSTALL) -D -m 0755 $$p $(PREFIX)/bin/$$p ; \
+	done
 

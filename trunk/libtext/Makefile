@@ -1,5 +1,7 @@
 BASE=..
 
+.PHONY: all clean install
+
 all: auto-mkdir auto/lmd5.h .depend libtext.so
 
 include $(BASE)/Makefile.common
@@ -42,3 +44,11 @@ split.o: $(BASE)/comp-so split.cc
 #####################
 clean:
 		rm -rf `cat TARGETS`
+
+#################
+install: all
+	for p in *.hpp ; do \
+		$(INSTALL) -D -m 0644 $$p $(PREFIX)/include/v-q/libtext/$$p ; \
+	done
+	$(INSTALL) -D -m 0755 libtext.so.6.0 $(PREFIX)/lib/v-q/libtext.so.6.0
+	$(INSTALL) -D -m 0755 libtext.so $(PREFIX)/lib/v-q/libtext.so

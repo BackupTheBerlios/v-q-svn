@@ -20,9 +20,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef __CQMAILVQ_HPP
 #define __CQMAILVQ_HPP
 
+#include "qmail_files.hpp"
+#include "cpaths.hpp"
 #include "../vq.hpp"
 #include "../auth.hpp"
-#include "qmail_files.hpp"
 
 #include <pfstream.hpp>
 
@@ -130,14 +131,13 @@ namespace POA_vq {
 						
 					std::string home; //!< home directory
 					std::string domains; //!< maildirs are placed here
-					unsigned dom_split;
-					unsigned user_split;
 					mode_t fmode; //!< permissions of created files
 					mode_t mmode; //!< permissions of created directories in Maildir
 					mode_t dmode; //!< permissions of directories created
 					std::string user; //!< user name we are working as
 					uid_t uid; //!< user's id.
 					gid_t gid; //!< group's id.
+					cpaths paths; //!< path generator (some common code)
 
 					::vq::iauth_var & auth; //!< authorization module
 
@@ -161,22 +161,6 @@ namespace POA_vq {
 					error * qmail_file_add( qmail_file, const std::string & );
 					std::string virt_prefix(const std::string &) const;
 				
-				/**
-				 * \defgroup path Paths handling
-				 */
-				//@{
-					std::string dom_path( const std::string & ) const;
-					std::string user_root_path(const std::string &, 
-							const std::string &) const;
-					std::string user_dir_path(const std::string &, 
-							const std::string &) const;
-					std::string user_md_path(const std::string &, 
-							const std::string &) const;
-					std::string user_md_subpath(const std::string &) const;
-					std::string maildir_path(const std::string &, 
-							const std::string &) const;
-				//@}
-
 					int run( char * const [] );
 				
 					/// Make maildir
@@ -223,8 +207,6 @@ namespace POA_vq {
 				 * \ingroup dom
 				 */
 				//@{
-					std::string dompath(const std::string &);
-	
 					error * dom_del_lock(const std::string &);
 					error * dom_del_unlock(const std::string &); 
 				//@}

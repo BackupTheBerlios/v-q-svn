@@ -51,8 +51,8 @@ int vqmain(int ac, char **av) {
 	string conf_dir(base+"etc/ivq/qmail/");
 	conf::clnconf ivq_name(conf_dir+"ivq_name", "vq::ivq");
 	conf::clnconf iauth_name(conf_dir+"iauth_name", "vq::iauth");
-	conf::cintconf split_dom(conf_dir+"split_dom", "1");
-	conf::cintconf split_user(conf_dir+"split_user", "3");
+	conf::cintconf split_dom(conf_dir+"split_dom", SPLIT_DOM);
+	conf::cintconf split_user(conf_dir+"split_user", SPLIT_USER);
 	conf::cintconf fmode(conf_dir+"fmode", "0640");
 	conf::cintconf mmode(conf_dir+"mmode", "0750");
 	conf::cintconf dmode(conf_dir+"dmode", "0750");
@@ -63,7 +63,7 @@ int vqmain(int ac, char **av) {
 	os.str("");
 	os<<getegid();
 	conf::cgidconf gid(conf_dir+"gid", os.str());
-	conf::clnconf domains(conf_dir+"domains", base+"domains");
+	conf::clnconf data(conf_dir+"data", DATA);
 
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
@@ -116,7 +116,7 @@ int vqmain(int ac, char **av) {
 	/*
 	 * Create authorization object
 	 */
-	auto_ptr<cqmailvq> vqimp(new cqmailvq(base, domains.val_str(), auth,
+	auto_ptr<cqmailvq> vqimp(new cqmailvq(base, data.val_str()+"/domains", auth,
 		split_dom.val_int(), split_user.val_int(),
 		fmode.val_int(), mmode.val_int(), dmode.val_int(),
 		user.val_str(), uid.val_int(), gid.val_int() ));

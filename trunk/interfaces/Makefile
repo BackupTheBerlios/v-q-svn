@@ -1,6 +1,6 @@
 SUBDIR=clue
 
-.PHONY: all clean
+.PHONY: all clean install
 
 all::
 	@for entry in $(SUBDIR); do \
@@ -12,6 +12,15 @@ all::
 	done
 
 clean:
+	@for entry in $(SUBDIR); do \
+		( \
+			echo "===> $$entry" ; \
+			cd $$entry ; \
+			$(MAKE) $@; \
+		); \
+	done
+
+install: all
 	@for entry in $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \

@@ -8,12 +8,15 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
 	`cat $(BASE)/corba.lib` `pqxx-config --libs`
 
+.PHONY: pgsql all clean install install-pgsql
+
 pgsql: .depend pgsqlauthd pgsqllogd
 
 all:
 
 include $(BASE)/Makefile.common
 
+##################
 clean:
 		rm -rf `cat TARGETS`
 
@@ -31,3 +34,11 @@ $(OBJS): $(BASE)/compile $(BASE)/corba.inc
 
 .cc.o:
 	$(BASE)/compile $(INCS) $<
+
+##################
+install:
+
+install-pgsql: pgsql
+	for p in pgsqllogd pgsqlauthd install.pgsql ; do \
+		$(INSTALL) -D -m 0755 $$p $(PREFIX)/bin/$$p ; \
+	done

@@ -270,7 +270,7 @@ namespace POA_vq {
 	 */
 	string cqmailvq::dotfile(const string &dom, const string &u, const string &e) std_try {
 		string user(u), ext(e);
-		string dotfile(user_root_path(dom, u));
+		string dotfile(paths.user_root_path(dom, u));
 		dotfile.append("/.qmail-");
 		replace(user.begin(),user.end(), '.', ':');
 		dotfile.append(user);

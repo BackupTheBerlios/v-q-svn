@@ -2,6 +2,7 @@ BASE=..
 OBJS=main.o
 INCS=
 
+.PHONY: all clean install
 
 all: .depend libmain.a
 
@@ -19,3 +20,7 @@ libmain.a: $(BASE)/make-lib main.o
 clean:
 		rm -rf `cat TARGETS`
 
+#################
+install: all
+	$(INSTALL) -D -m 0644 main.hpp $(PREFIX)/include/v-q/libmain/main.hpp
+	$(INSTALL) -D -m 0755 libmain.a $(PREFIX)/lib/v-q/libmain.a

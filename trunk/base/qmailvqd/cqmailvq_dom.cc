@@ -91,7 +91,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_temp, "wrong exit value");
 		}
 
-		string dir(dom_path(dom_id));
+		string dir(paths.dom_path(dom_id));
 		if(!rmdirrec(dir) && errno != ENOENT) {
 				return lr(::vq::ivq::err_unlink, dir);
 		}
@@ -118,7 +118,7 @@ namespace POA_vq {
 				return ret.release();
 		}
 	
-		string dom_add_dir(dom_path(static_cast<const char *>(did)));
+		string dom_add_dir(paths.dom_path(static_cast<const char *>(did)));
 
 		if(!mkdirhier(dom_add_dir.c_str(), 
 			this->dmode, this->uid, this->gid)) {
@@ -383,15 +383,6 @@ namespace POA_vq {
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	
-	/**
-	 * Create path for specified domain (in vq directory)
-	 * \param dom domain
-	 * \return path (ie. /var/vq/domains/pl/org/test/test.org.pl)
-	 */
-	string cqmailvq::dompath(const std::string &dom) std_try {
-		return this->domains + '/' + split_dom(dom, this->dom_split)+dom;
-	} std_catch
-
 	/**
 	 * Returns id. number of domain
 	 */

@@ -3,6 +3,8 @@ OBJS=conf.o
 INCS=
 LIBS=
 
+.PHONY: all clean install
+
 all: .depend libconf.a
 
 include $(BASE)/Makefile.common
@@ -21,3 +23,7 @@ $(OBJS): $(BASE)/comp-so
 clean:
 		rm -rf `cat TARGETS`
 
+#################
+install: all
+	$(INSTALL) -D -m 0644 conf.hpp $(PREFIX)/include/v-q/libconf/conf.hpp
+	$(INSTALL) -D -m 0755 libconf.a $(PREFIX)/lib/v-q/libconf.a

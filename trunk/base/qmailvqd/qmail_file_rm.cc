@@ -53,7 +53,7 @@ int vqmain( int ac , char ** av ) {
 				}
 
 				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
-					"/var/qmail/");
+					QMAIL_HOME);
 
 				string fn(qhome.val_str()+'/'
 					+qf2file(static_cast<qmail_file>(*av[1])));

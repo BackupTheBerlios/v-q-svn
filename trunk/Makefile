@@ -1,8 +1,8 @@
 SUBDIR=tools libconf libmain libsys libtext base interfaces
 
-.PHONY: all clean pgsql install
+.PHONY: all clean pgsql install install-pgsql
 
-all::
+all clean install:
 	@for entry in $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \
@@ -11,26 +11,8 @@ all::
 		) || exit 1; \
 	done
 
-pgsql::
+pgsql install-pgsql:
 	@for entry in base/pgsql; do \
-		( \
-			echo "===> $$entry" ; \
-			cd $$entry ; \
-			exec $(MAKE) $@; \
-		) || exit 1; \
-	done
-
-clean:
-	@for entry in tests $(SUBDIR); do \
-		( \
-			echo "===> $$entry" ; \
-			cd $$entry ; \
-			exec $(MAKE) $@; \
-		) || exit 1; \
-	done
-
-install:
-	@for entry in tests $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \

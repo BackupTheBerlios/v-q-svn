@@ -2,7 +2,9 @@ BASE=..
 OBJS=vq.o auth.o logger.o autoresp.o
 INCS=`cat $(BASE)/corba.inc`
 LIBS=`cat $(BASE)/corba.lib`
-SUBDIR=pgsql qmailvqd libvqmain
+SUBDIR=libvqmain pgsql qmailvqd
+
+.PHONY: all clean install
 
 all:: .depend libvq.a libautoresp.a
 	@for entry in $(SUBDIR); do \
@@ -51,3 +53,16 @@ autoresp.o:
 	$(BASE)/comp-so -I$(BASE)/libmain -I$(BASE)/libtext -I$(BASE)/libsys \
 	-Ilibvqmain autoresp.cc
 
+################
+install: all
+	@for entry in $(SUBDIR); do \
+		( \
+			echo "===> $$entry" ; \
+			cd $$entry ; \
+			$(MAKE) $@; \
+		) || exit 1; \
+	done
+	for p in auth.hpp auth.idl vq.idl vq.hpp logger.idl logger.hpp; do \
+		$(INSTALL) -D -m 0644 $$p $(PREFIX)/include/v-q/base/$$p ; \
+	done
+	$(INSTALL) -D -m 0755 libvq.a $(PREFIX)/lib/v-q/libvq.a

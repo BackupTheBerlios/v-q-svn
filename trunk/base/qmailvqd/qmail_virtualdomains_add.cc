@@ -106,7 +106,7 @@ int vqmain( int ac , char ** av ) {
 						return 111;
 				}
 
-				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home", "/var/qmail");
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home", QMAIL_HOME);
 				conf::cintconf qmode(VQ_HOME+"/etc/ivq/qmail/qmode", "0644");
 
 				string fn(qhome.val_str()+"/control/virtualdomains");

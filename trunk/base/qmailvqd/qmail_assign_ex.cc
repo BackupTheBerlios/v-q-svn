@@ -39,7 +39,7 @@ int vqmain( int ac , char ** av ) {
 				}
 
 				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
-					"/var/qmail/" );
+					QMAIL_HOME );
 				
 				ipfstream in((qhome.val_str()+"/users/assign").c_str());
 				if( ! in ) {
