@@ -1,0 +1,3 @@
+#!/bin/sh
+# WARNING: This file was auto-generated. Do not edit!
+exec g++ -D_REENTRANT -g -fpic -DPIC -pipe -Wall -O2 -c ${1+"$@"}

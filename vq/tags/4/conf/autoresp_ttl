@@ -1,0 +1,4 @@
+3600
+
+Period in seconds when information about senders is cached. So, if someone
+sends 5 messages within this time only one automatic reponse will be generated.
