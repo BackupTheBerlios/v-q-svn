@@ -20,13 +20,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef __CQAUTORESP_H
 #define __CQAUTORESP_H
 
+#include <cautoresp.hpp>
+#include <lower.hpp>
+
 #include <iostream>
 #include <stdexcept>
 #include <sys/types.h>
 #include <regex.h>
-
-#include "lower.h"
-#include "cautoresp.h"
 
 class cqautoresp : public cautoresp {
 		public:
@@ -100,12 +100,13 @@ class cqautoresp : public cautoresp {
 				map_hdr_val hdrs_in;
 				regex_t re_x_remark;
 				regex_t re_x_mailer;
+				int autoresp_ttl;
 
 				std::string subdir(const std::string &, const std::string &);
 				static std::string uniq();
-				static bool histAdd(const std::string &, const std::string &);
-				static bool histHas(const std::string &, const std::string &);
-				static bool histIDMatches(const std::string &, 
+				bool histAdd(const std::string &, const std::string &);
+				bool histHas(const std::string &, const std::string &);
+				bool histIDMatches(const std::string &, 
 						const std::string &, const std::string & );
 				void msgSend();
 				void msgWrite( std::ostream & );

@@ -16,24 +16,27 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "cqautoresp.hpp"
+
+#include <sys.hpp>
+#include <pfstream.hpp>
+#include <conf.hpp>
+#include <vqmain.hpp>
+
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <new>
+
 #include <sstream>
 #include <algorithm>
 #include <ctime>
 #include <cstdio>
 #include <cerrno>
 
-#include "sys.h"
-#include "cqautoresp.h"
-#include "vq_conf.h"
-#include "pfstream.h"
-
 using namespace std;
 using namespace posix;
-using namespace vq;
+using namespace sys;
+using namespace text;
 
 cautoresp * cautoresp::alloc() {
 	return new cqautoresp();
@@ -49,6 +52,9 @@ cqautoresp::cqautoresp() {
 	if( regcomp(&re_x_remark, ".*automatic.*response.*", REG_ICASE | REG_NOSUB 
 		| REG_EXTENDED ) )
 			throw regex_comp("re_x_remark");
+
+	conf::cintconf ar_ttl(VQ_HOME+"/etc/ivq/qmail/autoresp_ttl", "3600" );
+	this->autoresp_ttl = ar_ttl.val_int();
 }
 /**
  * 
@@ -292,7 +298,7 @@ bool cqautoresp::histAdd(const std::string &fn, const std::string &_add) {
 			time>>then.tv_sec;
 			if( ! time ) continue;
 			timersub(&now, &then, &sub);
-			if( sub.tv_sec > ac_autoresp_ttl.val_int() ) continue;
+			if( sub.tv_sec > this->autoresp_ttl ) continue;
 			tmp<<ln<<endl;
 			ln=ln.substr(0, sep);
 			if(ln == add) matches= true;
@@ -344,7 +350,7 @@ bool cqautoresp::histHas(const std::string &fn, const std::string &_chk) {
 			time>>then.tv_sec;
 			if( ! time ) continue;
 			timersub(&now, &then, &sub);
-			if( sub.tv_sec > ac_autoresp_ttl.val_int() ) continue;
+			if( sub.tv_sec > this->autoresp_ttl ) continue;
 			ln=ln.substr(0, sep);
 			if(ln == chk) {
 					matches= true;
@@ -390,7 +396,7 @@ bool cqautoresp::histIDMatches(const std::string &fn,
 			time>>then.tv_sec;
 			if( ! time ) continue;
 			timersub(&now, &then, &sub);
-			if( sub.tv_sec > ac_autoresp_ttl.val_int() ) continue;
+			if( sub.tv_sec > this->autoresp_ttl ) continue;
 			ln=ln.substr(0, sep);
 			if( (! chk.empty() && chk.find(ln) != string::npos)
 				|| (!chk1.empty() && chk1.find(ln) != string::npos) ) {

@@ -1,8 +1,12 @@
 BASE=../..
-OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o cqmailvq_user_conf.o \
-	qmail_assign_add.o qmail_assign_ex.o qmail_assign_rm.o qmail_common.o qmail_file_add.o \
-	qmail_file_rm.o qmail_files.o qmail_mrh_add.o qmail_mrh_rm.o qmail_rcpthosts_add.o \
-	qmail_virtualdomains_add.o qmail_virtualdomains_rm.o qmailvqd.o
+OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o \
+	cqmailvq_user_conf.o \
+	qmail_assign_add.o qmail_assign_ex.o qmail_assign_rm.o qmail_common.o \
+	qmail_file_add.o \
+	qmail_file_rm.o qmail_files.o qmail_mrh_add.o qmail_mrh_rm.o \
+	qmail_rcpthosts_add.o \
+	qmail_virtualdomains_add.o qmail_virtualdomains_rm.o qmailvqd.o \
+	cqautoresp.o autoresp.o
 INCS=-I$(BASE)/base -I$(BASE) -I$(BASE)/libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf `cat $(BASE)/corba.inc`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
@@ -12,7 +16,8 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 
 all: .depend auto-mkdir auto/d_namlen.h qmailvqd qmail_virtualdomains_add \
 qmail_virtualdomains_rm qmail_rcpthosts_add qmail_mrh_add qmail_mrh_rm \
-qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_file_add qmail_file_rm
+qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_file_add \
+qmail_file_rm autoresp
 
 include $(BASE)/Makefile.common
 
@@ -51,6 +56,9 @@ qmail_file_add: $(BASE)/load qmail_file_add.o qmail_files.o
 
 qmail_file_rm: $(BASE)/load qmail_file_rm.o qmail_files.o qmail_common.o
 	$(BASE)/load qmail_file_rm qmail_files.o qmail_common.o $(LIBS)
+
+autoresp: $(BASE)/load autoresp.o cqautoresp.o ../libautoresp.a
+	$(BASE)/load autoresp cqautoresp.o $(LIBS) -L.. -lautoresp 
 
 auto/d_namlen.h: $(BASE)/compile try/d_namlen.cc d_namlen.h1 d_namlen.h2
 	( ( cd try && $(BASE)/compile d_namlen.cc ) >/dev/null 2>&1 \

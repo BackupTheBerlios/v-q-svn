@@ -16,10 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "main.hpp"
-#include "text.hpp"
-#include "sys.hpp"
 #include "cautoresp.hpp"
+
+#include <vqmain.hpp>
+#include <text.hpp>
+#include <sys.hpp>
 
 #include <string>
 #include <map>
@@ -55,7 +56,7 @@ template <class T> void hdr_array2map( const T & array,
 		cautoresp::map_hdr_val & map ) {
 
 	// insert values into map (map header name to its value)
-	pair<cautoresp::map_hdr_val::key_type,cautoresp::map_hdr_val::data_type> 
+	pair<cautoresp::map_hdr_val::key_type, cautoresp::map_hdr_val::mapped_type> 
 			hdr_val_item;
 
 	string::size_type sep_pos, field_len;
@@ -103,7 +104,7 @@ cautoresp::map_hdr_val input_read() {
  * representation of headers to add. It may contain only
  * message double coded.
  */
-int cppmain(int ac , char **av) {
+int vqmain(int ac , char **av) {
 	try {
 			if( ac < 3 || ac > 4 ) {
    					usage(*av);
