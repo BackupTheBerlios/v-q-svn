@@ -1,15 +1,10 @@
 BASE=..
 
-.PHONY: auto-mkdir
-
 all: auto-mkdir auto/lmd5.h .depend libtext.so
 
 include $(BASE)/Makefile.common
 
 #######################
-
-auto-mkdir:
-	mkdir -p auto
 
 auto/lmd5.c: $(BASE)/compile try/md5.c md5.c1 md5.c2
 	( ( cd try && $(BASE)/../compile md5.c ) >/dev/null 2>&1 \

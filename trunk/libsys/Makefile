@@ -1,11 +1,6 @@
 BASE=..
 
-.PHONY: auto-mkdir
-
 all: auto-mkdir .depend libsys.so
-
-auto-mkdir:
-	mkdir -p auto
 
 include $(BASE)/Makefile.common
 

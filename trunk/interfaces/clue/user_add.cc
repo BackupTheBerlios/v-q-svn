@@ -47,7 +47,7 @@ void usage()
 /*
  *
  */
-bool user_add(const string &e, const string &p, uint8_t flags, 
+bool user_add(const string &e, const string &p, ::vq::ivq::uif_type flags, 
 		::vq::ivq_var & vq, bool quiet, bool eb_chk )
 {
 	static cdom_name2id dom_name2id;
@@ -91,7 +91,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 	bool quiet = false, eb_chk = true;
 	int opt;
 	bool sin = false;
-	uint8_t flags=0;
+	::vq::ivq::uif_type flags=0;
 	while( (opt=getopt(ac,av,"sqhl")) != -1 ) {
 			switch(opt) {
 			case 's':

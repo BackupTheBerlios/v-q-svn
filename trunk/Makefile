@@ -7,8 +7,8 @@ all::
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \
-			$(MAKE) $@; \
-		); \
+			exec $(MAKE) $@; \
+		) || exit 1; \
 	done
 
 pgsql::
@@ -16,8 +16,8 @@ pgsql::
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \
-			$(MAKE) $@; \
-		); \
+			exec $(MAKE) $@; \
+		) || exit 1; \
 	done
 
 clean:
@@ -25,7 +25,7 @@ clean:
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \
-			$(MAKE) $@; \
-		); \
+			exec $(MAKE) $@; \
+		) || exit 1; \
 	done
 

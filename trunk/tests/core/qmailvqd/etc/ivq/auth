@@ -1,1 +1,1 @@
--ORBInitRef NameService=corbaloc::openbsd:12453/NameService
+-ORBInitRef NameService=corbaloc::slack:12453/NameService

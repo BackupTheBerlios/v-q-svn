@@ -1,8 +1,8 @@
 BASE=..
 
-include $(BASE)/Makefile.common
-
 all: mkdep
+
+include $(BASE)/Makefile.common
 
 clean:
 	rm -rf `cat TARGETS`

@@ -1,1 +1,1 @@
--L/usr/local/lib/ -lboost_unit_test_framework-gcc-1_31 -lboost_date_time-gcc-1_31
+-L/usr/local/progs/boost-1_31/lib/

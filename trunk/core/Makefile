@@ -4,7 +4,7 @@ INCS=`cat $(BASE)/corba.inc`
 LIBS=`cat $(BASE)/corba.lib`
 SUBDIR=pgsql qmailvqd
 
-all:: libvq.a
+all:: .depend libvq.a
 	@for entry in $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \
@@ -39,7 +39,7 @@ logger.cc logger.hpp: $(BASE)/idl logger.idl vq.idl vq.hpp
 vq.cc vq.hpp: $(BASE)/idl vq.idl
 	$(BASE)/idl vq.idl
 
-$(OBJS): $(BASE)/comp-so $(BASE)/corba.inc .depend
+$(OBJS): $(BASE)/comp-so $(BASE)/corba.inc
 
 .cc.o:
 	$(BASE)/comp-so $(INCS) $<
