@@ -242,6 +242,86 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 				Second are used while linking, they include references
 				to libraries.
 			</para>
+
+			<section id="install.corba.conf">
+				<title>Selecting CORBA implementation</title>
+
+				<para>
+					Before compilation you're able to select CORBA
+					implementation v-q should use. If you want to use
+					other than default you need to modify 3 files.
+				</para>
+
+				<para>
+					<filename>corba.lib</filename> should include
+					all arguments for <application>make-so</application>
+					that will configure
+					linker. This means that you should put there
+					arguments specifing all libraries used by CORBA
+					implementation.
+				</para>
+
+				<para>
+					<filename>corba.inc</filename> should include
+					arguments for <application>comp-so</application>
+					and <application>compile</application> that 
+					will tell compiler about include files needed
+					by CORBA implementation. It also need to include
+					argument telling which implementation should be used.
+					For example to use MICO you should add -DP_USE_MICO. This
+					means that P_USE_MICO will be defined during compilation.
+					Other available options:
+					<itemizedlist>
+						<listitem><para>P_USE_MICO - for MICO</para></listitem>
+						<listitem><para>P_USE_OMNIORB - for omniORB</para></listitem>
+						<listitem><para>P_USE_ORBACUS - for Orbacus</para></listitem>
+						<listitem><para>P_USE_TAO - for TAO</para></listitem>
+						<listitem><para>P_USE_ORBIX - for Orbix</para></listitem>
+					</itemizedlist>
+
+					<note>
+						<para>
+							This software was tested only with MICO 
+							(threads disabled) and omniORB.
+						</para>
+					</note>
+				</para>
+
+				<para>
+					Last thing that must be changed is an IDL translator 
+					definition - file <filename>idl</filename> includes
+					command that is used to translate IDL files into C++.
+					This file includes examples for various CORBA
+					implementations.
+				</para>
+<example>
+	<title>corba.inc for MICO installed in /usr/local/progs/mico</title>
+<screen><userinput>
+-DP_USE_MICO -I/usr/local/progs/mico/include
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.lib for MICO installed in /usr/local/progs/mico</title>
+<screen><userinput>
+-L/usr/local/progs/mico/lib -lmicocoss2.3.11 -lmico2.3.11 -lssl -lcrypto
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.inc for omniORB installed in /usr/local/progs/omniorb</title>
+<screen><userinput>
+-DP_USE_OMNIORB -I/usr/local/progs/omniorb/include
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.lib for omniORB installed in /usr/local/progs/omniorb</title>
+<screen><userinput>
+-L/usr/local/progs/omniorb/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread 
+</userinput></screen>
+</example>
+			</section>
 		</section>
 	</section>
 
