@@ -9,3 +9,4 @@ conf_home.cc
 ac_int.o getgid.o getuid.o
 getuid getgid
 ac_int
+.depend

@@ -38,7 +38,9 @@ module vq {
 				err_no, //!< no errors
 				err_func_res, //!< incorrect return from function
 				err_user_ex, //!< user exists
-				err_user_inv //!< invalid user name
+				err_user_inv, //!< invalid user name
+				err_db, //!< database error
+				err_exists
 			};
 
 		/**
@@ -47,7 +49,7 @@ module vq {
 		//@{
 			/// Adds domain to database
 			error dom_add(in string dom)
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/*
 			/// Adds domain's IP address
 			error dom_ip_add(in string dom, in string ip)
@@ -67,7 +69,7 @@ module vq {
 			*/
 			/// Removes domain.
 			error dom_rm(in string dom)
-					raises (null_error);
+					raises (null_error, db_error, except);
 		//@}
 		
 		/**
@@ -76,20 +78,20 @@ module vq {
 		//@{
 			/// Adds user
 			error user_add(in auth_info ai )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Removes user
 			error user_rm(in string dom, in string user)
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Changes password for user
 			error user_pass(in string dom, in string user, in string pass )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/*
 			/// Gets authorization information for user
 			error user_auth( inout auth_info ai )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Checks whether user exists
 			error user_ex(in string dom, in string user)
-					raises (null_error);
+					raises (null_error, db_error, except);
 			*/
 		//@}
 #if 0
@@ -100,27 +102,29 @@ module vq {
 			/// Gets limits for user
 			error qt_get(in string dom, in string user, 
 					out quota_type bytes_max , out quota_type files_max )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Sets limits for user
 			error qt_set(in string dom, in string user, 
 					in quota_type bytes_max, in quota_type files_max )
-					raises (null_error);
+					raises (null_error, db_error, except);
 
 			/// Sets default value for a domain
 			error qt_def_set(in string dom, 
 					in quota_type bytes_max, in quota_type files_max )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Gets default value
 			error qt_def_get(in string dom, 
 					out quota_type bytes_max, out quota_type files_max )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			
 			/// Sets global defaults for new domains
 			error qt_global_def_set( 
-					in quota_type bytes_max, in quota_type files_max );
+					in quota_type bytes_max, in quota_type files_max )
+					raises (except);
 			/// Gets global defaults for new domains
 			error qt_global_def_get(
-					out quota_type bytes_max, out quota_type files_max );
+					out quota_type bytes_max, out quota_type files_max )
+					raises (except);
 		//@}
 
 		/**
@@ -130,41 +134,41 @@ module vq {
 			/// Adds mailbox configuration
 			error udot_add(in string dom, in string user,
 					in string pfix, out udot_info ui )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Removes all mailbox configuration entries
 			error udot_rm_by_type(in string dom, in string user,
 					in udot_type ut )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Removes mailbox configuration entry
 			error udot_rm_by_id(in string dom, in string user,
 					in string id )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Lists mailbox configuration
 			error udot_ls(in string dom, in string user,
 					in string pfix, out udot_info_list uis )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Lists mailbox configuation of specified type
 			error udot_ls_by_type(in string dom, in string user,
 					in string pfix, in udot_type ut,
 					out udot_info_list uis )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Changes existing entry
 			error udot_rep(in string dom, in string user,  
 					in udot_info ui )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Gets existing entry
 			error udot_get(in string dom, in string user,
 					inout udot_info ui )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Checks whether mailbox has entry of specified type
 			error udot_has(in string dom, in string user,
 					in string pfix, in udot_type ut )
-					raises (null_error);
+					raises (null_error, db_error, except);
 			/// Counts entries of specified type
 			error udot_type_cnt(in string dom, in string user,
 					in string pfix, in udot_type ut, 
 					out size_type cnt )
-					raises (null_error);
+					raises (null_error, db_error, except);
 		//@}
 		
 		/**
@@ -172,11 +176,14 @@ module vq {
 		 */
 		/*@{*/
 			/// return additional information about error (i.e. file name)
-			string err_info();
-			long err_sys(); //!< Returns stored errno
+			string err_info() 
+					raises(except);
+			long err_sys()
+					raises(except); //!< Returns stored errno
 
 			/// return description of error from lastret
-			string err_report();
+			string err_report()
+					raises(except);
 		/*@}*/
 #endif // if 0
 	}; // interface iauth

@@ -2,3 +2,4 @@ ac_int.o ac_str.o cconf.o conf_home.o getgid.o getuid.o lock.o pg2fs.o str2cc.o 
 auto/*
 ac_int ac_str getgid getuid pg2fs str2cc
 conf_home.cc
+.depend

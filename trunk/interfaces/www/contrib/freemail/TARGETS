@@ -14,3 +14,4 @@ auto/*
 ./vqsignup1d
 ./vqrescue
 ./libfreemail.so
+.depend

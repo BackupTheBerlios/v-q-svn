@@ -1,1 +1,2 @@
 libmain.a main.o
+.depend

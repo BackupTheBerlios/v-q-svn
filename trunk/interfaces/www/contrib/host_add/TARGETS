@@ -4,3 +4,4 @@ host_add
 ac_int ac_str conf_home.cc getgid getuid str2cc
 hier.o install.o
 install
+.depend

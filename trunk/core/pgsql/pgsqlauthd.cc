@@ -20,6 +20,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "main.hpp"
 
+#include <conf.hpp>
+
 // CORBA
 #include <coss/CosNaming.h>
 
@@ -31,6 +33,16 @@ using namespace std;
 using namespace POA_vq;
 
 int cppmain(int ac, char **av) {
+	if( ac < 2 ) {
+			cout<<"usage: "<<*av<<" [ORB options] configuration_dir"<<endl;
+			return 100;
+	}
+
+	string conf_dir(*(av+1));
+	conf_dir += '/';
+	conf::clnconf pgsql(conf_dir+"pgsql", "dbname=mail password=mail user=mail");
+	conf::clnconf objname(conf_dir+"objname", "vq::iauth");
+	
 	/*
 	 * Initialize the ORB
 	 */
@@ -48,7 +60,7 @@ int cppmain(int ac, char **av) {
 	/*
 	 * Create authorization object
 	 */
-	auto_ptr<cpgsqlauth> pgauth(new cpgsqlauth("pgsql.conf"));
+	auto_ptr<cpgsqlauth> pgauth(new cpgsqlauth(pgsql.val_str().c_str()));
 	
 	/*
 	 * Activate the Servant
@@ -73,7 +85,7 @@ int cppmain(int ac, char **av) {
 	 */
 	CosNaming::Name name;
 	name.length (1);
-	name[0].id = CORBA::string_dup ("vq::iauth");
+	name[0].id = CORBA::string_dup (objname.val_str().c_str());
 	name[0].kind = CORBA::string_dup ("");
 
     /*
@@ -82,8 +94,8 @@ int cppmain(int ac, char **av) {
 	 * name "Bank" is already registered, but silently overwrites it (the
 	 * existing reference is probably from an old incarnation of this server).
 	 */
-	cout << "Binding vq::iauth in the Naming Service ... " << flush;
-	nc->rebind (name, ref);
+	cout << "Binding "<<objname.val_str()<<" in the Naming Service ... " << flush;
+	nc->rebind(name, ref);
 	cout << "done." << endl;
 
 	/*

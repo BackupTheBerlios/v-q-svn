@@ -1,0 +1,2 @@
+auth.cc auth.hpp vq.cc vq.hpp auth.o vq.o
+.depend

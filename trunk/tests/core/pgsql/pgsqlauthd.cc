@@ -23,9 +23,39 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <coss/CosNaming.h>
 
 #include <memory>
+#include <sstream>
 
-using boost::unit_test_framework::test_suite;
-using boost::unit_test_framework::test_case;
+using namespace boost::unit_test_framework;
+
+/**
+ * 
+ */
+void et_vq_null_error( const vq::null_error &e ) {
+	BOOST_ERROR("null");
+}
+
+/**
+ * 
+ */
+void et_vq_except( const vq::except &e ) {
+	BOOST_ERROR(e.what);
+}
+
+/**
+ * 
+ */
+void et_vq_db_error( const vq::db_error &e ) {
+	BOOST_ERROR(e.what);
+}
+
+/**
+ * 
+ */
+void et_corba_exception( const CORBA::Exception & e ) {
+	std::ostringstream os;
+	e._print(os);
+	BOOST_ERROR(os.str());
+}
 
 /**
  *
@@ -69,14 +99,41 @@ struct auth_test {
 			BOOST_REQUIRE( !CORBA::is_nil(auth) );
 		}
 
-		void user_add() {
-				vq::iauth::auth_info ai;
-				ai.user = static_cast<const char *>("test");
-				ai.dom = static_cast<const char *>("test");
-				ai.pass = static_cast<const char *>("test");
-				ai.dir = static_cast<const char *>("dir");
+
+		/**
+		 * Add domain, add users, remove uses, remove domain.
+		 * No errors.
+		 */
+		void case1() {
+			const char * dom = "test.pl";
+			const char * user = "test";
+			BOOST_CHECK_EQUAL(auth->dom_add(dom), vq::iauth::err_no);
+				
+			vq::iauth::auth_info ai;
+			ai.user = CORBA::string_dup(user);
+			ai.dom = CORBA::string_dup(dom);
+			ai.pass = CORBA::string_dup("test");
+			ai.dir = CORBA::string_dup("dir");
 								
-				auth->user_add(ai);
+			BOOST_CHECK_EQUAL(auth->user_add(ai), vq::iauth::err_no);
+
+			//BOOST_CHECK_EQUAL(auth->user_exists());
+			
+			BOOST_CHECK_EQUAL(auth->user_rm(dom, user), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom), vq::iauth::err_no);
+		}
+
+		/**
+		 * Adding domain, adding the same domain again (err_exists),
+		 * removing domain, removing again (no errors).
+		 */
+		void case2() {
+			const char *dom = "test.pl";
+
+			BOOST_CHECK_EQUAL(auth->dom_add(dom), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_add(dom), vq::iauth::err_exists);
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom), vq::iauth::err_no);
 		}
 };
 
@@ -90,12 +147,18 @@ struct auth_test_suite : test_suite {
 
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&auth_test::init, test );
-			test_case * ts_user_add = BOOST_CLASS_TEST_CASE( 
-				&auth_test::user_add, test );
-			ts_user_add->depends_on(ts_init);
-
 			add(ts_init);
-			add(ts_user_add);
+
+			/*
+			test_case * ts_case1 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case1, test );
+			ts_case1->depends_on(ts_init);
+			add(ts_case1);
+			*/
+			test_case * ts_case2 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case2, test );
+			ts_case2->depends_on(ts_init);
+			add(ts_case2);
 		}
 };
 
@@ -104,6 +167,11 @@ struct auth_test_suite : test_suite {
  */
 test_suite* init_unit_test_suite( int ac, char* av[] ) {
 	std::auto_ptr<test_suite> test(BOOST_TEST_SUITE("pgsqlauthd tests"));
+
+	register_exception_translator<vq::null_error>( &et_vq_null_error );
+	register_exception_translator<vq::db_error>( &et_vq_db_error );
+	register_exception_translator<vq::except>( &et_vq_except );
+	register_exception_translator<CORBA::Exception>( &et_corba_exception );
 
 	test->add(new auth_test_suite(ac, av));
 

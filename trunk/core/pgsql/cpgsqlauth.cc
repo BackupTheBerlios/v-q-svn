@@ -21,70 +21,84 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <text.hpp>
 #include <util.hpp>
 
+#include <stdexcept>
+
 namespace POA_vq {
 	
 	using namespace std;
 	using namespace pqxx;
 	using namespace text;
 	using sys::str2tb;
-	
+
+	#define std_try { try
+	#define std_catch catch( sql_error & e ) { \
+		string em("sql error: \""); \
+		em+=e.query()+"\": "+e.what(); \
+		cout<<em<<endl; \
+		throw ::vq::db_error(em.c_str(), __FILE__, __LINE__); \
+	} catch( std::exception & e ) { \
+		cout<<"exception: "<<e.what()<<endl; \
+		throw ::vq::except(e.what(), __FILE__, __LINE__); \
+	} }
 	
 	/**
 	 * \param pginfo Connection configuration
 	 */
-	cpgsqlauth::cpgsqlauth( const char *pginfo ) {
+	cpgsqlauth::cpgsqlauth( const char *pginfo ) std_try {
 		pg.reset(new Connection(pginfo));
 		if( ! pg.get() || ! pg->is_open() ) {
-				throw ::vq::runtime_error(
+				throw ::vq::except(
 						static_cast<const char*>("can't create connection"),
 						__FILE__, __LINE__ ); 
 		}
-	}
+	} std_catch;
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::~cpgsqlauth() {
-	}
+	cpgsqlauth::~cpgsqlauth() std_try {
+	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::dom_add( const char * _dom ) {
+	cpgsqlauth::error cpgsqlauth::dom_add( const char * _dom ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
 
 		string dom(lower(_dom));
 
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT DOM_ADD("+Quote(str2tb(dom), false)+","
-			+Quote(dom, false)+","
-			+Quote(pg->UserName(), false)+")"));
-				
-		if(res.empty() || res[0][0].is_null() 
-			|| strcmp(res[0][0].c_str(), "t") ) {
+			"SELECT DOM_ADD("+Quote(dom, false)+")"));
+
+		if(res.empty() || res[0][0].is_null() ) {
 				return ::vq::iauth::err_func_res;
 		}
-		return ::vq::iauth::err_no;
-	}
+
+		const char *val = res[0][0].c_str();
+		if( *val && *(val+1) == '\0' ) {
+				if( *val == '2' ) {
+						return ::vq::iauth::err_exists;
+				} else if( *val == '1' ) {
+						return ::vq::iauth::err_no;
+				}
+		}
+
+		return ::vq::iauth::err_func_res;
+	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::dom_rm( const char * _dom ) {
+	cpgsqlauth::error cpgsqlauth::dom_rm( const char * _dom ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
 	
-		string dom(str2tb(lower(_dom)));
-		Result res(NonTransaction(*pg).Exec(
-				"SELECT DOM_RM("+Quote(dom, false)+")"));
+		string dom(lower(_dom));
+		NonTransaction(*pg).Exec("SELECT DOM_RM("+Quote(dom, false)+")");
 
-		if(res.empty() || res[0][0].is_null() 
-			|| strcmp(res[0][0].c_str(), "t") ) {
-				return ::vq::iauth::err_func_res;
-		}
 		return ::vq::iauth::err_no;
-	}
+	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::user_add( const auth_info & ai ) {
+	cpgsqlauth::error cpgsqlauth::user_add( const auth_info & ai ) std_try {
 		if( !ai.dom || !ai.user || !ai.pass || !ai.dir )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
@@ -110,13 +124,13 @@ namespace POA_vq {
 				}
 		}
 		return ::vq::iauth::err_func_res;
-	}
+	} std_catch;
 	
 	/**
 	 * 
 	 */
 	cpgsqlauth::error cpgsqlauth::user_pass( const char *_dom, 
-			const char *_user, const char *_pass ) {
+			const char *_user, const char *_pass ) std_try {
 		if( ! _dom || ! _user || ! _pass )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
@@ -132,11 +146,12 @@ namespace POA_vq {
 				return ::vq::iauth::err_func_res;
 		}
 		return ::vq::iauth::err_no;
-	}
+	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::user_rm( const char *_dom, const char *_user) {
+	cpgsqlauth::error cpgsqlauth::user_rm( const char *_dom, 
+			const char *_user) std_try {
 		if( ! _dom || ! _user )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
@@ -151,11 +166,11 @@ namespace POA_vq {
 				return ::vq::iauth::err_func_res;
 		}
 		return ::vq::iauth::err_no;
-	}
+	} std_catch
 #if 0
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::user_auth() {
+	cpgsqlauth::error cpgsqlauth::user_auth() std_try {
 		if( fdrdstr(cso, user) != -1
 		   && fdrdstr(cso, dom) != -1 ) {
 				dom = lower(dom);
@@ -171,7 +186,7 @@ namespace POA_vq {
 						if( res[0][0].is_null() || res[0][1].is_null() ) {
 								if( fdwrite(cso, &"E", 1) != 1 ) throw wr_error();
 								return;
-						}
+						} std_catch
 	
 						const char *pass = res[0][0].c_str();
 						if(!pass) pass = "";
@@ -184,7 +199,7 @@ namespace POA_vq {
 						if( ! is ) {
 								if( fdwrite(cso, &"E", 1) != 1 ) throw wr_error();
 								return;
-						}
+						} std_catch
 						if( fdwrite(cso,&"F",1) != 1
 							|| fdwrstr(cso, user) == -1
 							|| fdwrstr(cso, dom) == -1
@@ -193,11 +208,11 @@ namespace POA_vq {
 								throw wr_error();
 				} else if(fdwrite(cso,&"Z",1)!=1) throw wr_error();
 		} else throw rd_error();
-	}
+	} std_catch
 	
 	/**
 	 */
-	cpgsqlauth::error cpgsqlauth::user_ex() {
+	cpgsqlauth::error cpgsqlauth::user_ex() std_try {
 		if( -1 != fdrdstr(cso, dom)
 			&& -1 != fdrdstr(cso, user) ) {
 				uint8_t ret=0xff;
@@ -218,7 +233,7 @@ namespace POA_vq {
 						is.str(tmp);
 						is>>ret1;
 						if(is) ret = ret1 & 0xff;
-				}
+				} std_catch
 				if( 1 != fdwrite(cso, &"F", 1) ) {
 						switch(ret) {
 						case 1:
@@ -232,19 +247,19 @@ namespace POA_vq {
 								break;
 						default:
 								ret = cvq::err_temp;
-						}
+						} std_catch
 					
 						if( sizeof(ret) == fdwrite(cso, &ret, sizeof(ret)) )
 								return;
-				}
+				} std_catch
 				throw wr_error();
 		} else throw rd_error();
-	}
+	} std_catch
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::dom_ip_add() {
+	cpgsqlauth::error cpgsqlauth::dom_ip_add() std_try {
 		if( fdrdstr(cso,dom) != -1
 			&& fdrdstr(cso,ip) != -1 ) {
 				Result res(NonTransaction(*pg).Exec(
@@ -254,11 +269,11 @@ namespace POA_vq {
 	
 				if(fdwrite(cso,&"K",1) != 1) throw wr_error();
 		} else throw rd_error();
-	}
+	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::dom_ip_rm() {
+	cpgsqlauth::error cpgsqlauth::dom_ip_rm() std_try {
 		if( fdrdstr(cso,dom) != -1
 			&& fdrdstr(cso,ip) != -1 ) {
 				Result res(NonTransaction(*pg).Exec(
@@ -268,10 +283,10 @@ namespace POA_vq {
 	
 				if(fdwrite(cso,&"K",1) != 1) throw wr_error();
 		} else throw rd_error();
-	}
+	} std_catch
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::dom_ip_rm_all() {
+	cpgsqlauth::error cpgsqlauth::dom_ip_rm_all() std_try {
 		if( fdrdstr(cso,dom) != -1 ) {
 				Result res(NonTransaction(*pg).Exec(
 					"DELETE FROM ip2domain WHERE DOMAIN="
@@ -279,11 +294,11 @@ namespace POA_vq {
 	
 				if(fdwrite(cso,&"K",1) != 1) throw wr_error();
 		} else throw rd_error();
-	}
+	} std_catch
 	/**
 	 * 
 	 */
-	cpgsqlauth::error cpgsqlauth::dom_ip_ls() {
+	cpgsqlauth::error cpgsqlauth::dom_ip_ls() std_try {
 		if( fdrdstr(cso,dom) == -1 )
 				throw rd_error();
 	
@@ -306,11 +321,11 @@ namespace POA_vq {
 				if( fdwrite(cso,&ipl,sizeof(ipl)) == -1
 					|| (ip && fdwrite(cso, ip, ipl) == -1) )
 						throw wr_error();
-		}
-	}
+		} std_catch
+	} std_catch
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::dom_ip_ls_dom() {
+	cpgsqlauth::error cpgsqlauth::dom_ip_ls_dom() std_try {
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT DISTINCT DOMAIN FROM ip2domain ORDER BY DOMAIN"));
 	
@@ -327,13 +342,13 @@ namespace POA_vq {
 				if( fdwrite(cso,&doml,sizeof(doml)) == -1
 					|| (dom && fdwrite(cso, dom, doml) == -1) )
 						throw wr_error();
-		}
-	}
+		} std_catch
+	} std_catch
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_add() throw (out_of_range) {
+	cpgsqlauth::error cpgsqlauth::udot_add() throw (out_of_range) std_try {
 		string val;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
@@ -357,13 +372,13 @@ namespace POA_vq {
 				if(fdwrite(cso,&"F",1) == -1 || fdwrstr(cso, id) == -1 )
 						throw wr_error();
 				return;
-		}
+		} std_catch
 		if(fdwrite(cso,&"E",1)!=1) throw wr_error();
-	}
+	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_ls() {
+	cpgsqlauth::error cpgsqlauth::udot_ls() std_try {
 		string ext;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
@@ -397,12 +412,12 @@ namespace POA_vq {
 					|| fdwrite(cso, &ui.type, sizeof(ui.type)) != sizeof(ui.type)
 					|| fdwrstr(cso, ui.val) == -1 )
 						throw wr_error();
-		}
-	}
+		} std_catch
+	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_ls_type() {
+	cpgsqlauth::error cpgsqlauth::udot_ls_type() std_try {
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
 		   || fdrdstr(cso, ext) == -1
@@ -435,12 +450,12 @@ namespace POA_vq {
 					|| fdwrite(cso, &ui.type, sizeof(ui.type)) != sizeof(ui.type)
 					|| fdwrstr(cso, ui.val) == -1 )
 						throw wr_error();
-		}
-	}
+		} std_catch
+	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_rm() {
+	cpgsqlauth::error cpgsqlauth::udot_rm() std_try {
 		string id;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, id) == -1 )
@@ -451,11 +466,11 @@ namespace POA_vq {
 			"DELETE FROM \""+dom+"_dot\" WHERE ID="+Quote(id, false)));
 	
 		if(fdwrite(cso, &"K", 1)!=1) throw wr_error();
-	}
+	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_rm_type() {
+	cpgsqlauth::error cpgsqlauth::udot_rm_type() std_try {
 		if( fdrdstr(cso, dom) == -1 
 			|| fdrdstr(cso, user) == -1 
 			|| fdrdstr(cso, ext) == -1
@@ -471,11 +486,11 @@ namespace POA_vq {
 			+" AND TYPE='\\"+(char)type+"'"));
 	
 		if(fdwrite(cso, &"K",1) != 1) throw wr_error();
-	}
+	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_get() {
+	cpgsqlauth::error cpgsqlauth::udot_get() std_try {
 		string id;
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, id) == -1 )
@@ -488,7 +503,7 @@ namespace POA_vq {
 		if(res.empty()) {
 				if(fdwrite(cso, &"Z", 1)!=1) throw wr_error();
 				return;
-		}
+		} std_catch
 		
 		string val;
 		const char *ptr;
@@ -501,12 +516,12 @@ namespace POA_vq {
 		   || fdwrite(cso, &type, sizeof(type)) != sizeof(type)
 		   || fdwrstr(cso, val) == -1 )
 				throw wr_error();
-	}
+	} std_catch
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_rep() {
+	cpgsqlauth::error cpgsqlauth::udot_rep() std_try {
 		cvq::udot_info ui;
 	
 		if( fdrdstr(cso, dom) == -1
@@ -525,11 +540,11 @@ namespace POA_vq {
 				if(fdwrite(cso, &"Z", 1) != 1) throw wr_error();
 		} else 
 				if(fdwrite(cso, &"K", 1) != 1) throw wr_error();
-	}
+	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_has() {
+	cpgsqlauth::error cpgsqlauth::udot_has() std_try {
 		if( fdrdstr(cso, dom) == -1
 		   || fdrdstr(cso, user) == -1
 		   || fdrdstr(cso, ext) == -1
@@ -548,11 +563,11 @@ namespace POA_vq {
 				if(fdwrite(cso, &"T", 1) != 1) throw wr_error();
 		} else 
 				if(fdwrite(cso, &"F",1) != 1) throw wr_error();
-	}
+	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::udot_type_cnt() {
+	cpgsqlauth::error cpgsqlauth::udot_type_cnt() std_try {
 		if( fdrdstr(cso, dom) == -1 
 			|| fdrdstr(cso, user) == -1 
 			|| fdrdstr(cso, ext) == -1
@@ -569,7 +584,7 @@ namespace POA_vq {
 	
 		if( res.empty() || res[0][0].is_null() ) {
 				if( fdwrite(cso, &"E", 1)) throw wr_error();
-		}
+		} std_catch
 	
 		const char *ptr = res[0][0].c_str();
 	
@@ -581,12 +596,12 @@ namespace POA_vq {
 		if(fdwrite(cso, &"F",1) != 1
 		   || fdwrite(cso, &cnt, sizeof(cnt)) != sizeof(cnt))
 				throw wr_error();
-	}
+	} std_catch
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_set( const string & d ) {
+	cpgsqlauth::error cpgsqlauth::qt_def_set( const string & d ) std_try {
 		dom = lower(d);
 		if( -1 != fdread(cso, &qb, sizeof qb)
 			&& -1 != fdread(cso, &qf, sizeof qf) ) {
@@ -605,20 +620,20 @@ namespace POA_vq {
 				if( fdwrite(cso, &"K", 1) != 1 ) 
 						throw wr_error();
 		} else throw rd_error();
-	}
+	} std_catch
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_global_def_set() {
+	cpgsqlauth::error cpgsqlauth::qt_global_def_set() std_try {
 		qt_def_set("-");
-	}
+	} std_catch
 	
 	/**
 	 * Gets default quota for new users and sends it via cso
 	 * \param dom domain
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_get( const string & d ) {
+	cpgsqlauth::error cpgsqlauth::qt_def_get( const string & d ) std_try {
 		qb = qf = 0;
 		dom = lower(d);
 		Result res(NonTransaction(*pg).Exec(
@@ -629,7 +644,7 @@ namespace POA_vq {
 				if( fdwrite(cso, &"Z", 1) != 1 )
 						throw wr_error();
 				return;
-		}
+		} std_catch
 		
 		if( ! res[0][0].is_null() )
 				res[0][0].to<cauth::quota_value>(qb);
@@ -640,12 +655,12 @@ namespace POA_vq {
 			|| fdwrite(cso, &qb, sizeof qb) != sizeof qb
 			|| fdwrite(cso, &qf, sizeof qf) != sizeof qf) 
 				throw wr_error();
-	}
+	} std_catch
 	
 	/**
 	 * Gets limits for specified user
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_get() {
+	cpgsqlauth::error cpgsqlauth::qt_get() std_try {
 		if( -1 == fdrdstr(cso, dom)
 			|| -1 == fdrdstr(cso, user))
 				throw rd_error();
@@ -662,7 +677,7 @@ namespace POA_vq {
 				if( fdwrite(cso, &"Z", 1) != 1 )
 						throw wr_error();
 				return;
-		}
+		} std_catch
 		
 		if( ! res[0][0].is_null() )
 				res[0][0].to<cauth::quota_value>(qb);
@@ -673,12 +688,12 @@ namespace POA_vq {
 			|| fdwrite(cso, &qb, sizeof qb) != sizeof qb
 			|| fdwrite(cso, &qf, sizeof qf) != sizeof qf) 
 				throw wr_error();
-	}
+	} std_catch
 	
 	/**
 	 * Sets limits for specified user
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_set() {
+	cpgsqlauth::error cpgsqlauth::qt_set() std_try {
 		if( -1 == fdrdstr(cso, dom)
 			|| -1 == fdrdstr(cso, user)
 			|| -1 == fdread(cso, &qb, sizeof qb)
@@ -695,28 +710,28 @@ namespace POA_vq {
 	
 		if( fdwrite(cso, &"K", 1) != 1 ) 
 				throw wr_error();
-	}
+	} std_catch
 	
 	/**
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_global_def_get() {
+	cpgsqlauth::error cpgsqlauth::qt_global_def_get() std_try {
 		qt_def_get("-");
-	}
+	} std_catch
 	
 	/**
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_get() {
+	cpgsqlauth::error cpgsqlauth::qt_def_get() std_try {
 		if( -1 != fdrdstr(cso, dom) ) {
 				qt_def_get(dom);
 		} else throw rd_error();
-	}
+	} std_catch
 	
 	/**
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_set() {
+	cpgsqlauth::error cpgsqlauth::qt_def_set() std_try {
 		if( -1 != fdrdstr(cso, dom) ) {
 				qt_def_set(dom);
 		} else throw rd_error();
-	}
+	} std_catch
 #endif // if 0	
 } // namespace POA_vq
