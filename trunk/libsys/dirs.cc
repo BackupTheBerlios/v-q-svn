@@ -91,66 +91,33 @@ namespace sys {
 	 */
 	bool rmdirrec( const string & n )
 	{
-			if( n.empty() ) return true;
-			DIR *cd = opendir(".");
-			if( ! cd ) return false;
-	
-			if( chdir(n.c_str()) ) {
-					if( fchdir(dirfd(cd)) ) 
-							throw runtime_error((string)"rmdirrec: can't go back to: " 
-									+ n + ": " + strerror(errno));
-					closedir(cd);
-					return false;
-			}
-			DIR *d = opendir(".");
+			DIR *d = opendir(n.c_str());
 			if( ! d ) {
-					if( fchdir(dirfd(cd)) )
-							throw runtime_error((string)"rmdirrec: can't go back to: "
-									+ n + ": " + strerror(errno) );
-					closedir(cd);
 					return false;
 			}
 			struct dirent *de;
 			struct stat st;
+			std::string fn;
 			while( (de=readdir(d)) ) {
 					if( de->d_name[0] == '.' && ( de->d_name[1] == '\0' 
 						|| (de->d_name[1] == '.' && de->d_name[2] == '\0' )) )
 							continue;
+
+					fn = n + '/' + de->d_name;
 							
-					if( ::unlink(de->d_name) ) {
-							if( stat(de->d_name, & st) ) {
-									closedir(d);
-									if( fchdir(dirfd(cd)) )
-											throw runtime_error((string)"rmdirrec: can't go back to: "
-													+ n + ": " + strerror(errno) );
-									closedir(cd);
+					if( ::remove( fn.c_str() ) ) {
+							if( stat( fn.c_str(), & st) ) {
 									return false;
 							}
 							if( S_ISDIR(st.st_mode) ) {
-									if( ! rmdirrec(de->d_name) ) {
-											closedir(d);
-											if( fchdir(dirfd(cd)) )
-													throw runtime_error((string)"rmdirrec: can't go back to: "
-															+ n + ": " + strerror(errno) );
-											closedir(cd);
+									if( ! rmdirrec( fn ) )
 											return false;
-									}
 							} else {
-									closedir(d);
-									if( fchdir(dirfd(cd)) )
-											throw runtime_error((string)"rmdirrec: can't go back to: "
-													+ n + ": " + strerror(errno) );
-									closedir(cd);
 									return false;
 							}
 					}
 			}
-			closedir(d);
-			if( fchdir(dirfd(cd)) ) 
-					throw runtime_error((string)"rmdirrec: can't go back to: "
-							+ n + ": " + strerror(errno) );
-			closedir(cd);
-			return rmdir(n.c_str()) ? false : true;
+			return remove(n.c_str()) ? false : true;
 	}
 
 } // namespace sys
