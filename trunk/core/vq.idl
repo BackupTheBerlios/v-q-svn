@@ -131,8 +131,9 @@ module vq {
 			 * user's information.
 			 */
 			struct auth_info {
-					string dom; //!< domain
-					string user; //!< user name
+					string login;
+					string id_domain; //!< domain
+					string id_user; //!< user name
 					string pass; //!< password
 					string dir; //!< mailbox directory
 					aif_type flags; //!< additional flags

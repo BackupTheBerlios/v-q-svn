@@ -61,7 +61,8 @@ namespace POA_vq {
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::dom_add( const char * _dom ) std_try {
+	cpgsqlauth::error cpgsqlauth::dom_add( const char * _dom,
+			CORBA::String_out dom_id ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
 
 		string dom(lower(_dom));
@@ -74,99 +75,146 @@ namespace POA_vq {
 		}
 
 		const char *val = res[0][0].c_str();
-		if( *val && *(val+1) == '\0' ) {
-				if( *val == '2' ) {
-						return ::vq::iauth::err_exists;
-				} else if( *val == '1' ) {
-						return ::vq::iauth::err_no;
-				}
+		if( '-' == *val ) {
+				return ( '1' == *(val+1) ) 
+						? ::vq::iauth::err_exists : ::vq::iauth::err_func_res;
+						
 		}
-
-		return ::vq::iauth::err_func_res;
+		dom_id = val;
+		return ::vq::iauth::err_no;
 	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::dom_rm( const char * _dom ) std_try {
+	cpgsqlauth::error cpgsqlauth::dom_id( const char * _dom,
+			CORBA::String_out dom_id ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
-	
+
 		string dom(lower(_dom));
-		NonTransaction(*pg).Exec("SELECT DOM_RM("+Quote(dom, false)+")");
+
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT DOM_ID("+Quote(dom, false)+")"));
+
+		if(res.empty() || res[0][0].is_null() ) {
+				return ::vq::iauth::err_func_res;
+		}
+
+		const char *val = res[0][0].c_str();
+		if( '-' == *val ) {
+				return ( '1' == *(val+1) ) 
+						? ::vq::iauth::err_noent : ::vq::iauth::err_func_res;
+						
+		}
+		dom_id = val;
+		return ::vq::iauth::err_no;
+	} std_catch
+
+	/**
+	*/
+	cpgsqlauth::error cpgsqlauth::dom_rm( const char * dom_id ) std_try {
+		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
+	
+		NonTransaction(*pg).Exec("SELECT DOM_RM("+Quote(dom_id, false)+")");
 
 		return ::vq::iauth::err_no;
 	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::user_add( const auth_info & ai ) std_try {
-		if( !ai.dom || !ai.user || !ai.pass || !ai.dir )
+	cpgsqlauth::error cpgsqlauth::user_add( auth_info & ai, 
+			CORBA::Boolean is_banned ) std_try {
+		if( !ai.id_domain || !ai.login || !ai.pass /*|| !ai.dir*/ )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		string dom(lower(str2tb(string(ai.dom))));
-		string user(lower(string(ai.user)));
+		string login(lower(string(ai.login)));
 	
 		Result res(NonTransaction(*pg).Exec(
-				"SELECT USER_ADD("+Quote(user, false)+","
-				+Quote(dom, false)+","
-				+Quote(string(ai.pass), false)+","
-				+Quote(ToString(ai.flags), false)+")"));
+				"SELECT USER_ADD("
+				+Quote(static_cast<const char *>(ai.id_domain), false)+","
+				+Quote(login, false)+","
+				+Quote(static_cast<const char *>(ai.pass), false)+","
+				+Quote(ToString(ai.flags), false)+","
+				+Quote(ToString(is_banned), false)+"::boolean)"));
 	
 		if(res.empty() || res[0][0].is_null() ) {
 				return ::vq::iauth::err_func_res;
 		}
 
 		const char *val = res[0][0].c_str();
-		if( *(val+1) == '\0' ) {
-				if( *val == '1' ) {
+		if( '-' == *val ) {
+				switch( *(val+1) ) {
+				case '2':
 						return ::vq::iauth::err_user_inv;
-				} else if( *val == '0' ) {
-						return ::vq::iauth::err_no;
-				}
+				case '1':
+						return ::vq::iauth::err_exists;
+				default:
+						return ::vq::iauth::err_func_res;
+				} 
 		}
-		return ::vq::iauth::err_func_res;
+		ai.id_user = val;
+		return ::vq::iauth::err_no;
 	} std_catch;
-	
+
+	/**
+	*/
+	cpgsqlauth::error cpgsqlauth::user_id( const char * dom_id,
+			const char * _login, CORBA::String_out user_id ) std_try {
+		if( ! dom_id || ! _login ) throw ::vq::null_error(__FILE__, __LINE__);
+
+		string login(lower(_login));
+
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT USER_ID("
+				+Quote(dom_id, false)+","
+				+Quote(login, false)+")"));
+
+		if(res.empty() || res[0][0].is_null() ) {
+				return ::vq::iauth::err_func_res;
+		}
+
+		const char *val = res[0][0].c_str();
+		if( '-' == *val ) {
+				return ( '1' == *(val+1) ) 
+						? ::vq::iauth::err_noent : ::vq::iauth::err_func_res;
+						
+		}
+		user_id = val;
+		return ::vq::iauth::err_no;
+	} std_catch
+
+
 	/**
 	 * 
 	 */
-	cpgsqlauth::error cpgsqlauth::user_pass( const char *_dom, 
-			const char *_user, const char *_pass ) std_try {
-		if( ! _dom || ! _user || ! _pass )
+	cpgsqlauth::error cpgsqlauth::user_pass( const char *dom_id, 
+			const char *user_id, const char *_pass ) std_try {
+		if( ! dom_id || ! user_id || ! _pass )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		string dom(lower(str2tb(_dom)));
-		string user(lower(_user));
-	
 		Result res(NonTransaction(*pg).Exec(
-				"SELECT USER_PASS("+Quote(user, false)+","
-				+Quote(dom, false)+","+Quote(_pass, false)+")"));
+				"SELECT USER_PASS("
+				+Quote(dom_id, false)+","
+				+Quote(user_id, false)+","
+				+Quote(_pass, false)+")"));
 
-		if(res.empty() || res[0][0].is_null() 
-			|| strcmp(res[0][0].c_str(), "t") ) {
-				return ::vq::iauth::err_func_res;
-		}
 		return ::vq::iauth::err_no;
 	} std_catch
 	
 	/**
 	*/
-	cpgsqlauth::error cpgsqlauth::user_rm( const char *_dom, 
-			const char *_user) std_try {
-		if( ! _dom || ! _user )
+	cpgsqlauth::error cpgsqlauth::user_rm( const char *dom_id, 
+			const char *user_id) std_try {
+		if( ! dom_id || ! user_id )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		string dom(lower(str2tb(_dom)));
-		string user(lower(_user));
-		Result res(NonTransaction(*pg).Exec(
-				"SELECT USER_RM("+Quote(user, false)+","
-				+Quote(dom, false)+")"));
+		NonTransaction(*pg).Exec(
+				"SELECT USER_RM("
+				+Quote(dom_id, false)+","
+				+Quote(user_id, false)+")");
 
-		if(res.empty() || res[0][0].is_null() 
-			|| strcmp(res[0][0].c_str(), "t") ) {
-				return ::vq::iauth::err_func_res;
-		}
 		return ::vq::iauth::err_no;
 	} std_catch
+
 #if 0
 	/**
 	*/

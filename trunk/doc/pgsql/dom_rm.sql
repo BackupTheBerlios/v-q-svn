@@ -1,8 +1,8 @@
 CREATE or replace FUNCTION mail.dom_rm (text) RETURNS VOID AS '
 declare
-    dom alias for $1;
+    _id_domain alias for $1;
 begin
-	EXECUTE ''DELETE FROM domains WHERE domain ='' || quote_literal(dom);
+	DELETE FROM domains WHERE id_domain = _id_domain;
 	NOTIFY dom_rm;
 	RETURN;
 end;

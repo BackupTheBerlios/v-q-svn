@@ -37,10 +37,10 @@ module vq {
 			enum error {
 				err_no, //!< no errors
 				err_func_res, //!< incorrect return from function
-				err_user_ex, //!< user exists
 				err_user_inv, //!< invalid user name
 				err_db, //!< database error
-				err_exists
+				err_exists,
+				err_noent //!< no such element
 			};
 
 		/**
@@ -48,7 +48,7 @@ module vq {
 		 */
 		//@{
 			/// Adds domain to database
-			error dom_add(in string dom)
+			error dom_add(in string dom, out string dom_id)
 					raises (null_error, db_error, except);
 			/*
 			/// Adds domain's IP address
@@ -68,7 +68,10 @@ module vq {
 					raises (null_error);
 			*/
 			/// Removes domain.
-			error dom_rm(in string dom)
+			error dom_rm(in string dom_id)
+					raises (null_error, db_error, except);
+			/// Translates domain name to id.
+			error dom_id(in string dom, out string dom_id)
 					raises (null_error, db_error, except);
 		//@}
 		
@@ -77,13 +80,13 @@ module vq {
 		 */
 		//@{
 			/// Adds user
-			error user_add(in auth_info ai )
+			error user_add(inout auth_info ai, in boolean is_banned )
 					raises (null_error, db_error, except);
 			/// Removes user
-			error user_rm(in string dom, in string user)
+			error user_rm(in string dom_id, in string user_id)
 					raises (null_error, db_error, except);
 			/// Changes password for user
-			error user_pass(in string dom, in string user, in string pass )
+			error user_pass(in string dom_id, in string user_id, in string pass )
 					raises (null_error, db_error, except);
 			/*
 			/// Gets authorization information for user
@@ -93,6 +96,10 @@ module vq {
 			error user_ex(in string dom, in string user)
 					raises (null_error, db_error, except);
 			*/
+			/// Translates user name to id
+			error user_id(in string dom_id, in string login, 
+					out string user_id )
+					raises (null_error, db_error, except);
 		//@}
 #if 0
 		/**

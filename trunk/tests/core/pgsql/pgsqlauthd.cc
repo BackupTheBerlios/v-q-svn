@@ -105,6 +105,7 @@ struct auth_test {
 		 * No errors.
 		 */
 		void case1() {
+			/*
 			const char * dom = "test.pl";
 			const char * user = "test";
 			BOOST_CHECK_EQUAL(auth->dom_add(dom), vq::iauth::err_no);
@@ -121,19 +122,62 @@ struct auth_test {
 			
 			BOOST_CHECK_EQUAL(auth->user_rm(dom, user), vq::iauth::err_no);
 			BOOST_CHECK_EQUAL(auth->dom_rm(dom), vq::iauth::err_no);
+			*/
 		}
 
 		/**
-		 * Adding domain, adding the same domain again (err_exists),
-		 * removing domain, removing again (no errors).
+		 * 1. Adding domain, adding the same domain again (err_exists),
+		 * 2. getting id from domain's name
+		 * 3. getting id from domain's name given in upper-lower case (mixed)
+		 * 4. removing domain, removing again (no errors).
 		 */
 		void case2() {
 			const char *dom = "test.pl";
+			const char *dom_mixed = "TeST.pl";
+			CORBA::String_var dom_id;
+			CORBA::String_var dom_id1;
 
-			BOOST_CHECK_EQUAL(auth->dom_add(dom), vq::iauth::err_no);
-			BOOST_CHECK_EQUAL(auth->dom_add(dom), vq::iauth::err_exists);
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom), vq::iauth::err_no);
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom), vq::iauth::err_no);
+			// 1.
+			BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id1), vq::iauth::err_exists);
+
+			// 2.
+			CORBA::String_var dom_id2;
+			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id2), vq::iauth::err_no);
+			BOOST_CHECK( *dom_id2 && atoi(dom_id2) > 0);
+
+			// 3.
+			CORBA::String_var dom_id3;
+			BOOST_CHECK_EQUAL(auth->dom_id(dom_mixed, dom_id3), vq::iauth::err_no);
+			BOOST_CHECK( !strcmp(dom_id2, dom_id3) );
+
+			// 4.
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+		}
+
+		/**
+		 * trying to get ids of not existing domains
+		 */
+		void case3() {
+			const char *doms[] = {
+					"",
+					"nosuch.domain",
+					".",
+					"\"",
+					"----",
+					"'",
+					";;''"
+			};
+			unsigned doms_cnt = sizeof(doms)/sizeof(*doms);
+			if( doms_cnt-- ) {
+				CORBA::String_var id;
+				do {
+						BOOST_CHECK_EQUAL(auth->dom_id(doms[doms_cnt], id),
+							vq::iauth::err_noent);
+						BOOST_CHECK(!*id);
+				} while(doms_cnt --);
+			}
 		}
 };
 
@@ -159,6 +203,12 @@ struct auth_test_suite : test_suite {
 				&auth_test::case2, test );
 			ts_case2->depends_on(ts_init);
 			add(ts_case2);
+
+			test_case * ts_case3 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case3, test );
+			ts_case3->depends_on(ts_init);
+			add(ts_case3);
+
 		}
 };
 

@@ -45,7 +45,8 @@ namespace POA_vq {
 					virtual ~cpgsqlauth();
 					
 	
-				    virtual error dom_add( const char* dom );
+				    virtual error dom_add( const char* dom, 
+							CORBA::String_out dom_id );
 					/*
 				    virtual error dom_ip_add( const char* dom, const char* ip );
 				    virtual error dom_ip_rm( const char* dom, const char* ip );
@@ -55,10 +56,15 @@ namespace POA_vq {
 				    virtual error dom_ip_ls_dom( string_list_out doms );
 				    */
 					virtual error dom_rm( const char* dom );
-				    virtual error user_add( const auth_info & ai );
+				    virtual error dom_id( const char* dom, 
+							CORBA::String_out dom_id );
+				    virtual error user_add( auth_info & ai,
+							CORBA::Boolean is_banned );
 				    virtual error user_rm( const char* dom, const char* user );
 				    virtual error user_pass( const char* dom, const char* user, 
 							const char* pass );
+					virtual error user_id( const char* dom_id, 
+							const char* login, CORBA::String_out user_id );
 				    /*
 					virtual error user_auth( auth_info& ai );
 				    virtual error user_ex( const char* dom, const char* user );

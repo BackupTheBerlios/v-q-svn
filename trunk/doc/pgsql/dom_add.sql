@@ -1,16 +1,18 @@
-CREATE OR REPLACE FUNCTION mail.dom_add (text) RETURNS INT AS '
+CREATE OR REPLACE FUNCTION mail.dom_add (text) RETURNS INT4 AS '
 declare
-    dom ALIAS FOR $1;
-	r RECORD;
+    _domain ALIAS FOR $1;
+	id RECORD;
+	exists RECORD;
 begin
-	FOR r IN EXECUTE ''SELECT 1::integer FROM domains WHERE domain='' 
-		|| quote_literal(dom) LOOP
-		RETURN 2;
-	END LOOP;
+	SELECT 1::integer INTO exists FROM domains WHERE domain=_domain;
+	IF FOUND THEN	
+		RETURN -1;
+	END IF;
+
+	SELECT NEXTVAL(''domains_id_domain_seq'') INTO id;
 	
-	EXECUTE ''INSERT INTO domains (domain) VALUES('' 
-			|| quote_literal(dom) || '')'';
+	INSERT INTO domains (id_domain,domain) VALUES(id.nextval, _domain);
 	NOTIFY dom_add;
-	RETURN 1;
+	RETURN id.nextval;
 END;
 ' LANGUAGE 'plpgsql';
