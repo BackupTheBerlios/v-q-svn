@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cpgsqlauth.hpp"
+#include "pgsqlcommon.hpp"
 
 #include <text.hpp>
 #include <util.hpp>
@@ -29,17 +30,6 @@ namespace POA_vq {
 	using namespace pqxx;
 	using namespace text;
 	using sys::str2tb;
-
-	#define std_try { try
-	#define std_catch catch( sql_error & e ) { \
-		string em("sql error: \""); \
-		em+=e.query()+"\": "+e.what(); \
-		cout<<em<<endl; \
-		throw ::vq::db_error(em.c_str(), __FILE__, __LINE__); \
-	} catch( std::exception & e ) { \
-		cout<<"exception: "<<e.what()<<endl; \
-		throw ::vq::except(e.what(), __FILE__, __LINE__); \
-	} }
 
 	/**
 	 * \param pginfo Connection configuration

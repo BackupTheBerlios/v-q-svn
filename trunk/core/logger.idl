@@ -86,6 +86,11 @@ module vq {
 			 */ 
 			error read( in size_type start, in size_type cnt,
 					out log_entry_list les );
+
+			/**
+			 *
+			 */
+			error count( out size_type cnt );
 	};
 
 }; // module vq

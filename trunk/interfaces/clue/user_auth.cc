@@ -268,9 +268,6 @@ int cppmain(int ac, char **av)
 	sig_pipe_ign();
 
 	try {
-			vqo = cvq::alloc();
-			olog = clogger::alloc();
-			
 			if(read_env()) return 3;
 			
 			olog->ip_set(remip);

@@ -2,7 +2,7 @@
 	mkdir -p auto
 
 #################
-.depend:
+.depend: $(BASE)/compile $(BASE)/tools/mkdep *.cc
 	CC=$(BASE)/compile $(BASE)/tools/mkdep $(INCS) *.cc >> .depend 
 	if [ -e .depend -a ! -s .depend ]; then \
 		rm -f .depend ; \
