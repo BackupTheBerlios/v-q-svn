@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<msgs>
+	<menu>
+		<mod>
+			<m n="autoresp">Automatic response</m>
+			<desc>
+				<m n="autoresp">Here you can setup message,
+				which will be send automatically to senders of all
+				received messages.</m>
+			</desc>
+		</mod>
+	</menu>
+	<mod>
+		<autoresp>
+			<m n="getcant">Can't read current message.</m>
+			<m n="chgcant">Can't change message.</m>
+			<m n="label">Current message follows:</m>
+			<m n="desc">
+				If message is set all incoming e-mails will automatically generate
+				responses. Informations about senders which received 
+				generated response are stored for some time. So multiple
+				incoming (in short period) messages from the same sender will
+				generate only one response. Automatic responses are not send 
+				on messages received from mailing lists.
+			</m>
+			<m n="submit">Change</m>
+		</autoresp>
+	</mod>
+</msgs>

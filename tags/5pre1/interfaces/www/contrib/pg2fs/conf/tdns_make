@@ -1,0 +1,3 @@
+(cd /service/tinydns/root && make)
+
+Command used to compila data.cdb for tinydns.

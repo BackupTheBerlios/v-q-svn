@@ -1,0 +1,256 @@
+Branch version: 30 (vq)
+date: 2003-12-25T12:01:59.499017GMT 
+author: new@localhost
+CODE: hosting: cpginfodb.cc: wwwali_rep: link was removed, now link is removed only if old prefix != current prefix.
+CODE: vqwww: added language selection at login
+CODE: added - to allowed chars in user_ok
+CODE: cvq.cc: changed separator in err_report to #
+CODE: cfsvq*.cc: fixed error reporting for errors in authorization module
+CODE: added cookie locale (user can choose language).
+CODE: cmod.h: added std:: to ostream & err, & out;
+
+----------------------------
+Branch version: 29 (vq)
+date: 2003-12-09T16:38:49.268418GMT 
+author: new@localhost
+DOC: improved www_site
+
+----------------------------
+Branch version: 28 (vq)
+date: 2003-12-09T16:35:28.925111GMT 
+author: new@localhost
+VERSION: 4b
+CODE: cwwwstatmod.xslt is now using HTTPS and SERVER_NAME set in vqwww.xslt
+CODE: vqwww.xslt: added HTTPS parameter, it's set to "on" if user connects via SSL
+CODE: added SERVER_NAME to vqwww.xslt
+CODE: changed name libvalid.so.1 to libvalid.so.4.0
+CODE: cloghistmod: fixed navigation links (there were always 10 pages)
+BUG: pfstream.h: changed access to stat, because access ignores effective IDs.
+BUG: cfsvq::udot_add: Did not notice error in open
+CODE: cvq: added err_noent
+CODE: cvq: removed err_udot_ex, using err_exists
+CODE: cauth: removed enum err, using values from cvq directly
+CODE: changed libraries' names - they end now with ".so.4.0"
+CODE: changed code to be compatible with Sablotron 1.0, probably won't work with older versions
+CODE: added cvqwww in vqwww as descendant of cenvironment
+
+----------------------------
+Branch version: 27 (vq)
+date: 2003-11-16T10:08:36.430172GMT 
+author: new@localhost
+CODE: hier.cc: removed conf/ps
+
+----------------------------
+Branch version: 26 (vq)
+date: 2003-11-16T09:55:22.482948GMT 
+author: new@localhost
+CODE: Makefiles forgot to add -p to mkdir auto
+
+----------------------------
+Branch version: 25 (vq)
+date: 2003-11-16T09:51:30.263594GMT 
+author: new@localhost
+CODE: Makefile: removed auto/ps.o
+CODE: Makefiles: added automatically creating of auto directory
+DOC: www_site: changed all path to relative (it's possible to browse www_site from local disk :-)
+
+----------------------------
+Branch version: 24 (vq)
+date: 2003-11-12T22:41:23.457033GMT 
+author: new@localhost
+CODE: www_site: added doxygen output from processing vqwww, freemail, hosting
+CODE: www_site: added site map created automatically from menu.xml
+CODE: contrib: removed get{u,g}id.cc, they are copied from base directory
+CODE: contrib/freemail: file daemon.* are copied from base directory
+DOC: improved comments in code, better doxygen output
+CODE: hosting: changed reference to uri, it's REQUEST_URI now
+CODE: vqwww: changed uri parameter to REQUEST_URI in xslt
+CODE: pgsqllogd: forgot to add return 0 after child();
+DOC: removed www_site/xslt/lists.xslt
+CODE: contrib: removed install.{cc,h}, they are copied from main directory during make stage
+CODE: there may be some aborts, please notify me (I'll try to check as much programs as possible)
+CODE: optimization is turned on again, found that aborts were caused by wrong object order (g++ sucks?!) while linking
+CODE: Makefile -> changed order in which objects are passed to g++ when linking install (bad order causes aborts when exception is thrown from hier). what the fuck is with g++?
+
+----------------------------
+Branch version: 23 (vq)
+date: 2003-11-05T21:02:48.891208GMT 
+author: new@localhost
+CODE: pgsqllogd: added cmd_read_log
+
+----------------------------
+Branch version: 22 (vq)
+date: 2003-11-05T20:56:42.650315GMT 
+author: new@localhost
+CODE: fixes associated with changes in cauth ( in some places return codes were incorrectly processed )
+
+----------------------------
+Branch version: 21 (vq)
+date: 2003-11-05T20:36:20.437356GMT 
+author: new@localhost
+INFO: this version can be compiled
+CODE: clog.* renamed to clogger.*
+CODE: vq programs are creating cvq object using cvq::alloc
+CODE: constructor of cfsvq does not get cauth ptr, functions which need to operate on auth must call assert_auth which will initialize auth
+
+----------------------------
+Branch version: 20 (vq)
+date: 2003-11-05T19:40:47.803005GMT 
+author: new@localhost
+INFO: at this time it does not compile
+CODE: clean ups - programs include cvq.h, cauth.h, clog.h, removed all includes of deamon versions
+CODE: renamed log_init to clogger::alloc
+CODE: added cauth::alloc, removing vq_init
+CODE: functions from cauth now returns uint8_t, changing all references to those functions
+CODE: removed -O2 from compile because exceptions in pgsqlauthd caused aborts.
+
+----------------------------
+Branch version: 19 (vq)
+date: 2003-10-31T19:22:26.710297GMT 
+author: new@localhost
+CODE: error reporting is now done using vq->err_report
+
+----------------------------
+Branch version: 18 (vq)
+date: 2003-10-30T17:27:20.527974GMT 
+author: new@localhost
+CODE: added second (false) parameter to pqxx::Quote
+
+----------------------------
+Branch version: 17 (vq)
+date: 2003-10-29T21:49:31.269683GMT 
+author: new@localhost
+CODE: adding login history
+
+----------------------------
+Branch version: 16 (vq)
+date: 2003-10-28T18:04:09.305778GMT 
+author: new@localhost
+CODE: ac_int, ac_str, str2cc are now common, they are copied from vq during compilation.
+
+----------------------------
+Branch version: 15 (vq)
+date: 2003-10-27T21:47:49.902023GMT 
+author: new@localhost
+CODE: added namespace for auto/* in vq, will add apropriate namespaces to other projects.
+
+----------------------------
+Branch version: 14 (vq)
+date: 2003-10-27T21:16:22.752726GMT 
+author: new@localhost
+CODE: removed cconf.*, ac_int.cc, ac_str.cc, str2cc.cc from contrib/*, they will use files from vq main directory
+
+----------------------------
+Branch version: 13 (vq)
+date: 2003-10-27T20:28:29.041647GMT 
+author: new@localhost
+CODE: contrib/vqwww: better support of exceptions thrown by modules (menu will remain on screen)
+BUG: dom_ip_rm: printed error when -a option was given (wanted 2 arguments)
+BUG: cfsvq: wrong interpretation of qmail_assign_ex return codes
+BUG: qt_get: returned 0 even on error, added return ret; if error
+
+----------------------------
+Branch version: 12 (vq)
+date: 2003-10-26T20:46:15.457441GMT 
+author: new@localhost
+CODE: cvq: added function err_report which prints full description or last error, changed files to use it.
+
+----------------------------
+Branch version: 11 (vq)
+date: 2003-10-26T18:24:51.654817GMT 
+author: new@localhost
+CODE: cfsvq: added storing of errno, can be obtained by err_sys
+
+----------------------------
+Branch version: 10 (vq)
+date: 2003-10-26T18:11:53.510246GMT 
+author: new@localhost
+CODE: changed error reporting should be more describing. Some programs will return errors in situation ignored before (i.e. when you get qouta of user which has no quota).
+
+----------------------------
+Branch version: 9 (vq)
+date: 2003-10-26T13:37:58.039026GMT 
+author: new@localhost
+BUG: qmail_mrh_add core dumped, forget to change av[2] -> av[1], added also call to qmail-newmrh
+CODE: hier.cc: added qmail* files, removed skillall.h
+CODE: cfsvq::dom_add: changed order in which files are changed, now first is virt_add, if following fail entry from virtualdomains can be removed
+CODE: now you can call dom_add few time if there was temporary error and it will not fail on adding to virtualdomains
+CODE: vq/bin/qmail-send-restart is called after changing control files, put there command to HUP/TERM qmail-send
+
+----------------------------
+Branch version: 8 (vq)
+date: 2003-10-26T11:05:08.991434GMT 
+author: new@localhost
+CODE: Makefile: removed skillall.h
+CODE: sys.h: removed skillall.h
+
+----------------------------
+Branch version: 7 (vq)
+date: 2003-10-26T10:53:48.315079GMT 
+author: new@localhost
+CODE: removed skillall.*, we will use external programs to restart qmail (see vq/bin/qmail-send-restart)
+CODE: new programs: qmail_mrh_add, qmail_mrh_rm, qmail_rcpthosts_add, qmail_virtualdomains_add, qmail_virtualdomains_rm, qmail_assign_rm
+
+----------------------------
+Branch version: 6 (vq)
+date: 2003-10-25T11:07:37.436304GMT 
+author: new@localhost
+CODE: added qmail_run which will run programs like qmail-newu/qmail-newmrh under proper SUID/SGID.
+CODE: added qmail_file_add which will add to qmail's file under proper SUID/SGID
+CODE: contrib/vqwww adding better exception handling
+
+----------------------------
+Branch version: 5 (vq)
+date: 2003-10-25T07:20:12.536611GMT 
+author: new@localhost
+CODE: added qmail_assign_add which adds line to qmail/users/assign
+CODE: added qmail_assign_ex - program that checks whether domains is in qmail/users/assign
+CODE: it decided that part changing qmail's files should be moved off cfsvq.cc to separate programs. One action for one program.
+CODE: I'm also assuming that program modifing something in vq's directory has full rigths to do it (so it will try to copy permissions, owners, etc.)
+BUG: file_rm: under gcc 2.95 didn't work - it couldn't create file to read (yes, it tried to create it, stupid idea)
+BUG: file_rm: now it returns error code if it can't copy permissions and owners from original file
+
+----------------------------
+Branch version: 4 (vq)
+date: 2003-10-23T20:58:31.468657GMT 
+author: new@localhost
+CODE: create cfsvq_user.cc cfsvq_dom.cc from cfsvq.cc, faster recompilation on my poor k6-2.
+
+----------------------------
+Branch version: 3 (vq)
+date: 2003-10-21T19:42:59.503410GMT 
+author: new@localhost
+CODE: fixed bug in install.cc (when file existed it stoped installing), now it prints messages and goes further.
+CODE: changed cintconf - there's new multiplier argument.
+BUG: removing all throw specifications, they can cause too much aborts. it better to remove them all, than to check any single one.
+CODE: pgsqlauthd: moved from libpq++ to libpqxx.
+CODE: moving from libpq++ to libpqxx.
+BUG: in gcc 3.2 files aren't created when ios::in is specified, on gcc 2.95 are. Created compatible versions.
+BUG: user_rm fixed displayed strings
+CODE: user_add fixed displayed strings
+CODE: contrib/hosting/ac_{str,inc}.cc changed subdirectory in etc from freemail to hosting
+UI: contrib/hosting/cwwwstatmod.xslt cleaned
+CODE: contrib/hosting/cwwwstatmod.cc fixed bug in creating XML for HTTPS
+CODE: contrib/hosting/cwwwstatmod.cc it now supports HTTPS (links now points to http or https depending on environment)
+
+----------------------------
+Branch version: 2 (vq)
+date: 2003-09-30T20:16:29.486001GMT 
+author: new@localhost
+BUG: Some dump routines did not have ios::trunc in open
+
+----------------------------
+Branch version: 1 (vq)
+date: 2003-09-30T20:04:22.869057GMT 
+author: new@localhost
+Previous repository was lost. This is the current version from
+my disk.
+
+----------------------------
+Branch version: 0 (vq)
+date: 2003-09-30T20:03:49.141085GMT 
+author: new@localhost
+Initial, empty configuration for vq:
+Virtual Qmail
+
+----------------------------
