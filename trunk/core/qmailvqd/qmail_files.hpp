@@ -8,9 +8,10 @@ enum qmail_file {
 	qf_rcpthosts, // control/rcpthosts
 	qf_morercpthosts, // control/morercpthosts
 	qf_locals, // control/locals
-	qf_virtualdomains // control/virtualdomains
+	qf_virtualdomains, // control/virtualdomains
+	qf_moreipme // control/moreipme
 };
 
-const char *qf2file( qmail_file ) throw(std::runtime_error);
+const char *qf2file( qmail_file );
 
 #endif // ifndef __QMAIL_FILES_HPP

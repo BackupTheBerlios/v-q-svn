@@ -98,7 +98,7 @@ int vqmain( int ac , char ** av ) {
 				if( ac != 3 ) {
 						cerr<<"usage: "<<*av<<" file's_code line_to_add"<<endl
 							<<"Program adds a line to specified file."<<endl
-							<<"Does not add if file include given line."<<endl
+							<<"Does not add if file includes given line."<<endl
 							<<"Program returns 0 on success, 1 if file was not changed,"<<endl
 							<<"anything else on error."<<endl
 							<<"Files codes are set up during compilation in qmail_files.h"<<endl;

@@ -458,6 +458,13 @@ struct auth_test {
 			BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
 		}
 
+		/**
+		 * Test whether dom_id returns correct id. for aliases and ip addresses
+		 */
+		void case9() {
+			BOOST_REQUIRE(0);
+		}
+
 }; // struct auth_test
 
 /**
@@ -481,7 +488,7 @@ struct auth_test_suite : test_suite {
 		};
 		
 		typedef user_conf_test<vq::iauth_var, auth_wrap> obj_user_conf_test;
-		typedef dom_alias_test<vq::iauth_var> obj_dom_alias_test;
+		typedef da_dip_test<vq::iauth_var> obj_dom_alias_test;
 		typedef dom_ls_test<vq::iauth_var> obj_dom_ls_test;
 
 		boost::shared_ptr<auth_test> test;
@@ -530,10 +537,18 @@ struct auth_test_suite : test_suite {
 			ts_case6->depends_on(ts_init);
 			add(ts_case6);
 
-			test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
-				&obj_dom_alias_test::case7, da_test );
-			ts_case7->depends_on(ts_init);
-			add(ts_case7);
+			// da_dip_test
+			{
+					test_case * ts_case6 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_alias_test::case6, da_test );
+					ts_case6->depends_on(ts_init);
+					add(ts_case6);
+
+					test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_alias_test::case7, da_test );
+					ts_case7->depends_on(ts_init);
+					add(ts_case7);
+			}
 
 			test_case * ts_case8 = BOOST_CLASS_TEST_CASE( 
 				&auth_test::case8, test );
@@ -541,29 +556,37 @@ struct auth_test_suite : test_suite {
 			add(ts_case8);
 
 			test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
-				&obj_user_conf_test::case9, uc_test );
+				&auth_test::case9, test );
 			ts_case9->depends_on(ts_init);
 			add(ts_case9);
 
-			test_case * ts_case10 = BOOST_CLASS_TEST_CASE( 
-				&obj_user_conf_test::case10, uc_test );
-			ts_case10->depends_on(ts_init);
-			add(ts_case10);
+			// uc_test
+			{
+					test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_conf_test::case9, uc_test );
+					ts_case9->depends_on(ts_init);
+					add(ts_case9);
 
-			test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
-				&obj_user_conf_test::case11, uc_test );
-			ts_case11->depends_on(ts_init);
-			add(ts_case11);
+					test_case * ts_case10 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_conf_test::case10, uc_test );
+					ts_case10->depends_on(ts_init);
+					add(ts_case10);
 
-			test_case * ts_case12 = BOOST_CLASS_TEST_CASE( 
-				&obj_user_conf_test::case12, uc_test );
-			ts_case12->depends_on(ts_init);
-			add(ts_case12);
+					test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_conf_test::case11, uc_test );
+					ts_case11->depends_on(ts_init);
+					add(ts_case11);
 
-			test_case * ts_case13 = BOOST_CLASS_TEST_CASE( 
-				&obj_user_conf_test::case13, uc_test );
-			ts_case13->depends_on(ts_init);
-			add(ts_case13);
+					test_case * ts_case12 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_conf_test::case12, uc_test );
+					ts_case12->depends_on(ts_init);
+					add(ts_case12);
+
+					test_case * ts_case13 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_conf_test::case13, uc_test );
+					ts_case13->depends_on(ts_init);
+					add(ts_case13);
+			}
 
 			// dom_ls_test
 			{

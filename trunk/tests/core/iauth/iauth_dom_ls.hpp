@@ -55,7 +55,7 @@ struct dom_ls_test {
 					if( ! strcmp(dis[i].domain, di->c_str()) ) {
 						++di;
 					}
-					IVQ_ERROR_EQUAL(obj->dom_rm(dis[i].domain_id),
+					IVQ_ERROR_EQUAL(obj->dom_rm(dis[i].id_domain),
 						::vq::ivq::err_no );
 			}
 			BOOST_CHECK(di == de);

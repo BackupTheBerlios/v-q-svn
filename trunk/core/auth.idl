@@ -58,21 +58,37 @@ module vq {
 			error dom_ls( out domain_info_list dis )
 					raises (null_error, db_error, except);
 		//@}
+
 		/**
-		 * \defgroup dra Domains REGEX aliases
+		 * \defgroup dra Domain aliases
 		 */
 		//@{
-			/// Adds domain's IP address
-			error da_add(in string dom_id, in string rea)
-					raises (null_error, db_error, except);
-			/// Remove IP for domain
-			error da_rm(in string rea)
-					raises (null_error, db_error, except);
-			/// Lists all IP addresses asociated with domain
-			error da_ls_by_dom(in string dom_id, out string_list rea)
-					raises (null_error, db_error, except);
+			/// add alias for a domain
+			error da_add(in string dom_id, in string ali)
+					raises (null_error, except, db_error);
+			/// Removes alias
+			error da_rm(in string ali)
+					raises (null_error, except, db_error);
+			/// Lists all aliases for a domain
+			error da_ls_by_dom(in string dom_id, out string_list alis )
+					raises (null_error, except, db_error);
 		//@}
-		
+
+		/**
+		 * \defgroup dra Domain's IP addresses
+		 */
+		//@{
+			/// add IP address for a domain
+			error dip_add(in string dom_id, in string ip)
+					raises (null_error, except, db_error);
+			/// Removes IP address
+			error dip_rm(in string ip)
+					raises (null_error, except, db_error);
+			/// Lists all IP addresses for a domain
+			error dip_ls_by_dom(in string dom_id, out string_list ips )
+					raises (null_error, except, db_error);
+		//@}
+
 		/**
 		 * \defgroup user Users manipulation
 		 */

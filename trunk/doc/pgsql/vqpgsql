@@ -159,12 +159,20 @@ qt_files_max int not null default 0 check(qt_files_max>=0),"
 ."PRIMARY KEY(id_domain, login))",
 
 "CREATE TABLE vq_domains_aliases (
-id_domain int not null references vq_domains (id_domain),
+id_domain int not null references vq_domains (id_domain) on delete cascade on update cascade,
 alias text not null,
-PRIMARY KEY(id_domain,alias))",
+PRIMARY KEY(alias))",
 
 "CREATE INDEX vq_domains_aliases_id_domain_idx 
 ON vq_domains_aliases (id_domain)",
+
+"CREATE TABLE vq_domains_ips (
+id_domain int not null references vq_domains (id_domain) on delete cascade on update cascade,
+ip text not null,
+PRIMARY KEY(ip))",
+
+"CREATE INDEX vq_domains_ips_id_domain_idx 
+ON vq_domains_ips (id_domain)",
 
 "CREATE TABLE vq_users_conf (
 id_conf SERIAL,
@@ -233,7 +241,14 @@ DECLARE
 BEGIN
 	SELECT id_domain INTO id FROM vq_domains WHERE domain=_domain LIMIT 1;
 	IF NOT FOUND THEN
-		RETURN -1;
+		SELECT id_domain INTO id FROM vq_domains_aliases WHERE alias=_domain LIMIT 1;
+		IF NOT FOUND THEN
+			SELECT id_domain INTO id FROM vq_domains_ips WHERE ip=_domain 
+				OR ''['' || ip || '']''=_domain LIMIT 1;
+			IF NOT FOUND THEN
+				RETURN -1;
+			END IF;
+		END IF;
 	END IF;
 	RETURN id.id_domain;
 END;
@@ -297,7 +312,7 @@ END;
 FOR EACH ROW EXECUTE PROCEDURE vq_domains_qt_user_trig ();",
 
 "CREATE FUNCTION da_add
-(vq_domains.id_domain\%TYPE, vq_domains_aliases.alias\%TYPE) 
+(vq_domains_aliases.id_domain\%TYPE, vq_domains_aliases.alias\%TYPE) 
 RETURNS INT4 AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
@@ -338,6 +353,52 @@ DECLARE
 BEGIN
 	DELETE FROM vq_domains_aliases WHERE alias=_alias;
 	NOTIFY da_rm;
+	RETURN;
+END;
+' LANGUAGE 'plpgsql';",
+
+"CREATE FUNCTION dip_add
+(vq_domains_ips.id_domain\%TYPE, vq_domains_ips.ip\%TYPE) 
+RETURNS INT4 AS '
+DECLARE
+	_id_domain ALIAS FOR \$1;
+	_alias ALIAS FOR \$2;
+	exists RECORD;
+BEGIN
+	SELECT ''1'' INTO exists FROM vq_domains_ips
+		WHERE id_domain=_id_domain AND ip=_alias;
+	IF FOUND THEN	
+		RETURN -1;
+	END IF;
+
+	INSERT INTO vq_domains_ips (id_domain,ip) 
+		VALUES(_id_domain, _alias);
+	NOTIFY DIP_ADD;
+	RETURN 0;
+END;
+' LANGUAGE 'plpgsql';",
+
+"CREATE FUNCTION dip_ls_by_dom (vq_domains_ips.id_domain\%TYPE) 
+RETURNS SETOF TEXT AS '
+DECLARE
+	_id_domain ALIAS FOR \$1;
+	rea RECORD;
+BEGIN
+	FOR rea IN SELECT ip FROM vq_domains_ips WHERE id_domain=_id_domain LOOP
+		RETURN NEXT rea.ip;
+	END LOOP;
+	RETURN;
+END;
+' LANGUAGE 'plpgsql';",
+
+"CREATE FUNCTION dip_rm
+(vq_domains_ips.ip\%TYPE) 
+RETURNS VOID AS '
+DECLARE
+    _alias alias for \$1;
+BEGIN
+	DELETE FROM vq_domains_ips WHERE ip=_alias;
+	NOTIFY DIP_RM;
 	RETURN;
 END;
 ' LANGUAGE 'plpgsql';",

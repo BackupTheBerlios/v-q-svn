@@ -77,7 +77,7 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 							return 1;
 					}
 					dis->length(ac);
-					dis[i].domain_id = dom_id;
+					dis[i].id_domain = dom_id;
 					dis[i].domain = static_cast<const char *>(av[i]);
 			}
 	} else {
@@ -92,7 +92,7 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 	for( CORBA::ULong i=0, s=dis->length(); i<s; ++i ) {
 			::vq::ivq::string_list_var alis;
 
-			ret = ce.vq->da_ls_by_dom( dis[i].domain_id, alis );
+			ret = ce.vq->da_ls_by_dom( dis[i].id_domain, alis );
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
 							cout<<av[i]<<": "<<error2str(ret)<<endl;

@@ -62,7 +62,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 	}
 	
 	for(CORBA::ULong i=0, s=dis->length(); i < s; ++i ) {
-			cout<<dis[i].domain_id<<' '<<dis[i].domain<<endl;
+			cout<<dis[i].id_domain<<' '<<dis[i].domain<<endl;
 	}
 	return 0;
 }

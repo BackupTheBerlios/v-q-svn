@@ -19,7 +19,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "qmail_files.hpp"
 
-const char *qf2file( qmail_file qf ) throw (std::runtime_error) {
+const char *qf2file( qmail_file qf ) {
 	// we check each value, minimaze the risk
 	switch( qf ) {
 	case qf_assign:
@@ -32,6 +32,8 @@ const char *qf2file( qmail_file qf ) throw (std::runtime_error) {
 		return "control/locals";
 	case qf_virtualdomains:
 		return "control/virtualdomains";
+	case qf_moreipme:
+		return "control/moreipme";
 	default:
 		throw std::runtime_error("qf2file: invalid code");
 	}

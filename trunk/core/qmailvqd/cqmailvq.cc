@@ -301,12 +301,20 @@ namespace POA_vq {
 	 * (name in tmpfs.rcpt_rm) which you should rename to rcpthosts on success
 	 */
 	cqmailvq::error * cqmailvq::rcpt_rm(const string &dom) std_try {
-		char file[] = { qf_rcpthosts, '\0' };
+		return qmail_file_rm( qf_rcpthosts, dom );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cqmailvq::error * cqmailvq::qmail_file_rm( qmail_file qf, 
+			const string & ln ) std_try {
+		char file[] = { qf, '\0' };
 		string prog(home+"/bin/qmail_file_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				file,
-				const_cast<char *>(dom.c_str()),
+				const_cast<char *>(ln.c_str()),
 				NULL
 		};
 	
@@ -317,9 +325,35 @@ namespace POA_vq {
 						return lr(::vq::ivq::err_no, "");
 				}
 		}
-		return lr(::vq::ivq::err_exec,prog);
+		return lr(::vq::ivq::err_exec, prog);
 	} std_catch
 	
+	/**
+	 *
+	 */
+	cqmailvq::error * cqmailvq::qmail_file_add( qmail_file qf, 
+			const string & ln ) std_try {
+		char file[] = { qf, '\0' };
+		string prog(home+"/bin/qmail_file_add");
+		char * const args[] = {
+				const_cast<char *>(prog.c_str()),
+				file,
+				const_cast<char *>(ln.c_str()),
+				NULL
+		};
+	
+		int ret = run(args);
+		if( WIFEXITED(ret) ) {
+				switch(WEXITSTATUS(ret)) {
+				case 0:
+						return lr(::vq::ivq::err_no, "");
+				case 1:
+						return lr(::vq::ivq::err_exists, "");
+				}
+		}
+		return lr(::vq::ivq::err_exec, prog);
+	} std_catch
+
 	/**
 	 * Removes domain from locals, sets tmpfs.locals_rm to
 	 * name of created file, on success you have to rename it to locals
@@ -449,8 +483,7 @@ namespace POA_vq {
 	} std_catch
 	
 	/**
-	 * Adds domain to morercpthosts, creates temp. file which should
-	 * be renamed to morercpthosts, you should also run morercpt_comp.
+	 * Adds domain to morercpthosts
 	 */
 	cqmailvq::error * cqmailvq::morercpt_add(const string &dom) std_try {
 		string prog(home+"/bin/qmail_mrh_add");
@@ -470,6 +503,20 @@ namespace POA_vq {
 		return lr(::vq::ivq::err_exec, prog);
 	} std_catch
 	
+	/**
+	 * Adds IP to moreipme
+	 */
+	cqmailvq::error * cqmailvq::moreipme_add(const string &ip) std_try {
+		return qmail_file_add( qf_moreipme, ip );
+	} std_catch
+
+	/**
+	 * Removes IP from moreipme
+	 */
+	cqmailvq::error * cqmailvq::moreipme_rm(const string &ip) std_try {
+		return qmail_file_rm( qf_moreipme, ip );
+	} std_catch
+
 	/**
 	 * Add line to a file. Create temporary file, copy content to it,
 	 * add item, return temporary file's name.
@@ -653,7 +700,8 @@ namespace POA_vq {
 	 * Create path to user's maildir (always with / at the end)
 	 * \return path to maildir of specified user\@domain
 	 */
-	string cqmailvq::maildir_path(const string &d, const string &u) std_try {
+	string cqmailvq::maildir_path(const string &d, const string &u) 
+			const std_try {
 		string dom(text::lower(d)), user(text::lower(u));
 		return this->domains + '/' + text::split_dom(dom, this->dom_split)
 				+'/'+dom

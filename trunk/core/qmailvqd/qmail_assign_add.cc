@@ -90,8 +90,10 @@ char assign_add(const string &in_fn, const char *ln_add, mode_t qmode) {
 					unlink(out_fn.c_str());
 					return 111;
 			}
-	} else if( chmod(out_fn.c_str(), qmode) ) 
+	} else if( chmod(out_fn.c_str(), qmode) ) {
+			unlink(out_fn.c_str());
 			return 111;
+	}
 
 	return rename(out_fn.c_str(), in_fn.c_str()) ? 111 : 0;
 }

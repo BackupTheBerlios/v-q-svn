@@ -713,7 +713,7 @@ struct vq_test_suite : test_suite {
 		};
 
 		typedef user_conf_test<vq::ivq_var, obj_wrap> obj_user_conf_test;
-		typedef dom_alias_test<vq::ivq_var> obj_dom_alias_test;
+		typedef da_dip_test<vq::ivq_var> obj_dom_alias_test;
 		typedef dom_ls_test<vq::ivq_var> obj_dom_ls_test;
 
 		boost::shared_ptr<vq_test> test;
@@ -836,10 +836,15 @@ struct vq_test_suite : test_suite {
 			}
 
 			{
-			test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
-				&obj_dom_alias_test::case7, da_test );
-			ts_case7->depends_on(ts_init);
-			add(ts_case7);
+					test_case * ts_case6 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_alias_test::case6, da_test );
+					ts_case6->depends_on(ts_init);
+					add(ts_case6);
+
+					test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_alias_test::case7, da_test );
+					ts_case7->depends_on(ts_init);
+					add(ts_case7);
 			}
 
 			// dom_ls_test

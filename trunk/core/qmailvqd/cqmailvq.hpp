@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "../vq.hpp"
 #include "../auth.hpp"
+#include "qmail_files.hpp"
 
 #include <pfstream.hpp>
 
@@ -86,6 +87,11 @@ namespace POA_vq {
 					virtual error* da_ls_by_dom( const char* dom_id, 
 							string_list_out alis );
 
+					virtual error* dip_add( const char* dom_id, const char* ip );
+					virtual error* dip_rm( const char* ip );
+					virtual error* dip_ls_by_dom( const char* dom_id, 
+							string_list_out ips );
+
 					virtual error* eb_add( const char* re_domain, 
 							const char* re_login );
 					virtual error* eb_rm( const char* re_domain, 
@@ -139,15 +145,24 @@ namespace POA_vq {
 					error * assign_add(const std::string &);
 					error * assign_rm(const std::string &);
 					std::string assign_ln(const std::string &) const;
-					std::string dom_path( const std::string & ) const;
 					error * rcpt_add(const std::string &);
 					error * rcpt_rm(const std::string &);
 					error * morercpt_add(const std::string &);
 					error * morercpt_rm(const std::string &);
+					error * moreipme_add( const std::string & );
+					error * moreipme_rm( const std::string & );
 					error * locals_rm(const std::string &);
 					error * virt_add(const std::string &,const std::string &);
 					error * virt_rm(const std::string &);
+					error * qmail_file_rm( qmail_file, const std::string & );
+					error * qmail_file_add( qmail_file, const std::string & );
 					std::string virt_prefix(const std::string &) const;
+				
+				/**
+				 * \defgroup path Paths handling
+				 */
+				//@{
+					std::string dom_path( const std::string & ) const;
 					std::string user_root_path(const std::string &, 
 							const std::string &) const;
 					std::string user_dir_path(const std::string &, 
@@ -155,13 +170,12 @@ namespace POA_vq {
 					std::string user_md_path(const std::string &, 
 							const std::string &) const;
 					std::string user_md_subpath(const std::string &) const;
+					std::string maildir_path(const std::string &, 
+							const std::string &) const;
+				//@}
 
 					int run( char * const [] );
 				
-					/// path to maildir
-					std::string maildir_path(const std::string &, 
-							const std::string &);
-	
 					/// Make maildir
 					error * maildir_make(const std::string &);
 			

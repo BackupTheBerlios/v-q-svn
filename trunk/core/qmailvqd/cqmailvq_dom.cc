@@ -273,71 +273,60 @@ namespace POA_vq {
 		return auth->da_ls_by_dom( dom_id, alis );
 	} std_catch
 
-#if 0
 	/**
-	 * Adds IP address for domain
+	 * Remove aliass.
+	 * \param a alias name
+	 * \return ::vq::ivq::err_no on success
+	 */
+	cqmailvq::error * cqmailvq::dip_rm( const char * ali ) std_try {
+
+		if( ! ali )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
+		string alias(text::lower(ali));
+		auto_ptr<error> ret(auth->dip_rm( alias.c_str() ));
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		
+		ret.reset(moreipme_rm(alias));
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		return ret.release();
+	} std_catch
+
+	/**
+	 * Add alias for domain
 	 * \param d domain
-	 * \param i IP
+	 * \param a alias
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::dom_ip_add(const char *d, const char *i)
-	{
-		if(auth->dom_ip_add(lower(d).c_str(),lower(i).c_str()))
-				return lr(::vq::ivq::err_auth, auth->err_report());
-		return lr(::vq::ivq::err_no, "");
+	cqmailvq::error * cqmailvq::dip_add(const char *dom_id, 
+			const char *ali) std_try {
+
+		if( ! dom_id || ! ali )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
+		string alias(text::lower(ali));
+		
+		auto_ptr<error> ret(moreipme_add(alias));
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+
+		ret.reset(auth->dip_add(dom_id, alias.c_str()));
+		if( ::vq::ivq::err_no != ret->ec ) {
+				return ret.release();
+		}
+		return ret.release();
 	} std_catch
-	
+
 	/**
-	 * Remove IP address of domain
-	 * \param d domain's name
-	 * \param i IP
-	 * \return ::vq::ivq::err_no on success
+	 *
 	 */
-	cqmailvq::error cqmailvq::dom_ip_rm(const char *d, const char *i)
-	{
-		if(auth->dom_ip_rm(lower(d).c_str(),lower(i).c_str()))
-				return lr(::vq::ivq::err_auth, auth->err_report());
-		return lr(::vq::ivq::err_no, "");
+	cqmailvq::error * cqmailvq::dip_ls_by_dom( const char * dom_id,
+			string_list_out alis ) std_try {
+
+		if( ! dom_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		return auth->dip_ls_by_dom( dom_id, alis );
 	} std_catch
-	
-	/**
-	 * Remove all IP addresses asociated with domain
-	 * \param d domain
-	 * \return ::vq::ivq::err_no on success
-	 */
-	cqmailvq::error cqmailvq::dom_ip_rm_all(const char *d)
-	{
-		if(auth->dom_ip_rm_all(lower(d).c_str()))
-				return lr(::vq::ivq::err_auth, auth->err_report());
-		return lr(::vq::ivq::err_no, "");
-	} std_catch
-	
-	/**
-	 * Lists IP addresses asociated with domain
-	 * \param d domain
-	 * \param ips set to list of IP addresses
-	 * \return ::vq::ivq::err_no on success
-	 */
-	cqmailvq::error cqmailvq::dom_ip_ls(const char *d, vector<string> &ips)
-	{
-		if(auth->dom_ip_ls(lower(d).c_str(),ips))
-				return lr(::vq::ivq::err_auth, auth->err_report());
-		return lr(::vq::ivq::err_no, "");
-	} std_catch
-	
-	/**
-	 * Lists all domains which have asociated IP addresses
-	 * \param doms list of domains
-	 * \return ::vq::ivq::err_no on success
-	 */
-	cqmailvq::error cqmailvq::dom_ip_ls_dom(vector<string> &doms)
-	{
-		if(auth->dom_ip_ls_dom(doms.c_str()))
-				return lr(::vq::ivq::err_auth, auth->err_report());
-		return lr(::vq::ivq::err_no, "");
-	} std_catch
-#endif
-	
+
 	/**
 	 * Lock deliveries to specified domain
 	 * \return 0 on success

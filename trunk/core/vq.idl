@@ -174,7 +174,7 @@ module vq {
 
 			/// domains
 			struct domain_info {
-					string domain_id;
+					string id_domain;
 					string domain;
 			};
 			typedef sequence<domain_info> domain_info_list;
@@ -207,13 +207,29 @@ module vq {
 		 * \defgroup dra Domain aliases
 		 */
 		//@{
+			/// add alias for a domain
 			error da_add(in string dom_id, in string ali)
 					raises (null_error, except, db_error);
-			/// Removes IP address
+			/// Removes alias
 			error da_rm(in string ali)
 					raises (null_error, except, db_error);
-			/// Removes all IP addresses
+			/// Lists all aliases for a domain
 			error da_ls_by_dom(in string dom_id, out string_list alis )
+					raises (null_error, except, db_error);
+		//@}
+
+		/**
+		 * \defgroup dra Domain's IP addresses
+		 */
+		//@{
+			/// add IP address for a domain
+			error dip_add(in string dom_id, in string ip)
+					raises (null_error, except, db_error);
+			/// Removes IP address
+			error dip_rm(in string ip)
+					raises (null_error, except, db_error);
+			/// Lists all IP addresses for a domain
+			error dip_ls_by_dom(in string dom_id, out string_list ips )
 					raises (null_error, except, db_error);
 		//@}
 

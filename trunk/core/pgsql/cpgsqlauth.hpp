@@ -66,6 +66,11 @@ namespace POA_vq {
     				virtual error * da_ls_by_dom( const char* dom_id, 
 							string_list_out rea );
 
+					virtual error * dip_add( const char* dom_id, const char* rea );
+    				virtual error * dip_rm( const char* rea );
+    				virtual error * dip_ls_by_dom( const char* dom_id, 
+							string_list_out rea );
+
 				    virtual error * user_add( const user_info & ai,
 							CORBA::Boolean is_banned );
 				    virtual error * user_rm( const char* dom, const char* user );
@@ -127,6 +132,17 @@ namespace POA_vq {
 							const char *, CORBA::ULong );
 				/*@}*/	
 
+				/**
+				 * \defgroup da_dip functions used by da_... and dip_...
+				 */
+				//@{
+					virtual error * da_dip_add( const char* dom_id, 
+							const char* val, const std::string & func );
+    				virtual error * da_dip_rm( const char* rea,
+							const std::string & func );
+    				virtual error * da_dip_ls_by_dom( const char* dom_id, 
+							string_list_out rea, const std::string & func );
+				//@}
 	};
 
 	/**

@@ -56,8 +56,10 @@ char rcpt_add(const string &in_fn, const char *rcpt, mode_t qmode) {
 			while(getline(in, ln) && rcpts < 50 ) {
 					if(ln.empty()) continue;
 					if(ln.length() == rcptl 
-						&& ! memcmp(ln.data(), rcpt, rcptl) )
+						&& ! memcmp(ln.data(), rcpt, rcptl) ) {
+							unlink(out_fn.c_str());
 							return 1;
+					}
 
 					++rcpts;
 					out<<ln<<endl;
@@ -90,9 +92,10 @@ char rcpt_add(const string &in_fn, const char *rcpt, mode_t qmode) {
 					unlink(out_fn.c_str());
 					return 111;
 			}
-	} else if( chmod(out_fn.c_str(), qmode) ) 
+	} else if( chmod(out_fn.c_str(), qmode) ) {
+			unlink(out_fn.c_str());
 			return 111;
-
+	}
 	return rename(out_fn.c_str(), in_fn.c_str()) ? 111 : 0;
 }
 

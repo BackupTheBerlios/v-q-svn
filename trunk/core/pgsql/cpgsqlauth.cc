@@ -147,7 +147,7 @@ namespace POA_vq {
 		dis = new domain_info_list(static_cast<CORBA::ULong>(s));
 		dis->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
-			dis[i].domain_id = CORBA::string_dup(
+			dis[i].id_domain = CORBA::string_dup(
 				res[i][0].is_null() ? "" : res[i][0].c_str());
 			dis[i].domain = CORBA::string_dup(
 				res[i][1].is_null() ? "" : res[i][1].c_str());
@@ -194,38 +194,69 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::da_add( const char* dom_id, 
-			const char* rea ) std_try {
+	cpgsqlauth::error * cpgsqlauth::da_add( const char * dom_id,
+			const char * ali ) std_try {
+		return da_dip_add(dom_id, ali, "DA_ADD");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::dip_add( const char * dom_id,
+			const char * ali ) std_try {
+		return da_dip_add(dom_id, ali, "DIP_ADD");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::da_dip_add( const char* dom_id, 
+			const char* rea, const std::string & func ) std_try {
 		if( ! dom_id || ! rea )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		Result res(NonTransaction(*pg).Exec(
-				"SELECT DA_ADD("
+				"SELECT "+func+"("
 				+Quote(static_cast<const char *>(dom_id))+','
 				+Quote(static_cast<const char *>(rea))+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
-				return lr(::vq::ivq::err_func_res, "DA_ADD");
+				return lr(::vq::ivq::err_func_res, func);
 		}
 
 		const char *val = res[0][0].c_str();
 		if( '-' == *val ) {
 				return ( '1' == *(val+1) ) 
 						? lr(::vq::ivq::err_exists, "")
-						: lr(::vq::ivq::err_func_res, "DA_ADD");
+						: lr(::vq::ivq::err_func_res, func);
 		}
 		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::da_rm( const char* rea ) std_try {
+		return da_dip_rm( rea, "DA_RM" );
 	} std_catch
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::da_rm( const char* rea ) std_try {
+	cpgsqlauth::error * cpgsqlauth::dip_rm( const char* rea ) std_try {
+		return da_dip_rm( rea, "DIP_RM" );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::da_dip_rm( const char* rea,
+				const std::string & func ) std_try {
 		if( ! rea )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		NonTransaction(*pg).Exec(
-				"SELECT DA_RM("+Quote(static_cast<const char *>(rea))+')');
+				"SELECT "+func+"("+Quote(static_cast<const char *>(rea))+')');
 
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -236,7 +267,25 @@ namespace POA_vq {
 	cpgsqlauth::error * cpgsqlauth::da_ls_by_dom( const char* dom_id, 
 			string_list_out reas ) std_try {
 
-		Result res(NonTransaction(*pg).Exec("SELECT * FROM da_ls_by_dom("
+		return da_dip_ls_by_dom( dom_id, reas, "DA_LS_BY_DOM");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::dip_ls_by_dom( const char* dom_id, 
+			string_list_out reas ) std_try {
+
+		return da_dip_ls_by_dom( dom_id, reas, "DIP_LS_BY_DOM");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::da_dip_ls_by_dom( const char* dom_id, 
+			string_list_out reas, const std::string & func ) std_try {
+
+		Result res(NonTransaction(*pg).Exec("SELECT * FROM "+func+"("
 			+Quote(static_cast<const char *>(dom_id))+')'));
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
