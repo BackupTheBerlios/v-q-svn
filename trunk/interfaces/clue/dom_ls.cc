@@ -48,10 +48,6 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 					return(1);
 			}
 	}
-	if( optind >= ac ) {
-			usage();
-			return(1);
-	}
 	ac -= optind;
 	av += optind;
 

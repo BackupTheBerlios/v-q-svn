@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-package dom_ad;
+package dom_add;
 
 use strict;
 use Test;
