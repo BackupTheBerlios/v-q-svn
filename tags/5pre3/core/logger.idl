@@ -1,0 +1,155 @@
+/*
+Virtual Qmail (http://v-q.foo-baz.com)
+Copyright (C) 2002-2004 Pawel Niewiadomski (new-baz.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+#include "vq.idl"
+
+module vq {
+
+	/**
+	 * Base class for subsystem responsible of storing informations about
+	 * users' loggins.
+	 */
+	interface ilogger {
+			typedef ivq::error error;
+			typedef ivq::err_code err_code;
+			typedef unsigned short service_type;
+			typedef unsigned short result_type;
+
+			/// Size
+			typedef ivq::size_type size_type;
+	
+			/// what we're logging about
+			const service_type ser_unknown = 0; //!< unknown connection
+			const service_type ser_smtp = 1; //!< smpt connection
+			const service_type ser_pop3 = 2; //!< pop3 connection
+			const service_type ser_http = 3; //!< http connection
+			const service_type ser_https = 4; //!< https connection
+			const service_type ser_emtp = 5; //!< my emtp protocol
+			const service_type ser_external = 127;
+			
+			/// status of authorization/login
+			const result_type re_unknown = 0;
+			const result_type re_ok = 1; //!< success
+			const result_type re_read = 2; //!< can't read data
+			const result_type re_data = 3; //!< invalid data (domain, username, password)
+			const result_type re_pass = 4; //!< invalid password, description includes given password
+			const result_type re_int = 5; //!< internal error
+			const result_type re_blk = 6; //!< user's blocked
+			const result_type re_external = 127;
+	
+			/// information stored in log db
+			struct log_entry {
+					string id_log; //!< entry's id
+					string time; //!< time when entry was stored
+					service_type ser; //!< service
+					string msg; //!< error message?
+					string login; //!< user's id
+					string domain; //!< domain
+					string ip; //!< client's ip
+					result_type res; //!< login status, i.e.: ok, error, blocked
+			};
+
+			typedef sequence< log_entry > log_entry_list;
+
+			/// Clears all settings
+			void clear()
+				raises (null_error, db_error, except);
+				
+			/// sets client address
+			void ip_set( in string ip )
+				raises (null_error, db_error, except);
+	
+			/// set service type
+			void service_set( in service_type ser )
+				raises (null_error, db_error, except);
+	
+			/// set domain
+			void domain_set( in string dom )
+				raises (null_error, db_error, except);
+	
+			/// set user
+			void login_set( in string log )
+				raises (null_error, db_error, except);
+					
+			/// Write information
+			error write( in result_type r, in string msg )
+				raises (null_error, db_error, except);
+	
+			/**
+			 * Read all entries from global log (log table)
+			 */ 
+			error read( in size_type start, in size_type cnt,
+					out log_entry_list les )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Count all entries from global log table
+			 */
+			error count( out size_type cnt )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Read all entries for domain. In this case res[i].domain will be
+			 * empty.
+			 */
+			error read_by_dom( in size_type start, in size_type cnt,
+					out log_entry_list les )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Count all entries for domain.
+			 */
+			error count_by_dom( out size_type cnt )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Read all entries for login@domain. In this case res[i].domain
+			 * and res[i].login will be empty.
+			 */
+			error read_by_user( in size_type start, in size_type cnt,
+					out log_entry_list les )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Count all entries for login@domain
+			 */
+			error count_by_user( out size_type cnt )
+				raises (null_error, db_error, except);
+
+			/**
+			 * Removes all entries from log table.
+			 */
+			error rm_all()
+				raises (null_error, db_error, except);
+
+			/**
+			 * Removes all entries for a domain.
+			 */
+			error rm_by_dom()
+				raises (null_error, db_error, except);
+
+			/**
+			 * Removes all entries for a user.
+			 */
+			error rm_by_user()
+				raises (null_error, db_error, except);
+
+	};
+
+}; // module vq
