@@ -1,2 +1,1 @@
-libmain.a main.o
-.depend
+vqmain.o libvqmain.a
