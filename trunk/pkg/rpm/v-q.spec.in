@@ -141,6 +141,7 @@ end
 EOF
 
 # make /etc/ld.so.conf.d/vq.conf
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/
 echo %{_libdir}/vq > $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/vq.conf
 
 # make %{datadir} and %{datadir}/domains
