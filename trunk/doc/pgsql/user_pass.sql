@@ -1,4 +1,4 @@
-CREATE FUNCTION mail.user_pass (int4,int4,text) RETURNS boolean AS '
+CREATE FUNCTION mail.user_pass (int4,int4,text) RETURNS VOID AS '
 declare
     _id_domain alias for $1;
     _id_user alias for $2;

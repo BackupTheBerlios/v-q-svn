@@ -155,6 +155,20 @@ module vq {
 			};
 			typedef sequence<udot_info> udot_info_list;
 
+			/// banned emails
+			struct email_banned {
+					string re_domain; //!< POSIX regular exp.
+					string re_login; //!< POSIX regulat exp.
+			};
+			typedef sequence<email_banned> email_banned_list;
+
+			/// domains REGEX aliases
+			struct domain_re_alias {
+					string id_domain;
+					string re_alias;
+			};
+			typedef sequence<domain_re_alias> domain_re_alias_list;
+
 		/**
 		 * \defgroup dom Playing with domains
 		 * @{

@@ -33,13 +33,16 @@ module vq {
 			typedef ivq::udot_info_list udot_info_list;
 			typedef ivq::udot_type udot_type;
 			typedef ivq::aif_type aif_type;
+			typedef ivq::email_banned email_banned;
+			typedef ivq::email_banned_list email_banned_list;
+			typedef ivq::domain_re_alias domain_re_alias;
+			typedef ivq::domain_re_alias_list domain_re_alias_list;
 
 			enum error {
 				err_no, //!< no errors
 				err_func_res, //!< incorrect return from function
 				err_user_inv, //!< invalid user name
-				err_db, //!< database error
-				err_exists,
+				err_exists, //!< entry exists
 				err_noent //!< no such element
 			};
 
@@ -50,29 +53,34 @@ module vq {
 			/// Adds domain to database
 			error dom_add(in string dom, out string dom_id)
 					raises (null_error, db_error, except);
-			/*
-			/// Adds domain's IP address
-			error dom_ip_add(in string dom, in string ip)
-					raises (null_error);
-			/// Remove IP for domain
-			error dom_ip_rm(in string dom, in string ip)
-					raises (null_error);
-			/// Removes all IP addresses asociated with domain
-			error dom_ip_rm_all(in string dom)
-					raises (null_error);
-			/// Lists all IP addresses asociated with domain
-			error dom_ip_ls(in string dom, out string_list ips)
-					raises (null_error);
-			/// Lists domains having IP addresses
-			error dom_ip_ls_dom(out string_list doms)
-					raises (null_error);
-			*/
 			/// Removes domain.
 			error dom_rm(in string dom_id)
 					raises (null_error, db_error, except);
 			/// Translates domain name to id.
 			error dom_id(in string dom, out string dom_id)
 					raises (null_error, db_error, except);
+		//@}
+		/**
+		 * \defgroup dra Domains REGEX aliases
+		 */
+		//@{
+			/// Adds domain's IP address
+			error dra_add(in string dom_id, in string rea)
+					raises (null_error, db_error, except);
+			/// Remove IP for domain
+			error dra_rm(in string dom_id, in string rea)
+					raises (null_error, db_error, except);
+			/// Removes all IP addresses asociated with domain
+			error dra_rm_by_dom(in string dom_id)
+					raises (null_error, db_error, except);
+			/// Lists all IP addresses asociated with domain
+			error dra_ls_by_dom(in string dom_id, out string_list rea)
+					raises (null_error, db_error, except);
+			/*
+			/// Lists domains having IP addresses
+			error dra_ip_ls_dom(out string_list doms)
+					raises (null_error);
+			*/
 		//@}
 		
 		/**
@@ -88,18 +96,25 @@ module vq {
 			/// Changes password for user
 			error user_pass(in string dom_id, in string user_id, in string pass )
 					raises (null_error, db_error, except);
-			/*
+			
 			/// Gets authorization information for user
 			error user_auth( inout auth_info ai )
 					raises (null_error, db_error, except);
-			/// Checks whether user exists
-			error user_ex(in string dom, in string user)
-					raises (null_error, db_error, except);
-			*/
 			/// Translates user name to id
 			error user_id(in string dom_id, in string login, 
 					out string user_id )
 					raises (null_error, db_error, except);
+		//@}
+		/**
+		 * \defgroup eb Emails banned
+		 */
+		//@{
+			error eb_add(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_rm(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_ls(out email_banned_list ebs)
+					raises (db_error, except);
 		//@}
 #if 0
 		/**

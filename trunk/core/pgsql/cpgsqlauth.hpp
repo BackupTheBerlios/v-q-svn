@@ -29,6 +29,7 @@ namespace POA_vq {
 	class cpgsqlauth : public iauth {
 			public:
 					typedef ::vq::iauth::error error;
+					typedef ::vq::iauth::string_list string_list;
 					typedef ::vq::iauth::string_list_out string_list_out;
 					typedef ::vq::iauth::udot_info udot_info;
 					typedef ::vq::iauth::udot_info_list udot_info_list;
@@ -40,6 +41,9 @@ namespace POA_vq {
 					typedef ::vq::iauth::quota_type_out quota_type_out;
 					typedef ::vq::iauth::size_type size_type;
 					typedef ::vq::iauth::size_type_out size_type_out;
+					typedef ::vq::iauth::email_banned email_banned;
+					typedef ::vq::iauth::email_banned_list_out email_banned_list_out;
+					typedef ::vq::iauth::email_banned_list email_banned_list;
 
 					cpgsqlauth( const char *pginfo );
 					virtual ~cpgsqlauth();
@@ -47,17 +51,16 @@ namespace POA_vq {
 	
 				    virtual error dom_add( const char* dom, 
 							CORBA::String_out dom_id );
-					/*
-				    virtual error dom_ip_add( const char* dom, const char* ip );
-				    virtual error dom_ip_rm( const char* dom, const char* ip );
-				    virtual error dom_ip_rm_all( const char* dom );
-				    virtual error dom_ip_ls( const char* dom, 
-							string_list_out ips );
-				    virtual error dom_ip_ls_dom( string_list_out doms );
-				    */
 					virtual error dom_rm( const char* dom );
 				    virtual error dom_id( const char* dom, 
 							CORBA::String_out dom_id );
+
+					error dra_add( const char* dom_id, const char* rea );
+    				error dra_rm( const char* dom_id, const char* rea );
+    				error dra_rm_by_dom( const char* dom_id );
+    				error dra_ls_by_dom( const char* dom_id, 
+							string_list_out rea );
+
 				    virtual error user_add( auth_info & ai,
 							CORBA::Boolean is_banned );
 				    virtual error user_rm( const char* dom, const char* user );
@@ -65,9 +68,14 @@ namespace POA_vq {
 							const char* pass );
 					virtual error user_id( const char* dom_id, 
 							const char* login, CORBA::String_out user_id );
-				    /*
 					virtual error user_auth( auth_info& ai );
-				    virtual error user_ex( const char* dom, const char* user );
+					
+				    virtual error eb_add( const char * re_domain, 
+							const char * re_login );
+    				virtual error eb_rm( const char * re_domain,
+							const char * re_login );
+    				virtual error eb_ls( email_banned_list_out ebs );
+					/*
 				    virtual error qt_get( const char* dom, const char* user, 
 							quota_type_out bytes_max, quota_type_out files_max );
 				    virtual error qt_set( const char* dom, const char* user, 

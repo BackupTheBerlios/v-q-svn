@@ -19,14 +19,26 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "../../../core/auth.hpp"
 
 #include <boost/test/unit_test.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/time_formatters.hpp>
 
 #include <coss/CosNaming.h>
 
 #include <memory>
 #include <sstream>
+#include <map>
 
 using namespace boost::unit_test_framework;
 
+#define std_try { try
+#define std_catch catch( vq::null_error & e ) { \
+	BOOST_ERROR("null_error"); \
+} catch( vq::db_error & e ) { \
+	BOOST_ERROR(e.what); \
+} catch( vq::except & e ) { \
+	BOOST_ERROR(e.what); \
+} }
+	
 /**
  * 
  */
@@ -101,28 +113,42 @@ struct auth_test {
 
 
 		/**
-		 * Add domain, add users, remove uses, remove domain.
-		 * No errors.
+		 * Add domain, 
+		 * add users, 
+		 * remove uses, 
+		 * remove domain.
 		 */
 		void case1() {
-			/*
-			const char * dom = "test.pl";
-			const char * user = "test";
-			BOOST_CHECK_EQUAL(auth->dom_add(dom), vq::iauth::err_no);
-				
-			vq::iauth::auth_info ai;
-			ai.user = CORBA::string_dup(user);
-			ai.dom = CORBA::string_dup(dom);
-			ai.pass = CORBA::string_dup("test");
-			ai.dir = CORBA::string_dup("dir");
-								
-			BOOST_CHECK_EQUAL(auth->user_add(ai), vq::iauth::err_no);
-
-			//BOOST_CHECK_EQUAL(auth->user_exists());
+			const char * dom = "case1.pl";
+			const char *users[] = { "s", "asdasd", "vxcvcxvxcvxvcv" };
+			unsigned users_cnt= sizeof(users)/sizeof(*users);
 			
-			BOOST_CHECK_EQUAL(auth->user_rm(dom, user), vq::iauth::err_no);
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom), vq::iauth::err_no);
-			*/
+			CORBA::String_var dom_id;
+			BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id), vq::iauth::err_no);
+
+			vq::iauth::auth_info ai;
+			ai.id_domain = CORBA::string_dup(dom_id);
+			ai.pass = CORBA::string_dup("pass");
+			ai.dir = CORBA::string_dup("dir");
+
+			for( unsigned i=0; i<users_cnt; ++i ) {
+					ai.login = CORBA::string_dup(users[i]);
+								
+					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+						vq::iauth::err_no);
+					BOOST_CHECK(*ai.id_user);
+					BOOST_CHECK(atoi(ai.id_user)>0);
+			}
+
+			CORBA::String_var id_user;
+			for( unsigned i=0; i<users_cnt; ++i ) {
+					BOOST_CHECK_EQUAL(auth->user_id(dom_id, users[i], id_user),
+						vq::iauth::err_no);
+					BOOST_CHECK_EQUAL(auth->user_rm(dom_id, id_user),
+						vq::iauth::err_no);
+			}
+
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
 		}
 
 		/**
@@ -179,6 +205,194 @@ struct auth_test {
 				} while(doms_cnt --);
 			}
 		}
+
+		/**
+		 * Add domain, 
+		 * add users, 
+		 * remove domain.
+		 */
+		void case4() {
+			const char * dom = "case4.pl";
+			CORBA::String_var dom_id;
+
+			std_try {
+					const char *users[] = { "s", "asdasd", "vxcvcxvxcvxvcv" };
+					unsigned users_cnt= sizeof(users)/sizeof(*users);
+			
+					BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id),
+						vq::iauth::err_no);
+
+					vq::iauth::auth_info ai;
+					ai.id_domain = CORBA::string_dup(dom_id);
+					ai.pass = CORBA::string_dup("pass");
+					ai.dir = CORBA::string_dup("dir");
+
+					for( unsigned i=0; i<users_cnt; ++i ) {
+							ai.login = CORBA::string_dup(users[i]);
+								
+							BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+								vq::iauth::err_no);
+							BOOST_CHECK(*ai.id_user);
+							BOOST_CHECK(atoi(ai.id_user)>0);
+					}
+			} std_catch
+
+			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+		}
+
+		/**
+		 * Get all banned emails, remove all of them
+		 * 
+		 */
+		void case5() {
+			CORBA::String_var dom_id;
+
+			std_try {
+					vq::iauth::email_banned_list_var ebs;
+					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::iauth::err_no);
+					CORBA::ULong s = ebs->length();
+					for( CORBA::ULong i=0; i<s; ++i ) {
+							BOOST_CHECK_EQUAL(auth->eb_rm(ebs[i].re_domain,
+								ebs[i].re_login), 
+								vq::iauth::err_no);
+					}
+					BOOST_CHECK_EQUAL(auth->dom_add("case5.pl", dom_id), 
+						vq::iauth::err_no);
+			
+					vq::iauth::email_banned eb;
+					BOOST_CHECK_EQUAL(auth->eb_add(
+						static_cast<const char *>(".*"),
+						static_cast<const char *>("root")), vq::iauth::err_no);
+					BOOST_CHECK_EQUAL(auth->eb_add(
+						static_cast<const char *>("case5"),
+						static_cast<const char *>(".*")), vq::iauth::err_no);
+
+					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::iauth::err_no);
+					BOOST_CHECK_EQUAL(ebs->length(), 2U);
+					if( !strcmp(ebs[0].re_domain, ".*") ) {
+							BOOST_CHECK(!strcmp(ebs[1].re_domain, "case5"));
+							BOOST_CHECK(!strcmp(ebs[1].re_login, ".*"));
+							BOOST_CHECK(!strcmp(ebs[0].re_login, "root"));
+					} else {
+							BOOST_CHECK(!strcmp(ebs[0].re_domain, "case5"));
+							BOOST_CHECK(!strcmp(ebs[0].re_login, ".*"));
+							BOOST_CHECK(!strcmp(ebs[1].re_domain, ".*"));
+							BOOST_CHECK(!strcmp(ebs[1].re_login, "root"));
+					}
+
+					vq::iauth::auth_info ai;
+					ai.id_domain = CORBA::string_dup(dom_id);
+					ai.pass = CORBA::string_dup("pass");
+					ai.dir = CORBA::string_dup("dir");
+					ai.login = CORBA::string_dup("aroote");
+					ai.flags = 0;
+			
+					BOOST_CHECK_EQUAL(auth->user_add(ai, TRUE), 
+						vq::iauth::err_user_inv);
+					BOOST_CHECK_EQUAL(auth->user_add(ai, TRUE), 
+						vq::iauth::err_user_inv);
+
+					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+						vq::iauth::err_no);
+			} std_catch
+
+			BOOST_CHECK_EQUAL(auth->dom_id("case5.pl", dom_id), vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+		}
+
+		/**
+		 * Add domain and user if they don't exists
+		 * Change password for user, test if it is changed
+		 */
+		void case6() {
+			const char * dom = "case6.pl";
+			CORBA::String_var dom_id;
+			if( auth->dom_id(dom, dom_id) != vq::iauth::err_no ) {
+					BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id), 
+						vq::iauth::err_no);
+			}
+
+			vq::iauth::auth_info ai;
+			ai.id_domain = CORBA::string_dup(dom_id);
+			ai.pass = CORBA::string_dup("pass");
+			ai.dir = CORBA::string_dup("dir");
+			ai.login = CORBA::string_dup(dom);
+			ai.flags = 0;
+
+			if( auth->user_id(dom_id, dom, ai.id_user) != vq::iauth::err_no ) {
+					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+						vq::iauth::err_no);
+			}
+			std::string now(boost::posix_time::to_iso_string(
+				boost::posix_time::second_clock::local_time()));
+			BOOST_CHECK_EQUAL(auth->user_pass(dom_id, ai.id_user, now.c_str()),
+				vq::iauth::err_no );
+
+			vq::iauth::auth_info aicur;
+			aicur.id_domain = ai.id_domain;
+			aicur.id_user = ai.id_user;
+			aicur.pass = now.c_str();
+			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(aicur.flags, 0);
+
+			aicur.pass = CORBA::string_dup("");
+			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::iauth::err_noent);
+		}
+
+		/**
+		 * add regex aliases for domain created in case6
+		 * get list of regex aliases for domain created in case6
+		 * get list of regex aliases for not existing domain
+		 * remove regex aliases by pair: id_domain+re_alias
+		 * remove regex aliases by id_domain
+		 */
+		void case7() {
+			const char * dom = "case6.pl";
+			const char * reas[] = {
+				"test",
+				"^test.*",
+				"^oloo$"
+			};
+			unsigned reas_cnt = sizeof(reas)/sizeof(*reas);
+			CORBA::String_var dom_id;
+			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), 
+				vq::iauth::err_no);
+			BOOST_REQUIRE(*dom_id);
+			for( unsigned i=0; i<reas_cnt; ++i ) {
+					BOOST_CHECK_EQUAL(auth->dra_add(dom_id, reas[i]),
+						vq::iauth::err_no );
+			}
+			vq::iauth::string_list_var from_db, from_db1;
+			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(dom_id, from_db),
+				vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt);
+			// need to compare all of them
+			std::map<std::string, char> in_db;
+			for( unsigned i=0, s=from_db->length(); i<s; ++i ) {
+					in_db[static_cast<const char *>(from_db[i])] = 1;
+			}
+			for( unsigned i=0; i<reas_cnt; ++i ) {
+					BOOST_CHECK_EQUAL(in_db[reas[i]], 1);
+			}
+			
+			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(
+				static_cast<const char *>("-1"), from_db1), 
+				vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(from_db1->length(), 0U);
+
+			BOOST_CHECK_EQUAL(auth->dra_rm(dom_id, reas[0]),
+				vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(dom_id, from_db),
+				vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt-1);
+			
+			BOOST_CHECK_EQUAL(auth->dra_rm_by_dom(dom_id), vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(auth->dra_ls_by_dom(dom_id, from_db),
+				vq::iauth::err_no);
+			BOOST_CHECK_EQUAL(from_db->length(), 0U);
+		}
+
 };
 
 /**
@@ -193,12 +407,11 @@ struct auth_test_suite : test_suite {
 				&auth_test::init, test );
 			add(ts_init);
 
-			/*
 			test_case * ts_case1 = BOOST_CLASS_TEST_CASE( 
 				&auth_test::case1, test );
 			ts_case1->depends_on(ts_init);
 			add(ts_case1);
-			*/
+			
 			test_case * ts_case2 = BOOST_CLASS_TEST_CASE( 
 				&auth_test::case2, test );
 			ts_case2->depends_on(ts_init);
@@ -208,6 +421,26 @@ struct auth_test_suite : test_suite {
 				&auth_test::case3, test );
 			ts_case3->depends_on(ts_init);
 			add(ts_case3);
+
+			test_case * ts_case4 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case4, test );
+			ts_case4->depends_on(ts_init);
+			add(ts_case4);
+
+			test_case * ts_case5 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case5, test );
+			ts_case5->depends_on(ts_init);
+			add(ts_case5);
+
+			test_case * ts_case6 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case6, test );
+			ts_case6->depends_on(ts_init);
+			add(ts_case6);
+
+			test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case7, test );
+			ts_case7->depends_on(ts_case6);
+			add(ts_case7);
 
 		}
 };
