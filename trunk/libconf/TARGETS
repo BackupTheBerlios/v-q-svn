@@ -1,1 +1,1 @@
-.depend cconf.o libconf.a
+.depend conf.o libconf.a

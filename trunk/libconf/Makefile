@@ -1,5 +1,5 @@
 BASE=..
-OBJS=cconf.o
+OBJS=conf.o
 INCS=
 LIBS=
 
@@ -9,8 +9,8 @@ include $(BASE)/Makefile.common
 
 ##################
 
-libconf.a: $(BASE)/make-lib cconf.o
-	$(BASE)/make-lib libconf.a cconf.o
+libconf.a: $(BASE)/make-lib conf.o
+	$(BASE)/make-lib libconf.a conf.o
 
 $(OBJS): $(BASE)/comp-so
 
