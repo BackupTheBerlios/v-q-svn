@@ -36,7 +36,8 @@
 		<title>Foreword</title>
 
 		<para>
-			This is a guide to Virtual Qmail. I hope you'll enjoy
+			This is a guide to 
+			<ulink url="http://v-q.foo-baz.com">Virtual Qmail</ulink>. I hope you'll enjoy
 			reading it. Please direct all questions, bug reports,
 			or suggestions for changes to Pawe³ Niewiadomski 
 			&lt;<literal>new [__at__] foo-baz [__dot__] com</literal>&gt;.

@@ -92,6 +92,22 @@
 		</para>
 	</section>
 
+	<section id="intro.trans">
+		<title>Documentation translations</title>
+
+		<para>
+		Original documentation is written in English, current version
+		can be downloaded from <ulink url="http://v-q.foo-baz.com">http://v-q.foo-baz.com</ulink>.
+		</para>
+
+		<para>
+		At this time following translations exist:
+		<itemizedlist>
+			<listitem><para><ulink url="../pl.html/index.html">Polish</ulink></para></listitem>
+		</itemizedlist>
+		</para>
+	</section>
+
 	&license;
 
 <!--

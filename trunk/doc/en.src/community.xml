@@ -100,7 +100,7 @@
 			Informations you should include in a bug report:
 			v-q's version, architecture, operating system, 
 			error description, messages printed by program, 
-			configuration (except of passwords of course :-), 
+			configuration (except passwords of course :-), 
 			action description. And of course if you can reproduce it
 			please write all actions to do it.
 		</para>
