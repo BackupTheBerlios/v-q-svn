@@ -1,0 +1,25 @@
+#!/bin/sh
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f ../../../lib*/*.so* /tmp
+
+host=`uname -n`
+
+echo "starting Naming Service daemon ..."
+nsd -ORBIIOPAddr inet:$host:12456 &
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 1
+
+echo "starting qmailvqd server ..."
+../../../core/qmailvqd/qmailvqd \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService \
+/var/vq &
+server_pid=$!
+
+trap "kill $nsd_pid $server_pid" 0
+sleep 1
+
+echo "running client ..."
+./qmailvqd -ORBInitRef NameService=corbaloc::$host:12456/NameService
