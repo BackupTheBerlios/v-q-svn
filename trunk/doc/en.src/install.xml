@@ -327,6 +327,16 @@ make PREFIX=/var/v-q install
 				for <filename>bin/qmail*</filename> programs (except 
 				<application>qmailvqd</application>). This will
 				allow these programs to change qmail's configuration.
+				<note>
+					<para>
+						Programs starting with <filename>qmail_</filename>
+						are simple shell scripts - setting SETUID/SETGID flag
+						for them will not work with decent shells. You will
+						have to modify them to use <application>sudo</application>
+						to run some commands. See <application>qmail-send-restart</application>
+						for some clues about it.
+					</para>
+				</note>
 			</para>
 		</section>
 
