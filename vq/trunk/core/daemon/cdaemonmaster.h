@@ -36,7 +36,7 @@ SUCH DAMAGE.
 
 #include "cdaemonchild.h"
 
-#include "sys.h"
+#include <sys.hpp>
 
 #include <dirent.h>
 

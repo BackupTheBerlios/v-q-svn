@@ -44,7 +44,7 @@ namespace sys {
 	
 	int fdrdstr(int fd, string & str)
 	{
-		uint32_t len, i;
+		string::size_type len, i;
 		char c;
 		str = "";
 		if( fdread(fd, &len, sizeof(len)) == sizeof(len) ) {
@@ -66,7 +66,7 @@ namespace sys {
 	*/
 	int fdwrstr(int fd, const string & str)
 	{
-		uint32_t len = str.length();
+		string::size_type len = str.length();
 		if( fdwrite(fd, &len, sizeof(len)) == sizeof(len)
 			&& fdwrite(fd, str.data(), len) == len ) {
 				return len;

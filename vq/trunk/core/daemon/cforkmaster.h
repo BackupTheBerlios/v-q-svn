@@ -36,7 +36,7 @@ SUCH DAMAGE.
 
 #include "cdaemonmaster.h"
 
-#include "sys.h"
+#include <sys.hpp>
 
 #include <dirent.h>
 
@@ -72,7 +72,7 @@ class cforkmaster : public cdaemonmaster {
 				static size_type children; //!< number of children
 				static size_type children_lim; //!< maximum of children
 						
-				cpoll fds; //!< file descriptor we're listening on
+				sys::cpoll fds; //!< file descriptor we're listening on
 				DIR * dir_initial; //!< directory from which we have been run
 				socket2dll_map sock2dll; //!< map sockets to dll-s
 				bool set; //!< true if setup was executed

@@ -33,8 +33,7 @@ SUCH DAMAGE.
 
 #include "cforkmaster.h"
 
-#include "sys.h"
-#include "lock.h"
+#include <sys.hpp>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -44,6 +43,7 @@ SUCH DAMAGE.
 #include <unistd.h>
 #include <fcntl.h>
 #include <dlfcn.h>
+#include <signal.h>
 
 #include <iostream>
 #include <stdexcept>
@@ -56,6 +56,7 @@ SUCH DAMAGE.
 #endif 
 
 using namespace std;
+using namespace sys;
 
 cforkmaster::size_type cforkmaster::children(0);
 cforkmaster::size_type cforkmaster::children_lim(50); 

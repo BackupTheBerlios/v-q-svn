@@ -32,7 +32,6 @@ SUCH DAMAGE.
 */
 #include "main.h"
 #include "cdaemonmaster.h"
-#include "main.h"
 
 #include <iostream>
 #include <stdexcept>
