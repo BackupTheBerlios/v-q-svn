@@ -304,7 +304,9 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		in_addr addr;
-		if( inet_aton(ali ? ali : "", &addr) )
+		in6_addr addr6;
+		if( inet_aton(ali ? ali : "", &addr) != 1
+			&& inet_pton(AF_INET6, ali ? ali : "", &addr6) != 1 )
 				return lr(::vq::ivq::err_dom_inv, ali);
 
 		string alias(text::lower(ali));

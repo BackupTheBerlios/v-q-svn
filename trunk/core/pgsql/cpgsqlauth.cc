@@ -201,9 +201,6 @@ namespace POA_vq {
 	 */
 	cpgsqlauth::error * cpgsqlauth::da_add( const char * dom_id,
 			const char * ali ) std_try {
-		in_addr addr;
-		if( inet_aton(ali ? ali : "", &addr) )
-				return lr(::vq::ivq::err_dom_inv, ali);
 		return da_dip_add(dom_id, ali, "DA_ADD");
 	} std_catch
 
@@ -212,6 +209,11 @@ namespace POA_vq {
 	 */
 	cpgsqlauth::error * cpgsqlauth::dip_add( const char * dom_id,
 			const char * ali ) std_try {
+		in_addr addr;
+		in6_addr addr6;
+		if( inet_aton(ali ? ali : "", &addr) != 1
+			&& inet_pton(AF_INET6, ali ? ali : "", &addr6 ) != 1 )
+				return lr(::vq::ivq::err_dom_inv, ali);
 		return da_dip_add(dom_id, ali, "DIP_ADD");
 	} std_catch
 

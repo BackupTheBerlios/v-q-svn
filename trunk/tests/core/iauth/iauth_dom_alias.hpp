@@ -3,6 +3,8 @@
 
 #include "../../../core/auth.hpp"
 
+#include <getlines.hpp>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
 
@@ -10,6 +12,8 @@
 
 template <class OBJ_TYPE>
 struct da_dip_test {
+		typedef std::deque< std::string > string_array; 
+
 		vq::ivq::error_var err;
 
 		OBJ_TYPE & obj;
@@ -25,45 +29,44 @@ struct da_dip_test {
 		 */
 		void case6() {
 			const char * dom = "case6.pl";
-			const char * reas[] = {
-				"test",
-				"test.sdfsdfsdf",
-				"oloo"
-			};
-			unsigned reas_cnt = sizeof(reas)/sizeof(*reas);
+
+			std::ifstream ifs("data/dom_alias/ips");
+			string_array ips;
+			BOOST_REQUIRE( sys::getlines<std::string>(ifs, ips) );
+			
 			CORBA::String_var dom_id;
 			err = obj->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 			BOOST_REQUIRE(*dom_id);
-			for( unsigned i=0; i<reas_cnt; ++i ) {
-					err = obj->dip_add(dom_id, reas[i]);
+			for( string_array::value_type::size_type i=0, s=ips.size(); i<s; ++i ) {
+					err = obj->dip_add(dom_id, ips[i].c_str());
 					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
 			}
 			vq::iauth::string_list_var from_db, from_db1;
 			err = obj->dip_ls_by_dom(dom_id, from_db);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt);
+			BOOST_CHECK_EQUAL(from_db->length(), ips.size());
 			// need to compare all of them
 			std::map<std::string, char> in_db;
 			for( unsigned i=0, s=from_db->length(); i<s; ++i ) {
 					in_db[static_cast<const char *>(from_db[i])] = 1;
 			}
-			for( unsigned i=0; i<reas_cnt; ++i ) {
-					BOOST_CHECK_EQUAL(in_db[reas[i]], 1);
+			for( string_array::value_type::size_type i=0, s=ips.size(); i<s; ++i ) {
+					BOOST_CHECK_EQUAL(in_db[ ips[i] ], 1);
 			}
 		
 			err = obj->dip_ls_by_dom(static_cast<const char *>("-1"), from_db1);
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(from_db1->length(), 0U);
 
-			err = obj->dip_rm(reas[0]);
+			err = obj->dip_rm( ips[0].c_str() );
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_no );
 			err = obj->dip_ls_by_dom(dom_id, from_db);
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
-			BOOST_CHECK_EQUAL(from_db->length(), reas_cnt-1);
+			BOOST_CHECK_EQUAL(from_db->length(), ips.size()-1);
 
-			for( unsigned i=0; i<reas_cnt; ++i ) {
-					err = obj->dip_rm(reas[i]);
+			for( string_array::value_type::size_type i=0, s=ips.size(); i<s; ++i ) {
+					err = obj->dip_rm( ips[i].c_str() );
 					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
 			}
 		}

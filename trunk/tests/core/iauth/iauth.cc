@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "iauth_dom_ls.hpp"
 #include "../../../core/auth.hpp"
 
-#include <getlines.hpp>
 #include <split.hpp>
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
