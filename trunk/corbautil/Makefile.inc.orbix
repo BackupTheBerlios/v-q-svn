@@ -1,0 +1,108 @@
+#-----------------------------------------------------------------------
+# Copyright IONA Technologies 2002-2004. All rights reserved.
+# This software is provided "as is".
+#-----------------------------------------------------------------------
+
+#--------
+# Set the next line to point to this top-level directory
+#--------
+CORBA_UTIL_ROOT=	C:\corbautil
+
+#--------
+# Where Java is installed (ignore this if you are not using Java parts
+# of CORBA Utilities)
+#--------
+JAVA_HOME =		C:\jdk1.3.1_02
+
+#--------
+# If you do not have IT_PRODUCT_DIR set as an environment variable
+# then add it below, by uncommenting the next line and making sure
+# the specified directory is correct
+#--------
+#IT_PRODUCT_DIR=	C:\iona
+
+#--------
+# If you are using "old/classic" iostreams then uncomment the
+# following lines
+#--------
+#OPT_CXX_FLAGS= /DIT_CLASSIC_IOSTREAMS /DP_USE_OLD_TYPES
+#OPT_CIOS_DIR=	\cios
+
+#--------
+# Uncomment the following lines if you are using Orbix 2000 or ASP 5.0
+#--------
+#P_ORBIX_VERSION =	20
+#ART_ROOT_DIR =		$(IT_PRODUCT_DIR)\orbix_art\2.0
+#ART_CXX_INCLUDE_DIR =	"$(ART_ROOT_DIR)\cxx\include"
+#ART_LIB_DIR =		"$(ART_ROOT_DIR)\cxx\lib$(OPT_CIOS_DIR)"
+#ART_IDL_DIR =		"$(ART_ROOT_DIR)\idl"
+#ART_JAR_FILE =		$(ART_ROOT_DIR)\lib\runtime\art.jar
+
+#--------
+# Uncomment the following lines if you are using ASP 5.1
+#--------
+#P_ORBIX_VERSION =	51
+#ART_ROOT_DIR =		$(IT_PRODUCT_DIR)\asp\5.1
+#ART_CXX_INCLUDE_DIR =	"$(ART_ROOT_DIR)\include"
+#ART_LIB_DIR =		"$(ART_ROOT_DIR)\lib$(OPT_CIOS_DIR)"
+#ART_IDL_DIR =		"$(ART_ROOT_DIR)\idl"
+#ART_JAR_FILE =		$(ART_ROOT_DIR)\lib\runtime\art.jar
+
+#--------
+# Uncomment the following lines if you are using ASP 6.0
+#--------
+#P_ORBIX_VERSION =	60
+#ART_ROOT_DIR =		$(IT_PRODUCT_DIR)\asp\6.0
+#ART_CXX_INCLUDE_DIR =	"$(ART_ROOT_DIR)\include"
+#ART_LIB_DIR =		"$(ART_ROOT_DIR)\lib"
+#ART_IDL_DIR =		"$(ART_ROOT_DIR)\idl"
+#ART_JAR_FILE =		$(ART_ROOT_DIR)\lib\asp-corba.jar
+
+#--------
+# Uncomment the following lines if you are using ASP 6.0
+#--------
+P_ORBIX_VERSION =	61
+ART_ROOT_DIR =		$(IT_PRODUCT_DIR)\asp\6.1
+ART_CXX_INCLUDE_DIR =	"$(ART_ROOT_DIR)\include"
+ART_LIB_DIR =		"$(ART_ROOT_DIR)\lib"
+ART_IDL_DIR =		"$(ART_ROOT_DIR)\idl"
+ART_JAR_FILE =		$(ART_ROOT_DIR)\lib\asp-corba.jar
+
+
+
+#--------
+# You should not have to change anything after this point
+#--------
+
+
+#--------
+# C++ compiler
+#--------
+CXX=			cl
+CXXFLAGS=		-I. \
+			-I$(CORBA_UTIL_ROOT)\cxx\gsp \
+			-I$(CORBA_UTIL_ROOT)\cxx\import_export \
+			-I$(CORBA_UTIL_ROOT)\cxx\PoaUtility \
+			-I$(CORBA_UTIL_ROOT)\cxx\portability \
+			-I$(ART_CXX_INCLUDE_DIR) \
+			-Zi \
+			-nologo \
+			-GR \
+			-GX \
+			-W3 \
+			-Zm200 \
+			-MD \
+			-DWIN32 \
+			$(OPT_CXX_FLAGS) \
+			-DP_USE_WIN32_THREADS \
+			-DP_USE_ORBIX \
+			-DP_ORBIX_VERSION=$(P_ORBIX_VERSION)
+
+
+#--------
+# Generic build rules
+#--------
+.SUFFIXES:		.cxx
+
+.cxx.obj:
+	$(CXX) /c $(CXXFLAGS) $<
