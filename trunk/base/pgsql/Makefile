@@ -40,5 +40,5 @@ install:
 
 install-pgsql: pgsql
 	for p in pgsqllogd pgsqlauthd install.pgsql ; do \
-		$(INSTALL) -D -m 0755 $$p $(PREFIX)/bin/$$p ; \
+		$(INSTALL) -d -m 0755 $$p $(PREFIX)/bin/$$p ; \
 	done

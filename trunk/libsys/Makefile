@@ -46,7 +46,7 @@ clean:
 #################
 install: all
 	for p in *.hpp ; do \
-		$(INSTALL) -D -m 0644 $$p $(PREFIX)/include/v-q/libsys/$$p ; \
+		$(INSTALL) -d -m 0644 $$p $(PREFIX)/include/v-q/libsys/$$p ; \
 	done
-	$(INSTALL) -D -m 0755 libsys.so.6.0 $(PREFIX)/lib/v-q/libsys.so.6.0
-	$(INSTALL) -D -m 0755 libsys.so $(PREFIX)/lib/v-q/libsys.so
+	$(INSTALL) -d -m 0755 libsys.so.6.0 $(PREFIX)/lib/v-q/libsys.so.6.0
+	$(INSTALL) -d -m 0755 libsys.so $(PREFIX)/lib/v-q/libsys.so

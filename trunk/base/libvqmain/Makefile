@@ -21,5 +21,5 @@ clean:
 
 #################
 install: all
-	$(INSTALL) -D -m 0644 vqmain.hpp $(PREFIX)/include/v-q/base/libvqmain/vqmain.hpp
-	$(INSTALL) -D -m 0755 libvqmain.a $(PREFIX)/lib/v-q/libvqmain.a
+	$(INSTALL) -d -m 0644 vqmain.hpp $(PREFIX)/include/v-q/base/libvqmain/vqmain.hpp
+	$(INSTALL) -d -m 0755 libvqmain.a $(PREFIX)/lib/v-q/libvqmain.a

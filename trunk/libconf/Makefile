@@ -25,5 +25,5 @@ clean:
 
 #################
 install: all
-	$(INSTALL) -D -m 0644 conf.hpp $(PREFIX)/include/v-q/libconf/conf.hpp
-	$(INSTALL) -D -m 0755 libconf.a $(PREFIX)/lib/v-q/libconf.a
+	$(INSTALL) -d -m 0644 conf.hpp $(PREFIX)/include/v-q/libconf/conf.hpp
+	$(INSTALL) -d -m 0755 libconf.a $(PREFIX)/lib/v-q/libconf.a

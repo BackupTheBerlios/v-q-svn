@@ -104,6 +104,6 @@ install: all
 			qmail_virtualdomains_rm qmail_rcpthosts_add qmail_mrh_add qmail_mrh_rm \
 			qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_file_add \
 			qmail_file_rm autoresp deliver; do \
-		$(INSTALL) -D -m 0755 $$p $(PREFIX)/bin/$$p ; \
+		$(INSTALL) -d -m 0755 $$p $(PREFIX)/bin/$$p ; \
 	done
 
