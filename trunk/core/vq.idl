@@ -50,7 +50,7 @@ module vq {
 			typedef unsigned long quota_type; //!< Type for holding quota values
 			typedef unsigned long size_type; //!< Type for holding sizes
 			typedef unsigned short aif_type;
-			typedef unsigned short udot_type;
+			typedef unsigned short user_conf_type;
 			typedef sequence<string> string_list;
 
 		/**
@@ -71,7 +71,7 @@ module vq {
 					/// error in authorization module
 					err_auth, // 5
 					/// dot file - type is not supported
-					err_udot_tns,
+					err_user_conf_tns,
 					/// can't open sth
 					err_open, //  7
 					/// can't write
@@ -148,17 +148,17 @@ module vq {
 			};
 
 			/// Mailbox options
-			const udot_type ut_redir = 1; //!< redirection
-			const udot_type ut_maildir = 2; //!< maildir
-			const udot_type ut_autoresp = 3; //!< autorespond
+			const user_conf_type ut_redir = 1; //!< redirection
+			const user_conf_type ut_maildir = 2; //!< maildir
+			const user_conf_type ut_autoresp = 3; //!< autorespond
 
 			/// user's dot file info
-			struct udot_info {
+			struct user_conf_info {
 					string id_conf; //!< identificator
 					string val; //!< value
-					udot_type type; //!< type of entry
+					user_conf_type type; //!< type of entry
 			};
-			typedef sequence<udot_info> udot_info_list;
+			typedef sequence<user_conf_info> user_conf_info_list;
 
 			/// banned emails
 			struct email_banned {
@@ -293,59 +293,50 @@ module vq {
 			error qt_global_def_get(
 					out quota_type bytes_max, out quota_type files_max )
 					raises (null_error, except);
+#endif // if 0
 		//@}
 	/*@}*/
 
-	/**
-	 * \defgroup udot Playing with user mailbox's options
-	 * @{
-	 */
-			/// Adds to dot file
-			error udot_add(in string dom, in string user,
-					in string pfix, inout udot_info ui )
-					raises (null_error, except);
-			/// Adds some default configuration to user's mailbox
-			error udot_add_md_def(in string dom, in string user,
-					in string pfix)
-					raises (null_error, except);
-			/// Removes all options of specified type
-			error udot_rm_by_type(in string dom, in string user,
-					in string pfix, in udot_type ut )
-					raises (null_error, except);
-			/// Removes option with given id
-			error udot_rm_by_id(in string dom, in string user, 
-					in string id)
-					raises (null_error, except);
+		/**
+		 * \defgroup user_conf Playing with user mailbox's options
+		 */
+		 //@{
+			/// Adds mailbox configuration
+			error user_conf_add(in string dom_id, in string user,
+					in string pfix, inout user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Removes all mailbox configuration entries
+			error user_conf_rm_by_type(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut )
+					raises (null_error, db_error, except);
+			/// Removes mailbox configuration entry
+			error user_conf_rm( in string id )
+					raises (null_error, db_error, except);
 			/// Lists mailbox configuration
-			error udot_ls(in string dom, in string user, in string pfix, 
-					out udot_info_list uis )
-					raises (null_error, except);
-			/// Lists mailbox options of specified type
-			error udot_ls_by_type(in string dom, in string user,
-					in string pfix, in udot_type ut, 
-					out udot_info_list uis )
-					raises (null_error, except);
-			/// Changes value of option with given id.
-			error udot_rep(in string dom, in string user,
-					in udot_info ui )
-					raises (null_error, except);
-			/// Gets value of options with given id.
-			error udot_get( in string dom, in string user,
-					inout udot_info ui )
-					raises (null_error, except);
-			/// Checks if given option is supported
-			error udot_sup_is( in udot_type ut )
-					raises (null_error, except);
-			/// Checks if mailbox has configured option of given type
-			error udot_type_has(in string dom, in string user, in string pfix, 
-					in udot_type ut )
-					raises (null_error, except);
-			/// Counts options with given type
-			error udot_type_cnt(in string dom, in string user, in string pfix, 
-					in udot_type ut, out size_type cnt )
-					raises (null_error, except);
+			error user_conf_ls(in string dom_id, in string user,
+					in string pfix, out user_conf_info_list uis )
+					raises (null_error, db_error, except);
+			/// Lists mailbox configuation of specified type
+			error user_conf_ls_by_type(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut,
+					out user_conf_info_list uis )
+					raises (null_error, db_error, except);
+			/// Changes existing entry
+			error user_conf_rep( in user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Gets existing entry
+			error user_conf_get( inout user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Checks whether mailbox has entry of specified type
+			error user_conf_type_has(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut )
+					raises (null_error, db_error, except);
+			/// Counts entries of specified type
+			error user_conf_type_cnt(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut, 
+					out size_type cnt )
+					raises (null_error, db_error, except);
 		//@}
-#endif // if 0
 	}; // interface ivq
 
 }; // module vq

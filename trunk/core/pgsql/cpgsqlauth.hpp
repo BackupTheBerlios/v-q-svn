@@ -32,11 +32,11 @@ namespace POA_vq {
 					typedef ::vq::iauth::err_code err_code;
 					typedef ::vq::iauth::string_list string_list;
 					typedef ::vq::iauth::string_list_out string_list_out;
-					typedef ::vq::iauth::udot_info udot_info;
-					typedef ::vq::iauth::udot_info_list udot_info_list;
-					typedef ::vq::iauth::udot_info_list_out udot_info_list_out;
-					typedef ::vq::iauth::udot_type_out udot_type_out;
-					typedef ::vq::iauth::udot_type udot_type;
+					typedef ::vq::iauth::user_conf_info user_conf_info;
+					typedef ::vq::iauth::user_conf_info_list user_conf_info_list;
+					typedef ::vq::iauth::user_conf_info_list_out user_conf_info_list_out;
+					typedef ::vq::iauth::user_conf_type_out user_conf_type_out;
+					typedef ::vq::iauth::user_conf_type user_conf_type;
 					typedef ::vq::iauth::auth_info auth_info;
 					typedef ::vq::iauth::quota_type quota_type;
 					typedef ::vq::iauth::quota_type_out quota_type_out;
@@ -88,24 +88,24 @@ namespace POA_vq {
 				    virtual error* qt_user_def_get( const char* dom_id, 
 							quota_type_out bytes_max, quota_type_out files_max );
 				    
-					virtual error* udot_add( const char* dom_id, const char* user, 
-							const char* pfix, udot_info &ui );
-				    virtual error* udot_rm_by_type( const char* dom_id, 
-							const char* user, const char *pfix, udot_type ut );
-				    virtual error* udot_rm( const char* id );
-				    virtual error* udot_ls( const char* dom_id,
+					virtual error* user_conf_add( const char* dom_id, const char* user, 
+							const char* pfix, user_conf_info &ui );
+				    virtual error* user_conf_rm_by_type( const char* dom_id, 
+							const char* user, const char *pfix, user_conf_type ut );
+				    virtual error* user_conf_rm( const char* id );
+				    virtual error* user_conf_ls( const char* dom_id,
 							const char* user, const char* pfix, 
-							udot_info_list_out uis );
-				    virtual error* udot_ls_by_type( const char* dom_id, 
+							user_conf_info_list_out uis );
+				    virtual error* user_conf_ls_by_type( const char* dom_id, 
 							const char* user, const char* pfix, 
-							udot_type ut, udot_info_list_out uis );
-				    virtual error* udot_rep( const udot_info& ui );
-				    virtual error* udot_get( udot_info& ui );
-			    	virtual error* udot_type_has( const char* dom_id, 
-							const char* user, const char* pfix, udot_type ut );
-			    	virtual error* udot_type_cnt( const char* dom_id, 
+							user_conf_type ut, user_conf_info_list_out uis );
+				    virtual error* user_conf_rep( const user_conf_info& ui );
+				    virtual error* user_conf_get( user_conf_info& ui );
+			    	virtual error* user_conf_type_has( const char* dom_id, 
+							const char* user, const char* pfix, user_conf_type ut );
+			    	virtual error* user_conf_type_cnt( const char* dom_id, 
 							const char* user, const char* pfix, 
-							udot_type ut, size_type_out cnt );
+							user_conf_type ut, size_type_out cnt );
 
 			protected:
 					/// pgsql

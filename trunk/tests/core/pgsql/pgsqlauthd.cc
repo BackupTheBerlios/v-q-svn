@@ -533,7 +533,7 @@ struct auth_test {
 		 * in configuration files. When adding entries remeber their id.
 		 * Remove all entries by id. Get all entries for ids. Should return
 		 * err_noent. In the mean-time
-		 * call udot_type_has, udot_type_cnt (when user, pfix has entries, and
+		 * call user_conf_type_has, user_conf_type_cnt (when user, pfix has entries, and
 		 * after removing them).
 		 */
 		void case9() {
@@ -552,7 +552,7 @@ struct auth_test {
 					BOOST_REQUIRE(sys::getlines<std::string>(ifs, pfixs));
 					
 					string_array::const_iterator ubeg, uend, pbeg, pend;
-					::vq::ivq::udot_info ui;
+					::vq::ivq::user_conf_info ui;
 					::vq::ivq::auth_info ai;
 					ui.type = ::vq::ivq::ut_redir;
 					typedef std::vector<CORBA::String_var> id_array;
@@ -573,7 +573,7 @@ struct auth_test {
 
 									ui.val = pbeg->c_str();
 									ui.id_conf = static_cast<const char *>("");
-									IVQ_ERROR_EQUAL(auth->udot_add(dom_id,
+									IVQ_ERROR_EQUAL(auth->user_conf_add(dom_id,
 										ubeg->c_str(), pbeg->c_str(), ui),
 										::vq::ivq::err_no);
 									BOOST_CHECK(*ui.id_conf);
@@ -581,21 +581,21 @@ struct auth_test {
 
 									// Check if user,pfix has entries for
 									// type ui.type (should have them)
-									IVQ_ERROR_EQUAL(auth->udot_type_has(
+									IVQ_ERROR_EQUAL(auth->user_conf_type_has(
 										dom_id, ubeg->c_str(), pbeg->c_str(), 
 										ui.type), ::vq::ivq::err_no);
 
 									// Check number of entries for user,pfix
 									CORBA::ULong cnt;
-									IVQ_ERROR_EQUAL(auth->udot_type_cnt(
+									IVQ_ERROR_EQUAL(auth->user_conf_type_cnt(
 										dom_id, ubeg->c_str(), pbeg->c_str(), 
 										ui.type, cnt), ::vq::ivq::err_no);
 									BOOST_CHECK_EQUAL( cnt, 1U );
 
 									// Get entry and compare
-									::vq::ivq::udot_info uicmp;
+									::vq::ivq::user_conf_info uicmp;
 									uicmp.id_conf = ui.id_conf;
-									IVQ_ERROR_EQUAL(auth->udot_get(uicmp),
+									IVQ_ERROR_EQUAL(auth->user_conf_get(uicmp),
 										::vq::ivq::err_no);
 									BOOST_CHECK_EQUAL(uicmp.id_conf, ui.id_conf);
 									BOOST_CHECK_EQUAL(uicmp.type, ui.type);
@@ -605,14 +605,14 @@ struct auth_test {
 					// remove entries
 					for( id_array::const_iterator beg=ids.begin(), end=ids.end();
 								beg!=end; ++beg ) {
-							IVQ_ERROR_EQUAL(auth->udot_rm(*beg),
+							IVQ_ERROR_EQUAL(auth->user_conf_rm(*beg),
 								::vq::ivq::err_no);
 					}
 					// get entries
 					for( id_array::const_iterator beg=ids.begin(), end=ids.end();
 								beg!=end; ++beg ) {
 							ui.id_conf = *beg;
-							IVQ_ERROR_EQUAL(auth->udot_get(ui),
+							IVQ_ERROR_EQUAL(auth->user_conf_get(ui),
 								::vq::ivq::err_noent);
 					}
 			} std_catch
@@ -622,16 +622,16 @@ struct auth_test {
 		/**
 		 * Add domain. Create users as specified in configuration file.
 		 * For each users create many configuration entries as specified
-		 * in configuration file. For each pair user,pfix call udot_ls
+		 * in configuration file. For each pair user,pfix call user_conf_ls
 		 * and check whether it returns all entries as in configuration
-		 * file. Also for each pair call udot_ls_by_type and check results.
+		 * file. Also for each pair call user_conf_ls_by_type and check results.
 		 * Remove domain.
 		 */
 		void case10() {
 			const char * dom = "case10.pl";
-			CORBA::String_var dom_id;
 			std_try {
 					typedef std::deque< std::string > string_array;
+					CORBA::String_var dom_id;
 					test_dom_user_add(dom, dom_id);
 
 					string_array conf;
@@ -641,12 +641,12 @@ struct auth_test {
 
 					::vq::ivq::auth_info ai;
 					ai.id_domain = dom_id;
-					ai.pass = "asdasd";
+					ai.pass = static_cast<const char *>("asdasd");
 					ai.flags = 0;
 
 					string_array::const_iterator bc, be, fc, fe, pfix;
 					string_array fields, uia;
-					::vq::ivq::udot_info ui;
+					::vq::ivq::user_conf_info ui;
 					
 					for( bc=conf.begin(), be=conf.end(); bc!=be; ++bc ) {
 							if( '#' == (*bc)[0] ) continue;
@@ -668,7 +668,7 @@ struct auth_test {
 									ui.type = lexical_cast<CORBA::UShort>
 										(uia[0].c_str());
 									ui.val = uia[1].c_str();
-									IVQ_ERROR_EQUAL( auth->udot_add(dom_id,
+									IVQ_ERROR_EQUAL( auth->user_conf_add(dom_id,
 										ai.login, pfix->c_str(), ui), 
 										::vq::ivq::err_no);
 							}
@@ -686,8 +686,8 @@ struct auth_test {
 
 							pfix = fc++;
 
-							::vq::ivq::udot_info_list_var uis;
-							IVQ_ERROR_EQUAL(auth->udot_ls(dom_id,
+							::vq::ivq::user_conf_info_list_var uis;
+							IVQ_ERROR_EQUAL(auth->user_conf_ls(dom_id,
 								ai.login, pfix->c_str(), uis ),
 								::vq::ivq::err_no );
 
@@ -710,8 +710,8 @@ struct auth_test {
 									}
 									BOOST_CHECK(has);
 
-									::vq::ivq::udot_info_list_var uistype;
-									IVQ_ERROR_EQUAL(auth->udot_ls_by_type(dom_id,
+									::vq::ivq::user_conf_info_list_var uistype;
+									IVQ_ERROR_EQUAL(auth->user_conf_ls_by_type(dom_id,
 										ai.login, pfix->c_str(), ui.type, uistype ),
 										::vq::ivq::err_no );
 
@@ -728,14 +728,141 @@ struct auth_test {
 									BOOST_CHECK(has);
 							}
 					}
+			} std_catch
+			test_dom_rm(dom);
+		}
+
+		/**
+		 * Try to change entry which doesn't exist. 
+		 */
+		void case11() {
+			::vq::ivq::user_conf_info uci;
+			uci.id_conf = static_cast<const char *>("123123123");
+			uci.type = 12;
+			uci.val = static_cast<const char *>("asd");
+			IVQ_ERROR_EQUAL(auth->user_conf_rep(uci), ::vq::ivq::err_noent);
+		}
+
+		/**
+		 * Add domain and user. Add configuration
+		 *
+		 */
+		void case12() {
+			const char * dom = "case12.pl";
+			std_try {
+					CORBA::String_var dom_id;
+					test_dom_user_add(dom, dom_id);
+
+					::vq::ivq::auth_info ai;
+					ai.id_domain = dom_id;
+					ai.pass = static_cast<const char *>("asdasd");
+					ai.flags = 0;
+					ai.login = static_cast<const char *>("test");
+					IVQ_ERROR_EQUAL(auth->user_add(ai, FALSE), ::vq::ivq::err_no);
+
+					typedef std::vector< ::vq::ivq::user_conf_info > uci_array; 
+					uci_array ucis;
+					::vq::ivq::user_conf_info uci;
+					uci.type = 1;
+					uci.val = static_cast<const char *>("1");
+					ucis.push_back(uci);
+					++uci.type;
+					ucis.push_back(uci);
+					ucis.push_back(uci);
+					++uci.type;
+					ucis.push_back(uci);
+					ucis.push_back(uci);
+					uci_array::iterator ub, ue;
+					
+					for( ub=ucis.begin(), ue=ucis.end(); ub!=ue; ++ub ) {
+							IVQ_ERROR_EQUAL(auth->user_conf_add(dom_id,
+								ai.login, static_cast<const char *>(""),
+								*ub ), ::vq::ivq::err_no );
+					}
+					for( ub=ucis.begin(), ue=ucis.end(); ub!=ue; ++ub ) {
+							++ub->type;
+							ub->val = static_cast<const char *>("2");
+							IVQ_ERROR_EQUAL(auth->user_conf_rep(
+								*ub ), ::vq::ivq::err_no );
+					}
+					for( ub=ucis.begin(), ue=ucis.end(); ub!=ue; ++ub ) {
+							uci.id_conf = ub->id_conf;
+							IVQ_ERROR_EQUAL(auth->user_conf_get(
+								uci ), ::vq::ivq::err_no );
+							BOOST_CHECK_EQUAL(uci.type, ub->type);
+							BOOST_CHECK_EQUAL(uci.val, ub->val);
+					}
+					::vq::ivq::size_type cnt;
+					for( ub=ucis.begin(), ue=ucis.end(); ub!=ue; ++ub ) {
+							IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(dom_id,
+								ai.login, static_cast<const char *>(""),
+								ub->type ), ::vq::ivq::err_no );
+							IVQ_ERROR_EQUAL(auth->user_conf_type_cnt(dom_id,
+								ai.login, static_cast<const char *>(""),
+								ub->type, cnt ), ::vq::ivq::err_no );
+							BOOST_CHECK_EQUAL(cnt, 0U);
+					}
 
 			} std_catch
 			test_dom_rm(dom);
 		}
 
-		brakuje testów: udot_rm_by_type, udot_rep
+		/**
+		 * Try to remove configuration for non-existing user.
+		 * Try to remove configuration of type which user has not any item.
+		 */
+		void case13() {
+			IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(
+				static_cast<const char *>("123123123"), 
+				static_cast<const char *>("login"),
+				static_cast<const char *>(""),
+				12), ::vq::ivq::err_no);
+			const char * dom = "case13.pl";
+			std_try {
+					CORBA::String_var dom_id;
+					test_dom_user_add(dom, dom_id);
 
-};
+					IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(dom_id,
+						static_cast<const char *>("login"),
+						static_cast<const char *>(""),
+						12), ::vq::ivq::err_no);
+
+					::vq::ivq::auth_info ai;
+					ai.id_domain = dom_id;
+					ai.pass = static_cast<const char *>("asdasd");
+					ai.flags = 0;
+					ai.login = static_cast<const char *>("test");
+					IVQ_ERROR_EQUAL(auth->user_add(ai, FALSE), ::vq::ivq::err_no);
+
+					IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(dom_id,
+						ai.login, static_cast<const char *>(""),
+						12), ::vq::ivq::err_no);
+
+					::vq::ivq::user_conf_info uci;
+					uci.type = 15;
+					uci.val = static_cast<const char *>("asd");
+					IVQ_ERROR_EQUAL(auth->user_conf_add(dom_id,
+						ai.login, static_cast<const char *>(""), 
+						uci), ::vq::ivq::err_no);
+
+					IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(dom_id,
+						ai.login, static_cast<const char *>(""),
+						12), ::vq::ivq::err_no);
+
+					::vq::ivq::size_type cnt=0;
+					IVQ_ERROR_EQUAL(auth->user_conf_type_cnt(dom_id,
+						ai.login, static_cast<const char *>(""),
+						12, cnt ), ::vq::ivq::err_no);
+					BOOST_CHECK_EQUAL(cnt, 0U);
+
+					IVQ_ERROR_EQUAL(auth->user_conf_type_cnt(dom_id,
+						ai.login, static_cast<const char *>(""),
+						uci.type, cnt ), ::vq::ivq::err_no);
+					BOOST_CHECK_EQUAL(cnt, 1U);
+			} std_catch
+			test_dom_rm(dom);
+		}
+}; // struct auth_test
 
 /**
  * 
@@ -799,6 +926,20 @@ struct auth_test_suite : test_suite {
 			ts_case10->depends_on(ts_init);
 			add(ts_case10);
 
+			test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case11, test );
+			ts_case11->depends_on(ts_init);
+			add(ts_case11);
+
+			test_case * ts_case12 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case12, test );
+			ts_case12->depends_on(ts_init);
+			add(ts_case12);
+
+			test_case * ts_case13 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case13, test );
+			ts_case13->depends_on(ts_init);
+			add(ts_case13);
 		}
 };
 

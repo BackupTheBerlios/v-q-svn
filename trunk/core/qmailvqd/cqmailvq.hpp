@@ -44,11 +44,11 @@ namespace POA_vq {
 					typedef ::vq::ivq::quota_type_out quota_type_out;
 					typedef ::vq::ivq::size_type size_type;
 					typedef ::vq::ivq::size_type_out size_type_out;
-					typedef ::vq::ivq::udot_type udot_type;
-					typedef ::vq::ivq::udot_type_out udot_type_out;
-					typedef ::vq::ivq::udot_info udot_info;
-					typedef ::vq::ivq::udot_info_out udot_info_out;
-					typedef ::vq::ivq::udot_info_list_out udot_info_list_out;
+					typedef ::vq::ivq::user_conf_type user_conf_type;
+					typedef ::vq::ivq::user_conf_type_out user_conf_type_out;
+					typedef ::vq::ivq::user_conf_info user_conf_info;
+					typedef ::vq::ivq::user_conf_info_out user_conf_info_out;
+					typedef ::vq::ivq::user_conf_info_list_out user_conf_info_list_out;
 					typedef ::vq::ivq::error error;
 					typedef ::vq::ivq::err_code err_code;
 					typedef ::vq::ivq::string_list_out string_list_out;
@@ -87,9 +87,31 @@ namespace POA_vq {
 							const char* re_login );
 					virtual error* eb_ls( email_banned_list_out ebs );
 
+					virtual error* user_conf_add( const char* dom_id, 
+							const char* user, const char* pfix, 
+							user_conf_info& ui );
+				    virtual error* user_conf_rm_by_type( const char* dom_id, 
+							const char* user, const char* pfix, 
+							user_conf_type ut );
+				    virtual error* user_conf_rm( const char* id );
+				    virtual error* user_conf_ls( const char* dom_id, 
+							const char* user, const char* pfix, 
+							user_conf_info_list_out uis );
+				    virtual error* user_conf_ls_by_type( const char* dom_id, 
+							const char* user, const char* pfix, 
+							user_conf_type ut, user_conf_info_list_out uis );
+				    virtual error* user_conf_rep( const user_conf_info& ui );
+				    virtual error* user_conf_get( user_conf_info& ui );
+				    virtual error* user_conf_type_has( const char* dom_id, 
+							const char* user, const char* pfix, 
+							user_conf_type ut );
+				    virtual error* user_conf_type_cnt( const char* dom_id, 
+							const char* user, const char* pfix, 
+							user_conf_type ut, size_type_out cnt );
+				
+				
 			protected:
 					static const char tmp_end[]; //!< temporary file extension
-					static const char ud_sup[]; //!< array of supported udot types
 						
 					std::string home; //!< home directory
 					unsigned dom_split;
@@ -161,13 +183,13 @@ namespace POA_vq {
 				//@}
 	
 				/**
-				 * \ingroup udot
+				 * \ingroup user_conf
 				 */
 				//@{
 					/// create path to dot-qmail
 					std::string dotfile(const std::string &, const std::string &, const std::string &);
 					/// create line which will be added to dot-qmail
-					std::string udot_ln(const udot_info &);
+					std::string user_conf_ln(const user_conf_info &);
 				//@}
 	
 				/**

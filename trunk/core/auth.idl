@@ -29,9 +29,9 @@ module vq {
 			typedef ivq::quota_type quota_type;
 			typedef ivq::string_list string_list;
 			typedef ivq::auth_info auth_info;
-			typedef ivq::udot_info udot_info;
-			typedef ivq::udot_info_list udot_info_list;
-			typedef ivq::udot_type udot_type;
+			typedef ivq::user_conf_info user_conf_info;
+			typedef ivq::user_conf_info_list user_conf_info_list;
+			typedef ivq::user_conf_type user_conf_type;
 			typedef ivq::aif_type aif_type;
 			typedef ivq::email_banned email_banned;
 			typedef ivq::email_banned_list email_banned_list;
@@ -133,42 +133,42 @@ module vq {
 		//@}
 
 		/**
-		 * \defgroup udot Mailboxes configuration
+		 * \defgroup user_conf Mailboxes configuration
 		 */
 		//@{
 			/// Adds mailbox configuration
-			error udot_add(in string dom_id, in string user,
-					in string pfix, inout udot_info ui )
+			error user_conf_add(in string dom_id, in string user,
+					in string pfix, inout user_conf_info ui )
 					raises (null_error, db_error, except);
 			/// Removes all mailbox configuration entries
-			error udot_rm_by_type(in string dom_id, in string user,
-					in string pfix, in udot_type ut )
+			error user_conf_rm_by_type(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut )
 					raises (null_error, db_error, except);
 			/// Removes mailbox configuration entry
-			error udot_rm( in string id )
+			error user_conf_rm( in string id )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuration
-			error udot_ls(in string dom_id, in string user,
-					in string pfix, out udot_info_list uis )
+			error user_conf_ls(in string dom_id, in string user,
+					in string pfix, out user_conf_info_list uis )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuation of specified type
-			error udot_ls_by_type(in string dom_id, in string user,
-					in string pfix, in udot_type ut,
-					out udot_info_list uis )
+			error user_conf_ls_by_type(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut,
+					out user_conf_info_list uis )
 					raises (null_error, db_error, except);
 			/// Changes existing entry
-			error udot_rep( in udot_info ui )
+			error user_conf_rep( in user_conf_info ui )
 					raises (null_error, db_error, except);
 			/// Gets existing entry
-			error udot_get(	inout udot_info ui )
+			error user_conf_get(	inout user_conf_info ui )
 					raises (null_error, db_error, except);
 			/// Checks whether mailbox has entry of specified type
-			error udot_type_has(in string dom_id, in string user,
-					in string pfix, in udot_type ut )
+			error user_conf_type_has(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut )
 					raises (null_error, db_error, except);
 			/// Counts entries of specified type
-			error udot_type_cnt(in string dom_id, in string user,
-					in string pfix, in udot_type ut, 
+			error user_conf_type_cnt(in string dom_id, in string user,
+					in string pfix, in user_conf_type ut, 
 					out size_type cnt )
 					raises (null_error, db_error, except);
 		//@}

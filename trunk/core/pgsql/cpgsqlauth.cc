@@ -511,15 +511,15 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_add( const char * dom_id,
+	cpgsqlauth::error * cpgsqlauth::user_conf_add( const char * dom_id,
 			const char *login, const char * pfix, 
-			udot_info &ui ) std_try {
+			user_conf_info &ui ) std_try {
 
 		if( ! dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT UDOT_ADD("
+			"SELECT USER_CONF_ADD("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
 			+ Quote(lower(pfix), false)+','
@@ -527,7 +527,7 @@ namespace POA_vq {
 			+ Quote(static_cast<const char *>(ui.val), false)+')'));
 	
 		if(res.empty() || res[0][0].is_null()) {
-				return lr(::vq::ivq::err_func_res, "UDOT_ADD");
+				return lr(::vq::ivq::err_func_res, "USER_CONF_ADD");
 		}
 		ui.id_conf = res[0][0].c_str();
 		return lr(::vq::ivq::err_no, "");
@@ -535,15 +535,15 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_ls(const char *dom_id, 
+	cpgsqlauth::error * cpgsqlauth::user_conf_ls(const char *dom_id, 
 			const char * login, const char * pfix, 
-			udot_info_list_out uis) std_try {
+			user_conf_info_list_out uis) std_try {
 		
 		if( !dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT id_conf,val,type FROM udot_ls("
+			"SELECT id_conf,val,type FROM user_conf_ls("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
 			+ Quote(lower(pfix), false)+')'));
@@ -551,29 +551,29 @@ namespace POA_vq {
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
-		uis = new udot_info_list(static_cast<CORBA::ULong>(s));
+		uis = new user_conf_info_list(static_cast<CORBA::ULong>(s));
 		uis->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
 			uis[i].id_conf = res[i][0].is_null() 
 				? static_cast<const char *>("") : res[i][0].c_str();
 			uis[i].val = res[i][1].is_null() 
 				? static_cast<const char *>("") : res[i][1].c_str();
-			uis[i].type = static_cast<udot_type>(res[i][2].as<CORBA::ULong>(0));
+			uis[i].type = static_cast<user_conf_type>(res[i][2].as<CORBA::ULong>(0));
 		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_ls_by_type(const char *dom_id, 
-			const char * login, const char * pfix, udot_type ut,
-			udot_info_list_out uis) std_try {
+	cpgsqlauth::error * cpgsqlauth::user_conf_ls_by_type(const char *dom_id, 
+			const char * login, const char * pfix, user_conf_type ut,
+			user_conf_info_list_out uis) std_try {
 		
 		if( !dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT id_conf,val,type FROM udot_ls_by_type("
+			"SELECT id_conf,val,type FROM user_conf_ls_by_type("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
 			+ Quote(lower(pfix), false)+','
@@ -582,14 +582,14 @@ namespace POA_vq {
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
-		uis = new udot_info_list(static_cast<CORBA::ULong>(s));
+		uis = new user_conf_info_list(static_cast<CORBA::ULong>(s));
 		uis->length(static_cast<CORBA::ULong>(s));
 		for( Result::size_type i=0; i<s; ++i ) {
 			uis[i].id_conf = CORBA::string_dup(
 				res[i][0].is_null() ? "" : res[i][0].c_str());
 			uis[i].val = CORBA::string_dup(
 				res[i][1].is_null() ? "" : res[i][1].c_str());
-			uis[i].type = static_cast<udot_type>(res[i][2].as<CORBA::ULong>(0));
+			uis[i].type = static_cast<user_conf_type>(res[i][2].as<CORBA::ULong>(0));
 		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -597,24 +597,24 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_rm(const char * udot_id) std_try {
-		if( ! udot_id ) throw ::vq::null_error(__FILE__, __LINE__);
+	cpgsqlauth::error * cpgsqlauth::user_conf_rm(const char * user_conf_id) std_try {
+		if( ! user_conf_id ) throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT UDOT_RM("+Quote(udot_id, false)+')');
+		NonTransaction(*pg).Exec("SELECT USER_CONF_RM("+Quote(user_conf_id, false)+')');
 
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_rm_by_type(const char * dom_id,
+	cpgsqlauth::error * cpgsqlauth::user_conf_rm_by_type(const char * dom_id,
 			const char * login, const char * ext, 
-			udot_type ut) std_try {
+			user_conf_type ut) std_try {
 
 		if( ! dom_id || ! login || ! ext ) 
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT USER_RM_BY_TYPE("
+		NonTransaction(*pg).Exec("SELECT USER_CONF_RM_BY_TYPE("
 			+ Quote(dom_id, false)+','
 			+ Quote(lower(login), false)+','
 			+ Quote(lower(ext), false) + ','
@@ -626,15 +626,15 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_get( udot_info & ui ) std_try {
+	cpgsqlauth::error * cpgsqlauth::user_conf_get( user_conf_info & ui ) std_try {
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT TYPE,VAL FROM UDOT_GET("
+			"SELECT TYPE,VAL FROM USER_CONF_GET("
 			+ Quote(static_cast<const char *>(ui.id_conf), false) + ')'));
 	
 		if(res.empty())
 				return lr(::vq::ivq::err_noent, "");
 		
-		ui.type = static_cast<udot_type>(res[0][0].as< CORBA::ULong >(0));
+		ui.type = static_cast<user_conf_type>(res[0][0].as< CORBA::ULong >(0));
 		ui.val = res[0][1].is_null() 
 				? static_cast<const char *>("") : res[0][1].c_str();
 		return lr(::vq::ivq::err_no, "");
@@ -643,24 +643,24 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_rep( 
-			const udot_info & ui ) std_try {
+	cpgsqlauth::error * cpgsqlauth::user_conf_rep( 
+			const user_conf_info & ui ) std_try {
 	
 		Result res(NonTransaction(*pg).Exec(
-				"SELECT UDOT_REP("
+				"SELECT USER_CONF_REP("
 				+Quote(static_cast<const char *>(ui.id_conf), false)+','
 				+Quote(ToString( static_cast<CORBA::ULong>(ui.type) ), false)+','
 				+Quote(static_cast<const char *>(ui.val), false)+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
-				return lr(::vq::ivq::err_func_res, "UDOT_REP");
+				return lr(::vq::ivq::err_func_res, "USER_CONF_REP");
 		}
 
 		const char *val = res[0][0].c_str();
 		if( '-' == *val ) {
 				return ( '1' == *(val+1) ) 
 						? lr(::vq::ivq::err_noent, "")
-						: lr(::vq::ivq::err_func_res, "UDOT_REP");
+						: lr(::vq::ivq::err_func_res, "USER_CONF_REP");
 		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
@@ -668,22 +668,22 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_type_has(
+	cpgsqlauth::error * cpgsqlauth::user_conf_type_has(
 			const char * dom_id, const char *login, const char *pfix,
-			udot_type ut ) std_try {
+			user_conf_type ut ) std_try {
 
 		if( ! dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT UDOT_TYPE_HAS("
+			"SELECT USER_CONF_TYPE_HAS("
 			+ Quote(dom_id) + ','
 			+ Quote(lower(login)) + ','
 			+ Quote(lower(pfix)) + ','
 			+ Quote(ToString( static_cast<CORBA::ULong>(ut) )) + ')'));
 	
 		if(res.empty() || res[0][0].is_null() ) {
-				return lr(::vq::ivq::err_func_res, "UDOT_TYPE_HAS");
+				return lr(::vq::ivq::err_func_res, "USER_CONF_TYPE_HAS");
 		}
 
 		const char *val = res[0][0].c_str();
@@ -693,27 +693,27 @@ namespace POA_vq {
 				case '1': return lr(::vq::ivq::err_noent, "");
 				}
 		}
-		return lr(::vq::ivq::err_func_res, "UDOT_TYPE_HAS");
+		return lr(::vq::ivq::err_func_res, "USER_CONF_TYPE_HAS");
 	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_type_cnt(
+	cpgsqlauth::error * cpgsqlauth::user_conf_type_cnt(
 			const char * dom_id, const char *login, const char *pfix,
-			udot_type ut, CORBA::ULong &cnt ) std_try {
+			user_conf_type ut, CORBA::ULong &cnt ) std_try {
 
 		if( ! dom_id || ! login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 	
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT UDOT_TYPE_CNT("
+			"SELECT USER_CONF_TYPE_CNT("
 			+ Quote(dom_id) + ','
 			+ Quote(lower(login)) + ','
 			+ Quote(lower(pfix)) + ','
 			+ Quote(ToString( static_cast<CORBA::ULong>(ut) )) + ')'));
 	
 		if(res.empty() || res[0][0].is_null() ) {
-				return lr(::vq::ivq::err_func_res, "UDOT_TYPE_HAS");
+				return lr(::vq::ivq::err_func_res, "USER_CONF_TYPE_HAS");
 		}
 
 		cnt = res[0][0].as< CORBA::ULong > (0);

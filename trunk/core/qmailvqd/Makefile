@@ -1,5 +1,6 @@
 BASE=../..
-QOBJS=qmail_files.o qmailvqd.o cqmailvq_dom.o cqmailvq.o cqmailvq_user.o cqmailvq_eb.o
+QOBJS=qmail_files.o qmailvqd.o cqmailvq_dom.o cqmailvq.o cqmailvq_user.o \
+cqmailvq_eb.o cqmailvq_user_conf.o
 OBJS=$(QOBJS) qmail_virtualdomains_add.o qmail_virtualdomains_rm.o \
 qmail_common.o
 INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
@@ -17,9 +18,10 @@ qmail_run
 include $(BASE)/Makefile.common
 
 qmailvqd: $(BASE)/load $(BASE)/corba.lib qmail_files.o qmailvqd.o \
-cqmailvq_dom.o cqmailvq.o cqmailvq_user.o cqmailvq_eb.o
+cqmailvq_dom.o cqmailvq.o cqmailvq_user.o cqmailvq_eb.o cqmailvq_user_conf.o
 	$(BASE)/load qmailvqd qmail_files.o cqmailvq_dom.o cqmailvq.o \
-	cqmailvq_user.o cqmailvq_eb.o $(LIBS) `cat $(BASE)/corba.lib`
+	cqmailvq_user.o cqmailvq_eb.o cqmailvq_user_conf.o \
+	$(LIBS) `cat $(BASE)/corba.lib`
 
 qmail_virtualdomains_add: $(BASE)/load qmail_virtualdomains_add.o
 	$(BASE)/load qmail_virtualdomains_add $(LIBS)

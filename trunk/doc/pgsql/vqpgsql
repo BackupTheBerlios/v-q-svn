@@ -431,7 +431,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION udot_add(vq_users_conf.id_domain\%TYPE,
+"CREATE FUNCTION user_conf_add(vq_users_conf.id_domain\%TYPE,
 	vq_users_conf.login\%TYPE,
 	vq_users_conf.ext\%TYPE,vq_users_conf.type\%TYPE,vq_users_conf.val\%TYPE) 
 	RETURNS int AS '
@@ -449,12 +449,12 @@ BEGIN
 	INSERT INTO vq_users_conf (ID_CONF,ID_DOMAIN,LOGIN,EXT,TYPE,VAL) 
 		VALUES(id.nextval,_id_domain,_login,_ext,_type,_val);
 
-	NOTIFY udot_add;
+	NOTIFY user_conf_add;
 	RETURN id.nextval;
 END;
 ' LANGUAGE 'plpgsql'",
 
-"CREATE FUNCTION udot_ls (vq_users_conf.id_domain\%TYPE,vq_users_conf.login\%TYPE,
+"CREATE FUNCTION user_conf_ls (vq_users_conf.id_domain\%TYPE,vq_users_conf.login\%TYPE,
 	vq_users_conf.ext\%TYPE)
 	RETURNS SETOF vq_users_conf AS '
 DECLARE
@@ -471,7 +471,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION udot_ls_by_type (vq_users_conf.id_domain\%TYPE,vq_users_conf.login\%TYPE,
+"CREATE FUNCTION user_conf_ls_by_type (vq_users_conf.id_domain\%TYPE,vq_users_conf.login\%TYPE,
 	vq_users_conf.ext\%TYPE,vq_users_conf.type\%TYPE) 
 	RETURNS SETOF vq_users_conf AS '
 DECLARE
@@ -489,17 +489,17 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION udot_rm (vq_users_conf.id_conf\%TYPE) RETURNS VOID AS '
+"CREATE FUNCTION user_conf_rm (vq_users_conf.id_conf\%TYPE) RETURNS VOID AS '
 DECLARE
     _id_conf alias for \$1;
 BEGIN
 	DELETE FROM vq_users_conf WHERE id_conf = _id_conf;
-	NOTIFY udot_rm;
+	NOTIFY user_conf_rm;
 	RETURN;
 END;
 ' LANGUAGE 'plpgsql';", 
 
-"CREATE FUNCTION udot_rm_by_type (vq_users_conf.id_domain\%TYPE,
+"CREATE FUNCTION user_conf_rm_by_type (vq_users_conf.id_domain\%TYPE,
 	vq_users_conf.login\%TYPE, vq_users_conf.ext\%TYPE,
 	vq_users_conf.type\%TYPE) RETURNS VOID AS '
 DECLARE
@@ -510,12 +510,12 @@ DECLARE
 BEGIN
 	DELETE FROM vq_users_conf WHERE id_domain = _id_domain
 		AND login=_login AND ext=_ext AND type=_type;
-	NOTIFY udot_rm;
+	NOTIFY user_conf_rm;
 	RETURN;
 END;
 ' LANGUAGE 'plpgsql';", 
 
-"CREATE FUNCTION udot_get (vq_users_conf.id_conf\%TYPE) 
+"CREATE FUNCTION user_conf_get (vq_users_conf.id_conf\%TYPE) 
 	RETURNS SETOF vq_users_conf AS '
 DECLARE
 	_id_conf ALIAS FOR \$1;
@@ -529,7 +529,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION udot_rep
+"CREATE FUNCTION user_conf_rep
 (vq_users_conf.id_conf\%TYPE, vq_users_conf.type\%TYPE, vq_users_conf.val\%TYPE) 
 RETURNS INT AS '
 DECLARE
@@ -541,14 +541,14 @@ BEGIN
 	UPDATE vq_users_conf SET type=_type,val=_val WHERE id_conf=_id_conf;
 	GET DIAGNOSTICS rows = ROW_COUNT;
 	IF rows = 1 THEN
-		NOTIFY udot_rep;
+		NOTIFY user_conf_rep;
 		RETURN 0;
 	END IF;
 	RETURN -1;
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION udot_type_has 
+"CREATE FUNCTION user_conf_type_has 
 (vq_users_conf.id_domain\%TYPE,
 vq_users_conf.login\%TYPE,
 vq_users_conf.ext\%TYPE,
@@ -568,7 +568,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION udot_type_cnt
+"CREATE FUNCTION user_conf_type_cnt
 (vq_users_conf.id_domain\%TYPE,
 vq_users_conf.login\%TYPE,
 vq_users_conf.ext\%TYPE,
