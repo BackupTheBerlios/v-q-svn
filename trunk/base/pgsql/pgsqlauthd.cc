@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 // CORBA
 #include <import_export.h>
+#include <PoaUtility.h>
 
 #include <getopt.h>
 
@@ -32,6 +33,35 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 using namespace std;
 using namespace POA_vq;
+
+/**
+ *
+ */
+class cpoa_hier : corbautil::PoaUtility {
+		public:
+				cpoa_hier( CORBA::ORB_ptr orb, const std::string & depMod,
+						const std::string & policy );
+
+				POAManager_ptr core_mgr() { return this->_core_mgr.mgr(); }
+
+				POA_ptr core_poa() { return this->_core_poa; }
+
+		private:
+				corbautil::LabelledPOAManager _core_mgr;
+				POA_var _core_poa;
+
+				cpoa_hier( const cpoa_hier & );
+				cpoa_hier & operator = ( const cpoa_hier & );
+};
+
+cpoa_hier::cpoa_hier( CORBA::ORB_ptr orb, const std::string & depMod, 
+	const std::string & policy ) 
+		: PoaUtility( orb, corbautil::PoaUtility::stringToDeploymentModel(depMod.c_str()) ) {
+
+	_core_mgr = createPoaManager("core_mgr");
+
+	_core_poa = createPoa("core_poa", root(), _core_mgr, policy.c_str());
+}
 
 void usage( const char * me ) {
 	cerr<<"usage: "<<me<<" [ORB options] base_dir"<<endl;
@@ -76,28 +106,26 @@ int vqmain(int ac, char **av) {
 	string conf_dir(*(av+1));
 	conf_dir += "/etc/iauth/pgsql/";
 	conf::clnconf pgsql(conf_dir+"pgsql", "dbname=mail password=mail user=mail");
+	conf::clnconf dep_mod(conf_dir+"dep_mod", "fixed_ports_no_imr");
+	conf::clnconf policy(conf_dir+"policy", "single_thread_model");
 	
-	/*
-	 * Obtain a reference to the RootPOA and its Manager
-	 */
+	auto_ptr<cpoa_hier> poa;
+	try {
+			poa.reset( new cpoa_hier(orb, dep_mod.val_str(), 
+				policy.val_str()) );
+	} catch( corbautil::PoaUtilityException & e ) {
+			cerr<<e<<endl;
+			return 111;
+	}
 	
-	CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
-	PortableServer::POA_var root_poa = PortableServer::POA::_narrow (poaobj);
-	PortableServer::POAManager_var mgr = root_poa->the_POAManager();
-	mgr->activate();
-
-	CORBA::PolicyList pl;
-	pl.length(1);
-	pl[0] = root_poa->create_thread_policy(PortableServer::SINGLE_THREAD_MODEL);
-	PortableServer::POA_var poa = root_poa->create_POA("RealPOA", mgr, pl);
-
 	/*
 	 * Create authorization object
 	 */
 	auto_ptr<cpgsqlauth> pgauth(new cpgsqlauth(pgsql.val_str().c_str()));
 
-	PortableServer::ObjectId_var oid = poa->activate_object (pgauth.get());
-	CORBA::Object_var ref = poa->id_to_reference (oid.in());
+	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(pgauth.get());
+	CORBA::Object_var ref = poa->core_poa()->id_to_reference (oid.in());
+	pgauth->_remove_ref(); // ???
 
 	if( exp ) {
 			try {
@@ -107,23 +135,10 @@ int vqmain(int ac, char **av) {
 					run = false;
 			}
 	}
-	pgauth->_remove_ref(); // ???
 	if( run ) {
-			
-			/*
-			 * Activate the POA and start serving requests
-			 */
 			cout << "Running." << endl;
-#if 1
+			poa->core_mgr()->activate();
 			orb->run();
-#else
-			for( ;; ) {
-					omni_thread::sleep(1);
-					if( orb->work_pending() ) {
-							orb->perform_work();
-					}
-			}
-#endif 
 	}
 	orb->destroy();
 	return 0;

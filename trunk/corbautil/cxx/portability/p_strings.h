@@ -10,6 +10,8 @@
 #ifndef P_STRINGS_H
 #define P_STRINGS_H
 
+#ifndef P_USE_MICO
+
 namespace {
 		inline CORBA::Boolean _loc_strcmp( const char * pa, const char * pa1 ) {
 				if( !pa ) {
@@ -34,5 +36,7 @@ inline CORBA::Boolean operator==( const CORBA::String_member & a,
 }
 
 #endif
+
+#endif // ifndef P_USE_MICO
 
 #endif

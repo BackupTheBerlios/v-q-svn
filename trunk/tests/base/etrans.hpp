@@ -59,7 +59,7 @@ inline void et_CORBA_SystemException( const CORBA::SystemException & e ) {
 	std::ostringstream os;
 	os<<"CORBA system exception: ";
 #if defined(MICO_VERSION)
-	e._print(std::ostringstream os);
+	e._print(os);
 #elif defined(OMNIORB_DIST_DATE)
 	os<<"minor: "<<e.NP_minorString()<<"; completed: ";
 	switch(e.completed()) {
@@ -83,7 +83,7 @@ inline void et_CORBA_Exception( const CORBA::Exception & e ) {
 	os<<"CORBA exception";
 #ifdef MICO_VERSION	
 	os<<": ";
-	e._print(std::ostringstream os);
+	e._print(os);
 #endif
 	BOOST_ERROR(os.str());
 }

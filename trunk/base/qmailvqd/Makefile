@@ -9,6 +9,7 @@ OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o \
 	cqautoresp.o autoresp.o deliver.o
 INCS=-I$(BASE)/base -I$(BASE) -I../libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf -I$(BASE)/corbautil/cxx/import_export -I$(BASE)/corbautil/cxx/portability \
+	-I$(BASE)/corbautil/cxx/PoaUtility \
 	`cat $(BASE)/corba.inc`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L../libvqmain -lvqmain -L$(BASE)/base -lvq \
