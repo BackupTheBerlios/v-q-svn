@@ -1,1 +1,0 @@
--I/usr/local/progs/pqxx/include -I/usr/local/include/postgresql

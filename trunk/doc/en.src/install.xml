@@ -89,7 +89,7 @@
 			<para>
 				First you need to download <application>PostgreSQL</application>.
 				Using newest stable version is suggested. You also
-				need libpqxx and PERL module called Pg (if you want to
+				need libpqxx at least in version 2.4.2 and PERL module called Pg (if you want to
 				use automatic installation script). All progams
 				you can download from <ulink url="http://www.postgresql.org">
 				http://www.postgresql.org</ulink>.
@@ -233,11 +233,7 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 				First are used during compilation, they include informations
 				about directories used in searching included files.
 				Second are used while linking, they include references
-				to libraries. You don't need to edit all of them. For example
-				if you don't want to compile PostgreSQL modules
-				you don't need to edit <filename>pgsql.inc</filename> and
-				<filename>pgsql.lib</filename>. Usually these files
-				include description inside them.
+				to libraries.
 			</para>
 		</section>
 	</section>
@@ -336,6 +332,25 @@ createuser -A -D -P mail
 createdb -E utf-8 -O mail mail
 </userinput>
 </screen>
+			</para>
+
+			<para>
+				To compile PostgreSQL modules you should run in bash:
+<screen>
+<userinput>
+make pgsql 2>&amp;1 > out.pgsql
+</userinput>
+</screen>
+				In tcsh run:
+<screen>
+<userinput>
+make pgsql >&amp; out.pgsql
+</userinput>
+</screen>
+
+				Remember that pqxx-config must be in the path (if you don't have
+				this program it means eaither libpqxx is not installed or it's too old
+				version).
 			</para>
 
 			<para>
