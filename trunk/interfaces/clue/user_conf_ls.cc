@@ -16,85 +16,87 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "main.hpp"
+#include "error2str.hpp"
+#include "cluemain.hpp"
+#include "cdom_name2id.hpp"
 
-#include <unistd.h>
-
-#include <exception>
-#include <iostream>
-#include <cerrno>
-#include <deque>
+#include <split.hpp>
+#include <conf.hpp>
+#include <vqmain.hpp>
 
 using namespace std;
+using namespace clue;
 
-const char *me = NULL;
 /*
  *
  */
-void usage()
+void usage( const char *me, const std::string & uc_names )
 {
 	cerr<<"usage: "<<me<< " (e-mail){1,}"<<endl
 		<<endl
 		<<"List options assiociated with specified mailboxes."<<endl
 		<<"Some of them may be in unreadable form that must be processed"<<endl
-		<<"by some utilities. It prints: address, entry's id. number, type,"<<endl
-		<<"value."<<endl;
+		<<"by some utilities. It prints: address, entry's identificator, type,"<<endl
+		<<"value. It also print user friendly type's name if it can find "<<endl
+		<<"mapping in "<<uc_names<<'.'<<endl;
 }
 
 /*
  *
  */
-int cppmain(int ac, char **av)
+int cluemain(int ac, char **av, vq::ivq_var & vq )
 {
-	me = *av;
-	try {
-			int opt;
-			while( (opt=getopt(ac,av,"h")) != -1 ) {
-					switch(opt) {
-					case '?':
-					case 'h':
-							usage();
-							return(1);
-					}
-			}
-			ac -= optind;
-			av += optind;
-			if( 1 > ac ) {
-					usage();
+	int opt;
+	std::string fn_uc_names(VQ_HOME+"/etc/ivq/user_conf_names");
+	while( (opt=getopt(ac,av,"h")) != -1 ) {
+			switch(opt) {
+			case '?':
+			case 'h':
+					usage(*av, fn_uc_names);
 					return(1);
 			}
+	}
+	ac -= optind;
+	av += optind;
+	if( 1 > ac ) {
+			usage(*av, fn_uc_names);
+			return(1);
+	}
 
-			cvq *vq(cvq::alloc());
-
-			uint8_t ret;
-			char *atpos=NULL;
-			vector<cvq::udot_info>::size_type size, j;
-			vector<cvq::udot_info> uis;
-			for(int i=0; i < ac; i++ ) {
-					atpos = rindex(av[i], '@');
-					if(atpos) {
-							*atpos = '\0';
-							atpos++;
-							ret = vq->udot_ls(atpos, av[i], "", uis);
-							if(ret) {
-									cout<<av[i]<<'@'<<atpos<<": "
-										<<vq->err_report()<<endl;
-									continue;
-							}
-							for( j=0, size=uis.size(); j<size; ++j ) {
-								cout<<av[i]<<'@'<<atpos<<": "
-									<<uis[j].id<<": "
-									<<uis[j].type<<": "
-									<<uis[j].val<<endl;
-							}
-					} else {
-							cout<<av[i]<<": invalid e-mail"<<endl;
-					}
+	CORBA::String_var did;
+	cdom_name2id dom_name2id;
+	vq::ivq::error_var ret;
+	vq::ivq::user_conf_info_list_var ucis;
+	conf::cmapconf::map_type uc_names_map( conf::cmapconf(fn_uc_names).val_map() );
+	conf::cmapconf::map_type::const_iterator name_itr;
+	std::deque< std::string > esplit;
+	
+	for(int i=0; i < ac; i++ ) {
+			esplit = text::split(av[i], "@");
+			cout<<av[i]<<": ";
+			if( esplit.size() != 2 ) {
+					cout<<"invalid e-mail"<<endl;
+					continue;
 			}
-	} catch( const exception & e ) {
-			cerr << "exception: " << e.what() << endl;
-			return 1;
+			ret = dom_name2id(vq, esplit.back().c_str(), did);
+			if( vq::ivq::err_no != ret->ec ) {
+					cout<<error2str(ret)<<endl;
+					continue;
+			}
+			ret = vq->user_conf_ls(did, esplit.front().c_str(), "", ucis);
+			if( vq::ivq::err_no != ret->ec ) {
+					cout<<error2str(ret)<<endl;
+					continue;
+			}
+			for( CORBA::ULong j = 0, size=ucis->length(); j<size; ++j ) {
+					cout<<ucis[j].id_conf;
+					name_itr = uc_names_map.find(
+						static_cast<const char *>(ucis[j].id_conf));
+					if( name_itr != uc_names_map.end() )
+							cout<<" ("<<name_itr->second<<')';
+					
+					cout<<": "<<ucis[j].type<<": "<<ucis[j].val<<endl;
+			}
 	}
 	return 0;
 }
