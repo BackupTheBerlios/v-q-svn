@@ -137,40 +137,37 @@ module vq {
 		 */
 		//@{
 			/// Adds mailbox configuration
-			error udot_add(in string dom, in string user,
-					in string pfix, out udot_info ui )
+			error udot_add(in string dom_id, in string user,
+					in string pfix, inout udot_info ui )
 					raises (null_error, db_error, except);
 			/// Removes all mailbox configuration entries
-			error udot_rm_by_type(in string dom, in string user,
-					in udot_type ut )
+			error udot_rm_by_type(in string dom_id, in string user,
+					in string pfix, in udot_type ut )
 					raises (null_error, db_error, except);
 			/// Removes mailbox configuration entry
-			error udot_rm_by_id(in string dom, in string user,
-					in string id )
+			error udot_rm( in string id )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuration
-			error udot_ls(in string dom, in string user,
+			error udot_ls(in string dom_id, in string user,
 					in string pfix, out udot_info_list uis )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuation of specified type
-			error udot_ls_by_type(in string dom, in string user,
+			error udot_ls_by_type(in string dom_id, in string user,
 					in string pfix, in udot_type ut,
 					out udot_info_list uis )
 					raises (null_error, db_error, except);
 			/// Changes existing entry
-			error udot_rep(in string dom, in string user,  
-					in udot_info ui )
+			error udot_rep( in udot_info ui )
 					raises (null_error, db_error, except);
 			/// Gets existing entry
-			error udot_get(in string dom, in string user,
-					inout udot_info ui )
+			error udot_get(	inout udot_info ui )
 					raises (null_error, db_error, except);
 			/// Checks whether mailbox has entry of specified type
-			error udot_has(in string dom, in string user,
+			error udot_type_has(in string dom_id, in string user,
 					in string pfix, in udot_type ut )
 					raises (null_error, db_error, except);
 			/// Counts entries of specified type
-			error udot_type_cnt(in string dom, in string user,
+			error udot_type_cnt(in string dom_id, in string user,
 					in string pfix, in udot_type ut, 
 					out size_type cnt )
 					raises (null_error, db_error, except);

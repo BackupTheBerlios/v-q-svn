@@ -3,7 +3,7 @@
 
 #define std_try { try
 #define std_catch catch( std::exception & e ) { \
-	cout<<"exception: "<<e.what()<<endl; \
+	std::cout<<"exception: "<<e.what()<<std::endl; \
 	throw ::vq::except(e.what(), __FILE__, __LINE__); \
 } }
 	

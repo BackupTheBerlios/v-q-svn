@@ -249,7 +249,6 @@ struct vq_test {
 			}
 		}	
 
-#if 0
 		/**
 		 * Add domain, 
 		 * add users, 
@@ -260,29 +259,33 @@ struct vq_test {
 			CORBA::String_var dom_id;
 
 			std_try {
-					const char *users[] = { "s", "asdasd", "vxcvcxvxcvxvcv" };
+					const char *users[] = { 
+							"s", 
+							"asdasd", 
+							"vxcvASDxcvxvcv", 
+							"xCADSASxzc" 
+					};
 					unsigned users_cnt= sizeof(users)/sizeof(*users);
 			
-					BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id),
+					IVQ_ERROR_EQUAL(vq->dom_add(dom, dom_id),
 						vq::ivq::err_no);
 
-					vq::iauth::auth_info ai;
+					vq::ivq::auth_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
+					ai.flags = ::vq::ivq::aif_pop3_blk;
 
 					for( unsigned i=0; i<users_cnt; ++i ) {
-							ai.login = CORBA::string_dup(users[i]);
+							ai.login = users[i];
 								
-							BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+							IVQ_ERROR_EQUAL(vq->user_add(ai, FALSE), 
 								vq::ivq::err_no);
-							BOOST_CHECK(*ai.id_user);
-							BOOST_CHECK(atoi(ai.id_user)>0);
 					}
 			} std_catch
 
-			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), vq::ivq::err_no);
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::ivq::err_no);
+			IVQ_ERROR_EQUAL(vq->dom_id(dom, dom_id), vq::ivq::err_no);
+			IVQ_ERROR_EQUAL(vq->dom_rm(dom_id), vq::ivq::err_no);
 		}
 
 		/**
@@ -292,25 +295,25 @@ struct vq_test {
 			CORBA::String_var dom_id;
 
 			std_try {
-					::vq::iauth::email_banned_list_var ebs;
-					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::ivq::err_no);
+					::vq::ivq::email_banned_list_var ebs;
+					IVQ_ERROR_EQUAL(vq->eb_ls(ebs), vq::ivq::err_no);
 					CORBA::ULong s = ebs->length();
 					for( CORBA::ULong i=0; i<s; ++i ) {
-							BOOST_CHECK_EQUAL(
-								auth->eb_rm(ebs[i].re_domain, ebs[i].re_login), 
+							IVQ_ERROR_EQUAL(
+								vq->eb_rm(ebs[i].re_domain, ebs[i].re_login), 
 								vq::ivq::err_no);
 					}
-					BOOST_CHECK_EQUAL(auth->dom_add("case5.pl", dom_id), 
+					IVQ_ERROR_EQUAL(vq->dom_add("case5.pl", dom_id), 
 						vq::ivq::err_no);
 			
-					BOOST_CHECK_EQUAL(auth->eb_add(
+					IVQ_ERROR_EQUAL(vq->eb_add(
 						static_cast<const char *>(".*"),
 						static_cast<const char *>("root")), vq::ivq::err_no);
-					BOOST_CHECK_EQUAL(auth->eb_add(
+					IVQ_ERROR_EQUAL(vq->eb_add(
 						static_cast<const char *>("case5"),
 						static_cast<const char *>(".*")), vq::ivq::err_no);
 
-					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::ivq::err_no);
+					IVQ_ERROR_EQUAL(vq->eb_ls(ebs), vq::ivq::err_no);
 					BOOST_CHECK_EQUAL(ebs->length(), 2U);
 					if( !strcmp(ebs[0U].re_domain, ".*") ) {
 							BOOST_CHECK(!strcmp(ebs[1U].re_domain, "case5"));
@@ -323,24 +326,24 @@ struct vq_test {
 							BOOST_CHECK(!strcmp(ebs[1U].re_login, "root"));
 					}
 
-					vq::iauth::auth_info ai;
+					vq::ivq::auth_info ai;
 					ai.id_domain = CORBA::string_dup(dom_id);
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
 					ai.login = CORBA::string_dup("aroote");
 					ai.flags = 0;
 			
-					BOOST_CHECK_EQUAL(auth->user_add(ai, TRUE), 
+					IVQ_ERROR_EQUAL(vq->user_add(ai, TRUE), 
 						vq::ivq::err_user_inv);
-					BOOST_CHECK_EQUAL(auth->user_add(ai, TRUE), 
+					IVQ_ERROR_EQUAL(vq->user_add(ai, TRUE), 
 						vq::ivq::err_user_inv);
 
-					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+					IVQ_ERROR_EQUAL(vq->user_add(ai, FALSE), 
 						vq::ivq::err_no);
 			} std_catch
 
-			BOOST_CHECK_EQUAL(auth->dom_id("case5.pl", dom_id), vq::ivq::err_no );
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::ivq::err_no);
+			IVQ_ERROR_EQUAL(vq->dom_id("case5.pl", dom_id), vq::ivq::err_no );
+			IVQ_ERROR_EQUAL(vq->dom_rm(dom_id), vq::ivq::err_no);
 		}
 
 		/**
@@ -350,38 +353,41 @@ struct vq_test {
 		void case6() {
 			const char * dom = "case6.pl";
 			CORBA::String_var dom_id;
-			if( auth->dom_id(dom, dom_id) != vq::ivq::err_no ) {
-					BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id), 
+
+			err = vq->dom_id(dom, dom_id);
+			if( err->ec != vq::ivq::err_no ) {
+					IVQ_ERROR_EQUAL(vq->dom_add(dom, dom_id), 
 						vq::ivq::err_no);
 			}
 
-			vq::iauth::auth_info ai;
+			vq::ivq::auth_info ai;
 			ai.id_domain = CORBA::string_dup(dom_id);
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
 			ai.login = CORBA::string_dup(dom);
 			ai.flags = 0;
 
-			if( auth->user_id(dom_id, dom, ai.id_user) != vq::ivq::err_no ) {
-					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+			err = vq->user_ex(dom_id, ai.login);
+			if( err->ec == vq::ivq::err_noent ) {
+					IVQ_ERROR_EQUAL(vq->user_add(ai, FALSE), 
 						vq::ivq::err_no);
 			}
 			std::string now(boost::posix_time::to_iso_string(
 				boost::posix_time::second_clock::local_time()));
-			BOOST_CHECK_EQUAL(auth->user_pass(dom_id, ai.id_user, now.c_str()),
+			IVQ_ERROR_EQUAL(vq->user_pass(dom_id, ai.login, now.c_str()),
 				vq::ivq::err_no );
 
-			vq::iauth::auth_info aicur;
+			vq::ivq::auth_info aicur;
 			aicur.id_domain = ai.id_domain;
-			aicur.id_user = ai.id_user;
+			aicur.login = ai.login;
 			aicur.pass = now.c_str();
-			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::ivq::err_no );
+			IVQ_ERROR_EQUAL(vq->user_auth(aicur), vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(aicur.flags, 0);
 
 			aicur.pass = CORBA::string_dup("");
-			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::ivq::err_pass_inv);
+			IVQ_ERROR_EQUAL(vq->user_auth(aicur), vq::ivq::err_pass_inv);
 		}
-
+#if 0
 		/**
 		 * add regex aliases for domain created in case6
 		 * get list of regex aliases for domain created in case6
@@ -671,7 +677,7 @@ struct vq_test_suite : test_suite {
 				&vq_test::case_dom_name1, test );
 			ts_case_dom_name1->depends_on(ts_init);
 			add(ts_case_dom_name1);
-#if 0		
+
 			test_case * ts_case4 = BOOST_CLASS_TEST_CASE( 
 				&vq_test::case4, test );
 			ts_case4->depends_on(ts_init);
@@ -686,7 +692,7 @@ struct vq_test_suite : test_suite {
 				&vq_test::case6, test );
 			ts_case6->depends_on(ts_init);
 			add(ts_case6);
-
+#if 0		
 			test_case * ts_case7 = BOOST_CLASS_TEST_CASE( 
 				&vq_test::case7, test );
 			ts_case7->depends_on(ts_case6);

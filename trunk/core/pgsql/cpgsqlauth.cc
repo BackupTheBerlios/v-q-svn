@@ -307,7 +307,7 @@ namespace POA_vq {
 
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT USER_EX("
-			+Quote(dom_id, false)+","
+			+Quote(dom_id, false)+','
 			+Quote(lower(login), false)+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
@@ -370,7 +370,8 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqlauth::error * cpgsqlauth::eb_ls( email_banned_list_out ebs ) std_try {
-		Result res(NonTransaction(*pg).Exec("SELECT * FROM eb_ls()"));
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT re_domain,re_login FROM eb_ls()"));
 		if(res.empty()) return lr(::vq::ivq::err_no, "");
 
 		Result::size_type s = res.size();
@@ -506,261 +507,219 @@ namespace POA_vq {
 						throw wr_error();
 		} std_catch
 	} std_catch
-	
+#endif // if 0
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_add() throw (out_of_range) std_try {
-		string val;
-		if( fdrdstr(cso, dom) == -1
-		   || fdrdstr(cso, user) == -1
-		   || fdrdstr(cso, ext) == -1
-		   || fdread(cso, &type, sizeof(type)) == -1 
-		   || fdrdstr(cso, val) == -1 )
-				throw rd_error();
+	cpgsqlauth::error * cpgsqlauth::udot_add( const char * dom_id,
+			const char *login, const char * pfix, 
+			udot_info &ui ) std_try {
+
+		if( ! dom_id || ! login || ! pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		dom = lower(dom);
-		user = lower(user);
-		ext = lower(ext);
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT UDOT_ADD("
+			+ Quote(dom_id, false)+','
+			+ Quote(lower(login), false)+','
+			+ Quote(lower(pfix), false)+','
+			+ Quote(ToString( static_cast<CORBA::ULong>(ui.type) ))+','
+			+ Quote(static_cast<const char *>(ui.val), false)+')'));
+	
+		if(res.empty() || res[0][0].is_null()) {
+				return lr(::vq::ivq::err_func_res, "UDOT_ADD");
+		}
+		ui.id_conf = res[0][0].c_str();
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::udot_ls(const char *dom_id, 
+			const char * login, const char * pfix, 
+			udot_info_list_out uis) std_try {
 		
-		dom = str2tb(dom);
+		if( !dom_id || ! login || ! pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT UDOT_ADD("+Quote(dom, false)+','+Quote(user, false)
-			+','+Quote(ext, false)+",'\\"+(char)type+"',"
-			+Quote(val, false)+')'));
-	
-		if(res.size() && !res[0][0].is_null()) {
-				string id(res[0][0].c_str());
-				if(fdwrite(cso,&'F',1) == -1 || fdwrstr(cso, id) == -1 )
-						throw wr_error();
-				return;
-		} std_catch
-		if(fdwrite(cso,&'E',1)!=1) throw wr_error();
+			"SELECT id_conf,val,kind FROM udot_ls("
+			+ Quote(dom_id, false)+','
+			+ Quote(lower(login), false)+','
+			+ Quote(lower(pfix), false)+')'));
+
+		if(res.empty()) return lr(::vq::ivq::err_no, "");
+
+		Result::size_type s = res.size();
+		uis = new udot_info_list(static_cast<CORBA::ULong>(s));
+		uis->length(static_cast<CORBA::ULong>(s));
+		for( Result::size_type i=0; i<s; ++i ) {
+			uis[i].id_conf = res[i][0].is_null() 
+				? static_cast<const char *>("") : res[i][0].c_str();
+			uis[i].val = res[i][1].is_null() 
+				? static_cast<const char *>("") : res[i][1].c_str();
+			uis[i].type = static_cast<udot_type>(res[i][2].as<CORBA::ULong>(0));
+		}
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_ls() std_try {
-		string ext;
-		if( fdrdstr(cso, dom) == -1
-		   || fdrdstr(cso, user) == -1
-		   || fdrdstr(cso, ext) == -1 )
-				throw rd_error();
+	cpgsqlauth::error * cpgsqlauth::udot_ls_by_type(const char *dom_id, 
+			const char * login, const char * pfix, udot_type ut,
+			udot_info_list_out uis) std_try {
 		
-		dom = lower(str2tb(dom));
-		user = lower(user);
-		ext = lower(ext);
+		if( !dom_id || ! login || ! pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT ID,TYPE,VALUE FROM \""+dom+"_dot\" WHERE EXT="
-			+Quote(user+ac_qmail_hyp.val_str().at(0)+ext, false)
-			+" ORDER BY ID"));
+			"SELECT id_conf,val,kind FROM udot_ls_by_type("
+			+ Quote(dom_id, false)+','
+			+ Quote(lower(login), false)+','
+			+ Quote(lower(pfix), false)+','
+			+ Quote(ToString( static_cast<CORBA::ULong>(ut) )) + ')'));
+
+		if(res.empty()) return lr(::vq::ivq::err_no, "");
+
+		Result::size_type s = res.size();
+		uis = new udot_info_list(static_cast<CORBA::ULong>(s));
+		uis->length(static_cast<CORBA::ULong>(s));
+		for( Result::size_type i=0; i<s; ++i ) {
+			uis[i].id_conf = CORBA::string_dup(
+				res[i][0].is_null() ? "" : res[i][0].c_str());
+			uis[i].val = CORBA::string_dup(
+				res[i][1].is_null() ? "" : res[i][1].c_str());
+			uis[i].type = static_cast<udot_type>(res[i][2].as<CORBA::ULong>(0));
+		}
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::udot_rm(const char * udot_id) std_try {
+		if( ! udot_id ) throw ::vq::null_error(__FILE__, __LINE__);
 	
-		vector<string>::size_type i, cnt = res.size();
-		if(fdwrite(cso,&'F',1) == -1
-		   || fdwrite(cso,&cnt,sizeof(cnt)) == -1 )
-				throw wr_error();
-	
-		const char *tmp;
-		cvq::udot_info ui;
-		for(i=0; i<cnt; ++i) {
-				tmp = res[i][0].c_str();
-				ui.id = !tmp ? "" : tmp;
-				tmp = res[i][1].c_str();
-				(char)ui.type = !tmp ? 0 : *tmp;
-				tmp = res[i][2].c_str();
-				ui.val = !tmp ? "" : tmp;
-	
-				if( fdwrstr(cso,ui.id) == -1 
-					|| fdwrite(cso, &ui.type, sizeof(ui.type)) != sizeof(ui.type)
-					|| fdwrstr(cso, ui.val) == -1 )
-						throw wr_error();
-		} std_catch
+		NonTransaction(*pg).Exec("SELECT UDOT_RM("+Quote(udot_id, false)+')');
+
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_ls_type() std_try {
-		if( fdrdstr(cso, dom) == -1
-		   || fdrdstr(cso, user) == -1
-		   || fdrdstr(cso, ext) == -1
-		   || fdread(cso, &type, sizeof(type)) == -1 )
-				throw rd_error();
+	cpgsqlauth::error * cpgsqlauth::udot_rm_by_type(const char * dom_id,
+			const char * login, const char * ext, 
+			udot_type ut) std_try {
+
+		if( ! dom_id || ! login || ! ext ) 
+				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		dom = lower(str2tb(dom));
-		user = lower(user);
-		ext = lower(ext);
-		Result res(NonTransaction(*pg).Exec(
-			"SELECT ID,TYPE,VALUE FROM \""+dom+"_dot\" WHERE EXT="
-			+Quote(user+ac_qmail_hyp.val_str().at(0)+ext, false)
-			+" AND TYPE='\\"+(char)type+"' ORDER BY ID"));
-	
-		vector<string>::size_type i, cnt = res.size();
-		if(fdwrite(cso,&'F',1) == -1
-		   || fdwrite(cso,&cnt,sizeof(cnt)) == -1 )
-				throw wr_error();
-	
-		const char *tmp;
-		cvq::udot_info ui;
-		for(i=0; i<cnt; ++i) {
-				tmp = res[i][0].c_str();
-				ui.id = !tmp ? "" : tmp;
-				tmp = res[i][1].c_str();
-				(char)ui.type = !tmp ? 0 : *tmp;
-				tmp = res[i][2].c_str();
-				ui.val = !tmp ? "" : tmp;
-				if( fdwrstr(cso,ui.id) == -1 
-					|| fdwrite(cso, &ui.type, sizeof(ui.type)) != sizeof(ui.type)
-					|| fdwrstr(cso, ui.val) == -1 )
-						throw wr_error();
-		} std_catch
+		NonTransaction(*pg).Exec("SELECT USER_RM_BY_TYPE("
+			+ Quote(dom_id, false)+','
+			+ Quote(lower(login), false)+','
+			+ Quote(lower(ext), false) + ','
+			+ Quote(ToString( static_cast<CORBA::ULong>(ut) )) + ')');
+
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
+
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_rm() std_try {
-		string id;
-		if( fdrdstr(cso, dom) == -1
-		   || fdrdstr(cso, id) == -1 )
-				throw rd_error();
-	
-		dom = lower(str2tb(dom));
+	cpgsqlauth::error * cpgsqlauth::udot_get( udot_info & ui ) std_try {
 		Result res(NonTransaction(*pg).Exec(
-			"DELETE FROM \""+dom+"_dot\" WHERE ID="+Quote(id, false)));
+			"SELECT TYPE,VAL FROM UDOT_GET("
+			+ Quote(static_cast<const char *>(ui.id_conf), false) + ')'));
 	
-		if(fdwrite(cso, &'K', 1)!=1) throw wr_error();
-	} std_catch
-	/**
-	 *
-	 */
-	cpgsqlauth::error * cpgsqlauth::udot_rm_type() std_try {
-		if( fdrdstr(cso, dom) == -1 
-			|| fdrdstr(cso, user) == -1 
-			|| fdrdstr(cso, ext) == -1
-			|| fdread(cso, &type, sizeof(type)) != sizeof(type) )
-				throw rd_error();
-	
-		dom = lower(str2tb(dom));
-		user = lower(user);
-		ext = lower(ext);
-		Result res(NonTransaction(*pg).Exec(
-			"DELETE FROM \""+dom+"_dot\" WHERE EXT="
-			+Quote(user+ac_qmail_hyp.val_str().at(0)+ext, false)
-			+" AND TYPE='\\"+(char)type+'\''));
-	
-		if(fdwrite(cso, &'K',1) != 1) throw wr_error();
-	} std_catch
-	/**
-	 *
-	 */
-	cpgsqlauth::error * cpgsqlauth::udot_get() std_try {
-		string id;
-		if( fdrdstr(cso, dom) == -1
-		   || fdrdstr(cso, id) == -1 )
-				throw rd_error();
+		if(res.empty())
+				return lr(::vq::ivq::err_noent, "");
 		
-		dom = lower(str2tb(dom));
-		Result res(NonTransaction(*pg).Exec(
-			"SELECT TYPE,VALUE FROM \""+dom+"_dot\" WHERE ID="+Quote(id, false)));
-	
-		if(res.empty()) {
-				if(fdwrite(cso, &'Z', 1)!=1) throw wr_error();
-				return;
-		} std_catch
-		
-		string val;
-		const char *ptr;
-		ptr = res[0][0].c_str();
-		(char)type = ! ptr ? '\0' : *ptr;
-		ptr = res[0][1].c_str();
-		val = ! ptr ? "" : ptr;
-		
-		if( fdwrite(cso, &'F', 1) != 1 
-		   || fdwrite(cso, &type, sizeof(type)) != sizeof(type)
-		   || fdwrstr(cso, val) == -1 )
-				throw wr_error();
+		ui.type = static_cast<udot_type>(res[0][0].as< CORBA::ULong >(0));
+		ui.val = res[0][1].is_null() 
+				? static_cast<const char *>("") : res[0][1].c_str();
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_rep() std_try {
-		cvq::udot_info ui;
+	cpgsqlauth::error * cpgsqlauth::udot_rep( 
+			const udot_info & ui ) std_try {
 	
-		if( fdrdstr(cso, dom) == -1
-		   || fdrdstr(cso, ui.id) == -1
-		   || fdread(cso, &ui.type, sizeof(ui.type)) != sizeof(ui.type)
-		   || fdrdstr(cso, ui.val) == -1 )
-				throw rd_error();
-	
-		dom = lower(str2tb(dom));
 		Result res(NonTransaction(*pg).Exec(
-			"UPDATE \""+dom+"_dot\" SET TYPE='\\"+(char)ui.type
-			+"',VALUE="+Quote(ui.val, false)+" WHERE ID="
-			+Quote(ui.id, false)));
+				"SELECT UDOT_REP("
+				+Quote(static_cast<const char *>(ui.id_conf), false)+','
+				+Quote(ToString( static_cast<CORBA::ULong>(ui.type) ), false)+','
+				+Quote(static_cast<const char *>(ui.val), false)+')'));
+
+		if(res.empty() || res[0][0].is_null() ) {
+				return lr(::vq::ivq::err_func_res, "UDOT_REP");
+		}
+
+		const char *val = res[0][0].c_str();
+		if( '-' == *val ) {
+				return ( '1' == *(val+1) ) 
+						? lr(::vq::ivq::err_noent, "")
+						: lr(::vq::ivq::err_func_res, "UDOT_REP");
+		}
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
 	
-		if( ! res.AffectedRows() ) {
-				if(fdwrite(cso, &'Z', 1) != 1) throw wr_error();
-		} else 
-				if(fdwrite(cso, &'K', 1) != 1) throw wr_error();
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::udot_type_has(
+			const char * dom_id, const char *login, const char *pfix,
+			udot_type ut ) std_try {
+
+		if( ! dom_id || ! login || ! pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
+	
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT UDOT_TYPE_HAS("
+			+ Quote(dom_id) + ','
+			+ Quote(lower(login)) + ','
+			+ Quote(lower(pfix)) + ','
+			+ Quote(ToString( static_cast<CORBA::ULong>(ut) )) + ')'));
+	
+		if(res.empty() || res[0][0].is_null() ) {
+				return lr(::vq::ivq::err_func_res, "UDOT_TYPE_HAS");
+		}
+
+		const char *val = res[0][0].c_str();
+		if( *val && '\0' == *(val+1) ) {
+				switch(*val) {
+				case '0': return lr(::vq::ivq::err_no, "");
+				case '1': return lr(::vq::ivq::err_noent, "");
+				}
+		}
+		return lr(::vq::ivq::err_func_res, "UDOT_TYPE_HAS");
 	} std_catch
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::udot_has() std_try {
-		if( fdrdstr(cso, dom) == -1
-		   || fdrdstr(cso, user) == -1
-		   || fdrdstr(cso, ext) == -1
-		   || fdread(cso, &type, sizeof(type)) == -1 )
-				throw rd_error();
+	cpgsqlauth::error * cpgsqlauth::udot_type_cnt(
+			const char * dom_id, const char *login, const char *pfix,
+			udot_type ut, CORBA::ULong &cnt ) std_try {
+
+		if( ! dom_id || ! login || ! pfix )
+				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		dom = lower(str2tb(dom));
-		user = lower(user);
-		ext = lower(ext);
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT 1 FROM \""+dom+"_dot\" WHERE ext="
-			+Quote(user+ac_qmail_hyp.val_str().at(0)+ext, false)
-			+" AND TYPE='\\"+(char)type+"' LIMIT 1"));
+			"SELECT UDOT_TYPE_CNT("
+			+ Quote(dom_id) + ','
+			+ Quote(lower(login)) + ','
+			+ Quote(lower(pfix)) + ','
+			+ Quote(ToString( static_cast<CORBA::ULong>(ut) )) + ')'));
 	
-		if( ! res.empty() ) {
-				if(fdwrite(cso, &'T', 1) != 1) throw wr_error();
-		} else 
-				if(fdwrite(cso, &'F',1) != 1) throw wr_error();
+		if(res.empty() || res[0][0].is_null() ) {
+				return lr(::vq::ivq::err_func_res, "UDOT_TYPE_HAS");
+		}
+
+		cnt = res[0][0].as< CORBA::ULong > (0);
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
-	/**
-	 *
-	 */
-	cpgsqlauth::error * cpgsqlauth::udot_type_cnt() std_try {
-		if( fdrdstr(cso, dom) == -1 
-			|| fdrdstr(cso, user) == -1 
-			|| fdrdstr(cso, ext) == -1
-			|| fdread(cso, &type, sizeof(type)) != sizeof(type) )
-				throw rd_error();
-		
-		dom = lower(str2tb(dom));
-		user = lower(user);
-		ext = lower(ext);
-		Result res(NonTransaction(*pg).Exec(
-			"SELECT COUNT(*) FROM \""+dom+"_dot\" WHERE ext="
-			+Quote(user+ac_qmail_hyp.val_str().at(0)+ext, false)
-			+" AND TYPE='\\"+(char)type+'\''));
-	
-		if( res.empty() || res[0][0].is_null() ) {
-				if( fdwrite(cso, &'E', 1)) throw wr_error();
-		} std_catch
-	
-		const char *ptr = res[0][0].c_str();
-	
-		cdaemonauth::size_type cnt;
-		istringstream is(ptr);
-		is>>cnt;
-		if( ! is ) cnt = 0;
-		
-		if(fdwrite(cso, &'F',1) != 1
-		   || fdwrite(cso, &cnt, sizeof(cnt)) != sizeof(cnt))
-				throw wr_error();
-	} std_catch
-#endif
-	
+
 	/**
 	 *
 	 */
@@ -814,7 +773,7 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT * from QT_USER_GET("+Quote(dom_id)+","+Quote(lower(login))
+			"SELECT * from QT_USER_GET("+Quote(dom_id)+','+Quote(lower(login))
 			+") as (qt_bytes_max int, qt_files_max int)"));
 
 		if( res.empty() )

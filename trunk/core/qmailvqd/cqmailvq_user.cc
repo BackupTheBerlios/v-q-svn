@@ -76,7 +76,7 @@ namespace POA_vq {
 	 */
 	std::string cqmailvq::user_root_path( const std::string &dom_id,
 			const std::string & login ) const {
-		return dom_path(dom_id)+'/'+split_user(lower(user), this->user_split);
+		return dom_path(dom_id)+'/'+split_user(lower(login), this->user_split);
 	}
 
 	/**
@@ -124,7 +124,8 @@ namespace POA_vq {
 		}
 	#endif	
 	
-		if(!sys::mkdirhier(user_add_dir.c_str(), 777, geteuid(), getegid())) 
+		if(!sys::mkdirhier(user_add_dir.c_str(), this->dmode, 
+					this->uid, this->gid)) 
 				return lr(::vq::ivq::err_mkdir, user_add_dir);
 	
 		auto_ptr<error> ret;
@@ -222,12 +223,7 @@ namespace POA_vq {
 		if(!dom_id || !login || !pass)
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		std::auto_ptr<error> ret;
-		ret.reset( auth->user_pass(dom_id, login, pass) );
-		if( ret->ec != ::vq::ivq::err_no )
-				return ret.release();
-
-		return lr(::vq::ivq::err_no, "");
+		return auth->user_pass(dom_id, login, pass);
 	} std_catch
 
 	/**

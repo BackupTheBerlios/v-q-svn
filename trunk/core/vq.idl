@@ -156,7 +156,7 @@ module vq {
 
 			/// user's dot file info
 			struct udot_info {
-					string id; //!< identificator
+					string id_conf; //!< identificator
 					string val; //!< value
 					udot_type type; //!< type of entry
 			};
@@ -234,19 +234,19 @@ module vq {
 			error user_ex(in string dom_id, in string login)
 					raises (null_error, except, db_error);
 		//@}
-#if 0
+
 		/**
 		 * \defgroup eb Emails banned
 		 */
 		//@{
-			error eb_add(in string re_domain, in string re_login )
-					raises (null_error, except);
-			error eb_rm(in string re_domain, in string re_login )
-					raises (null_error, except);
-			error eb_ls( out email_banned_list ebs )
-					raises (null_error, except);
+			error eb_add(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_rm(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_ls(out email_banned_list ebs)
+					raises (db_error, except);
 		//@}
-#endif // if 0
+
 	/**
 	 * \defgroup qt Quota support
 	 * @{
@@ -304,7 +304,7 @@ module vq {
 	 */
 			/// Adds to dot file
 			error udot_add(in string dom, in string user,
-					in string pfix, out udot_info ui )
+					in string pfix, inout udot_info ui )
 					raises (null_error, except);
 			/// Adds some default configuration to user's mailbox
 			error udot_add_md_def(in string dom, in string user,
@@ -312,7 +312,7 @@ module vq {
 					raises (null_error, except);
 			/// Removes all options of specified type
 			error udot_rm_by_type(in string dom, in string user,
-					in udot_type ut )
+					in string pfix, in udot_type ut )
 					raises (null_error, except);
 			/// Removes option with given id
 			error udot_rm_by_id(in string dom, in string user, 
@@ -339,7 +339,7 @@ module vq {
 			error udot_sup_is( in udot_type ut )
 					raises (null_error, except);
 			/// Checks if mailbox has configured option of given type
-			error udot_has(in string dom, in string user, in string pfix, 
+			error udot_type_has(in string dom, in string user, in string pfix, 
 					in udot_type ut )
 					raises (null_error, except);
 			/// Counts options with given type

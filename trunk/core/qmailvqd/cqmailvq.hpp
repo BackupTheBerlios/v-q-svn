@@ -80,10 +80,13 @@ namespace POA_vq {
 				    virtual error* dra_add( const char* dom_id, const char* rea );
 				    virtual error* dra_rm( const char* dom_id, const char* rea );
 				    virtual error* dra_rm_by_dom( const char* dom_id );
-				    virtual error* eb_add( const char* re_domain, const char* re_login );
-				    virtual error* eb_rm( const char* re_domain, const char* re_login );
-				    virtual error* eb_ls( email_banned_list_out ebs );
 #endif // if 0
+					virtual error* eb_add( const char* re_domain, 
+							const char* re_login );
+					virtual error* eb_rm( const char* re_domain, 
+							const char* re_login );
+					virtual error* eb_ls( email_banned_list_out ebs );
+
 			protected:
 					static const char tmp_end[]; //!< temporary file extension
 					static const char ud_sup[]; //!< array of supported udot types

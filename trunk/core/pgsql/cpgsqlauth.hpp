@@ -35,7 +35,7 @@ namespace POA_vq {
 					typedef ::vq::iauth::udot_info udot_info;
 					typedef ::vq::iauth::udot_info_list udot_info_list;
 					typedef ::vq::iauth::udot_info_list_out udot_info_list_out;
-					typedef ::vq::iauth::udot_info_out udot_info_out;
+					typedef ::vq::iauth::udot_type_out udot_type_out;
 					typedef ::vq::iauth::udot_type udot_type;
 					typedef ::vq::iauth::auth_info auth_info;
 					typedef ::vq::iauth::quota_type quota_type;
@@ -78,43 +78,35 @@ namespace POA_vq {
 							const char * re_login );
     				virtual error * eb_ls( email_banned_list_out ebs );
     
-					virtual error * qt_user_get( const char* dom_id, 
-							const char* user_id, 
-							quota_type_out bytes_max, quota_type_out files_max );
-    				virtual error * qt_user_set( const char* dom_id, 
-							const char* user_id, 
+					virtual error* qt_user_get( const char* dom_id, 
+							const char* user, quota_type_out bytes_max, 
+							quota_type_out files_max );
+				    virtual error* qt_user_set( const char* dom_id, const char* user, 
 							quota_type bytes_max, quota_type files_max );
-    				virtual error * qt_user_def_set( const char* dom_id, 
+				    virtual error* qt_user_def_set( const char* dom_id, 
 							quota_type bytes_max, quota_type files_max );
-    				virtual error * qt_user_def_get( const char* dom_id, 
+				    virtual error* qt_user_def_get( const char* dom_id, 
 							quota_type_out bytes_max, quota_type_out files_max );
-
-					/*
-				    virtual error udot_add( const char* dom, const char* user, 
-							const char* pfix, udot_info_out ui );
-				    virtual error udot_rm_by_type( const char* dom, 
-							const char* user, udot_type ut );
-				    virtual error udot_rm_by_id( const char* dom, 
-							const char* user, const char* id );
-				    virtual error udot_ls( const char* dom, const char* user, 
-							const char* pfix, udot_info_list_out uis );
-				    virtual error udot_ls_by_type( const char* dom, 
-							const char* user, const char* pfix, udot_type ut, 
+				    
+					virtual error* udot_add( const char* dom_id, const char* user, 
+							const char* pfix, udot_info &ui );
+				    virtual error* udot_rm_by_type( const char* dom_id, 
+							const char* user, const char *pfix, udot_type ut );
+				    virtual error* udot_rm( const char* id );
+				    virtual error* udot_ls( const char* dom_id,
+							const char* user, const char* pfix, 
 							udot_info_list_out uis );
-				    virtual error udot_rep( const char* dom, const char* user, 
-							const udot_info& ui );
-				    virtual error udot_get( const char* dom, const char* user, 
-							udot_info& ui );
-				    virtual error udot_has( const char* dom, const char* user, 
-							const char* pfix, udot_type ut );
-				    virtual error udot_type_cnt( const char* dom, 
+				    virtual error* udot_ls_by_type( const char* dom_id, 
+							const char* user, const char* pfix, 
+							udot_type ut, udot_info_list_out uis );
+				    virtual error* udot_rep( const udot_info& ui );
+				    virtual error* udot_get( udot_info& ui );
+			    	virtual error* udot_type_has( const char* dom_id, 
+							const char* user, const char* pfix, udot_type ut );
+			    	virtual error* udot_type_cnt( const char* dom_id, 
 							const char* user, const char* pfix, 
 							udot_type ut, size_type_out cnt );
-				    virtual char* err_info();
-				    virtual CORBA::Long err_sys();
-				    virtual char* err_report();
-					*/
-	
+
 			protected:
 					/// pgsql
 					std::auto_ptr<pqxx::Connection> pg;
