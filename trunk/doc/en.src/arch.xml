@@ -42,7 +42,7 @@
 
 		<para>
 			Ivq module calls methods from <link linkend="arch.iauth">iauth</link>
-			interface to retreive or store informations about users or domains.
+			interface to retrieve or store informations about users or domains.
 		</para>
 
 		<section id="arch.ivq.cqmailvq">
@@ -64,7 +64,7 @@
 			<para>
 				For some actions it uses small, helper programs
 				that are responsible for qmail's configuration updates.
-				This way priviledges can be separated - qmail's configuration
+				This way privileges can be separated - qmail's configuration
 				can be owned by a user other than the user which runs
 				qmailvqd.
 			</para>
@@ -75,14 +75,14 @@
 		<title>Interface iauth</title>
 
 		<para>
-			This interface represents authorization backend which
+			This interface represents authorization back end which
 			is responsible for storing informations about existing
 			domains and users.
 		</para>
 
 		<para>
 			Usually this interface implementations does not create
-			any entries in a filesystem. They operate only on a specified
+			any entries in a file system. They operate only on a specified
 			database.
 		</para>
 

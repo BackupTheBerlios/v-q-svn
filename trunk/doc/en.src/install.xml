@@ -33,12 +33,17 @@
 			Common dependencies are:
 
 			<itemizedlist>
-				<listitem><para>C++ compiler</para></listitem>
+				<listitem>
+					<para>
+						modern C++ compiler, if you use gcc it must be at 
+						least version >= 3.
+					</para>
+				</listitem>
 				<listitem>
 					<para>
 						CORBA implementation with IDL to C++ mapping, 
 						for example <ulink url="http://www.mico.org">MICO</ulink> 
-						or <ulink url="http://www.omniorb.org">OmniORB</ulink>
+						or <ulink url="http://www.omniorb.org">omniORB</ulink>
 					</para>
 				</listitem>
 				<listitem>
@@ -91,7 +96,7 @@
 				First you need to download <application>PostgreSQL</application>.
 				Using newest stable version is suggested. You also
 				need libpqxx at least in version 2.4.2 and PERL module called Pg (if you want to
-				use automatic installation script). All progams
+				use automatic installation script). All programs
 				you can download from <ulink url="http://www.postgresql.org">
 				http://www.postgresql.org</ulink>.
 			</para>
@@ -257,7 +262,7 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 					all arguments for <application>make-so</application>
 					that will configure
 					linker. This means that you should put there
-					arguments specifing all libraries used by CORBA
+					arguments specifying all libraries used by CORBA
 					implementation.
 				</para>
 
@@ -330,7 +335,7 @@ bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
 		
 		<para>Now it's time to compile sources. If you configured
 		everything properly you should be able to successfully
-		compile Virual Qmail.</para>
+		compile Virtual Qmail.</para>
 
 		<para>
 			To compile program use <application>make</application>.
@@ -374,7 +379,7 @@ make >&amp; out
 		<title>Installation</title>
 
 		<para>
-			After succesful compilation you're ready to install software.
+			After successful compilation you're ready to install software.
 			It's easy as writing:
 <screen>
 <userinput>
@@ -459,7 +464,7 @@ make pgsql >&amp; out.pgsql
 </screen>
 
 				Remember that pqxx-config must be in the path (if you don't have
-				this program it means eaither libpqxx is not installed or it's too old
+				this program it means either libpqxx is not installed or it's too old
 				version).
 			</para>
 
@@ -489,7 +494,7 @@ make PREFIX=/var/v-q install-pgsql
 			<para>
 				To create objects in a database you can use PERL script
 				<application>install.pgsql</application>. This
-				document doesn't desribe how to manually create them.
+				document doesn't describe how to manually create them.
 				If you don't want to use this script check it's
 				source to see what needs to be created.
 
@@ -502,7 +507,7 @@ make PREFIX=/var/v-q install-pgsql
 
 				<caution>
 					<para>
-						Remeber to set password for database user
+						Remember to set password for database user
 						and configure PostgreSQL to authorize users.
 						If you don't do it everyone will be able to
 						modify entries in a database.

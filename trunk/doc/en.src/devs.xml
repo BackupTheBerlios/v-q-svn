@@ -151,7 +151,7 @@ echo "running client ..."
 		<title>Using v-q from Java</title>
 		<para>
 			<ulink url="http://java.sun.com">Java</ulink> language
-			is one of most pupular languages used in
+			is one of most popular languages used in
 			enterprise systems.
 		</para>
 
@@ -309,7 +309,7 @@ java DomVal -ORBInitRef NameService=corbaloc::$host:12456/NameService
 			<note>
 				<para>
 					qmailvqd and pgsqlauthd were compiled using MICO,
-					name service was represented by OmniORB 
+					name service was represented by omniORB 
 					<application>omniNames</application> and client was
 					written in Java. So, it's also an example of interoperability :-)
 				</para>
