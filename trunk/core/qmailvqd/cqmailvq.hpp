@@ -54,6 +54,7 @@ namespace POA_vq {
 					typedef ::vq::ivq::error error;
 					typedef ::vq::ivq::err_code err_code;
 					typedef ::vq::ivq::string_list_out string_list_out;
+					typedef ::vq::ivq::string_list_var string_list_var;
 					typedef ::vq::ivq::email_banned_list_out email_banned_list_out;
 					typedef ::vq::ivq::domain_info_list_out domain_info_list_out;
 
@@ -123,7 +124,7 @@ namespace POA_vq {
 				    virtual error* user_conf_type_cnt( const char* dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, size_type_out cnt );
-				
+			
 			protected:
 					static const char tmp_end[]; //!< temporary file extension
 						
@@ -139,6 +140,8 @@ namespace POA_vq {
 					gid_t gid; //!< group's id.
 
 					::vq::iauth_var & auth; //!< authorization module
+
+					virtual error* dip_rm_by_dom( const char* dom_id );
 
 					error * send_restart();
 					error * assign_ex(const std::string &);

@@ -457,13 +457,6 @@ struct auth_test {
 			BOOST_CHECK_EQUAL(err->ec, ::vq::ivq::err_no );
 		}
 
-		/**
-		 * Test whether dom_id returns correct id. for aliases and ip addresses
-		 */
-		void case9() {
-			BOOST_REQUIRE(0);
-		}
-
 }; // struct auth_test
 
 /**
@@ -538,6 +531,16 @@ struct auth_test_suite : test_suite {
 
 			// da_dip_test
 			{
+					test_case * ts_case4 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_alias_test::case4, da_test );
+					ts_case4->depends_on(ts_init);
+					add(ts_case4);
+
+					test_case * ts_case5 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_alias_test::case5, da_test );
+					ts_case5->depends_on(ts_init);
+					add(ts_case5);
+
 					test_case * ts_case6 = BOOST_CLASS_TEST_CASE( 
 						&obj_dom_alias_test::case6, da_test );
 					ts_case6->depends_on(ts_init);
@@ -553,11 +556,6 @@ struct auth_test_suite : test_suite {
 				&auth_test::case8, test );
 			ts_case8->depends_on(ts_init);
 			add(ts_case8);
-
-			test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
-				&auth_test::case9, test );
-			ts_case9->depends_on(ts_init);
-			add(ts_case9);
 
 			// uc_test
 			{

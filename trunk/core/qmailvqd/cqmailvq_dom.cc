@@ -60,7 +60,10 @@ namespace POA_vq {
 					return ret.release();
 			dom = static_cast<const char *>(_dom);
 		}
-		
+	
+		ret.reset(dip_rm_by_dom(dom_id));
+		if( ret->ec != ::vq::ivq::err_no )
+				return ret.release();
 		ret.reset(rcpt_rm(dom));
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
@@ -273,7 +276,7 @@ namespace POA_vq {
 	} std_catch
 
 	/**
-	 * Remove aliass.
+	 * Remove alias.
 	 * \param a alias name
 	 * \return ::vq::ivq::err_no on success
 	 */
@@ -288,6 +291,28 @@ namespace POA_vq {
 		
 		ret.reset(moreipme_rm(alias));
 		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		return ret.release();
+	} std_catch
+
+	/**
+	 * Remove aliases for a domain.
+	 * \param a alias name
+	 * \return ::vq::ivq::err_no on success
+	 */
+	cqmailvq::error * cqmailvq::dip_rm_by_dom( const char * dom_id ) std_try {
+
+		if( ! dom_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
+	
+		string_list_var alis;
+		auto_ptr<error> ret(auth->dip_ls_by_dom( dom_id, alis ));
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		CORBA::ULong i, s = alis->length();
+		if( ! s ) return lr(::vq::ivq::err_no, "");
+		for( i=0; i<s; ++i ) {
+				ret.reset(this->dip_rm(alis[i]));
+				if( ::vq::ivq::err_no != ret->ec ) return ret.release();
+		}
 		return ret.release();
 	} std_catch
 

@@ -835,7 +835,13 @@ struct vq_test_suite : test_suite {
 			add(ts_case13);
 			}
 
+			// da_test
 			{
+					test_case * ts_case5 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_alias_test::case5, da_test );
+					ts_case5->depends_on(ts_init);
+					add(ts_case5);
+
 					test_case * ts_case6 = BOOST_CLASS_TEST_CASE( 
 						&obj_dom_alias_test::case6, da_test );
 					ts_case6->depends_on(ts_init);
