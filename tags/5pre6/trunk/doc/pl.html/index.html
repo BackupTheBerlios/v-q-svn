@@ -1,0 +1,493 @@
+<HTML
+><HEAD
+><TITLE
+>Virtual Qmail</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="NEXT"
+TITLE="Foreword"
+HREF="foreword.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-03-22T22:13:25"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="book"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="AEN1"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN2"
+>Virtual Qmail</A
+></H1
+><H3
+CLASS="author"
+><A
+NAME="AEN5"
+>Pawe³ Niewiadomski</A
+></H3
+><P
+CLASS="copyright"
+>Copyright &copy; 2003, 2004, 2005 by <A
+HREF="http://foo-baz.com"
+TARGET="_top"
+>foo-baz.com</A
+></P
+><HR></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="foreword.html"
+>Foreword</A
+></DT
+><DT
+>1. <A
+HREF="intro.html"
+>Introduction</A
+></DT
+><DD
+><DL
+><DT
+>1.1. <A
+HREF="intro.html#intro.goal"
+>Project goal</A
+></DT
+><DT
+>1.2. <A
+HREF="intro.features.html"
+>Current main features</A
+></DT
+><DT
+>1.3. <A
+HREF="intro.todo.html"
+>Planned features</A
+></DT
+><DT
+>1.4. <A
+HREF="intro.missing.html"
+>Missing features</A
+></DT
+><DT
+>1.5. <A
+HREF="license.html"
+>License</A
+></DT
+></DL
+></DD
+><DT
+>2. <A
+HREF="arch.html"
+>Architecture</A
+></DT
+><DD
+><DL
+><DT
+>2.1. <A
+HREF="arch.html#arch.parts"
+>Main parts</A
+></DT
+><DT
+>2.2. <A
+HREF="arch.ivq.html"
+>Interface ivq</A
+></DT
+><DD
+><DL
+><DT
+>2.2.1. <A
+HREF="arch.ivq.html#arch.ivq.cqmailvq"
+>cqmailvq</A
+></DT
+></DL
+></DD
+><DT
+>2.3. <A
+HREF="arch.iauth.html"
+>Interface iauth</A
+></DT
+><DD
+><DL
+><DT
+>2.3.1. <A
+HREF="arch.iauth.html#arch.iauth.cpgsqlauth"
+>cpgsqlauth</A
+></DT
+></DL
+></DD
+><DT
+>2.4. <A
+HREF="arch.clients.html"
+>Clients: command line programs, WWW interface, etc.</A
+></DT
+></DL
+></DD
+><DT
+>3. <A
+HREF="life.html"
+>Life with Virtual Qmail</A
+></DT
+><DD
+><DL
+><DT
+>3.1. <A
+HREF="life.html#life.conf"
+>Configuration</A
+></DT
+><DD
+><DL
+><DT
+>3.1.1. <A
+HREF="life.html#life.env"
+>Environment variables</A
+></DT
+><DT
+>3.1.2. <A
+HREF="life.html#AEN134"
+>Configuration for Qmail part</A
+></DT
+><DT
+>3.1.3. <A
+HREF="life.html#AEN216"
+>Configuration for PostgreSQL authorization part</A
+></DT
+><DT
+>3.1.4. <A
+HREF="life.html#AEN240"
+>Configuration for PostgreSQL logging part</A
+></DT
+></DL
+></DD
+><DT
+>3.2. <A
+HREF="life.security.html"
+>Security not by obscurity</A
+></DT
+><DT
+>3.3. <A
+HREF="life.integration.html"
+>Integration with other software</A
+></DT
+><DD
+><DL
+><DT
+>3.3.1. <A
+HREF="life.integration.html#life.inte.omail"
+>Omail-webmail</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>4. <A
+HREF="devs.html"
+>Tworzenie aplikacji wykorzystuj±cych v-q</A
+></DT
+><DD
+><DL
+><DT
+>4.1. <A
+HREF="devs.html#devs.python"
+>U¿ywanie v-q z poziomu pythona</A
+></DT
+></DL
+></DD
+><DT
+>5. <A
+HREF="community.html"
+>Community</A
+></DT
+><DD
+><DL
+><DT
+>5.1. <A
+HREF="community.html#community.list"
+>Mailing list</A
+></DT
+><DT
+>5.2. <A
+HREF="community.forums.html"
+>Forums</A
+></DT
+><DT
+>5.3. <A
+HREF="community.requests.html"
+>Requests</A
+></DT
+><DT
+>5.4. <A
+HREF="community.success.html"
+>Success stories</A
+></DT
+><DT
+>5.5. <A
+HREF="community.bugs.html"
+>Reporting bugs</A
+></DT
+><DT
+>5.6. <A
+HREF="community.blog.html"
+>Virtual Qmail has it's blog</A
+></DT
+><DT
+>5.7. <A
+HREF="community.authors.html"
+>Authors</A
+></DT
+><DD
+><DL
+><DT
+>5.7.1. <A
+HREF="community.authors.html#pniewiadomski"
+>Pawe³ Niewiadomski</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>6. <A
+HREF="com.support.html"
+>Commercial support</A
+></DT
+><DT
+>7. <A
+HREF="install.html"
+>Installation</A
+></DT
+><DD
+><DL
+><DT
+>7.1. <A
+HREF="install.html#install.download"
+>Downloading</A
+></DT
+><DT
+>7.2. <A
+HREF="install.deps.html"
+>Dependencies</A
+></DT
+><DD
+><DL
+><DT
+>7.2.1. <A
+HREF="install.deps.html#install.mta"
+>Mail transfer agent</A
+></DT
+><DT
+>7.2.2. <A
+HREF="install.deps.html#install.pgsql"
+>PostgreSQL version</A
+></DT
+></DL
+></DD
+><DT
+>7.3. <A
+HREF="install.prep.html"
+>Preparation</A
+></DT
+><DD
+><DL
+><DT
+>7.3.1. <A
+HREF="install.prep.html#AEN413"
+>Creating user and group</A
+></DT
+><DT
+>7.3.2. <A
+HREF="install.prep.html#install.unpack"
+>Unpacking sources</A
+></DT
+><DT
+>7.3.3. <A
+HREF="install.prep.html#install.conf"
+>Configuration before compilation</A
+></DT
+></DL
+></DD
+><DT
+>7.4. <A
+HREF="install.comp.html"
+>Compilation</A
+></DT
+><DT
+>7.5. <A
+HREF="install.install.html"
+>Installation</A
+></DT
+><DD
+><DL
+><DT
+>7.5.1. <A
+HREF="install.install.html#install.steps.qmail"
+>Special steps for Qmail</A
+></DT
+><DT
+>7.5.2. <A
+HREF="install.install.html#install.steps.pgsql"
+>Special steps for PostgreSQL</A
+></DT
+><DT
+>7.5.3. <A
+HREF="install.install.html#install.problems"
+>What if I have problems?</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>8. <A
+HREF="doc.gen.html"
+>Generating documentation</A
+></DT
+><DD
+><DL
+><DT
+>8.1. <A
+HREF="doc.gen.html#doc.gen.openbsd"
+>OpenBSD</A
+></DT
+><DT
+>8.2. <A
+HREF="doc.gen.makefile.html"
+>Using makefile</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="LOT"
+><DL
+CLASS="LOT"
+><DT
+><B
+>List of Tables</B
+></DT
+><DT
+>3-1. <A
+HREF="life.html#AEN139"
+>Configuration files for Qmail part</A
+></DT
+><DT
+>3-2. <A
+HREF="life.html#AEN221"
+>Configuration files for PostgreSQL authorization part</A
+></DT
+><DT
+>3-3. <A
+HREF="life.html#AEN245"
+>Configuration files for PostgreSQL logging part</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="LOT"
+><DL
+CLASS="LOT"
+><DT
+><B
+>List of Figures</B
+></DT
+><DT
+>2-1. <A
+HREF="arch.html#AEN85"
+>Architecture in a picture</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="LOT"
+><DL
+CLASS="LOT"
+><DT
+><B
+>List of Examples</B
+></DT
+><DT
+>8-1. <A
+HREF="doc.gen.html#AEN545"
+>Content of <TT
+CLASS="filename"
+>catalog</TT
+> file</A
+></DT
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="foreword.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Foreword</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,21 @@
+#!/bin/sh
+export PROG=pgsqlauthd
+
+if [ ! -z "$VQ_HOME" ] ; then
+    export PATH="$PATH":"$VQ_HOME"
+else
+    export VQ_HOME=`which "$PROG" | xargs dirname | xargs dirname`
+    if [ ! -d $VQ_HOME ] ; then
+        export VQ_HOME=/var/vq
+    fi
+fi
+
+if [ ! -d $VQ_HOME ] ; then
+    echo "VQ_HOME not set!"
+    exit 1
+fi
+
+exec 2>&1
+exec su _vq -c "exec "$PROG" -ORBIIOPAddr "unix:/var/vq/sockets/$PROG.sock" \
+-ORBInitRef NameService=corbaloc::127.0.0.1:12456/NameService \
+$VQ_HOME"

@@ -1,0 +1,182 @@
+Version 2.2
+
+Changes since Version 2.1
+-------------------------
+
+o Added support for MICO. Tested only on Unix.
+
+o Added makefiles for GNU and BSD make. It's easier to compile sources under
+  Unix. Chosing ORB implementation is done via P_USE_ORB environment variable.
+  See Makefile.unix.inc.
+
+Version 2.1
+
+Changes since Version 2.0
+-------------------------
+
+o Support has been added for omniORB. Note that omniORB 4.0.3
+  is required; the CORBA Utilities package will NOT compile with
+  earlier versions of omniORB. Thanks for Duncan Grisby for his help
+  with this port.
+
+o Rather than having a separate PDF file for each utility, all the
+  documentation has now been gathered into one book.
+
+o A new Orbix-specific utility called "orbix_ns_on_fixed_port" has been
+  added. This utility reconfigures the Naming Service so that it
+  listens on a fixed port, which makes it firewall friendly.
+  Documentation for this can be found in the "Orbix Administration Made
+  Simple" chapter of the documentation.
+
+o Some minor typos have been fixed in the documentation.
+
+
+
+Version 2.0
+
+Changes since Version 1.3.2
+---------------------------
+
+o A backwards-incompatible change has been made to the PoaUtility
+  class. In older versions of this class, a boolean parameter was
+  passed to the constructor. This boolean flag allowed one of two
+  server deployment models to be used. The new version of the class
+  allows any of four deployment models to be used. This has
+  necessitated that the boolean parameter be replaced with an "enum"
+  parameter in the C++ version, and an "int" parameter in the Java
+  version (because Java does not have "enum" types). Read the
+  "doc/PoaUtility.pdf" file for details of the new version of the
+  PoaUtility class.
+
+o Unnecessary (and hence slightly confusing) Makefile variables in the
+  "Makefile.inc.<product>" files have been removed.
+
+
+
+Version 1.3.2
+
+Changes since Version 1.3.1
+---------------------------
+
+o Perry Russell added support for TAO (an open-source CORBA implementation).
+
+
+
+Version 1.3.1
+
+Changes since Version 1.3
+-------------------------
+
+o A new Orbix administration utility called "orbix_notify_service"
+  is provided. This utility is documented in the "Orbix Administration
+  Made Simple" paper (doc/orbix_admin.pdf).
+
+
+
+Version 1.3
+
+Changes since Version 1.2.3
+---------------------------
+
+o The documentation has been reformatted into a 12pt font (it used to
+  be in 10pt). The PDF files are more compact and are hyperlinked. For
+  example, clicking on an entry in the table of contents brings you to
+  the relevant page of the document.
+
+o No new software utilities have been added, but two new documents have
+  been added:
+
+	- "The corbaloc and corbaname URLs" document (doc/corbaloc.pdf)
+	  provides an short, easy-to-understand discussion of the
+	  "corbaloc:" and "corbaname:" URL formats for CORBA object
+	  references.
+
+	- The "Tips for Windows" document (doc/tips_for_windows.pdf)
+	  provides 3 useful tips that can help people who use (MS-DOS)
+	  command windows on a PC.
+
+
+
+Version 1.2.3
+
+Changes since Version 1.2.2
+---------------------------
+
+o Changed the implementation of the ImportExport functionality so that
+  the functions do not make use of any static or instance variables.
+  Instead, all the work is done with stack-local variables. This makes
+  these functions thread-safe and also suitable for use in a multi-ORB
+  application.
+
+
+
+Version 1.2.2
+
+Changes since Version 1.2.1
+---------------------------
+
+o In the "Orbix Administration Made Simple" paper, the discussion of
+  the configuration variables for thread pools has been updated.
+
+
+
+Version 1.2.1
+
+Changes since Version 1.2
+-------------------------
+
+o ASP 6.0 has changed the integer value that is passed as a parameter to
+  orb.create_policy() when associating a work queue with a POA. The
+  source code of the PoaUtility class has been modified so that it
+  works correctly with both ASP 6.0 and previous versions of ASP.
+
+
+
+Version 1.2 
+
+Changes since Version 1.1
+-------------------------
+
+o Fixed some typos in doc/import_export.pdf.
+
+o Changed Makefile.inc.orbix to provide support for ASP 6.0
+
+
+
+Version 1.1
+
+Changes since the original (unnumbered version)
+-----------------------------------------------
+
+o The original version of CORBA Utilities package provided only
+  C++ versions of the import/export and PoaUtility classes.
+  This version also provides Java versions. Javadoc documentation
+  is provided in the top-level "javadoc" directory.
+
+o The C++ version of import/export has undergone some changes in
+  its public API:
+
+	- The import_obj_ref() function has been renamed to
+	  corbautil::importObjRef()
+
+	- The export_obj_ref() function has been renamed to
+	  corbautil::exportObjRef()
+
+	- The functions do not throw a std::string exception
+	  if anything goes wrong. Instead, they now throw a
+	  corbautil::ImportExportException.
+
+o The C++ version of the POA hierarchy utility class has undergone
+  some changes in its public API:
+
+	- The class has been renamed from poa_hierarchy_base to
+	  corbautil::PoaUtility
+
+	- Operations on this class are no longer spelled in
+	  lower_case_and_underscores(). Instead, they are spelled
+	  in mixedCapitals().
+
+	- If any errors occur in an operation on this class then
+	  it does not throw a std::string exception. Instead, it
+	  now throws a corbautil::PoaUtilityException.
+

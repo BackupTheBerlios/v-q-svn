@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="doc.gen">
+	<title>Generating documentation</title>
+
+	<para>
+		This chapter describes how to process DocBook XML documentation
+		into other formats such as: HTML, RTF.
+	</para>
+
+	<section id="doc.gen.openbsd">
+		<title>OpenBSD</title>
+
+		<para>
+			First you need install openjade and dockbook-* packages.
+			This packages allows you to process SGML documents into
+			some formats. Sadly (as in 3.6 release) there is no
+			package with DocBook XML style-sheets so you need to
+			download appropriate.
+		</para>
+
+		<para>
+			I used files from Fedora Core 2 release (packages: 
+			docbook-style-dsssl-1.78-2.noarch.rpm
+			and docbook-dtds-1.0-22.1.noarch.rpm). I unpacked them
+			with <application>rpm2cpio</application>, copied everything from 
+			<filename>usr/share/</filename> to 
+			<filename>/usr/local/share/sgml/redhat</filename>. Then
+			added following lines:
+<example>
+	<title>Content of <filename>catalog</filename> file</title>
+<screen>
+<userinput>
+CATALOG "redhat/sgml/docbook/xml-dtd-4.1.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog" 
+</userinput>
+</screen>
+</example>
+			to <filename>/usr/local/share/sgml/catalog</filename>.
+		</para>
+
+		<para>
+			Then using following application I was able to create RTF version of
+			documentation:
+<synopsis>
+env <envar>SGML_CATALOG_FILES</envar>=/usr/local/share/sgml/catalog 
+openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
+/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
+</synopsis>
+			Changing RTF to SGML produces HTML files.
+			<note>
+				<para>
+					<application>openjade</application> may print warnings
+					about DTDDECL which is not supported but you
+					should ignore them.
+				</para>
+			</note>
+		</para>
+	</section>
+
+	<section id="doc.gen.makefile">
+		<title>Using makefile</title>
+
+		<para>
+			After installing openjade and docbook files all you need
+			to do is run make.
+		</para>
+
+		<para>
+			There are few targets producing documentation:
+			<itemizedlist>
+				<listitem>
+					<para>doc-html produces HTML files in BASE/doc/html</para>
+				</listitem>
+				<listitem>
+					<para>doc-rtf produces RTF files in BASE/doc/rtf</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+</chapter>
+

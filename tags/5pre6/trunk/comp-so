@@ -1,0 +1,2 @@
+#!/bin/sh
+exec eg++ -D_REENTRANT -g -ftemplate-depth-40 -fpic -DPIC -pipe -Wall -c ${1+"$@"}

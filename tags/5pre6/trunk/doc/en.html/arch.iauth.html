@@ -1,0 +1,194 @@
+<HTML
+><HEAD
+><TITLE
+>Interface iauth</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Architecture"
+HREF="arch.html"><LINK
+REL="PREVIOUS"
+TITLE="Interface ivq"
+HREF="arch.ivq.html"><LINK
+REL="NEXT"
+TITLE="Clients: command line programs, WWW interface, etc."
+HREF="arch.clients.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-03-22T22:13:02"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="arch.ivq.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 2. Architecture</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="arch.iauth"
+>2.3. Interface iauth</A
+></H1
+><P
+>&#13;			This interface represents authorization backend which
+			is responsible for storing informations about existing
+			domains and users.
+		</P
+><P
+>&#13;			Usually this interface implementations does not create
+			any entries in a filesystem. They operate only on a specified
+			database.
+		</P
+><P
+>&#13;			This interface is used by <A
+HREF="arch.ivq.html"
+>ivq
+			implementations</A
+>. You should not use it directly.
+			If you think that some feature should be added
+			to ivq please contact developers or add them and send us
+			a patch.
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="arch.iauth.cpgsqlauth"
+>2.3.1. cpgsqlauth</A
+></H2
+><P
+>&#13;				This is an implementation of <A
+HREF="arch.iauth.html"
+>iauth
+				interface</A
+>. It operates on a PostgreSQL database.
+			</P
+><P
+>&#13;				It stores all informations in a database. Doesn't create
+				or use any files other than configuration.
+			</P
+><P
+>&#13;				It is represented by pgsqlauthd daemon.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="arch.ivq.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Interface ivq</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="arch.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Clients: command line programs, WWW interface, etc.</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
