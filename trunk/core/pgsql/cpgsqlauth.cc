@@ -136,6 +136,26 @@ namespace POA_vq {
 	} std_catch
 	
 	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::dom_ls( domain_info_list_out dis ) std_try {
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT id_domain,domain FROM dom_ls()"));
+		if(res.empty()) return lr(::vq::ivq::err_no, "");
+
+		Result::size_type s = res.size();
+		dis = new domain_info_list(static_cast<CORBA::ULong>(s));
+		dis->length(static_cast<CORBA::ULong>(s));
+		for( Result::size_type i=0; i<s; ++i ) {
+			dis[i].domain_id = CORBA::string_dup(
+				res[i][0].is_null() ? "" : res[i][0].c_str());
+			dis[i].domain = CORBA::string_dup(
+				res[i][1].is_null() ? "" : res[i][1].c_str());
+		}
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
 	*/
 	cpgsqlauth::error * cpgsqlauth::user_add( const user_info & ai, 
 			CORBA::Boolean is_banned ) std_try {

@@ -3,9 +3,6 @@
 
 #include "../../../core/auth.hpp"
 
-#include <getlines.hpp>
-#include <split.hpp>
-
 #include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
 

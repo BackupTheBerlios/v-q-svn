@@ -45,6 +45,8 @@ namespace POA_vq {
 					typedef ::vq::iauth::email_banned email_banned;
 					typedef ::vq::iauth::email_banned_list_out email_banned_list_out;
 					typedef ::vq::iauth::email_banned_list email_banned_list;
+					typedef ::vq::iauth::domain_info_list_out domain_info_list_out;
+					typedef ::vq::iauth::domain_info_list domain_info_list;
 
 					cpgsqlauth( const char *pginfo );
 					virtual ~cpgsqlauth();
@@ -57,6 +59,7 @@ namespace POA_vq {
 							CORBA::String_out dom_id );
     				virtual error * dom_name( const char* dom_id, 
 							CORBA::String_out domain );
+					virtual error * dom_ls( domain_info_list_out dis );
 
 					virtual error * da_add( const char* dom_id, const char* rea );
     				virtual error * da_rm( const char* rea );

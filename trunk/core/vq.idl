@@ -172,12 +172,12 @@ module vq {
 			};
 			typedef sequence<email_banned> email_banned_list;
 
-			/// domains REGEX aliases
-			struct domain_re_alias {
-					string id_domain;
-					string re_alias;
+			/// domains
+			struct domain_info {
+					string domain_id;
+					string domain;
 			};
-			typedef sequence<domain_re_alias> domain_re_alias_list;
+			typedef sequence<domain_info> domain_info_list;
 
 		/**
 		 * \defgroup dom Playing with domains
@@ -197,6 +197,9 @@ module vq {
 					raises (null_error, except, db_error);
 			/// Gets name of a domain
 			error dom_name(in string dom_id, out string dom_name )
+					raises (null_error, except, db_error);
+			/// List all domains
+			error dom_ls( out domain_info_list dis )
 					raises (null_error, except, db_error);
 		//@}
 

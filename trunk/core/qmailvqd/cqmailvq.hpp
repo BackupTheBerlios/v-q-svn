@@ -54,6 +54,7 @@ namespace POA_vq {
 					typedef ::vq::ivq::err_code err_code;
 					typedef ::vq::ivq::string_list_out string_list_out;
 					typedef ::vq::ivq::email_banned_list_out email_banned_list_out;
+					typedef ::vq::ivq::domain_info_list_out domain_info_list_out;
 
 					cqmailvq( const std::string &, const std::string &,
 						::vq::iauth_var &,
@@ -67,6 +68,7 @@ namespace POA_vq {
 				    virtual error* dom_val( const char* dom );
 				    virtual error* dom_id( const char* dom, CORBA::String_out dom_id );
     				virtual error* dom_name( const char* dom_id, CORBA::String_out dom_name );
+					virtual error* dom_ls( domain_info_list_out dis );
 
 				    virtual error* user_add( const user_info& ai, 
 							CORBA::Boolean is_banned );

@@ -35,10 +35,10 @@ module vq {
 			typedef ivq::uif_type uif_type;
 			typedef ivq::email_banned email_banned;
 			typedef ivq::email_banned_list email_banned_list;
-			typedef ivq::domain_re_alias domain_re_alias;
-			typedef ivq::domain_re_alias_list domain_re_alias_list;
 			typedef ivq::err_code err_code;
 			typedef ivq::error error;
+			typedef ivq::domain_info domain_info;
+			typedef ivq::domain_info_list domain_info_list;
 
 		/**
 		 * \defgroup dom Domains manipulation
@@ -54,6 +54,8 @@ module vq {
 			error dom_id(in string dom, out string did)
 					raises (null_error, db_error, except);
 			error dom_name(in string dom_id, out string domain)
+					raises (null_error, db_error, except);
+			error dom_ls( out domain_info_list dis )
 					raises (null_error, db_error, except);
 		//@}
 		/**

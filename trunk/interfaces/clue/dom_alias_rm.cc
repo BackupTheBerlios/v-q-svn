@@ -16,74 +16,64 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "main.hpp"
-
-#include <exception>
-#include <iostream>
-#include <cerrno>
-#include <unistd.h>
+#include "cluemain.hpp"
+#include "error2str.hpp"
+#include "cdom_name2id.hpp"
 
 using namespace std;
+using namespace clue;
 
-const char *me = NULL;
 /*
  *
  */
-void usage()
+void usage( const char * me )
 {
 	cerr<<"usage: "<<me<< " [-q] [alias ...]"<<endl
 		<<"-q\tquiet mode"<<endl
 		<<endl
-		<<"Remove specified aliases. Don't call it for domains."<<endl;
+		<<"Remove specified aliases."<<endl;
 }
 
 /*
  *
  */
-int cppmain(int ac, char **av)
-{
-	me = *av;
-	try {
-			int opt;
-			bool quiet=false;
-			while( (opt=getopt(ac,av,"qh")) != -1 ) {
-					switch(opt) {
-					case 'q':
-							quiet=true;
-							break;
-					default:		
-					case '?':
-					case 'h':
-							usage();
-							return(1);
-					}
-			}
-			ac -= optind;
-			av += optind;
-			if( ! ac ) {
-					usage();
+int cluemain( int ac, char **av, cluemain_env & ce ) {
+	const char *me = *av;
+	int opt;
+	bool quiet=false;
+	while( (opt=getopt(ac,av,"qh")) != -1 ) {
+			switch(opt) {
+			case 'q':
+					quiet=true;
+					break;
+			default:		
+			case '?':
+			case 'h':
+					usage( me );
 					return(1);
 			}
+	}
+	ac -= optind;
+	av += optind;
+	if( ! ac ) {
+			usage( me );
+			return(1);
+	}
 
-			cvq *vq(cvq::alloc());
-
-			char ret;
-			if(quiet) ac = 1;
-			for( int i=0;  i < ac; i++ ) {
-					if(!quiet) cout<<av[i]<<": ";
-					if((ret=vq->dom_alias_rm(av[i]))) {
-							if(!quiet)
-									cout<<vq->err_report()<<endl;
-							else return ret;
-					} else {
-							if(!quiet)
-									cout<<"Alias was removed."<<endl;
-					}
+	::vq::ivq::error_var ret;
+	if(quiet) ac = 1;
+	for( int i=0;  i < ac; ++i ) {
+			if(!quiet) cout<<av[i]<<": ";
+			ret=ce.vq->da_rm(av[i]);
+			if( ::vq::ivq::err_no != ret->ec ) {
+					if(!quiet)
+							cout<<error2str(ret)<<endl;
+					else 
+							return 1;
+			} else {
+					if(!quiet)
+							cout<<"Alias was removed."<<endl;
 			}
-	} catch( const exception & e ) {
-			cerr << "exception: " << e.what() << endl;
-			return 1;
 	}
 	return 0;
 }

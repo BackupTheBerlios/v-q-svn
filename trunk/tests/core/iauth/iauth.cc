@@ -19,6 +19,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "iauth_common.hpp"
 #include "iauth_user_conf.hpp"
 #include "iauth_dom_alias.hpp"
+#include "iauth_dom_ls.hpp"
 #include "../../../core/auth.hpp"
 
 #include <getlines.hpp>
@@ -481,16 +482,19 @@ struct auth_test_suite : test_suite {
 		
 		typedef user_conf_test<vq::iauth_var, auth_wrap> obj_user_conf_test;
 		typedef dom_alias_test<vq::iauth_var> obj_dom_alias_test;
+		typedef dom_ls_test<vq::iauth_var> obj_dom_ls_test;
 
 		boost::shared_ptr<auth_test> test;
 		boost::shared_ptr< obj_user_conf_test > uc_test;
 		boost::shared_ptr< obj_dom_alias_test > da_test;
+		boost::shared_ptr< obj_dom_ls_test > dom_ls_test;
 
 		auth_test_suite(int ac, char *av[]) 
 				: test_suite("pgsqlauthd tests"), 
 				test(new auth_test(ac, av)),
 				uc_test(new obj_user_conf_test(test->auth)),
-				da_test(new obj_dom_alias_test(test->auth)) {
+				da_test(new obj_dom_alias_test(test->auth)),
+				dom_ls_test(new obj_dom_ls_test(test->auth)) {
 
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&auth_test::init, test );
@@ -560,6 +564,14 @@ struct auth_test_suite : test_suite {
 				&obj_user_conf_test::case13, uc_test );
 			ts_case13->depends_on(ts_init);
 			add(ts_case13);
+
+			// dom_ls_test
+			{
+					test_case * ts_case1 = BOOST_CLASS_TEST_CASE( 
+						&obj_dom_ls_test::case1, dom_ls_test );
+					ts_case1->depends_on(ts_init);
+					add(ts_case1);
+			}
 		}
 };
 

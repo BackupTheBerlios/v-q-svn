@@ -262,6 +262,17 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';", 
 
+"CREATE or replace FUNCTION dom_ls () RETURNS SETOF vq_domains AS '
+DECLARE
+	di RECORD;
+BEGIN
+	FOR di IN SELECT * FROM vq_domains ORDER BY DOMAIN LOOP
+		RETURN NEXT di;
+	END LOOP;
+	RETURN;
+END;
+' LANGUAGE 'plpgsql';", 
+
 "CREATE FUNCTION vq_domains_qt_user_trig() RETURNS TRIGGER AS '
 DECLARE
 	qt RECORD;

@@ -179,6 +179,13 @@ namespace POA_vq {
 	/**
 	 *
 	 */
+	cqmailvq::error * cqmailvq::dom_ls( domain_info_list_out dis ) std_try {
+		return auth->dom_ls( dis );
+	} std_catch
+
+	/**
+	 *
+	 */
 	cqmailvq::error * cqmailvq::send_restart() std_try {
 		string restart(this->home+"/bin/qmail-send-restart");
 		char *const args[] = {
@@ -204,7 +211,7 @@ namespace POA_vq {
 		
 		string alias(text::lower(ali));
 		auto_ptr<error> ret( assign_ex(alias) );
-		if( ret->ec != ::vq::ivq::err_no ) return ret.release();
+		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
 		ret.reset(auth->da_rm( alias.c_str() ));
 		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
 		
