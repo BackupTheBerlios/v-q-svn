@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002,2003 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,16 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef FD_H
-#define FD_H
+#ifndef __FD_HPP
+#define __FD_HPP
 
 #include <inttypes.h>
 
-int32_t fdread(int, void *, int32_t);
-int32_t fdwrite(int, const void *, int32_t);
+namespace  sys {
 
+	int32_t fdread(int, void *, int32_t);
+	int32_t fdwrite(int, const void *, int32_t);
 
-#endif
+} // namespace sys
+
+#endif // ifndef __FD_HPP

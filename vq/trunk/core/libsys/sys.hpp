@@ -36,5 +36,8 @@ SUCH DAMAGE.
 #include "uniq.hpp"
 #include "sig.hpp"
 #include "cpoll.hpp"
+#include "fd.hpp"
+#include "fdstr.hpp"
+#include "getline.hpp"
 
 #endif // ifndef __SYS_HPP

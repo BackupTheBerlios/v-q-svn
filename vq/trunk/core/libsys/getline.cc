@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 Pawel Niewiadomski
+Copyright (c) 2002,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,27 +33,32 @@ SUCH DAMAGE.
 
 #include <unistd.h>
 
-#include "getline.h"
+#include "getline.hpp"
 
-using namespace std;
-
-/**
-read line from input
-*/
-bool getline( int fd, string & b, char delim )
-{
-	b = "";
-	char c;
-	for(;;) {
-			switch(read(fd,&c,1)) {
-			case 1:
-				if(c==delim)
-						return true;
-				b+=c;
-				break;
-			case 0: 
-			case -1:
-				return false;
-			}
+namespace sys {
+	
+	using namespace std;
+	
+	/**
+	 * read line from input
+	 */
+	bool getline( int fd, string & b, char delim )
+	{
+		b = "";
+		char c;
+		for(;;) {
+				switch(read(fd,&c,1)) {
+				case 1:
+					if(c==delim)
+							return true;
+					b+=c;
+					break;
+				case 0: 
+				case -1:
+					return false;
+				}
+		}
 	}
-}
+
+} // namespace sys
+

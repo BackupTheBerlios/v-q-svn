@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002,2003 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,12 +31,16 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef __GETSTRING_H
-#define __GETSTRING_H
+#ifndef __GETSTRING_HPP
+#define __GETSTRING_HPP
 
 #include <string>
 
-int fdrdstr(int, std::string &);
-int fdwrstr(int, const std::string &);
+namespace sys {
 
-#endif
+	int fdrdstr(int, std::string &);
+	int fdwrstr(int, const std::string &);
+
+} // namespace sys
+
+#endif // ifndef __GETSTRING_HPP
