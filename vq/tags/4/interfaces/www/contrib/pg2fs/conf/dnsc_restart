@@ -1,3 +1,0 @@
-svc -h /service/dnscache
-
-Command used to restart dnscache.

@@ -1,3 +1,0 @@
-#!/bin/sh
-# WARNING: This file was auto-generated. Do not edit!
-exec g++ -O2 -pipe -g -Wall -c ${1+"$@"}

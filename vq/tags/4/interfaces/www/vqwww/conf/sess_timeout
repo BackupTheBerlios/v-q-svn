@@ -1,4 +1,0 @@
-20
-
-Timeout of session, counted in minutes. If user is idle more than
-this time it will have to authorize.

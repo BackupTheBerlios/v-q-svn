@@ -1,7 +1,0 @@
-3
-
-Level of splits of domain name. Directory "domains" includes domains
-registered in system. It's possible to lower number of entries per 
-directory by creating tree. If you leave this with value 3, path for
-"test.org.pl" in "domains" will look: domains/pl/org/test/test.org.pl.
-If you don't want any splits set it to 0.

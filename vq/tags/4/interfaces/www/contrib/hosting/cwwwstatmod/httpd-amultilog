@@ -1,2 +1,0 @@
-#!/bin/sh
-exec httpd-multilog /var/log/httpd/access/

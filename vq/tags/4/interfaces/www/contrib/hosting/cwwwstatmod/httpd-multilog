@@ -1,2 +1,0 @@
-#!/bin/sh
-exec multilog \!/usr/local/sbin/webalizer_wrap.pl n10 s1000000 ${1+"$@"}

@@ -1,4 +1,0 @@
-conf_home.o install.o str2cc.o valid.o libvalid.so
-conf_home.cc install str2cc
-libvalid.so.4.0
-hier.o

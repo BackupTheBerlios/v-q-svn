@@ -1,6 +1,0 @@
-ac_int.o ac_str.o cconf.o cgi.o conf_home.o getgid.o getuid.o host_add.o html.o sabmain.o str2cc.o host_add_conf.a
-auto/*
-host_add
-ac_int ac_str conf_home.cc getgid getuid str2cc
-hier.o install.o
-install

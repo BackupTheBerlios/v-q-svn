@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-First line creating XML source which will be processed to create HTML output.
-Remeber that internal coding is UTF-8 (which is by the way default XML coding).
