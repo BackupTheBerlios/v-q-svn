@@ -1,2 +1,3 @@
 cforkmaster.o daemon.o main.o daemon
 auto/dl.lib
+.depend
