@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<page base=".">
+<p>
+<a href="docs">Documentation</a> section for informations about project, installation, etc.
+This site is the only source of informations/documentation for VQ (well,
+at this time, may be some day someone will write some nice guide :-).
+</p>
+<p>
+<a href="dev">Developers</a> sections includes: authors, history of repository, source code
+documentation. SourceForge section includes links to: forums, mailing
+lists and tracker (where you can report bugs, modification requests).
+</p>
+<news>
+	<item tit="Version 4 Released" id="339917"/>
+	<item tit="Developers wanted" id="319381"/>
+	<item tit="Packagers wanted" id="319380"/>
+</news>
+</page>

@@ -1,0 +1,3 @@
+dbname=mail user=mail password=********
+
+Connect information used while connecting with PostgreSQL server.

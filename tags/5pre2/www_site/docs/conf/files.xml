@@ -1,0 +1,222 @@
+<?xml version="1.0"?><page menu="files"><conf><proj name="vq"><file name="autoresp_ttl">
+ Period in seconds when information about senders is cached. So, if someone
+ sends 5 messages within this time only one automatic reponse will be generated.
+</file><file name="pgsql">
+ Connect information used while connecting with PostgreSQL server.
+</file><file name="qmail">
+ QMail's home directory.
+</file><file name="qmail_hyp">
+ Hyphen used by qmail.
+</file><file name="qmail_mode">
+ Mode of files created in qmail's home. 0 means octal form.
+</file><file name="split_dom">
+ Level of splits of domain name. Directory "domains" includes domains
+ registered in system. It's possible to lower number of entries per 
+ directory by creating tree. If you leave this with value 3, path for
+ "test.org.pl" in "domains" will look: domains/pl/org/test/test.org.pl.
+ If you don't want any splits set it to 0.
+</file><file name="split_user">
+ Level of splits of user name. To lower number of entries in directory
+ containing user mailboxes tree is created. For value 3 entries in
+ domain's directory look as following: for user test, path is t/e/s/test/.
+</file><file name="vq_fmode">
+ Mode of files created in vq's home.
+</file><file name="vq_mode">
+ Mode of directories created in vq's home.
+</file><file name="vq_user">
+ Name of vq user.
+</file><file name="atchars">
+ Chars treated as a separator between user and domain in e-mail addresses.
+</file><file name="home">
+ Virtual QMail's home directory.
+</file></proj><proj name="freemail"><file name="xmlstart">
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</file><file name="cntry_minl">
+ Country - minimal length.
+</file><file name="home">
+ Home directory.
+</file><file name="html_br">
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</file><file name="notify">
+ Program which will be executed after adding user, program will be called
+ with following arguments: domain_name login users_info_id
+</file><file name="pass_maxl">
+ Password's maximal length
+</file><file name="pass_minl">
+ Minimal length of password
+</file><file name="pass_ok">
+ Allowed chars in password.
+</file><file name="pgsql">
+ Connect string for vqsignup1d
+</file><file name="user_maxl">
+ Maximal length of username.
+</file><file name="user_minl">
+ Minimal length of username.
+</file><file name="user_ok">
+ Chars allowed in username.
+</file><file name="vq_user">
+ Name of vq user.
+</file><file name="city_minl">
+ City - minimal length.
+</file></proj><proj name="host_add"><file name="html_br">
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+ 
+</file><file name="pass_ok">
+ Chars allowed in password
+</file><file name="pref_ok">
+ Chars allowed in hostname.
+</file><file name="user_ok">
+ Chars allowed in username.
+</file><file name="vq_user">
+ VQ's user
+</file><file name="xmlstart">
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</file><file name="domains">
+ File which includes list of allowed domains.
+</file><file name="home">
+ Destination directory
+</file></proj><proj name="hosting"><file name="notify">
+ Program which will be executed after adding user, program will be called
+ with following arguments: domain_name login users_info_id
+</file><file name="ftp_ok">
+ Chars allowed in FTP paths.
+</file><file name="home">
+ Home directory
+</file><file name="ftp_base">
+ Base directory for FTP access.
+</file><file name="pgsql">
+ Connect string for pgsqlauthd
+</file><file name="prefix_ok">
+ Chars allowed in WWW aliases (prefix field)
+</file><file name="wwwali_exe">
+ Program run to change links in htdocs directory.
+</file><file name="html_br">
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</file><file name="user_minl">
+ Minimal length of username.
+</file><file name="user_maxl">
+ Maximal length of username.
+</file><file name="user_ok">
+ Chars allowed in username.
+</file><file name="pass_maxl">
+ Password's maximal length.
+</file><file name="pass_minl">
+ Password's minimal length.
+</file><file name="pass_ok">
+ Chars allowed in password.
+</file><file name="vq_user">
+ Name of vq user.
+</file></proj><proj name="pg2fs"><file name="tdns_user"></file><file name="dnsc_mode">
+ Mode of files created for dnscache.
+</file><file name="dnsc_restart">
+ Command used to restart dnscache.
+</file><file name="dnsc_root">
+ Base directory for dnscache.
+</file><file name="dnsc_user"></file><file name="home">
+ Home directory
+</file><file name="tdns_group">
+ Group of user running tinydns.
+</file><file name="tdns_make">
+ Command used to compila data.cdb for tinydns.
+</file><file name="tdns_mode">
+ Mode of file created in tinydns directory.
+</file><file name="tdns_root">
+ Base directory of tinydns.
+</file><file name="dnsc_group">
+ Group of user running dnscache.
+</file></proj><proj name="valid"><file name="home">
+ Destination directory.
+</file></proj><proj name="vqsignup"><file name="home">
+ Destination directory for binary files.
+</file><file name="domains">
+ File which includes list of allowed domains.
+</file><file name="html_br">
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</file><file name="pass_ok">
+ Chars allowed in password.
+</file><file name="user_ok">
+ Chars allowed in username.
+</file><file name="vq_user">
+ Name of vq user.
+</file><file name="xmlstart">
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</file></proj><proj name="vqsignup1"><file name="domains">
+ File which includes list of allowed domains.
+</file><file name="html_br">
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</file><file name="notify">
+ Program which will be executed after adding user, program will be called
+ with following arguments: domain_name login users_info_id
+</file><file name="pass_ok">
+ Chars allowed in password.
+</file><file name="pgsql">
+ Connect string for pgsqlauthd
+</file><file name="user_ok">
+ Chars allowed in username.
+</file><file name="vq_user">
+ Name of vq user.
+</file><file name="xmlstart">
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</file><file name="xmlstart1">
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</file><file name="home">
+ Destination directory.
+</file></proj><proj name="vquserrm"><file name="home">
+ Home directory.
+</file><file name="vq_user">
+ Name of vq user.
+</file><file name="xmlstart">
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</file></proj><proj name="vqwww"><file name="sess_fmode">
+ Mode of file created to store session's information.
+</file><file name="vq_user">
+ Name of vq user.
+</file><file name="user_ok">
+ Chars allowed in username.
+</file><file name="user_minl">
+ Minimal length of username.
+</file><file name="user_maxl">
+ Maximal length of username.
+</file><file name="sess_timeout">
+ Timeout of session, counted in minutes. If user is idle more than
+ this time it will have to authorize.
+</file><file name="redir_max">
+ Number of possible redirections for one address.
+</file><file name="pass_ok">
+ Chars allowed in password.
+</file><file name="pass_minl">
+ Minimal length of password.
+</file><file name="pass_maxl">
+ Password's maximal length.
+</file><file name="html_br">
+ Character which replaces all disallowed characters. It's used when
+ creating XML/HTML output - replaces all characters which could
+ invalidate output.
+</file><file name="fs_split">
+ Number of splits done on cfilesess session dir name. To lower number of
+ entries for main directory containing sessions special tree is created.
+ For value of 3 session is stored in following manner: session id: 3344556677,
+ path: 33/44/55/3344556677.
+</file><file name="xmlstart">
+ First line creating XML source which will be processed to create HTML output.
+ Remeber that internal coding is UTF-8 (which is by the way default XML coding).
+</file><file name="home">
+ Destination directory.
+</file><file name="fs">
+ Place for storing sessions with cfilesess.</file></proj></conf></page>
