@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <iostream>
 #include <sstream>
+#include <cerrno>
 
 using namespace std;
 using namespace vq;

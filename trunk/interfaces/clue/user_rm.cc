@@ -75,7 +75,7 @@ bool user_rm(const string &e, ::vq::ivq_var &vq, bool quiet ) {
 int cluemain(int ac, char **av, cluemain_env & ce ) {
 	me = *av;
 	int opt;
-	bool quiet;
+	bool quiet = false;
 	while( (opt=getopt(ac,av,"qh")) != -1 ) {
 			switch(opt) {
 			case 'q':
