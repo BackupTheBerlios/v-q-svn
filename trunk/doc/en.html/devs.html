@@ -19,7 +19,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-02-17T19:29:04"><META
+CONTENT="2005-02-19T20:34:40"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -198,13 +198,14 @@ if err.ec is vq.ivq.err_no:
 	print "It's a valid domain name"
 else:
 	print "It's an invalid domain name"
+
 </PRE
 ><P>
 			Following script executes omniNames (name server),
 			iauth (pgsqlauthd) and ivq (qmailvqd), then dom_val.py (above
 			example). It is also located in <TT
 CLASS="filename"
->interfaces/python</TT
+>examples/python</TT
 >.
 
 </P><PRE
@@ -246,6 +247,7 @@ sleep 2
 
 echo "running client ..."
 ./dom_val.py -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
 </PRE
 ><P>
 			</P><DIV

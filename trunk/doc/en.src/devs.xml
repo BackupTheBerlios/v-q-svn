@@ -53,7 +53,7 @@
 		<para>
 			Here's an example I created, it calls vq::ivq::dom_val function
 			to validate domain's name:
-<!--INSERT:interfaces/python/dom_val.py-->
+<!--INSERT:../../examples/python/dom_val.py-->
 <programlisting><![CDATA[
 #!/usr/bin/env python
 import sys
@@ -92,11 +92,12 @@ if err.ec is vq.ivq.err_no:
 	print "It's a valid domain name"
 else:
 	print "It's an invalid domain name"
+
 ]]></programlisting>
 			Following script executes omniNames (name server),
 			iauth (pgsqlauthd) and ivq (qmailvqd), then dom_val.py (above
-			example). It is also located in <filename>interfaces/python</filename>.
-<!--INSERT:interfaces/python/run-->
+			example). It is also located in <filename>examples/python</filename>.
+<!--INSERT:../../examples/python/run-->
 <programlisting><![CDATA[
 #!/bin/sh
 export BASE=../..
@@ -135,6 +136,7 @@ sleep 2
 
 echo "running client ..."
 ./dom_val.py -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
 ]]></programlisting>
 			<note>
 				<para>

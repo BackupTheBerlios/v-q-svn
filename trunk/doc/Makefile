@@ -7,6 +7,7 @@ JADE?=openjade
 
 doc-html:
 	for l in $(LANGS) ; do \
+		./insert_code.pl $$l.src .xml ; \
 		(cd $$l.html/ && env SGML_CATALOG_FILES=/usr/local/share/sgml/catalog \
 		openjade -t sgml -i output-html -d ../$$l.src/stylesheet.dsl \
 		/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl \

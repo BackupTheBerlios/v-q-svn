@@ -56,7 +56,7 @@
 			Oto przyk³ad, który utworzy³em. Wywo³uje on funkcjê
 			vq::ivq::dom_val w celu sprawdzenia poprawno¶ci nazwy 
 			domeny:
-<!--INSERT:interfaces/python/dom_val.py-->
+<!--INSERT:../../examples/python/dom_val.py-->
 <programlisting><![CDATA[
 #!/usr/bin/env python
 import sys
@@ -95,12 +95,13 @@ if err.ec is vq.ivq.err_no:
 	print "It's a valid domain name"
 else:
 	print "It's an invalid domain name"
+
 ]]></programlisting>
 			Poni¿szy skrypt uruchamia omniNames (serwer nazw),
 			iauth (pgsqlauthd) oraz ivq (qmailvqd), po czym dom_val.py 
 			(powy¿szy przyk³ad). Skrypt mo¿na równie¿ znale¼æ w
-			<filename>interfaces/python</filename>.
-<!--INSERT:interfaces/python/run-->
+			<filename>examples/python</filename>.
+<!--INSERT:../../examples/python/run-->
 <programlisting><![CDATA[
 #!/bin/sh
 export BASE=../..
@@ -139,6 +140,7 @@ sleep 2
 
 echo "running client ..."
 ./dom_val.py -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
 ]]></programlisting>
 			<note>
 				<para>
