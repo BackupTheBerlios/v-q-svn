@@ -17,7 +17,8 @@ License: GPL
 Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{name}-root
 BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
-BuildPrereq: postgresql-libs >= 7.4.6, libpqxx >= 2.5.0
+BuildPrereq: postgresql-libs >= 7.4.6, libpqxx-devel >= 2.5.0
+BuildPrereq: postgresql-devel >= 7.4.6
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
 Prereq: sh-utils, textutils
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0
@@ -52,11 +53,16 @@ Implementation is based on PostgreSQL and libpqxx.
 %prep
 %setup -q
 echo "-I/usr/include" > boost.inc
-echo "-L/usr/lib" > boost.lib
+echo "-L`pwd`" > boost.lib
 echo "-lboost_date_time" > boost_date_time.lib
 echo "-lboost_regex" > boost_regex.lib
 echo "-lboost_thread" > boost_thread.lib
 echo "-lboost_unit_test_framework" > boost_unit_test.lib
+
+for p in boost_date_time boost_regex boost_thread boost_unit_test_framework ; do
+	ln -sf /usr/lib/lib$p.so.1 lib$p.so
+done
+
 echo "-DP_USE_OMNIORB -I/usr/include" > corba.inc
 echo "-L/usr/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread" > corba.lib
 
@@ -135,8 +141,9 @@ end
 EOF
 
 # make %{datadir} and %{datadir}/domains
-mkdir -p $RPM_BUILD_ROOT/%{datadir}/vq
-mkdir -p $RPM_BUILD_ROOT/%{datadir}/vq/domains
+mkdir -p $RPM_BUILD_ROOT/%{datadir}
+mkdir -p $RPM_BUILD_ROOT/%{datadir}/domains
+mkdir -p $RPM_BUILD_ROOT/%{datadir}/sockets
 
 # move usr/etc
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}
@@ -166,19 +173,32 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/sysconfig/
 %config(noreplace) %{_sysconfdir}/sysconfig/vq
 
-%{_bindir}/*
+%{_bindir}/*_*
+%{_bindir}/qmailvqd
+%{_bindir}/autoresp
+%{_bindir}/deliver
+%{_bindir}/qmail-send-restart
+
 #%attr(4510,root,%{suexec_caller}) %{_sbindir}/suexec
 
 %dir %{_libdir}/vq
 %{_libdir}/vq/*
 
 %attr(0750,_vq,_vq) %dir %{datadir}
+%attr(0750,_vq,_vq) %dir %{datadir}/domains
+%attr(0750,_vq,_vq) %dir %{datadir}/sockets
 
 %files devel
 %defattr(-,root,root)
 
 %dir %{_includedir}/vq
 %{_includedir}/vq/*
+
+%files pgsql
+%defattr(-,root,root)
+
+%{_bindir}/pgsql*
+%{_bindir}/install.pgsql
 
 %changelog
 * Fri Mar 25 2005 Pawel Niewiadomski <new@foo-baz.com> 6

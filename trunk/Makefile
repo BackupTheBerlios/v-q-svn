@@ -42,7 +42,7 @@ pkg-rpm:
 	svn export . "/usr/src/redhat/SOURCES/v-q-$(VERSION)"
 	cd /usr/src/redhat/SOURCES && tar -czf v-q-$(VERSION).tar.gz v-q-$(VERSION)
 	rm -rf "/usr/src/redhat/SOURCES/v-q-$(VERSION)"
-	sed -e "s/@VERSION@/$(VERSION)/" < pkg/rpm/v-q.spec > /usr/src/redhat/SPECS/v-q.spec
+	sed -e "s/@VERSION@/$(VERSION)/" < pkg/rpm/v-q.spec.in > /usr/src/redhat/SPECS/v-q.spec
 	rpmbuild -ba /usr/src/redhat/SPECS/v-q.spec
 
 include Makefile.common

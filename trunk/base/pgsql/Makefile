@@ -8,7 +8,8 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L../libvqmain -lvqmain -L$(BASE)/base -lvq \
 	-L$(BASE)/libconf -lconf -L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
 	-L$(BASE)/corbautil -lcorbautil \
-	`cat $(BASE)/corba.lib` `cat $(BASE)/boost_thread.lib` `pqxx-config --libs`
+	`cat $(BASE)/corba.lib` `cat $(BASE)/boost.lib` \
+	`cat $(BASE)/boost_thread.lib` `pqxx-config --libs`
 
 .PHONY: pgsql all clean install install-pgsql
 

@@ -48,7 +48,7 @@ namespace POA_vq {
 	 */
 	void cpgsqllog::clear() std_try {
 		this->ip.clear();
-		this->ser = pqxx::ToString(service_type());
+		this->ser = pqxx::to_string(service_type());
 		this->dom.clear();
 		this->log.clear();
 	} std_catch
@@ -65,7 +65,7 @@ namespace POA_vq {
 	 *
 	 */
 	void cpgsqllog::service_set( service_type ser ) std_try {
-		this->ser = pqxx::ToString(ser);
+		this->ser = pqxx::to_string(ser);
 	} std_catch
 
 	/**
@@ -94,13 +94,13 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		cpgsqlpool::value_ptr pg(pool.get());
-		pqxx::NonTransaction(*pg.get()).Exec(
+		pqxx::nontransaction(*pg.get()).exec(
 			"SELECT log_write("
 			+pqxx::Quote(this->ip)+","
 			+this->ser+","
 			+pqxx::Quote(this->dom)+","
 			+pqxx::Quote(this->log)+","
-			+pqxx::ToString(static_cast<unsigned>(res))+","
+			+pqxx::to_string(static_cast<unsigned>(res))+","
 			+pqxx::Quote(msg)+')');
 		
 		return lr(::vq::ivq::err_no, "");
@@ -137,7 +137,7 @@ namespace POA_vq {
 
 		string qr("SELECT "+func);
 		cpgsqlpool::value_ptr pg(pool.get());
-		Result res(pqxx::NonTransaction(*pg.get()).Exec(qr));
+		result res(pqxx::nontransaction(*pg.get()).exec(qr));
 		if( res.empty() ) return lr(::vq::ivq::err_func_res, func.c_str());
 		
 		cnt = res[0][0].as< size_type >(0);
@@ -188,18 +188,18 @@ namespace POA_vq {
 		qr += " FROM "+func.second+" ORDER BY time DESC";
 		
 		if( cnt ) {
-				qr += " LIMIT "+ToString(cnt);
+				qr += " LIMIT "+to_string(cnt);
 		}
 		if( start ) {
-				qr+= " OFFSET "+ToString(start);
+				qr+= " OFFSET "+to_string(start);
 		}
 
 		cpgsqlpool::value_ptr pg(pool.get());
-		Result res(pqxx::NonTransaction(*pg.get()).Exec(qr));
-		Result::size_type s = res.size();
+		result res(pqxx::nontransaction(*pg.get()).exec(qr));
+		result::size_type s = res.size();
 
 		les->length(s);
-		for( Result::tuple::size_type i=0, idx=0; i<s; ++i, idx=0 ) {
+		for( result::tuple::size_type i=0, idx=0; i<s; ++i, idx=0 ) {
 				les[i].id_log = CORBA::string_dup(
 					res[i][idx].is_null() ? "" : res[i][idx].c_str() );
 				++idx;
@@ -259,7 +259,7 @@ namespace POA_vq {
 	 */
 	cpgsqllog::error * cpgsqllog::rm_by_func( const std::string & func ) std_try {
 		cpgsqlpool::value_ptr pg(pool.get());
-		pqxx::NonTransaction(*pg.get()).Exec("SELECT "+func);
+		pqxx::nontransaction(*pg.get()).exec("SELECT "+func);
   		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
