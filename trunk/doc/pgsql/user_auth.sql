@@ -1,15 +1,24 @@
-CREATE or replace FUNCTION mail.user_auth(text,text,text) RETURNS mail.users.flags%TYPE AS '
+CREATE or replace FUNCTION mail.user_auth
+(mail.users.id_domain%TYPE,
+mail.users.id_user%TYPE,
+mail.users.pass%TYPE) RETURNS mail.users.flags%TYPE AS '
 declare
 	_id_domain ALIAS FOR $1;
 	_id_user ALIAS FOR $2;
 	_pass ALIAS FOR $3;
-	_flags users.flags%TYPE;
+	ai RECORD;
 begin
-	SELECT INTO _flags flags FROM users 
-		WHERE id_domain=_id_domain AND id_user=_id_user AND pass=_pass LIMIT 1;
-	IF FOUND THEN
-		RETURN _flags;
+	SELECT INTO ai pass,flags FROM users 
+		WHERE id_domain=_id_domain AND id_user=_id_user LIMIT 1;
+	IF NOT FOUND THEN
+		RETURN -1;
 	END IF;
-	RETURN NULL;
+	IF ai.pass != _pass THEN
+		RETURN -2;
+	END IF;
+	IF ai.flags < 0 THEN 
+		RAISE EXCEPTION ''flags can not be lower than 0'';
+	END IF;
+	RETURN ai.flags;
 end;
 ' LANGUAGE 'plpgsql';

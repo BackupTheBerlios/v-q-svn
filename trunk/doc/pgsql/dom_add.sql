@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION mail.dom_add (text) RETURNS INT4 AS '
+CREATE OR REPLACE FUNCTION mail.dom_add (text) RETURNS mail.domains.id_domain%TYPE AS '
 declare
     _domain ALIAS FOR $1;
 	id RECORD;

@@ -68,7 +68,7 @@ namespace POA_vq {
 		string dom(lower(_dom));
 
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT DOM_ADD("+Quote(dom, false)+")"));
+			"SELECT DOM_ADD("+Quote(dom, false)+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
 				return ::vq::iauth::err_func_res;
@@ -93,7 +93,7 @@ namespace POA_vq {
 		string dom(lower(_dom));
 
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT DOM_ID("+Quote(dom, false)+")"));
+			"SELECT DOM_ID("+Quote(dom, false)+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
 				return ::vq::iauth::err_func_res;
@@ -114,7 +114,7 @@ namespace POA_vq {
 	cpgsqlauth::error cpgsqlauth::dom_rm( const char * dom_id ) std_try {
 		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
 	
-		NonTransaction(*pg).Exec("SELECT DOM_RM("+Quote(dom_id, false)+")");
+		NonTransaction(*pg).Exec("SELECT DOM_RM("+Quote(dom_id, false)+')');
 
 		return ::vq::iauth::err_no;
 	} std_catch
@@ -130,10 +130,10 @@ namespace POA_vq {
 	
 		Result res(NonTransaction(*pg).Exec(
 				"SELECT USER_ADD("
-				+Quote(static_cast<const char *>(ai.id_domain), false)+","
-				+Quote(login, false)+","
-				+Quote(static_cast<const char *>(ai.pass), false)+","
-				+Quote(ToString(ai.flags), false)+","
+				+Quote(static_cast<const char *>(ai.id_domain), false)+','
+				+Quote(login, false)+','
+				+Quote(static_cast<const char *>(ai.pass), false)+','
+				+Quote(ToString(ai.flags), false)+','
 				+(is_banned ? "'t'" : "'f'")+"::boolean)"));
 	
 		if(res.empty() || res[0][0].is_null() ) {
@@ -165,8 +165,8 @@ namespace POA_vq {
 		
 		Result res(NonTransaction(*pg).Exec(
 				"SELECT DRA_ADD("
-				+Quote(static_cast<const char *>(dom_id))+","
-				+Quote(static_cast<const char *>(rea))+")"));
+				+Quote(static_cast<const char *>(dom_id))+','
+				+Quote(static_cast<const char *>(rea))+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
 				return ::vq::iauth::err_func_res;
@@ -191,8 +191,8 @@ namespace POA_vq {
 		
 		NonTransaction(*pg).Exec(
 				"SELECT DRA_RM("
-				+Quote(static_cast<const char *>(dom_id))+","
-				+Quote(static_cast<const char *>(rea))+")");
+				+Quote(static_cast<const char *>(dom_id))+','
+				+Quote(static_cast<const char *>(rea))+')');
 
 		return ::vq::iauth::err_no;
 	} std_catch
@@ -206,7 +206,7 @@ namespace POA_vq {
 		
 		NonTransaction(*pg).Exec(
 				"SELECT DRA_RM_BY_DOM("
-				+Quote(static_cast<const char *>(dom_id))+")");
+				+Quote(static_cast<const char *>(dom_id))+')');
 
 		return ::vq::iauth::err_no;
 
@@ -219,7 +219,7 @@ namespace POA_vq {
 			string_list_out reas ) std_try {
 
 		Result res(NonTransaction(*pg).Exec("SELECT * FROM dra_ls_by_dom("
-			+Quote(static_cast<const char *>(dom_id))+")"));
+			+Quote(static_cast<const char *>(dom_id))+')'));
 		if(res.empty()) return ::vq::iauth::err_no;
 
 		Result::size_type s = res.size();
@@ -242,8 +242,8 @@ namespace POA_vq {
 
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT USER_ID("
-				+Quote(dom_id, false)+","
-				+Quote(login, false)+")"));
+				+Quote(dom_id, false)+','
+				+Quote(login, false)+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
 				return ::vq::iauth::err_func_res;
@@ -270,9 +270,9 @@ namespace POA_vq {
 		
 		Result res(NonTransaction(*pg).Exec(
 				"SELECT USER_PASS("
-				+Quote(dom_id, false)+","
-				+Quote(user_id, false)+","
-				+Quote(_pass, false)+")"));
+				+Quote(dom_id, false)+','
+				+Quote(user_id, false)+','
+				+Quote(_pass, false)+')'));
 
 		return ::vq::iauth::err_no;
 	} std_catch
@@ -286,8 +286,8 @@ namespace POA_vq {
 		
 		NonTransaction(*pg).Exec(
 				"SELECT USER_RM("
-				+Quote(dom_id, false)+","
-				+Quote(user_id, false)+")");
+				+Quote(dom_id, false)+','
+				+Quote(user_id, false)+')');
 
 		return ::vq::iauth::err_no;
 	} std_catch
@@ -302,8 +302,8 @@ namespace POA_vq {
 		
 		Result res(NonTransaction(*pg).Exec(
 				"SELECT EB_ADD("
-				+Quote(static_cast<const char *>(re_domain))+","
-				+Quote(static_cast<const char *>(re_login))+")"));
+				+Quote(static_cast<const char *>(re_domain))+','
+				+Quote(static_cast<const char *>(re_login))+')'));
 
 		if(res.empty() || res[0][0].is_null() ) {
 				return ::vq::iauth::err_func_res;
@@ -328,8 +328,8 @@ namespace POA_vq {
 		
 		NonTransaction(*pg).Exec(
 				"SELECT EB_RM("
-				+Quote(static_cast<const char *>(re_domain))+","
-				+Quote(static_cast<const char *>(re_login))+")");
+				+Quote(static_cast<const char *>(re_domain))+','
+				+Quote(static_cast<const char *>(re_login))+')');
 
 		return ::vq::iauth::err_no;
 	} std_catch
@@ -363,12 +363,24 @@ namespace POA_vq {
 		
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT user_auth("
-			+Quote(static_cast<const char *>(ai.id_domain))+","
-			+Quote(static_cast<const char *>(ai.id_user))+","
-			+Quote(static_cast<const char *>(ai.pass))+")" ));
+			+Quote(static_cast<const char *>(ai.id_domain))+','
+			+Quote(static_cast<const char *>(ai.id_user))+','
+			+Quote(static_cast<const char *>(ai.pass))+')' ));
 		
 		if( res.empty() || res[0][0].is_null() ) 
-				return ::vq::iauth::err_noent;
+				return ::vq::iauth::err_func_res;
+
+		const char *val = res[0][0].c_str();
+		if( '-' == *val ) {
+				switch( *(val+1) ) {
+				case '2':
+						return ::vq::iauth::err_pass_inv;
+				case '1':
+						return ::vq::iauth::err_user_inv;
+				default:
+						return ::vq::iauth::err_func_res;
+				} 
+		}
 
 		ai.flags = res[0][0].as< ::vq::iauth::aif_type >(0);
 		return ::vq::iauth::err_no;
@@ -382,10 +394,10 @@ namespace POA_vq {
 			&& fdrdstr(cso,ip) != -1 ) {
 				Result res(NonTransaction(*pg).Exec(
 					"INSERT INTO ip2domain (DOMAIN,IP) VALUES("
-					+Quote(lower(dom), false)+","
+					+Quote(lower(dom), false)+','
 					+Quote(lower(ip), false)+')'));
 	
-				if(fdwrite(cso,&"K",1) != 1) throw wr_error();
+				if(fdwrite(cso,&'K',1) != 1) throw wr_error();
 		} else throw rd_error();
 	} std_catch
 	
@@ -399,7 +411,7 @@ namespace POA_vq {
 					+Quote(lower(dom), false)
 					+" AND IP="+Quote(lower(ip), false)));
 	
-				if(fdwrite(cso,&"K",1) != 1) throw wr_error();
+				if(fdwrite(cso,&'K',1) != 1) throw wr_error();
 		} else throw rd_error();
 	} std_catch
 	/**
@@ -410,7 +422,7 @@ namespace POA_vq {
 					"DELETE FROM ip2domain WHERE DOMAIN="
 					+Quote(lower(dom), false)));
 	
-				if(fdwrite(cso,&"K",1) != 1) throw wr_error();
+				if(fdwrite(cso,&'K',1) != 1) throw wr_error();
 		} else throw rd_error();
 	} std_catch
 	/**
@@ -427,7 +439,7 @@ namespace POA_vq {
 			+Quote(dom, false)+" ORDER BY IP"));
 	
 		vector<string>::size_type i, cnt = res.size();
-		if( fdwrite(cso,&"F",1) == -1
+		if( fdwrite(cso,&'F',1) == -1
 			|| fdwrite(cso,&cnt,sizeof(cnt)) == -1 )
 				throw wr_error();
 	
@@ -448,7 +460,7 @@ namespace POA_vq {
 			"SELECT DISTINCT DOMAIN FROM ip2domain ORDER BY DOMAIN"));
 	
 		vector<string>::size_type i, cnt = res.size();
-		if(fdwrite(cso,&"F",1) == -1
+		if(fdwrite(cso,&'F',1) == -1
 		   || fdwrite(cso,&cnt,sizeof(cnt)) == -1 )
 				throw wr_error();
 	
@@ -481,17 +493,17 @@ namespace POA_vq {
 		
 		dom = str2tb(dom);
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT UDOT_ADD("+Quote(dom, false)+","+Quote(user, false)
-			+","+Quote(ext, false)+",'\\"+(char)type+"',"
-			+Quote(val, false)+")"));
+			"SELECT UDOT_ADD("+Quote(dom, false)+','+Quote(user, false)
+			+','+Quote(ext, false)+",'\\"+(char)type+"',"
+			+Quote(val, false)+')'));
 	
 		if(res.size() && !res[0][0].is_null()) {
 				string id(res[0][0].c_str());
-				if(fdwrite(cso,&"F",1) == -1 || fdwrstr(cso, id) == -1 )
+				if(fdwrite(cso,&'F',1) == -1 || fdwrstr(cso, id) == -1 )
 						throw wr_error();
 				return;
 		} std_catch
-		if(fdwrite(cso,&"E",1)!=1) throw wr_error();
+		if(fdwrite(cso,&'E',1)!=1) throw wr_error();
 	} std_catch
 	/**
 	 *
@@ -512,7 +524,7 @@ namespace POA_vq {
 			+" ORDER BY ID"));
 	
 		vector<string>::size_type i, cnt = res.size();
-		if(fdwrite(cso,&"F",1) == -1
+		if(fdwrite(cso,&'F',1) == -1
 		   || fdwrite(cso,&cnt,sizeof(cnt)) == -1 )
 				throw wr_error();
 	
@@ -551,7 +563,7 @@ namespace POA_vq {
 			+" AND TYPE='\\"+(char)type+"' ORDER BY ID"));
 	
 		vector<string>::size_type i, cnt = res.size();
-		if(fdwrite(cso,&"F",1) == -1
+		if(fdwrite(cso,&'F',1) == -1
 		   || fdwrite(cso,&cnt,sizeof(cnt)) == -1 )
 				throw wr_error();
 	
@@ -583,7 +595,7 @@ namespace POA_vq {
 		Result res(NonTransaction(*pg).Exec(
 			"DELETE FROM \""+dom+"_dot\" WHERE ID="+Quote(id, false)));
 	
-		if(fdwrite(cso, &"K", 1)!=1) throw wr_error();
+		if(fdwrite(cso, &'K', 1)!=1) throw wr_error();
 	} std_catch
 	/**
 	 *
@@ -601,9 +613,9 @@ namespace POA_vq {
 		Result res(NonTransaction(*pg).Exec(
 			"DELETE FROM \""+dom+"_dot\" WHERE EXT="
 			+Quote(user+ac_qmail_hyp.val_str().at(0)+ext, false)
-			+" AND TYPE='\\"+(char)type+"'"));
+			+" AND TYPE='\\"+(char)type+'\''));
 	
-		if(fdwrite(cso, &"K",1) != 1) throw wr_error();
+		if(fdwrite(cso, &'K',1) != 1) throw wr_error();
 	} std_catch
 	/**
 	 *
@@ -619,7 +631,7 @@ namespace POA_vq {
 			"SELECT TYPE,VALUE FROM \""+dom+"_dot\" WHERE ID="+Quote(id, false)));
 	
 		if(res.empty()) {
-				if(fdwrite(cso, &"Z", 1)!=1) throw wr_error();
+				if(fdwrite(cso, &'Z', 1)!=1) throw wr_error();
 				return;
 		} std_catch
 		
@@ -630,7 +642,7 @@ namespace POA_vq {
 		ptr = res[0][1].c_str();
 		val = ! ptr ? "" : ptr;
 		
-		if( fdwrite(cso, &"F", 1) != 1 
+		if( fdwrite(cso, &'F', 1) != 1 
 		   || fdwrite(cso, &type, sizeof(type)) != sizeof(type)
 		   || fdwrstr(cso, val) == -1 )
 				throw wr_error();
@@ -655,9 +667,9 @@ namespace POA_vq {
 			+Quote(ui.id, false)));
 	
 		if( ! res.AffectedRows() ) {
-				if(fdwrite(cso, &"Z", 1) != 1) throw wr_error();
+				if(fdwrite(cso, &'Z', 1) != 1) throw wr_error();
 		} else 
-				if(fdwrite(cso, &"K", 1) != 1) throw wr_error();
+				if(fdwrite(cso, &'K', 1) != 1) throw wr_error();
 	} std_catch
 	/**
 	 *
@@ -678,9 +690,9 @@ namespace POA_vq {
 			+" AND TYPE='\\"+(char)type+"' LIMIT 1"));
 	
 		if( ! res.empty() ) {
-				if(fdwrite(cso, &"T", 1) != 1) throw wr_error();
+				if(fdwrite(cso, &'T', 1) != 1) throw wr_error();
 		} else 
-				if(fdwrite(cso, &"F",1) != 1) throw wr_error();
+				if(fdwrite(cso, &'F',1) != 1) throw wr_error();
 	} std_catch
 	/**
 	 *
@@ -698,10 +710,10 @@ namespace POA_vq {
 		Result res(NonTransaction(*pg).Exec(
 			"SELECT COUNT(*) FROM \""+dom+"_dot\" WHERE ext="
 			+Quote(user+ac_qmail_hyp.val_str().at(0)+ext, false)
-			+" AND TYPE='\\"+(char)type+"'"));
+			+" AND TYPE='\\"+(char)type+'\''));
 	
 		if( res.empty() || res[0][0].is_null() ) {
-				if( fdwrite(cso, &"E", 1)) throw wr_error();
+				if( fdwrite(cso, &'E', 1)) throw wr_error();
 		} std_catch
 	
 		const char *ptr = res[0][0].c_str();
@@ -711,145 +723,97 @@ namespace POA_vq {
 		is>>cnt;
 		if( ! is ) cnt = 0;
 		
-		if(fdwrite(cso, &"F",1) != 1
+		if(fdwrite(cso, &'F',1) != 1
 		   || fdwrite(cso, &cnt, sizeof(cnt)) != sizeof(cnt))
 				throw wr_error();
 	} std_catch
+#endif
 	
 	/**
 	 *
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_set( const string & d ) std_try {
-		dom = lower(d);
-		if( -1 != fdread(cso, &qb, sizeof qb)
-			&& -1 != fdread(cso, &qf, sizeof qf) ) {
-				dom = lower(dom);
+	cpgsqlauth::error cpgsqlauth::qt_user_def_set( const char *dom_id,
+			quota_type bytes_max, quota_type files_max ) std_try {
+
+		if( ! dom_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
 	
-				ostringstream qb_str, qf_str;
-				qb_str<<qb;
-				qf_str<<qf;
-				
-				Result res(NonTransaction(*pg).Exec(
-					"SELECT qt_def_set("
-					+Quote(dom, false)+","
-					+Quote(qb_str.str(), false)+","
-					+Quote(qf_str.str(), false)+')'));
-	
-				if( fdwrite(cso, &"K", 1) != 1 ) 
-						throw wr_error();
-		} else throw rd_error();
-	} std_catch
-	
-	/**
-	 *
-	 */
-	cpgsqlauth::error cpgsqlauth::qt_global_def_set() std_try {
-		qt_def_set("-");
+		NonTransaction(*pg).Exec("SELECT QT_USER_DEF_SET("
+			+Quote(dom_id)+','
+			+Quote(ToString(bytes_max))+','
+			+Quote(ToString(files_max))+')');
+
+		return ::vq::iauth::err_no;
 	} std_catch
 	
 	/**
 	 * Gets default quota for new users and sends it via cso
 	 * \param dom domain
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_get( const string & d ) std_try {
-		qb = qf = 0;
-		dom = lower(d);
+	cpgsqlauth::error cpgsqlauth::qt_user_def_get( const char * dom_id,
+			quota_type_out bytes_max, quota_type_out files_max ) std_try {
+
+		if( ! dom_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
+
 		Result res(NonTransaction(*pg).Exec(
-			"SELECT qt_user_bytes_def,qt_user_files_def FROM domains"
-			" WHERE name="+Quote(dom, false)+" LIMIT 1"));
+			"SELECT * FROM QT_USER_DEF_GET("+Quote(dom_id)
+			+") AS (qt_user_bytes_def int, qt_user_files_def int)"));
 	
-		if( res.size() <= 0 ) {
-				if( fdwrite(cso, &"Z", 1) != 1 )
-						throw wr_error();
-				return;
-		} std_catch
-		
-		if( ! res[0][0].is_null() )
-				res[0][0].to<cauth::quota_value>(qb);
-		if( ! res[0][1].is_null() )
-				res[0][1].to<cauth::quota_value>(qf);
-	
-		if( fdwrite(cso, &"F", 1) != 1
-			|| fdwrite(cso, &qb, sizeof qb) != sizeof qb
-			|| fdwrite(cso, &qf, sizeof qf) != sizeof qf) 
-				throw wr_error();
+		if( res.empty() )
+				return ::vq::iauth::err_func_res;
+
+		if( res[0][0].is_null() || res[0][1].is_null() )
+				return ::vq::iauth::err_noent;
+
+		res[0][0].to<quota_type>(bytes_max);
+		res[0][1].to<quota_type>(files_max);
+
+		return ::vq::iauth::err_no;
 	} std_catch
 	
 	/**
 	 * Gets limits for specified user
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_get() std_try {
-		if( -1 == fdrdstr(cso, dom)
-			|| -1 == fdrdstr(cso, user))
-				throw rd_error();
-	
-		qb = qf = 0;
-		dom = lower(str2tb(dom));
-		user = lower(user);
-	
-		Result res(NonTransaction(*pg).Exec(
-			"SELECT qt_bytes,qt_files FROM \""+dom
-			+"\" WHERE login="+Quote(user, false)));
-	
-		if( res.size() <= 0 ) {
-				if( fdwrite(cso, &"Z", 1) != 1 )
-						throw wr_error();
-				return;
-		} std_catch
+	cpgsqlauth::error cpgsqlauth::qt_user_get( const char * dom_id, 
+			const char * user_id,
+			quota_type_out bytes_max, quota_type_out files_max ) std_try {
+		if( ! dom_id || ! user_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		if( ! res[0][0].is_null() )
-				res[0][0].to<cauth::quota_value>(qb);
-		if( ! res[0][1].is_null() )
-				res[0][1].to<cauth::quota_value>(qf);
-	
-		if( fdwrite(cso, &"F", 1) != 1
-			|| fdwrite(cso, &qb, sizeof qb) != sizeof qb
-			|| fdwrite(cso, &qf, sizeof qf) != sizeof qf) 
-				throw wr_error();
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT * from QT_USER_GET("+Quote(dom_id)+","+Quote(user_id)
+			+") as (qt_bytes_max int, qt_files_max int)"));
+
+		if( res.empty() )
+				return ::vq::iauth::err_func_res;
+
+		if( res[0][0].is_null() || res[0][1].is_null() )
+				return ::vq::iauth::err_noent;
+		
+		res[0][0].to<quota_type>(bytes_max);
+		res[0][1].to<quota_type>(files_max);
+
+		return ::vq::iauth::err_no;
 	} std_catch
 	
 	/**
 	 * Sets limits for specified user
 	 */
-	cpgsqlauth::error cpgsqlauth::qt_set() std_try {
-		if( -1 == fdrdstr(cso, dom)
-			|| -1 == fdrdstr(cso, user)
-			|| -1 == fdread(cso, &qb, sizeof qb)
-			|| -1 == fdread(cso, &qf, sizeof qf) )
-				throw rd_error();
+	cpgsqlauth::error cpgsqlauth::qt_user_set( const char * dom_id,
+			const char * user_id,
+			quota_type bytes_max, quota_type files_max ) std_try {
+
+		if( ! dom_id || ! user_id )
+				throw ::vq::null_error(__FILE__, __LINE__);
 	
-		dom = str2tb(lower(dom));
-		user = lower(user);
-	
-		Result res(NonTransaction(*pg).Exec(
-			"UPDATE \""+dom+"\" SET qt_bytes="+ToString<cauth::quota_value>(qb)
-			+",qt_files="+ToString<cauth::quota_value>(qf)
-			+" WHERE login="+Quote(user, false)));
-	
-		if( fdwrite(cso, &"K", 1) != 1 ) 
-				throw wr_error();
+		NonTransaction(*pg).Exec("SELECT QT_USER_SET("
+			+Quote(dom_id)+','+Quote(user_id)+','
+			+Quote(ToString(bytes_max))+','
+			+Quote(ToString(files_max))+')');
+
+		return ::vq::iauth::err_no;
+
 	} std_catch
 	
-	/**
-	 */
-	cpgsqlauth::error cpgsqlauth::qt_global_def_get() std_try {
-		qt_def_get("-");
-	} std_catch
-	
-	/**
-	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_get() std_try {
-		if( -1 != fdrdstr(cso, dom) ) {
-				qt_def_get(dom);
-		} else throw rd_error();
-	} std_catch
-	
-	/**
-	 */
-	cpgsqlauth::error cpgsqlauth::qt_def_set() std_try {
-		if( -1 != fdrdstr(cso, dom) ) {
-				qt_def_set(dom);
-		} else throw rd_error();
-	} std_catch
-#endif // if 0	
 } // namespace POA_vq

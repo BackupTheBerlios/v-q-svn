@@ -1,4 +1,6 @@
-CREATE or replace FUNCTION mail.user_id (int4,text) RETURNS int4 AS '
+CREATE or replace FUNCTION mail.user_id
+(mail.users.id_domain%TYPE,
+mail.users.login%TYPE) RETURNS mail.users.id_user%TYPE AS '
 declare
     _id_domain alias for $1;
     _login alias for $2;

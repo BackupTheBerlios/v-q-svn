@@ -1,4 +1,4 @@
-CREATE or replace FUNCTION "udot_add" (text,text,text,char,text) RETURNS int4 AS '
+CREATE or replace FUNCTION mail.udot_add(text,text,text,char,text) RETURNS int4 AS '
 declare
     dom alias for $1;
     user alias for $2;

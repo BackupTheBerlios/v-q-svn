@@ -43,7 +43,8 @@ module vq {
 				err_func_res, //!< incorrect return from function
 				err_user_inv, //!< invalid user name
 				err_exists, //!< entry exists
-				err_noent //!< no such element
+				err_noent, //!< no such element
+				err_pass_inv //!< invalid password
 			};
 
 		/**
@@ -116,39 +117,28 @@ module vq {
 			error eb_ls(out email_banned_list ebs)
 					raises (db_error, except);
 		//@}
-#if 0
 		/**
 		 * \ingroup qt_user
 		 */
 		//@{
 			/// Gets limits for user
-			error qt_get(in string dom, in string user, 
+			error qt_user_get(in string dom_id, in string user_id, 
 					out quota_type bytes_max , out quota_type files_max )
 					raises (null_error, db_error, except);
 			/// Sets limits for user
-			error qt_set(in string dom, in string user, 
+			error qt_user_set(in string dom_id, in string user_id, 
 					in quota_type bytes_max, in quota_type files_max )
 					raises (null_error, db_error, except);
-
 			/// Sets default value for a domain
-			error qt_def_set(in string dom, 
+			error qt_user_def_set(in string dom_id, 
 					in quota_type bytes_max, in quota_type files_max )
 					raises (null_error, db_error, except);
 			/// Gets default value
-			error qt_def_get(in string dom, 
+			error qt_user_def_get(in string dom_id, 
 					out quota_type bytes_max, out quota_type files_max )
 					raises (null_error, db_error, except);
-			
-			/// Sets global defaults for new domains
-			error qt_global_def_set( 
-					in quota_type bytes_max, in quota_type files_max )
-					raises (except);
-			/// Gets global defaults for new domains
-			error qt_global_def_get(
-					out quota_type bytes_max, out quota_type files_max )
-					raises (except);
 		//@}
-
+#if 0
 		/**
 		 * \defgroup udot Mailboxes configuration
 		 */

@@ -1,4 +1,4 @@
-CREATE or replace FUNCTION mail.dom_rm (text) RETURNS VOID AS '
+CREATE or replace FUNCTION mail.dom_rm (mail.domains.id_domain%TYPE) RETURNS VOID AS '
 declare
     _id_domain alias for $1;
 begin

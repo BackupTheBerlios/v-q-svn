@@ -1,4 +1,9 @@
-CREATE or replace FUNCTION mail.user_add(int4,text,text,int4,bool) RETURNS int4 AS '
+CREATE or replace FUNCTION mail.user_add
+(mail.users.id_domain%TYPE,
+mail.users.login%TYPE,
+mail.users.pass%TYPE,
+mail.users.flags%TYPE,
+bool) RETURNS int4 AS '
 declare
     _id_domain alias for $1;
     _login alias for $2;

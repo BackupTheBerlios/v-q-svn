@@ -337,7 +337,7 @@ struct auth_test {
 			BOOST_CHECK_EQUAL(aicur.flags, 0);
 
 			aicur.pass = CORBA::string_dup("");
-			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::iauth::err_noent);
+			BOOST_CHECK_EQUAL(auth->user_auth(aicur), vq::iauth::err_pass_inv);
 		}
 
 		/**
@@ -393,6 +393,84 @@ struct auth_test {
 			BOOST_CHECK_EQUAL(from_db->length(), 0U);
 		}
 
+		/**
+		 * Change default quota values for users,
+		 * add user,
+		 * check quotas for user,
+		 * change quotas for user,
+		 * check quotas for user,
+		 * delete user,
+		 * revert to default quotas for new users
+		 */
+		void case8() {
+			const char * dom = "case6.pl";
+			CORBA::String_var dom_id;
+
+			std_try {
+					BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id), 
+						vq::iauth::err_no);
+					BOOST_REQUIRE(*dom_id);
+		
+					::vq::iauth::quota_type bytes_max, files_max;
+					::vq::iauth::quota_type ubytes, ufiles;
+					BOOST_CHECK_EQUAL(auth->qt_user_def_get(dom_id, 
+						bytes_max, files_max), ::vq::iauth::err_no );
+					BOOST_CHECK_EQUAL(bytes_max, 0U);
+					BOOST_CHECK_EQUAL(files_max, 0U);
+		
+					// changing default quota for users
+					bytes_max = 1000;
+					files_max = 500;
+					BOOST_CHECK_EQUAL(auth->qt_user_def_set(dom_id,
+						bytes_max, files_max), ::vq::iauth::err_no);
+					BOOST_CHECK_EQUAL(auth->qt_user_def_get(dom_id,
+						ubytes, ufiles), ::vq::iauth::err_no );
+					BOOST_CHECK_EQUAL(files_max, ufiles);
+					BOOST_CHECK_EQUAL(bytes_max, ubytes);
+		
+					// adding user
+					vq::iauth::auth_info ai;
+					ai.id_domain = CORBA::string_dup(dom_id);
+					ai.pass = CORBA::string_dup("pass");
+					ai.dir = CORBA::string_dup("dir");
+					ai.login = CORBA::string_dup("case8");
+					ai.flags = 0;
+		
+					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
+						vq::iauth::err_no);
+		
+					// check quota for created user
+					BOOST_CHECK_EQUAL(auth->qt_user_get(dom_id, ai.id_user,
+						ubytes, ufiles), ::vq::iauth::err_no );
+					BOOST_CHECK_EQUAL(ubytes, bytes_max);
+					BOOST_CHECK_EQUAL(ufiles, files_max);
+		
+					// change quotas for user
+					files_max += 501;
+					bytes_max += 501;
+					BOOST_CHECK_EQUAL(auth->qt_user_set(dom_id, ai.id_user,
+						bytes_max, files_max), ::vq::iauth::err_no );
+			
+					// check quotas
+					BOOST_CHECK_EQUAL(auth->qt_user_get(dom_id, ai.id_user,
+						ubytes, ufiles), ::vq::iauth::err_no );
+					BOOST_CHECK_EQUAL(ubytes, bytes_max);
+					BOOST_CHECK_EQUAL(ufiles, files_max);
+			} std_catch
+
+			// remove user
+			CORBA::String_var user_id;
+			BOOST_CHECK_EQUAL(auth->user_id(dom_id, "case8", user_id), 
+				::vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(auth->user_rm(dom_id, user_id), 
+				::vq::iauth::err_no );
+
+			// revert to default values
+			BOOST_CHECK_EQUAL(auth->dom_id(dom, dom_id),
+				::vq::iauth::err_no );
+			BOOST_CHECK_EQUAL(auth->qt_user_def_set(dom_id, 0U, 0U),
+				::vq::iauth::err_no );
+		}
 };
 
 /**
@@ -441,6 +519,11 @@ struct auth_test_suite : test_suite {
 				&auth_test::case7, test );
 			ts_case7->depends_on(ts_case6);
 			add(ts_case7);
+
+			test_case * ts_case8 = BOOST_CLASS_TEST_CASE( 
+				&auth_test::case8, test );
+			ts_case8->depends_on(ts_case6);
+			add(ts_case8);
 
 		}
 };

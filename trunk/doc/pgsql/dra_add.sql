@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION mail.dra_add (int4,text) RETURNS INT4 AS '
+CREATE OR REPLACE FUNCTION mail.dra_add (mail.domains.id_domain%TYPE,text) RETURNS INT4 AS '
 declare
 	_id_domain ALIAS FOR $1;
 	_re_alias ALIAS FOR $2;

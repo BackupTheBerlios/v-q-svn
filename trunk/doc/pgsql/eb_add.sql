@@ -1,4 +1,5 @@
-CREATE OR REPLACE FUNCTION mail.eb_add (text,text) RETURNS INT4 AS '
+CREATE OR REPLACE FUNCTION mail.eb_add 
+(mail.emails_banned.domain%TYPE,mail.emails_banned.login%TYPE) RETURNS INT4 AS '
 declare
 	_re_domain ALIAS FOR $1;
 	_re_login ALIAS FOR $2;

@@ -1,4 +1,4 @@
-CREATE or replace FUNCTION mail.dra_ls_by_dom (int4) RETURNS SETOF text AS '
+CREATE or replace FUNCTION mail.dra_ls_by_dom (mail.domains_re_aliases.id_domain%TYPE) RETURNS SETOF text AS '
 declare
 	_id_domain ALIAS FOR $1;
 	rea RECORD;

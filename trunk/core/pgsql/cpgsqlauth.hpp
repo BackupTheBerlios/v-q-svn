@@ -75,19 +75,20 @@ namespace POA_vq {
     				virtual error eb_rm( const char * re_domain,
 							const char * re_login );
     				virtual error eb_ls( email_banned_list_out ebs );
+    
+					virtual error qt_user_get( const char* dom_id, 
+							const char* user_id, 
+							quota_type_out bytes_max, quota_type_out files_max );
+    				virtual error qt_user_set( const char* dom_id, 
+							const char* user_id, 
+							quota_type bytes_max, quota_type files_max );
+    				virtual error qt_user_def_set( const char* dom_id, 
+							quota_type bytes_max, quota_type files_max );
+    				virtual error qt_user_def_get( const char* dom_id, 
+							quota_type_out bytes_max, quota_type_out files_max );
+
+
 					/*
-				    virtual error qt_get( const char* dom, const char* user, 
-							quota_type_out bytes_max, quota_type_out files_max );
-				    virtual error qt_set( const char* dom, const char* user, 
-							quota_type bytes_max, quota_type files_max );
-				    virtual error qt_def_set( const char* dom, 
-							quota_type bytes_max, quota_type files_max );
-				    virtual error qt_def_get( const char* dom, 
-							quota_type_out bytes_max, quota_type_out files_max );
-				    virtual error qt_global_def_set( 
-							quota_type bytes_max, quota_type files_max );
-				    virtual error qt_global_def_get( 
-							quota_type_out bytes_max, quota_type_out files_max );
 				    virtual error udot_add( const char* dom, const char* user, 
 							const char* pfix, udot_info_out ui );
 				    virtual error udot_rm_by_type( const char* dom, 

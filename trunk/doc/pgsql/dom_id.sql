@@ -1,4 +1,4 @@
-CREATE or replace FUNCTION mail.dom_id (text) RETURNS int4 AS '
+CREATE or replace FUNCTION mail.dom_id (text) RETURNS mail.domains.id_domain%TYPE AS '
 declare
     _domain alias for $1;
 	id RECORD;
