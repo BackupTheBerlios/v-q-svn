@@ -1,0 +1,4 @@
+/var/vq/bin/vqsignup1_notify
+
+Program which will be executed after adding user, program will be called
+with following arguments: domain_name login users_info_id
