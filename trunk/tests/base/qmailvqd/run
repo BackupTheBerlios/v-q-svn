@@ -9,7 +9,7 @@ qmail/control/virtualdomains qmail/control/virtualdomains.lock
 for p in qmail_virtualdomains_add qmail_rcpthosts_add qmail_assign_add \
 qmail_locals_rm qmail_file_add qmail_file_rm qmail_mrh_rm \
 qmail_virtualdomains_rm qmail_assign_rm qmail_run; do
-	ln -sf $BASE/base/qmailvqd/$p bin
+	ln -sf $BASE/../base/qmailvqd/$p bin
 done
 
 export LD_LIBRARY_PATH="/tmp" 

@@ -1,10 +1,21 @@
 #!/bin/sh
+export PROG=user_auth
+
 if [ ! -z "$VQ_HOME" ] ; then
-	export PATH="$PATH":"$VQ_HOME"
+    export PATH="$PATH":"$VQ_HOME"
 else
-	export VQ_HOME="/var/vq"
+    export VQ_HOME=`which "$PROG" | xargs dirname`
+    if [ ! -d $VQ_HOME ] ; then
+        export VQ_HOME=/var/vq
+	else
+		export VQ_HOME="$VQ_HOME/.."
+    fi
 fi
-export PATH="$PATH":/var/qmail/bin
+
+if [ ! -d $VQ_HOME ] ; then
+    echo "VQ_HOME not set!"
+    exit 1
+fi
 
 exec 2>&1
 
@@ -14,5 +25,5 @@ if [ -f /var/qmail/control/concurrencypop3d ]; then
 fi
 
 exec tcpserver -c "$con" -RHv 0 110 qmail-popup \
-"`hostname`.`domainname`" user_auth \
+"`hostname`.`domainname`" "$PROG" \
 qmail-pop3d Maildir

@@ -1,4 +1,6 @@
 #!/bin/sh
+export VQ_HOME="/usr/local/progs/vq"
+
 for p in `ls [0-9]*.pl | sort -i` ; do
 	./$p
 done

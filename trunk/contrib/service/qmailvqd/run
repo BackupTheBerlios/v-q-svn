@@ -4,10 +4,11 @@ export PROG=qmailvqd
 if [ ! -z "$VQ_HOME" ] ; then
     export PATH="$PATH":"$VQ_HOME"
 else
-
     export VQ_HOME=`which "$PROG" | xargs dirname`
     if [ ! -d $VQ_HOME ] ; then
         export VQ_HOME=/var/vq
+	else
+		export VQ_HOME="$VQ_HOME/.."
     fi
 fi
 
