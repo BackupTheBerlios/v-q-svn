@@ -19,13 +19,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "vqmain.hpp"
 
 #include <main.hpp>
+#include <vq.hpp>
 
 #include <iostream>
 #include <cstdlib>
 
 std::string VQ_HOME("/var/vq/");
 
-int cppmain( int ac, char ** av ) {
+int cppmain( int ac, char ** av ) try {
 	char * ptr;
 	ptr = getenv("VQ_HOME");
 	if(ptr) VQ_HOME = ptr;
@@ -46,4 +47,18 @@ int cppmain( int ac, char ** av ) {
 		}
 	}
 	return vqmain(ac, av);
+} catch( vq::except & e ) {
+	std::cerr<<"Exception: "<<e.what<<" in "<<e.file<<" at "<<e.line<<std::endl;
+	return 111;
+} catch( vq::db_error & e ) {
+	std::cerr<<"Database exception: "<<e.what<<" in "<<e.file<<" at "<<e.line<<std::endl;
+	return 111;
+} catch( vq::null_error & e ) {
+	std::cerr<<"Unexpected NULL value in "<<e.file<<" at "<<e.line<<std::endl;
+	return 111;
+} catch( CORBA::Exception & e ) {
+	std::cerr<<"CORBA exception: ";
+	e._print(std::cerr);
+	std::cerr<<std::endl;
+	return 111;
 }

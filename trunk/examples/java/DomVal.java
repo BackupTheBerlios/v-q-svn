@@ -30,7 +30,7 @@ public class DomVal {
 		if( err.ec == err_code.err_no ) {
 			System.out.println("It's a valid domain name");
 		} else {
-			System.out.print("It's an invalid domain name");
+			System.out.println("It's an invalid domain name");
 		}
 		System.exit(0);
 	}

@@ -10,7 +10,7 @@ all:: .depend libvq.a libautoresp.a
 			echo "===> $$entry" ; \
 			cd $$entry ; \
 			$(MAKE) $@; \
-		); \
+		) || exit 1; \
 	done
 
 include $(BASE)/Makefile.common
@@ -22,7 +22,7 @@ clean:
 			echo "===> $$entry" ; \
 			cd $$entry ; \
 			$(MAKE) $@; \
-		); \
+		) || exit 1; \
 	done
 
 ##################
@@ -49,5 +49,5 @@ $(OBJS): $(BASE)/comp-so $(BASE)/corba.inc
 
 autoresp.o:
 	$(BASE)/comp-so -I$(BASE)/libmain -I$(BASE)/libtext -I$(BASE)/libsys \
-	-I$(BASE)/libvqmain autoresp.cc
+	-Ilibvqmain autoresp.cc
 

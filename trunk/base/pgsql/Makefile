@@ -1,9 +1,9 @@
 BASE=../..
 OBJS=cpgsqlauth.o pgsqlauthd.o cpgsqllog.o pgsqllogd.o
-INCS=-I$(BASE)/base -I$(BASE) -I$(BASE)/libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
+INCS=-I$(BASE)/base -I$(BASE) -I../libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf `cat $(BASE)/corba.inc` `pqxx-config --cflags`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
-	-L$(BASE)/libvqmain -lvqmain -L$(BASE)/base -lvq \
+	-L../libvqmain -lvqmain -L$(BASE)/base -lvq \
 	-L$(BASE)/libconf -lconf \
 	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
 	`cat $(BASE)/corba.lib` `pqxx-config --libs`
