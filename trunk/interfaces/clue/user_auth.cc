@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "hmac_md5.hpp"
 #include "auto/lmd5.h"
 #include "cluemain.hpp"
 #include "error2str.hpp"
@@ -26,6 +25,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys.hpp>
 #include <conf.hpp>
 #include <vqmain.hpp>
+
+#include <unistd.h>
 
 #include <iostream>
 #include <sstream>
@@ -46,7 +47,7 @@ enum { smtp, pop3 } contype;
 ::vq::ilogger_var olog;
 ::vq::ivq_var ovq;
 
-::vq::ivq::auth_info vqai;
+::vq::ivq::user_info vqai;
 ::vq::ivq::error_var ret;
 
 #define LOG(x,y) delete olog->write(x,y)
@@ -80,15 +81,15 @@ char read_auth_info() {
 	olog->login_set(vqai.login);
 	
 	if( dom.empty() ) dom = defdom ? defdom : locip;
-	if( dom.empty() )
+	if( dom.empty() ) {
 			LOG(::vq::ilogger::re_data, "empty domain");
 			return 1;
 	}
-	olog->domain_set(dom);
+	olog->domain_set(dom.c_str());
 
 	ret=ovq->dom_id(dom.c_str(), vqai.id_domain);
 	if( ret->ec != ::vq::ivq::err_no ) {
-			LOG(::vq:ilogger::re_data, error2str(ret));
+			LOG(::vq::ilogger::re_data, error2str(ret).c_str() );
 			return 1;
 	}
 
@@ -125,7 +126,7 @@ char read_env() {
 					locip = "127.0.0.1";
 			}
 	}			
-	if( (tmp=getenv("TCPLOCALPORT")) ) 
+	if( (tmp=getenv("TCPLOCALPORT")) ) {
 			istringstream is;
 			is.str(tmp);
 			is >> itmp;
@@ -138,7 +139,6 @@ char read_env() {
 	}
 
 	switch(itmp) {
-	default:
 	case 995:
 	case 110:
 			if(ac<1) {
@@ -171,6 +171,7 @@ char read_env() {
 			break;
 	default:
 			olog->service_set(::vq::ilogger::ser_unknown);
+			contype = ac > 1 ? pop3 : smtp;
 	}
 	return 0;
 }
@@ -183,8 +184,12 @@ char auth_apop() {
 	unsigned char digest[16];
 	string hexdigest;
 	MD5Init(&ctx);
-	MD5Update(&ctx,(const unsigned char*)resp.data(),resp.length());
-	MD5Update(&ctx,(const unsigned char*)vqai.pass.data(),vqai.pass.length());
+	MD5Update(&ctx,
+		reinterpret_cast<const unsigned char*>(resp.data()),
+		resp.length());
+	MD5Update(&ctx,
+		reinterpret_cast<const unsigned char*>(&*vqai.pass),
+		vqai.pass ? strlen(vqai.pass) : 0);
 	MD5Final(digest,&ctx);
 	hexdigest = to_hex(digest,16);
 	return pass==hexdigest ? 0 : 1;
@@ -193,13 +198,10 @@ char auth_apop() {
  * return 0 if cram-md5 authorization is successful
  */
 char auth_cram() {
-	unsigned char digest[16];
-	string hexdigest;
-	hmac_md5((const unsigned char*)vqai.pass.data(),
-					vqai.pass.length(),(const unsigned char*)resp.data(),
-					resp.length(),digest);
-	hexdigest = to_hex(digest,16);
-	return pass==hexdigest ? 0 : 1;
+	char digest[16];
+	hmac_md5( vqai.pass ? "" : vqai.pass, vqai.pass ? strlen(vqai.pass) : 0, 
+		resp.data(), resp.length(), digest);
+	return to_hex(digest, sizeof digest) == pass ? 0 : 1;
 }
 
 /*
@@ -214,21 +216,21 @@ char login_smtp() {
  *
  */
 char login_pop() {
-	if( setenv("HOME", vqai.dir.c_str(), 1) ) {
+	if( setenv("HOME", vqai.dir ? vqai.dir : "", 1) ) {
 			return(1);
 	}
-	if( chdir(vqai.dir.c_str()) ) {
+	if( chdir(vqai.dir) ) {
 			return(1);
 	}
-	if( setgid(ac_vq_gid.val_int()) || setegid(getgid()) 
-		|| setuid(ac_vq_uid.val_int()) || seteuid(getuid()) ) {
+	if( setgid(vqai.gid) || setegid(getgid()) 
+		|| setuid(vqai.uid) || seteuid(getuid()) ) {
 			return(1);
 	}
 	LOG(::vq::ilogger::re_ok, "" );
 
-	delete olog; olog = NULL;
-	delete ovq; ovq = NULL;
-	execvp(*av,av);
+	olog = NULL;
+	ovq = NULL;
+	execvp(*av, av);
 	return(1);
 } 
 
@@ -237,25 +239,25 @@ char login_pop() {
  */
 char proc_auth_info() {
 	if(contype==smtp) {
-			if( vqai.flags & cvq::smtp_blk ) {
+			if( vqai.flags & vq::ivq::uif_smtp_blk ) {
 					LOG(::vq::ilogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_cram())
-				|| pass==vqai.pass ) {
+				|| pass==static_cast<char *>(vqai.pass) ) {
 					return login_smtp();
 			}
 	} else {
-			if( vqai.flags & cvq::pop3_blk ) {
+			if( vqai.flags & vq::ivq::uif_pop3_blk ) {
 					LOG(::vq::ilogger::re_blk, "" );
 					return(1);
 			}
 			if( (! resp.empty() && ! auth_apop())
-				|| pass==vqai.pass ) {
+				|| pass==static_cast<const char *>(vqai.pass) ) {
 					return login_pop();
 			}
 	}
-	LOG( ::vq::ilogger::re_pass, pass );
+	LOG( ::vq::ilogger::re_pass, pass.c_str() );
 	return(1);
 }
 
@@ -298,7 +300,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) try {
 			if( ::vq::ivq::err_no != ret->ec ) {
 					LOG( ret->ec == ::vq::ivq::err_noent 
 						? ::vq::ilogger::re_data : ::vq::ilogger::re_int, 
-						error2str(ret) );
+						error2str(ret).c_str() );
 			}
 
 			return proc_auth_info();

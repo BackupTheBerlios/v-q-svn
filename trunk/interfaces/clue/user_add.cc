@@ -60,7 +60,7 @@ bool user_add(const string &e, const string &p, uint8_t flags,
 					cout<<"invalid e-mail"<<endl;
 			return quiet;
 	}
-	::vq::ivq::auth_info ai;
+	::vq::ivq::user_info ai;
 	ai.flags = flags;
 	ai.login = esplit.front().c_str();
 	
