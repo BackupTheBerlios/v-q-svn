@@ -249,18 +249,17 @@ struct auth_test {
 			CORBA::String_var dom_id;
 
 			std_try {
-					vq::iauth::email_banned_list_var ebs;
+					::vq::iauth::email_banned_list_var ebs;
 					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::iauth::err_no);
 					CORBA::ULong s = ebs->length();
 					for( CORBA::ULong i=0; i<s; ++i ) {
-							BOOST_CHECK_EQUAL(auth->eb_rm(ebs[i].re_domain,
-								ebs[i].re_login), 
+							BOOST_CHECK_EQUAL(
+								auth->eb_rm(ebs[i].re_domain, ebs[i].re_login), 
 								vq::iauth::err_no);
 					}
 					BOOST_CHECK_EQUAL(auth->dom_add("case5.pl", dom_id), 
 						vq::iauth::err_no);
 			
-					vq::iauth::email_banned eb;
 					BOOST_CHECK_EQUAL(auth->eb_add(
 						static_cast<const char *>(".*"),
 						static_cast<const char *>("root")), vq::iauth::err_no);
@@ -270,15 +269,15 @@ struct auth_test {
 
 					BOOST_CHECK_EQUAL(auth->eb_ls(ebs), vq::iauth::err_no);
 					BOOST_CHECK_EQUAL(ebs->length(), 2U);
-					if( !strcmp(ebs[0].re_domain, ".*") ) {
-							BOOST_CHECK(!strcmp(ebs[1].re_domain, "case5"));
-							BOOST_CHECK(!strcmp(ebs[1].re_login, ".*"));
-							BOOST_CHECK(!strcmp(ebs[0].re_login, "root"));
+					if( !strcmp(ebs[0U].re_domain, ".*") ) {
+							BOOST_CHECK(!strcmp(ebs[1U].re_domain, "case5"));
+							BOOST_CHECK(!strcmp(ebs[1U].re_login, ".*"));
+							BOOST_CHECK(!strcmp(ebs[0U].re_login, "root"));
 					} else {
-							BOOST_CHECK(!strcmp(ebs[0].re_domain, "case5"));
-							BOOST_CHECK(!strcmp(ebs[0].re_login, ".*"));
-							BOOST_CHECK(!strcmp(ebs[1].re_domain, ".*"));
-							BOOST_CHECK(!strcmp(ebs[1].re_login, "root"));
+							BOOST_CHECK(!strcmp(ebs[0U].re_domain, "case5"));
+							BOOST_CHECK(!strcmp(ebs[0U].re_login, ".*"));
+							BOOST_CHECK(!strcmp(ebs[1U].re_domain, ".*"));
+							BOOST_CHECK(!strcmp(ebs[1U].re_login, "root"));
 					}
 
 					vq::iauth::auth_info ai;

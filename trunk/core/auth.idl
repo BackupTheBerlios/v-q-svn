@@ -60,6 +60,8 @@ module vq {
 			/// Translates domain name to id.
 			error dom_id(in string dom, out string did)
 					raises (null_error, db_error, except);
+			error dom_name(in string dom_id, out string domain)
+					raises (null_error, db_error, except);
 		//@}
 		/**
 		 * \defgroup dra Domains REGEX aliases
@@ -104,6 +106,9 @@ module vq {
 			/// Translates user name to id
 			error user_id(in string dom_id, in string login, 
 					out string uid )
+					raises (null_error, db_error, except);
+			error user_name(in string dom_id, in string uid,
+					out string name )
 					raises (null_error, db_error, except);
 		//@}
 		/**

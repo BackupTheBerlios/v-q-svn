@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cqmailvq.hpp"
-//#include "auto/d_namlen.h"
+#include "auto/d_namlen.h"
 
 #include <sys.hpp>
 #include <text.hpp>
@@ -27,20 +27,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
-#include <sstream>
 #include <unistd.h>
-#include <stdio.h>
-#include <cerrno>
-#include <algorithm>
 #include <dirent.h>
-#include <signal.h>
+
+#include <csignal>
+#include <cstdio>
 #include <iomanip>
+#include <sstream>
+#include <algorithm>
+#include <cerrno>
 
 namespace POA_vq {
 
 	using namespace std;
 	using namespace posix;
 	using namespace vq;
+	using namespace text;
 	
 	/**
 	 * Add user
@@ -56,8 +58,8 @@ namespace POA_vq {
 		assert_auth();
 		string user(lower(ai.login));
 	
-		string domdir(conf_home+"/domains/"+split_dom(dom)+'/'+dom+'/');
-		string spuser(split_user(user));
+		string domdir(this->home+"/domains/"+split_dom(dom, this->dom_split)+'/'+dom+'/');
+		string spuser(split_user(user, this->user_split));
 		string user_add_dir(domdir + spuser + '/'+ u);
 	
 		/* check wheter domain has default quota for users */
@@ -119,15 +121,16 @@ namespace POA_vq {
 		assert_auth();
 	
 		if( auth->user_rm(dom_id, user_id) ) 
-				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
+				return lr(::vq::ivq::err_auth, "");
 	
-		string dir = conf_home+"/domains/"+split_dom(dom)+'/'+dom+'/'
-				+split_user(user) + '/';
+		string dir = this->home+"/domains/"
+				+split_dom(dom, this->dom_split)+'/'+dom+'/'
+				+split_user(user, this->user_split) + '/';
 		
 		ostringstream dir_mv;
 		struct timeval time_mv;
 		gettimeofday(&time_mv, NULL);
-		dir_mv<<conf_home<<"/deleted/@"<<time_mv.tv_sec
+		dir_mv<<this->home<<"/deleted/@"<<time_mv.tv_sec
 				<<'.'<<time_mv.tv_usec<<'.'<<user<<'@'<<dom;
 	
 		if(rename((dir+user).c_str(), dir_mv.str().c_str())) 
@@ -196,8 +199,9 @@ namespace POA_vq {
 		ai.dom=lower(ai.dom);
 		switch( auth->user_auth(ai) ) {
 		case ::vq::ivq::err_no: 
-				ai.dir = conf_home+"/domains/"+split_dom(ai.dom)+'/'+ai.dom+'/'
-						+split_user(ai.user)+'/'+ai.user;
+				ai.dir = this->home+"/domains/"
+						+split_dom(ai.dom, this->dom_split)+'/'+ai.dom+'/'
+						+split_user(ai.user, this->user_split)+'/'+ai.user;
 				return lr(::vq::ivq::err_no, "");
 		case ::vq::ivq::err_user_nf: 
 				return lr(::vq::ivq::err_user_nf, ai.user+"@"+ai.dom);

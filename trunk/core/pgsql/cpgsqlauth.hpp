@@ -54,6 +54,8 @@ namespace POA_vq {
 					virtual error dom_rm( const char* dom );
 				    virtual error dom_id( const char* dom, 
 							CORBA::String_out dom_id );
+    				virtual error dom_name( const char* dom_id, 
+							CORBA::String_out domain );
 
 					error dra_add( const char* dom_id, const char* rea );
     				error dra_rm( const char* dom_id, const char* rea );
@@ -68,6 +70,8 @@ namespace POA_vq {
 							const char* pass );
 					virtual error user_id( const char* dom_id, 
 							const char* login, CORBA::String_out user_id );
+    				virtual error user_name( const char* dom_id, 
+							const char* uid, CORBA::String_out name );
 					virtual error user_auth( auth_info& ai );
 					
 				    virtual error eb_add( const char * re_domain, 

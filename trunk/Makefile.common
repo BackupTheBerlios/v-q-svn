@@ -1,3 +1,6 @@
+.auto:
+	mkdir -p auto
+
 #################
 .depend:
 	$(BASE)/tools/mkdep $(INCS) *.cc >> .depend 

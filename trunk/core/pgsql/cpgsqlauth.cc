@@ -111,6 +111,29 @@ namespace POA_vq {
 
 	/**
 	*/
+	cpgsqlauth::error cpgsqlauth::dom_name( const char * dom_id,
+			CORBA::String_out domain ) std_try {
+		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
+
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT DOM_NAME("+Quote(dom_id, false)+')'));
+
+		if(res.empty() || res[0][0].is_null() ) {
+				return ::vq::iauth::err_func_res;
+		}
+
+		const char *val = res[0][0].c_str();
+		if( '-' == *val ) {
+				return ( '1' == *(val+1) ) 
+						? ::vq::iauth::err_noent : ::vq::iauth::err_func_res;
+						
+		}
+		domain = val;
+		return ::vq::iauth::err_no;
+	} std_catch
+
+	/**
+	*/
 	cpgsqlauth::error cpgsqlauth::dom_rm( const char * dom_id ) std_try {
 		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
 	
@@ -259,6 +282,30 @@ namespace POA_vq {
 		return ::vq::iauth::err_no;
 	} std_catch
 
+	/**
+	*/
+	cpgsqlauth::error cpgsqlauth::user_name( const char * dom_id,
+			const char * uid, CORBA::String_out login ) std_try {
+		if( ! dom_id || ! uid ) throw ::vq::null_error(__FILE__, __LINE__);
+
+		Result res(NonTransaction(*pg).Exec(
+			"SELECT USER_NAME("
+				+Quote(dom_id, false)+','
+				+Quote(uid, false)+')'));
+
+		if(res.empty() || res[0][0].is_null() ) {
+				return ::vq::iauth::err_func_res;
+		}
+
+		const char *val = res[0][0].c_str();
+		if( '-' == *val ) {
+				return ( '1' == *(val+1) ) 
+						? ::vq::iauth::err_noent : ::vq::iauth::err_func_res;
+						
+		}
+		login = val;
+		return ::vq::iauth::err_no;
+	} std_catch
 
 	/**
 	 * 

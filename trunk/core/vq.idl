@@ -53,7 +53,6 @@ module vq {
 			typedef unsigned short aif_type;
 			typedef sequence<string> string_list;
 
-
 		/**
 		 * \ingroup err
 		 */
@@ -192,6 +191,9 @@ module vq {
 			/// Gets ID of domain
 			error dom_id(in string dom, out string dom_id)
 					raises (null_error, except);
+			/// Gets name of a domain
+			error dom_name(in string dom_id, out string dom_name )
+					raises (null_error, except);
 		//@}
 
 		/**
@@ -230,6 +232,9 @@ module vq {
 			/// Gets ID of given user
 			error user_id(in string dom_id, in string login, 
 					out string uid )
+					raises (null_error, except);
+			error user_name(in string dom_id, in string uid,
+					out string login )
 					raises (null_error, except);
 		//@}
 
