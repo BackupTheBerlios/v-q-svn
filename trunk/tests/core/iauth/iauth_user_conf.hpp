@@ -294,7 +294,7 @@ struct user_conf_test {
 					++uci.type;
 					ucis.push_back(uci);
 					ucis.push_back(uci);
-					++uci.type;
+					uci.type = ::vq::ivq::uc_external;
 					ucis.push_back(uci);
 					ucis.push_back(uci);
 					uci_array::iterator ub, ue;
@@ -305,7 +305,6 @@ struct user_conf_test {
 								*ub ), ::vq::ivq::err_no );
 					}
 					for( ub=ucis.begin(), ue=ucis.end(); ub!=ue; ++ub ) {
-							++ub->type;
 							ub->val = static_cast<const char *>("2");
 							IVQ_ERROR_EQUAL(wrap.user_conf_rep(dom_id,
 								ai.login, static_cast<const char *>(""),

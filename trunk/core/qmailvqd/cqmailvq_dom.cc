@@ -18,7 +18,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cqmailvq.hpp"
 #include "cqmailvq_common.hpp"
-#include "qmail_progs.hpp"
 
 #include <pfstream.hpp>
 #include <sys.hpp>
@@ -95,11 +94,9 @@ namespace POA_vq {
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
 	
-		string restart(home+"/bin/qmail_run");
-		char prog[] = { qp_send_restart, '\0' };
+		string restart(home+"/bin/qmail-send-restart");
 		char *const args[] = {
 				const_cast<char *>(restart.c_str()),
-				prog,
 				NULL
 		};
 		int rr = run(args);
@@ -185,11 +182,9 @@ namespace POA_vq {
 				return ret.release();
 		}
 	
-		string restart(this->home+"/bin/qmail_run");
-		char prog[] = { qp_send_restart, '\0' };
+		string restart(this->home+"/bin/qmail-send-restart");
 		char *const args[] = {
 				const_cast<char *>(restart.c_str()),
-				prog,
 				NULL
 		};
 		int rr = run(args);

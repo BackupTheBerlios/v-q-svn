@@ -696,10 +696,16 @@ END;
 BEGIN
 	IF NEW.qt_files_max = 0 THEN
 		NEW.qt_files_max := (SELECT qt_user_files_def FROM vq_domains WHERE id_domain=NEW.id_domain);
+		IF NEW.qt_files_max IS NULL THEN
+			NEW.qt_files_max := 0;
+		END IF;
 	END IF;
 
 	IF NEW.qt_bytes_max = 0 THEN
 		NEW.qt_bytes_max := (SELECT qt_user_bytes_def FROM vq_domains WHERE id_domain=NEW.id_domain);
+		IF NEW.qt_bytes_max IS NULL THEN
+			NEW.qt_bytes_max := 0;
+		END IF;
 	END IF;
 
 	RETURN NEW;

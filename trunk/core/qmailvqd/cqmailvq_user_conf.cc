@@ -388,6 +388,9 @@ namespace POA_vq {
 		
 		string ln;
 		CORBA::ULong uisl = uis->length(), i;
+
+		if( ! uisl ) return lr(::vq::ivq::err_no, "");
+
 		for( i=0; i<uisl; ++i ) {
 				ret.reset(user_conf_ln(uis[i], ln));
 				if( ::vq::ivq::err_func_ni == ret->ec ) {

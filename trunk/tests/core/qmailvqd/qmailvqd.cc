@@ -34,6 +34,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 using namespace boost::unit_test_framework;
 
+#warning dodac test - dodawanie konfiguracji, usuwanie uzytkownika, sprawdzanie czy konfiguracja zostala usunieta
+#warning dodac - sprawdzanie czy jak user_conf_rep jest wywolane z innym typem to zwroci blad
+
 /**
  * 
  */

@@ -12,8 +12,7 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 
 all: .auto auto/d_namlen.h .depend qmailvqd qmail_virtualdomains_add \
 qmail_virtualdomains_rm qmail_rcpthosts_add qmail_mrh_add qmail_mrh_rm \
-qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_file_add qmail_file_rm \
-qmail_run
+qmail_assign_add qmail_assign_ex qmail_assign_rm qmail_file_add qmail_file_rm
 
 include $(BASE)/Makefile.common
 
@@ -52,9 +51,6 @@ qmail_file_add: $(BASE)/load qmail_file_add.o qmail_files.o
 
 qmail_file_rm: $(BASE)/load qmail_file_rm.o qmail_files.o qmail_common.o
 	$(BASE)/load qmail_file_rm qmail_files.o qmail_common.o $(LIBS)
-
-qmail_run: $(BASE)/load qmail_run.o qmail_progs.o
-	$(BASE)/load qmail_run qmail_progs.o $(LIBS)
 
 auto/d_namlen.h: $(BASE)/compile try/d_namlen.cc d_namlen.h1 d_namlen.h2
 	( ( cd try && $(BASE)/compile d_namlen.cc ) >/dev/null 2>&1 \
