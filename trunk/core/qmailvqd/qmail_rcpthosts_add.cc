@@ -16,11 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "pfstream.h"
-#include "vq_conf.h"
-#include "lock.h"
-#include "uniq.h"
-#include "main.h"
+#include <pfstream.hpp>
+#include <vqmain.hpp>
+#include <conf.hpp>
+#include <sys.hpp>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -38,9 +37,9 @@ using std::endl;
 using posix::ipfstream;
 using posix::opfstream;
 using std::rename;
-using namespace vq;
+using namespace sys;
 
-char vd_add(const string &in_fn, const char *dom, const char *alias) {
+char rcpt_add(const string &in_fn, const char *rcpt, mode_t qmode) {
 	bool enoent = false;
 	ipfstream in(in_fn.c_str());
 	if( ! in ) {
@@ -52,16 +51,15 @@ char vd_add(const string &in_fn, const char *dom, const char *alias) {
 	if( ! out ) return 111;
 	if( ! enoent ) {
 			string ln;
-			string::size_type ln_len, doml = strlen(dom);
-			while(getline(in, ln)) {
-					ln_len = ln.length();
-					if( ! ln_len ) continue;
-					if( ln_len > doml
-						&& ln[doml] == ':'
-						&& ! memcmp(ln.data(), dom, doml) ) {
-							unlink(out_fn.c_str());
+			string::size_type rcptl = strlen(rcpt);
+			uint32_t rcpts=0;
+			while(getline(in, ln) && rcpts < 50 ) {
+					if(ln.empty()) continue;
+					if(ln.length() == rcptl 
+						&& ! memcmp(ln.data(), rcpt, rcptl) )
 							return 1;
-					}
+
+					++rcpts;
 					out<<ln<<endl;
 					if( ! out ) {
 							unlink(out_fn.c_str());
@@ -72,8 +70,12 @@ char vd_add(const string &in_fn, const char *dom, const char *alias) {
 					unlink(out_fn.c_str());
 					return 111;
 			}
+			if( rcpts == 50 ) {
+					unlink(out_fn.c_str());
+					return 2;
+			}
 	}
-	out<<alias<<endl;
+	out<<rcpt<<endl;
 	out.close();
 	if( ! out ) {
 			unlink(out_fn.c_str());
@@ -88,30 +90,35 @@ char vd_add(const string &in_fn, const char *dom, const char *alias) {
 					unlink(out_fn.c_str());
 					return 111;
 			}
-	} else if( chmod(out_fn.c_str(), ac_qmail_mode.val_int()) ) 
+	} else if( chmod(out_fn.c_str(), qmode) ) 
 			return 111;
 
 	return rename(out_fn.c_str(), in_fn.c_str()) ? 111 : 0;
 }
 
-int cppmain( int ac , char ** av ) {
+int vqmain( int ac , char ** av ) {
 		try {
-				if( ac != 3 ) {
-						cerr<<"usage: "<<*av<<" domain line_to_add"<<endl
-							<<"Program adds a line to qmail/control/virtualdomains file."
-							<<"Program returns 0 on success, 1 if entry for given domain exists,"
+				if( ac != 2 ) {
+						cerr<<"usage: "<<*av<<" domain"<<endl
+							<<"Program adds a line to qmail/control/rcpthosts file."<<endl
+							<<"Program returns 0 on success, 1 if entry for given domain exists,"<<endl
+							<<"2 if there's more than 50 recipients (in that case it doesn't add),"<<endl
 							<<"anything else on error."<<endl;
 						return 111;
 				}
 
-				string fn(ac_qmail.val_str()+"/control/virtualdomains");
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
+					"/var/qmail/");
+				conf::cintconf qmode(VQ_HOME+"/etc/ivq/qmail/qmode", "0644");
+
+				string fn(qhome.val_str()+"/control/rcpthosts");
 
 				opfstream lck((fn+".lock").c_str());
 				if( ! lck ) return 111;
 		
 				if( lock_exnb(lck.rdbuf()->fd()) ) return 111;
 	
-				return vd_add(fn, av[1], av[2]);
+				return rcpt_add(fn, av[1], qmode.val_int());
 		} catch(...) {
 				return 111;
 		}

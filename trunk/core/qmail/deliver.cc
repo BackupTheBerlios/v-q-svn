@@ -16,9 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "main.h"
 #include "split.h"
 #include "vq_conf.h"
+
+#include <vqmain.hpp>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -34,7 +35,7 @@ using namespace vq;
 /*
  *
  */
-int cppmain(int ac, char **av)
+int vqmain(int ac, char **av)
 {
 	char *args[11], *host, *tmp;
 	string ql = ac_qmail.val_str()+"/bin/qmail-local";

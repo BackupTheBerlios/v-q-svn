@@ -16,14 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "pfstream.h"
-#include "vq_conf.h"
-#include "lock.h"
-#include "uniq.h"
-#include "main.h"
+#include <pfstream.hpp>
+#include <vqmain.hpp>
+#include <sys.hpp>
+#include <conf.hpp>
 
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include <iostream>
@@ -38,11 +38,11 @@ using std::endl;
 using posix::ipfstream;
 using posix::opfstream;
 using std::rename;
-using namespace vq;
+using namespace sys;
 
-char rcpt_add(const string &in_fn, const char *rcpt) {
-	bool enoent = false;
+char file_add(const string &in_fn, const char *rm, mode_t qmode) {
 	ipfstream in(in_fn.c_str());
+	bool enoent = false;
 	if( ! in ) {
 			if( errno != ENOENT ) return 111; 
 			enoent = true;
@@ -50,17 +50,14 @@ char rcpt_add(const string &in_fn, const char *rcpt) {
 	string out_fn(in_fn+'.'+uniq());
 	opfstream out(out_fn.c_str(), ios::trunc);
 	if( ! out ) return 111;
+	
+	string ln, lncmp(*rm ? rm : "");
 	if( ! enoent ) {
-			string ln;
-			string::size_type rcptl = strlen(rcpt);
-			uint32_t rcpts=0;
-			while(getline(in, ln) && rcpts < 50 ) {
-					if(ln.empty()) continue;
-					if(ln.length() == rcptl 
-						&& ! memcmp(ln.data(), rcpt, rcptl) )
+			while(getline(in, ln)) {
+					if(ln == lncmp) {
+							unlink(out_fn.c_str());
 							return 1;
-
-					++rcpts;
+					}
 					out<<ln<<endl;
 					if( ! out ) {
 							unlink(out_fn.c_str());
@@ -71,12 +68,8 @@ char rcpt_add(const string &in_fn, const char *rcpt) {
 					unlink(out_fn.c_str());
 					return 111;
 			}
-			if( rcpts == 50 ) {
-					unlink(out_fn.c_str());
-					return 2;
-			}
 	}
-	out<<rcpt<<endl;
+	out<<lncmp<<endl;
 	out.close();
 	if( ! out ) {
 			unlink(out_fn.c_str());
@@ -91,31 +84,62 @@ char rcpt_add(const string &in_fn, const char *rcpt) {
 					unlink(out_fn.c_str());
 					return 111;
 			}
-	} else if( chmod(out_fn.c_str(), ac_qmail_mode.val_int()) ) 
+	} else if( chmod(out_fn.c_str(), qmode) ) {
+			unlink(out_fn.c_str());
 			return 111;
-
+	}
+			
 	return rename(out_fn.c_str(), in_fn.c_str()) ? 111 : 0;
 }
 
-int cppmain( int ac , char ** av ) {
+int vqmain( int ac , char ** av ) {
 		try {
 				if( ac != 2 ) {
-						cerr<<"usage: "<<*av<<" domain"<<endl
-							<<"Program adds a line to qmail/control/rcpthosts file."<<endl
-							<<"Program returns 0 on success, 1 if entry for given domain exists,"<<endl
-							<<"2 if there's more than 50 recipients (in that case it doesn't add),"<<endl
+						cerr<<"usage: "<<*av<<" line_to_add"<<endl
+							<<"Program adds a line to morercpthosts file."<<endl
+							<<"Does not add if file include given line."<<endl
+							<<"If morercpthosts file was changed it calls qmail-newmrh."<<endl
+							<<"Program returns 0 on success, 1 if file was not changed,"<<endl
 							<<"anything else on error."<<endl;
 						return 111;
 				}
 
-				string fn(ac_qmail.val_str()+"/control/rcpthosts");
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
+					"/var/qmail/");
+				conf::cintconf qmode(VQ_HOME+"/etc/ivq/qmail/qmode", "0644");
+				
+				string fn(qhome.val_str()+"/control/morercpthosts");
 
 				opfstream lck((fn+".lock").c_str());
 				if( ! lck ) return 111;
 		
 				if( lock_exnb(lck.rdbuf()->fd()) ) return 111;
 	
-				return rcpt_add(fn, av[1]);
+				char ret = file_add(fn, av[1], qmode.val_int());
+				switch(ret) {
+				case 1: return 1;
+				case 0: break;
+				default:
+						return ret;
+				}
+				
+				pid_t pid;
+				string newu(qhome.val_str()+"/bin/qmail-newmrh");
+				char * const args[] = {
+						const_cast<char *>(newu.c_str()),
+						NULL
+				};
+						
+				switch((pid=vfork())) {
+				case -1: 
+						return 111;
+				case 0:
+						execv(*args, args);
+						_exit(111);
+				}
+				while( wait(&pid) == -1 && errno == EINTR );
+				if( ! WIFEXITED(pid) || WEXITSTATUS(pid) ) return 111;
+				return 0;
 		} catch(...) {
 				return 111;
 		}

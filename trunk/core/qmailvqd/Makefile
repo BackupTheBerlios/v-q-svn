@@ -1,18 +1,37 @@
 BASE=../..
-OBJS=qmail_files.o qmailvqd.o cqmailvq_dom.o cqmailvq.o #cqmailvq_user.o
-INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libmain -I$(BASE)/libsys -I$(BASE)/libtext \
+QOBJS=qmail_files.o qmailvqd.o cqmailvq_dom.o cqmailvq.o #cqmailvq_user.o 
+OBJS=$(QOBJS) qmail_virtualdomains_add.o qmail_virtualdomains_rm.o
+INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf `cat $(BASE)/corba.inc`
-LIBS=-L$(BASE) -L$(BASE)/libmain -lmain -L$(BASE)/core -lvq \
+LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
+	-L$(BASE)/libvqmain -lvqmain -L$(BASE)/core -lvq \
 	-L$(BASE)/libconf -lconf \
-	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
-`cat $(BASE)/corba.lib`
+	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext
 
-all: .auto auto/d_namlen.h .depend qmailvqd
+all: .auto auto/d_namlen.h .depend qmailvqd qmail_virtualdomains_add \
+qmail_virtualdomains_rm qmail_rcpthosts_add qmail_mrh_add qmail_mrh_rm
 
 include $(BASE)/Makefile.common
 
-qmailvqd: $(BASE)/load $(BASE)/corba.lib $(OBJS)
-	$(BASE)/load qmailvqd qmail_files.o cqmailvq_dom.o cqmailvq.o $(LIBS)
+qmailvqd: $(BASE)/load $(BASE)/corba.lib qmail_files.o qmailvqd.o \
+cqmailvq_dom.o cqmailvq.o
+	$(BASE)/load qmailvqd qmail_files.o cqmailvq_dom.o cqmailvq.o $(LIBS) \
+	`cat $(BASE)/corba.lib`
+
+qmail_virtualdomains_add: $(BASE)/load qmail_virtualdomains_add.o
+	$(BASE)/load qmail_virtualdomains_add $(LIBS)
+
+qmail_virtualdomains_rm: $(BASE)/load qmail_virtualdomains_rm.o
+	$(BASE)/load qmail_virtualdomains_rm $(LIBS)
+
+qmail_rcpthosts_add: $(BASE)/load qmail_rcpthosts_add.o
+	$(BASE)/load qmail_rcpthosts_add $(LIBS)
+
+qmail_mrh_add: $(BASE)/load qmail_mrh_add.o
+	$(BASE)/load qmail_mrh_add $(LIBS)
+
+qmail_mrh_rm: $(BASE)/load qmail_mrh_rm.o
+	$(BASE)/load qmail_mrh_rm $(LIBS)
 
 auto/d_namlen.h: $(BASE)/compile try/d_namlen.cc d_namlen.h1 d_namlen.h2
 	( ( cd try && $(BASE)/compile d_namlen.cc ) >/dev/null 2>&1 \
@@ -21,7 +40,9 @@ auto/d_namlen.h: $(BASE)/compile try/d_namlen.cc d_namlen.h1 d_namlen.h2
 
 ##################
 
-$(OBJS): $(BASE)/compile $(BASE)/corba.inc
+$(OBJS): $(BASE)/compile 
+
+$(QOBJS): $(BASE)/corba.inc
 
 cqmailvq_user.o: auto/d_namlen.h
 

@@ -1,2 +1,4 @@
 auto
-cqmailvq.o cqmailvq_dom.o qmail_files.o qmailvqd.o
+cqmailvq.o cqmailvq_dom.o qmail_files.o 
+qmail_mrh_add.o qmail_rcpthosts_add.o qmail_virtualdomains_add.o qmail_virtualdomains_rm.o qmailvqd.o
+qmail_mrh_add qmail_mrh_rm qmail_rcpthosts_add qmail_virtualdomains_add qmail_virtualdomains_rm qmailvqd

@@ -18,8 +18,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cpgsqlauth.hpp"
 
-#include "main.hpp"
-
+#include <vqmain.hpp>
 #include <conf.hpp>
 
 // CORBA
@@ -32,7 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 using namespace std;
 using namespace POA_vq;
 
-int cppmain(int ac, char **av) {
+int vqmain(int ac, char **av) {
 	/*
 	 * Initialize the ORB
 	 */
