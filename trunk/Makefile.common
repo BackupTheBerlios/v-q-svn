@@ -3,7 +3,7 @@
 
 #################
 .depend:
-	$(BASE)/tools/mkdep $(INCS) *.cc >> .depend 
+	CC=$(BASE)/compile $(BASE)/tools/mkdep $(INCS) *.cc >> .depend 
 	if [ -e .depend -a ! -s .depend ]; then \
 		rm -f .depend ; \
 	fi

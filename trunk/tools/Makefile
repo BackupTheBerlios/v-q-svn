@@ -10,8 +10,10 @@ mkdep::
 	if [ "X$${?}" = X"0" ] ; then \
 		ln -sf `which mkdepend` ./mkdep ; \
 	fi
-	which mkdep 2>&1 > /dev/null; \
-	if [ "X$${?}" = X"0" ] ; then \
-		ln -sf `which mkdep` ./mkdep ; \
+	if [ ! -f mkdep ] ; then \
+		which mkdep 2>&1 > /dev/null; \
+		if [ "X$${?}" = X"0" ] ; then \
+			ln -sf `which mkdep` ./mkdep ; \
+		fi ; \
 	fi
 

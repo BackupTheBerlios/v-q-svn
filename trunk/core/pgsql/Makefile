@@ -8,11 +8,11 @@ LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
 `cat $(BASE)/corba.lib` `cat pgsql.lib`
 
+pgsql: .depend pgsqlauthd
+
 all::
 
 include $(BASE)/Makefile.common
-
-pgsql:: .depend pgsqlauthd
 
 clean:
 		rm -rf `cat TARGETS`
