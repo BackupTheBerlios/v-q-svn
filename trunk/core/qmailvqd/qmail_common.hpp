@@ -16,11 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#ifndef __QMAIL_COMMON_H
-#define __QMAIL_COMMON_H
+#ifndef __QMAIL_COMMON_HPP
+#define __QMAIL_COMMON_HPP
 
 #include <string>
 
 char file_rm(const std::string &, const char *, bool = true);
 
-#endif // ifndef __QMAIL_COMMON_H
+#endif // ifndef __QMAIL_COMMON_HPP

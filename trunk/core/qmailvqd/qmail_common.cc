@@ -16,6 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "qmail_common.hpp"
+#include "qmail_files.hpp"
+
+#include <pfstream.hpp>
+#include <sys.hpp>
+#include <conf.hpp>
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -24,13 +31,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <cerrno>
 #include <cstdio>
 
-#include "pfstream.h"
-#include "vq_conf.h"
-#include "lock.h"
-#include "uniq.h"
-#include "qmail_files.h"
-#include "qmail_common.h"
-
 using std::string;
 using std::ios;
 using std::cerr;
@@ -38,7 +38,7 @@ using std::endl;
 using posix::ipfstream;
 using posix::opfstream;
 using std::rename;
-using namespace vq;
+using namespace sys;
 
 /**
  * Remove line from a file in a secure manner.

@@ -16,12 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "pfstream.h"
-#include "vq_conf.h"
-#include "lock.h"
-#include "uniq.h"
-#include "qmail_common.h"
-#include "main.h"
+#include "qmail_common.hpp"
+
+#include <pfstream.hpp>
+#include <conf.hpp>
+#include <sys.hpp>
+#include <vqmain.hpp>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -40,9 +40,9 @@ using std::endl;
 using posix::ipfstream;
 using posix::opfstream;
 using std::rename;
-using namespace vq;
+using namespace sys;
 
-int cppmain( int ac, char ** av ) {
+int vqmain( int ac, char ** av ) {
 		try {
 				if( ac != 2 ) {
 						cerr<<"usage: "<<*av<<" line_to_remove"<<endl
@@ -53,7 +53,10 @@ int cppmain( int ac, char ** av ) {
 						return 2;
 				}
 
-				string fn(ac_qmail.val_str()+"/users/assign");
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
+					"/var/qmail/");
+
+				string fn(qhome.val_str()+"/users/assign");
 
 				opfstream lck((fn+".lock").c_str());
 				if( ! lck ) return 3;
@@ -67,7 +70,7 @@ int cppmain( int ac, char ** av ) {
 						}
 						return 2;
 				} else if( ret == 0 ) {
-						string newu(ac_qmail.val_str()+"/bin/qmail-newu");
+						string newu(qhome.val_str()+"/bin/qmail-newu");
 						char * const args[] = {
 								const_cast<char *>(newu.c_str()),
 								NULL

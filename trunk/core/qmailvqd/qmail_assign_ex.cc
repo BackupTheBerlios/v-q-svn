@@ -16,9 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "pfstream.h"
-#include "vq_conf.h"
-#include "main.h"
+#include <pfstream.hpp>
+#include <conf.hpp>
+#include <vqmain.hpp>
 
 #include <iostream>
 #include <cerrno>
@@ -28,9 +28,8 @@ using std::string;
 using std::cerr;
 using std::endl;
 using posix::ipfstream;
-using namespace vq;
 
-int cppmain( int ac , char ** av ) {
+int vqmain( int ac , char ** av ) {
 		try {
 				if( ac != 2 ) {
 						cerr<<"usage: "<<*av<<" domain_name"<<endl
@@ -38,15 +37,18 @@ int cppmain( int ac , char ** av ) {
 							<<"1 if not, anything else on error."<<endl;
 						return 2;
 				}
-				ipfstream in((ac_qmail.val_str()+"/users/assign").c_str());
+
+				conf::clnconf qhome(VQ_HOME+"/etc/ivq/qmail/qmail_home",
+					"/var/qmail/" );
+				
+				ipfstream in((qhome.val_str()+"/users/assign").c_str());
 				if( ! in ) {
 						if( errno == ENOENT ) return 1;
 						return 3;
 				}
 
 				string ln, dot(".");
-				string::size_type ln_len;
-				int doml = strlen(av[1]);
+				string::size_type ln_len, doml = strlen(av[1]);
 				if(! doml) return 4;
 
 				while(getline(in, ln)) {
