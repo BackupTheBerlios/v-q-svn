@@ -39,5 +39,8 @@ SUCH DAMAGE.
 #include "fd.hpp"
 #include "fdstr.hpp"
 #include "getline.hpp"
+#include "util.hpp"
+#include "lock.hpp"
+#include "dirs.hpp"
 
 #endif // ifndef __SYS_HPP
