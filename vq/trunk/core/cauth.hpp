@@ -31,13 +31,13 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef __CAUTH_H
-#define __CAUTH_H
+#ifndef __CAUTH_HPP
+#define __CAUTH_HPP
+
+#include "cvq.hpp"
 
 #include <string>
 #include <vector>
-
-#include "cvq.h"
 
 /**
  * Base class representing authorization module.

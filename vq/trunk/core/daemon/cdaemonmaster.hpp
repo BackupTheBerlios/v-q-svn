@@ -31,10 +31,10 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef __CDAEMONMASTER_H
-#define __CDAEMONMASTER_H
+#ifndef __CDAEMONMASTER_HPP
+#define __CDAEMONMASTER_HPP
 
-#include "cdaemonchild.h"
+#include "cdaemonchild.hpp"
 
 #include <sys.hpp>
 

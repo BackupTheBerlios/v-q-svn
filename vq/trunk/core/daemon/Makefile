@@ -20,20 +20,20 @@ auto/dl.lib: try/dl.c $(BASE)/compile $(BASE)/load
 cforkmaster.o: $(BASE)/compile all.inc
 	$(BASE)/compile `cat all.inc` cforkmaster.cc
 
-cforkmaster.o: cforkmaster.cc cforkmaster.h cdaemonmaster.h \
- cdaemonchild.h ../libsys/sys.hpp \
+cforkmaster.o: cforkmaster.cc cforkmaster.hpp cdaemonmaster.hpp \
+ cdaemonchild.hpp ../libsys/sys.hpp \
  ../libsys/uniq.hpp ../libsys/sig.hpp ../libsys/cpoll.hpp \
  ../libsys/fd.hpp \
  ../libsys/fdstr.hpp ../libsys/getline.hpp ../libsys/util.hpp \
  ../libsys/lock.hpp ../libsys/dirs.hpp
 
 daemon: $(BASE)/load $(BASE)/main.o daemon.o cforkmaster.o auto/dl.lib all.lib
-	$(BASE)/load daemon main.o cforkmaster.o `cat auto/dl.lib` `cat all.lib`
+	$(BASE)/load daemon $(BASE)/main.o cforkmaster.o `cat auto/dl.lib` `cat all.lib`
 
 daemon.o: $(BASE)/compile all.inc
 	$(BASE)/compile `cat all.inc` daemon.cc
 
-daemon.o: daemon.cc ../../main.h cdaemonmaster.h cdaemonchild.h \
+daemon.o: daemon.cc ../../main.hpp cdaemonmaster.hpp cdaemonchild.hpp \
  ../libsys/sys.hpp \
  ../libsys/uniq.hpp ../libsys/sig.hpp ../libsys/cpoll.hpp \
  ../libsys/fd.hpp \

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2004 Pawel Niewiadomski
+Copyright (c) 2002,2003,2004 Pawel Niewiadomski
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,77 +31,64 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 */
 
-#ifndef __CFORKMASTER_H
-#define __CFORKMASTER_H
+#ifndef __CDAEMONCHILD_HPP
+#define __CDAEMONCHILD_HPP
 
-#include "cdaemonmaster.h"
-
-#include <sys.hpp>
-
-#include <dirent.h>
-
-#include <list>
-#include <map>
-#include <algorithm>
-#include <exception>
+#include <stdexcept>
+#include <string>
+#include <cerrno>
 
 /**
- * For each incoming connection fork child which will process all requests
- * from child.
- */
-class cforkmaster : public cdaemonmaster {
+ * This class represents module interface used by daemon.cc
+ */ 
+class cdaemonchild {
 		public:
-				class fork_error;
-				
-				cforkmaster();
-				virtual ~cforkmaster();
+				/**
+				 * This exception is thrown when can't read from child.
+				 */
+				class rd_error : public std::runtime_error {
+						public:
+								inline rd_error();
+				};
 
-				virtual void children_limit_set(size_type);
+				/**
+				 * This exception is thrown when can't write to child.
+				 */
+				class wr_error : public std::runtime_error {
+						public:
+								inline wr_error();
+				};
 
-				virtual void daemon_add( const char *, const char *, 
-						const char * );
+				/**
+				 * Wrong command.
+				 */
+				class bad_command : public std::runtime_error {
+						public:
+								inline bad_command( const std::string & );
+				};
 
-				virtual void run();
-				virtual void setup();
-
-		protected:
-				struct dll_info;
-				
-				typedef std::map< int, dll_info > socket2dll_map;
-				
-				static size_type children; //!< number of children
-				static size_type children_lim; //!< maximum of children
-						
-				sys::cpoll fds; //!< file descriptor we're listening on
-				DIR * dir_initial; //!< directory from which we have been run
-				socket2dll_map sock2dll; //!< map sockets to dll-s
-				bool set; //!< true if setup was executed
-
-				void mod_load( dll_info & , const char *, const char * );
-
-				void child_accept( int );
-				void children_dump();
-
-				static void wait_run( int );
+				virtual void setup() = 0; //!< Initialize module
+				virtual int child( int ) = 0; //!< Process child requests
 };
 
 /**
  *
  */
-class cforkmaster::fork_error : public std::exception {
-		public:
-				virtual ~fork_error() throw() {}
-				
-				const char * what() const throw();
-};
+cdaemonchild::rd_error::rd_error() 
+	: std::runtime_error((std::string)"read error: "+std::strerror(errno)) {
+}
 
 /**
- * Informations about plug-in
+ *
  */
-struct cforkmaster::dll_info {
-		void * dll;
-		daemon_info * di;
-		int lock;
-};
+cdaemonchild::wr_error::wr_error() 
+	: std::runtime_error((std::string)"write error: "+std::strerror(errno)) {
+}
 
-#endif // ifndef __CFORKMASTER_H
+/**
+ * 
+ */
+cdaemonchild::bad_command::bad_command( const std::string & cmd ) 
+	: std::runtime_error("bad command: "+cmd) {
+}
+#endif // ifndef __CDAEMON_H
