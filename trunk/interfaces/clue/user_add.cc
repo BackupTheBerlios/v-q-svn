@@ -18,10 +18,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cluemain.hpp"
 #include "error2str.hpp"
+#include "cdom_name2id.hpp"
+
+#include <split.hpp>
 
 #include <map>
 
 using namespace std;
+using namespace clue;
 
 static const char *me = NULL;
 
@@ -46,39 +50,27 @@ void usage()
 bool user_add(const string &e, const string &p, uint8_t flags, 
 		::vq::ivq_var & vq, bool quiet, bool eb_chk )
 {
-	typedef std::map< std::string, CORBA::String_var > domain2id_map;
-	static domain2id_map dom2id;
-	
-	string u, d;
-	string::size_type atpos;
+	static cdom_name2id dom_name2id;
 
 	if(!quiet) cout<<e<<": ";
-	if( (atpos=e.find('@')) == string::npos
-		|| (u = e.substr(0,atpos)).empty()
-		|| (d = e.substr(atpos+1)).empty() ) {
+
+	std::deque<std::string> esplit( text::split(e, "@") );
+	if( esplit.size() != 2 ) {
 			if(!quiet)
 					cout<<"invalid e-mail"<<endl;
 			return quiet;
 	}
-	::vq::ivq::error_var ret;
-	
-	domain2id_map::const_iterator did_itr( dom2id.find(d) );
-	if( dom2id.end() == did_itr ) {
-			CORBA::String_var did;
-			ret = vq->dom_id(d.c_str(), did);
-			if( ::vq::ivq::err_no != ret->ec ) {
-					if( ! quiet )
-							cout<<error2str(ret)<<endl;
-					return quiet;
-			}
-			did_itr = dom2id.insert( dom2id.begin(), std::make_pair(d, did) );
-	}
-	
 	::vq::ivq::auth_info ai;
 	ai.flags = flags;
-	ai.id_domain = did_itr->second;
-	ai.login = u.c_str();
+	ai.login = esplit.front().c_str();
 	
+	::vq::ivq::error_var ret(dom_name2id(vq, esplit.back(), ai.id_domain));
+	if( ::vq::ivq::err_no != ret->ec ) {
+			if( ! quiet )
+					cout<<error2str(ret)<<endl;
+			return quiet;
+	}
+
 	ret = vq->user_add(ai, eb_chk ? TRUE : FALSE );
 	if( ::vq::ivq::err_no != ret->ec ) {
 			if(!quiet)

@@ -16,17 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#ifndef __ERROR2STR_HPP
-#define __ERROR2STR_HPP
 
-#include <string>
-
-#include <vq.hpp>
+#include "cdom_name2id.hpp"
 
 namespace clue {
 
-	std::string error2str( vq::ivq::error_var & );
+	cdom_name2id::domain2id_map cdom_name2id::dom2id;
 
-}
-
-#endif // ifndef __ERROR2STR_HPP
+} // namespace clue

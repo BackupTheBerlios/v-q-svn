@@ -20,40 +20,43 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <sstream>
 
-std::string error2str( vq::ivq::error_var & err ) {
-	std::ostringstream os;
-	os<<"#"<<err->ec<<": ";
-	switch( err->ec ) {
-	case ::vq::ivq::err_no: os<<"success"; break;
-	case ::vq::ivq::err_temp: os<<"unknown temporary error"; break;
-	case ::vq::ivq::err_dom_inv: os<<"invalid domain"; break;
-	case ::vq::ivq::err_user_inv: os<<"invalid user"; break;
-	case ::vq::ivq::err_auth: os<<"unknown problem with authorization module"; break;
-	case ::vq::ivq::err_user_conf_tns: os<<"type not supported in user's configuration"; break;
-	case ::vq::ivq::err_open: os<<"open failed"; break;
-	case ::vq::ivq::err_wr: os<<"write failed"; break;
-	case ::vq::ivq::err_rd: os<<"read failed"; break;
-	case ::vq::ivq::err_stat: os<<"stat failed"; break;
-	case ::vq::ivq::err_notdir: os<<"directory required"; break;
-	case ::vq::ivq::err_chmod: os<<"chmod failed"; break;
-	case ::vq::ivq::err_lckd: os<<"locked"; break;
-	case ::vq::ivq::err_ren: os<<"rename failed"; break;
-	case ::vq::ivq::err_chown: os<<"chown failed"; break;
-	case ::vq::ivq::err_over: os<<"over"; break;
-	case ::vq::ivq::err_exec: os<<"exec failed"; break;
-	case ::vq::ivq::err_mkdir: os<<"mkdir failed"; break;
-	case ::vq::ivq::err_exists: os<<"exists"; break;
-	case ::vq::ivq::err_noent: os<<"missing element"; break;
-	case ::vq::ivq::err_unlink: os<<"unlink failed"; break;
-	case ::vq::ivq::err_pass_inv: os<<"invalid password"; break;
-	case ::vq::ivq::err_func_res: os<<"unsupported return value"; break;
-	case ::vq::ivq::err_func_ni: os<<"function not implemented"; break;
+namespace clue {
+
+	std::string error2str( vq::ivq::error_var & err ) {
+		std::ostringstream os;
+		os<<"#"<<err->ec<<": ";
+		switch( err->ec ) {
+		case ::vq::ivq::err_no: os<<"success"; break;
+		case ::vq::ivq::err_temp: os<<"unknown temporary error"; break;
+		case ::vq::ivq::err_dom_inv: os<<"invalid domain"; break;
+		case ::vq::ivq::err_user_inv: os<<"invalid user"; break;
+		case ::vq::ivq::err_auth: os<<"unknown problem with authorization module"; break;
+		case ::vq::ivq::err_user_conf_tns: os<<"type not supported in user's configuration"; break;
+		case ::vq::ivq::err_open: os<<"open failed"; break;
+		case ::vq::ivq::err_wr: os<<"write failed"; break;
+		case ::vq::ivq::err_rd: os<<"read failed"; break;
+		case ::vq::ivq::err_stat: os<<"stat failed"; break;
+		case ::vq::ivq::err_notdir: os<<"directory required"; break;
+		case ::vq::ivq::err_chmod: os<<"chmod failed"; break;
+		case ::vq::ivq::err_lckd: os<<"locked"; break;
+		case ::vq::ivq::err_ren: os<<"rename failed"; break;
+		case ::vq::ivq::err_chown: os<<"chown failed"; break;
+		case ::vq::ivq::err_over: os<<"over"; break;
+		case ::vq::ivq::err_exec: os<<"exec failed"; break;
+		case ::vq::ivq::err_mkdir: os<<"mkdir failed"; break;
+		case ::vq::ivq::err_exists: os<<"exists"; break;
+		case ::vq::ivq::err_noent: os<<"missing element"; break;
+		case ::vq::ivq::err_unlink: os<<"unlink failed"; break;
+		case ::vq::ivq::err_pass_inv: os<<"invalid password"; break;
+		case ::vq::ivq::err_func_res: os<<"unsupported return value"; break;
+		case ::vq::ivq::err_func_ni: os<<"function not implemented"; break;
+		}
+	
+		os<<" in "<<err->file<<" at "<<err->line;
+		if( '\0' != *err->what ) {
+				os<<": "<<err->what;
+		}
+		return os.str();
 	}
 
-	os<<" in "<<err->file<<" at "<<err->line;
-	if( '\0' != *err->what ) {
-			os<<": "<<err->what;
-	}
-	return os.str();
-}
-
+} // namespace clue

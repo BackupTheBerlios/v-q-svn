@@ -16,20 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-#include "cvq.hpp"
-#include "main.hpp"
+#include "error2str.hpp"
+#include "cluemain.hpp"
+#include "cdom_name2id.hpp"
 
-#include <unistd.h>
-
-#include <exception>
-#include <iostream>
-#include <cerrno>
+#include <split.hpp>
 
 using namespace std;
+using namespace clue;
 
 static const char *me = NULL;
-static bool quiet = false;
-static cvq *vq = NULL;
 
 /*
  *
@@ -47,22 +43,31 @@ void usage()
 /*
  *
  */
-bool user_pass(const string &e, const string &p)
+bool user_pass(const string &e, const string &p, 
+		::vq::ivq_var & vq, bool quiet )
 {
-	string u, d;
-	string::size_type atpos;
+	static cdom_name2id dom_name2id;
+
+	std::deque< std::string > esplit(text::split(e, "@"));
 	if(!quiet) cout<<e<<": ";
-	if( (atpos=e.find('@')) == string::npos
-		|| (u = e.substr(0,atpos)).empty()
-		|| (d = e.substr(atpos+1)).empty() ) {
+	if( esplit.size() != 2 ) {
 			if(!quiet)
 					cout<<"invalid e-mail"<<endl;
 			return quiet;
 	}
-	char ret;
-	if((ret=vq->user_pass(u,d,p))) {
+
+	CORBA::String_var did;
+	::vq::ivq::error_var ret(dom_name2id(vq, esplit.back(), did));
+	if( ::vq::ivq::err_no != ret->ec ) {
+			if( ! quiet )
+					cout<<error2str(ret)<<endl;
+			return quiet;
+	}
+	
+	ret = vq->user_pass(did, esplit.front().c_str(), p.c_str());
+	if( ::vq::ivq::err_no != ret->ec ) {
 			if(!quiet)
-					cout<<vq->err_report()<<endl;
+					cout<<error2str(ret)<<endl;
 			return quiet;
 	} else {
 			if(!quiet)
@@ -73,65 +78,57 @@ bool user_pass(const string &e, const string &p)
 /*
  *
  */
-int cppmain(int ac, char **av)
-{
+int cluemain(int ac, char **av, ::vq::ivq_var & vq ) {
 	me = *av;
-	try {
-			int opt;
-			bool sin = false;
-			while( (opt=getopt(ac,av,"sqh")) != -1 ) {
-					switch(opt) {
-					case 's':
-							sin = true;
-							break;
-					case 'q':
-							quiet=true;
-							break;
-					default:		
-					case '?':
-					case 'h':
-							usage();
-							return(1);
-					}
-			}
-			if( ! sin && optind >= ac ) {
+	int opt;
+	bool sin = false, quiet = false;
+	while( (opt=getopt(ac,av,"sqh")) != -1 ) {
+			switch(opt) {
+			case 's':
+					sin = true;
+					break;
+			case 'q':
+					quiet=true;
+					break;
+			default:		
+			case '?':
+			case 'h':
 					usage();
 					return(1);
 			}
-			ac -= optind;
-			av += optind;
-			if( ! sin && ac % 2 ) {
-					usage();
-					return(1);
-			}
+	}
+	if( ! sin && optind >= ac ) {
+			usage();
+			return(1);
+	}
+	ac -= optind;
+	av += optind;
+	if( ! sin && ac % 2 ) {
+			usage();
+			return(1);
+	}
 
-			vq = cvq::alloc();
-
-			if( sin ) {
-					string e,p;
-					do {
-							if( ! quiet ) {
-									cout << "E-mail: ";
-									cout.flush();
-							}
-							if( ! getline(cin,e) ) break;
-							if( ! quiet ) {
-									cout << "Password: ";
-									cout.flush();
-							}
-							if( ! getline(cin,p) ) break;
-							if( user_pass(e,p) ) return 1;
-					} while(cin);
-			} else {
-					if(quiet) ac = 1;
-					for(int i=0; i < ac; i+=2 ) {
-							if( user_pass(av[i], av[i+1]) )
-									return 1;
+	if( sin ) {
+			string e,p;
+			do {
+					if( ! quiet ) {
+							cout << "E-mail: ";
+							cout.flush();
 					}
+					if( ! getline(cin,e) ) break;
+					if( ! quiet ) {
+							cout << "Password: ";
+							cout.flush();
+					}
+					if( ! getline(cin,p) ) break;
+					if( user_pass(e, p, vq, quiet) ) return 1;
+			} while(cin);
+	} else {
+			if(quiet) ac = 1;
+			for(int i=0; i < ac; i+=2 ) {
+					if( user_pass(av[i], av[i+1], vq, quiet) )
+							return 1;
 			}
-	} catch( const exception & e ) {
-			cerr << "exception: " << e.what() << endl;
-			return 1;
 	}
 	return 0;
 }
