@@ -2,11 +2,13 @@
 
 package vqpgsql;
 
-use Pg;
+use DBI;
 
 # Configuration
 
-my $con_conf = "dbname=mail user=mail host=/tmp";
+my $con_conf = "dbname=mail host=/tmp";
+my $con_user = "mail";
+my $con_pass = "mail";
 my $schema = "mail";
 
 # Prototypes
@@ -23,9 +25,12 @@ sub v6_funcs;
 sub v6_tables;
 
 ############
-my $con = Pg::connectdb($con_conf);
-if( $con->status != PGRES_CONNECTION_OK ) {
-	die("Can't connect: ".$con->errorMessage);
+my $con = DBI->connect("dbi:Pg:$con_conf", $con_user, $con_pass);
+if( $con == undef ) {
+	die("Can't connect");
+}
+if( $con->err != PGRES_CONNECTION_OK ) {
+	die("Can't connect: ".$con->errstr);
 }
 
 if($schema ne "") {
@@ -36,8 +41,8 @@ if($schema ne "") {
 plpgsql();
 
 my $ver = version_get();
-
 print "Database version is: $ver\n";
+
 if( $ver < 6 ) {
 	print "Upgrading to 6...\n";
 	v6_vq_info();
@@ -51,16 +56,18 @@ if( $ver < 6 ) {
 #
 sub schema_crt {
 	my $qr = "SELECT '1' FROM pg_catalog.pg_namespace WHERE nspname='$schema'";
-	my $res = $con->exec($qr);
-	if( $res->resultStatus != PGRES_TUPLES_OK ) {
+	my $sth = $con->prepare($qr);
+	$sth->execute;
+	my $res = $sth->fetchall_arrayref;
+	if( $sth->err != PGRES_TUPLES_OK ) {
 		qdie($qr);
 	}
-	if( $res->ntuples == 1 && $res->getvalue(0,0) eq "1" ) {
+	if( @{$res}."" == 1 && ${$res}[0][0] eq "1" ) {
 		return;
 	}
 	$qr = "CREATE SCHEMA $schema";
-	$res = $con->exec($qr);
-	if( $res->resultStatus != PGRES_COMMAND_OK ) {
+	$res = $con->do($qr);
+	if( $con->err != PGRES_COMMAND_OK ) {
 		qdie($qr);
 	}
 }
@@ -69,8 +76,8 @@ sub schema_crt {
 #
 sub schema_set {
 	my $qr = "SET search_path=$schema";
-	my $res = $con->exec($qr);
-	if( $res->resultStatus != PGRES_COMMAND_OK ) {
+	my $res = $con->do($qr);
+	if( $con->err != PGRES_COMMAND_OK ) {
 		qdie($qr);
 	}
 }
@@ -78,7 +85,7 @@ sub schema_set {
 ##
 #
 sub qdie($) {
-	die("Query: $_[0]: ".$con->errorMessage);
+	die("Query: $_[0]: ".$con->errstr);
 }
 
 ##
@@ -86,17 +93,21 @@ sub qdie($) {
 sub version_get {
 	my $qr = "SELECT '1' FROM pg_tables WHERE schemaname='"
 		.($schema eq "" ? "public" : $schema)."' AND tablename='vq_info'";
-	my $res = $con->exec($qr);
-	if( $res->resultStatus != PGRES_TUPLES_OK ) {
+	my $sth = $con->prepare($qr);
+	$sth->execute;
+	my $res = $sth->fetchall_arrayref;
+	if( $con->err != PGRES_TUPLES_OK ) {
 		qdie($qr);
 	}
-	if( $res->ntuples == 1 && $res->getvalue(0,0) eq "1" ) {
+	if( @{$res}."" == 1 && ${$res}[0][0] eq "1" ) {
 		$qr = "SELECT value FROM vq_info WHERE key='version'";
-		$res = $con->exec($qr);
-		if( $res->resultStatus != PGRES_TUPLES_OK ) {
+		$sth = $con->prepare($qr);
+		$sth->execute;
+		$res = $sth->fetchall_arrayref;
+		if( $con->err != PGRES_TUPLES_OK ) {
 			qdie($qr);
 		}
-		return $res->ntuples >= 1 ? int($res->getvalue(0,0)) : 0;
+		return @{$res}."" >= 1 ? int(${$res}[0][0]) : 0;
 	} else {
 		return 0;
 	}
@@ -108,13 +119,13 @@ sub v6_vq_info {
 	my $qr = "CREATE TABLE vq_info "
 		."(key TEXT NOT NULL CHECK (length(key)>1), value TEXT NOT NULL,".
 		"PRIMARY KEY(key))";
-	my $res = $con->exec($qr);
-	if( $res->resultStatus != PGRES_COMMAND_OK ) {
+	my $res = $con->do($qr);
+	if( $con->err != PGRES_COMMAND_OK ) {
 		qdie($qr);
 	}
 	$qr = "INSERT INTO vq_info (key,value) VALUES('version','6')";
-	$res = $con->exec($qr);
-	if( $res->resultStatus != PGRES_COMMAND_OK || $res->cmdTuples != 1 ) {
+	$res = $con->do($qr);
+	if( $con->err != PGRES_COMMAND_OK || $res != 1 ) {
 		qdie($qr);
 	}
 }
@@ -123,11 +134,13 @@ sub v6_vq_info {
 #
 sub plpgsql {
 	my $qr = "SELECT '1' FROM pg_catalog.pg_language WHERE lanname='plpgsql'";
-	my $res = $con->exec($qr);
-	if( $res->resultStatus != PGRES_TUPLES_OK ) {
+	my $sth = $con->prepare($qr);
+	$sth->execute;
+	my $res = $sth->fetchall_arrayref;
+	if( $con->err != PGRES_TUPLES_OK ) {
 		qdie($qr);
 	}
-	if( $res->ntuples == 1 && $res->getvalue(0,0) eq "1" ) {
+	if( @{$res}."" == 1 && ${$res}[0][0] eq "1" ) {
 		return;
 	}
 	die("You must manually enable PL/PgSQL for selected database.\n");
@@ -206,8 +219,8 @@ primary key(id_log)
 ); # funcs
 
 	for( my $i=0; $i < @funcs.""; ++$i ) {
-		my $res = $con->exec($funcs[$i]);
-		if( $res->resultStatus != PGRES_COMMAND_OK ) {
+		my $res = $con->do($funcs[$i]);
+		if( $con->err != PGRES_COMMAND_OK ) {
 			qdie($funcs[$i]);
 		}
 	}
@@ -734,8 +747,8 @@ END;
 );
 
 	for( my $i=0; $i < @funcs.""; ++$i ) {
-		my $res = $con->exec($funcs[$i]);
-		if( $res->resultStatus != PGRES_COMMAND_OK ) {
+		my $res = $con->do($funcs[$i]);
+		if( $con->err != PGRES_COMMAND_OK ) {
 			qdie($funcs[$i]);
 		}
 	}
