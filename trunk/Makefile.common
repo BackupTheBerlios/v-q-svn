@@ -1,4 +1,4 @@
-PREFIX?=/tmp/v-q
+PREFIX?=/usr/local
 INSTALL=install
 
 .PHONY: auto-mkdir
