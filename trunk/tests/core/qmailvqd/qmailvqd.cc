@@ -43,21 +43,21 @@ using namespace boost::unit_test_framework;
  * 
  */
 void et_vq_null_error( const vq::null_error &e ) {
-	BOOST_ERROR("null");
+	BOOST_ERROR("null_error");
 }
 
 /**
  * 
  */
 void et_vq_except( const vq::except &e ) {
-	BOOST_ERROR(e.what);
+	BOOST_ERROR(std::string("ivq::except: ")+static_cast<const char *>(e.what));
 }
 
 /**
  * 
  */
 void et_vq_db_error( const vq::db_error &e ) {
-	BOOST_ERROR(e.what);
+	BOOST_ERROR(std::string("ivq::db_error: ")+static_cast<const char *>(e.what));
 }
 
 /**
@@ -66,7 +66,7 @@ void et_vq_db_error( const vq::db_error &e ) {
 void et_corba_exception( const CORBA::Exception & e ) {
 	std::ostringstream os;
 	e._print(os);
-	BOOST_ERROR(os.str());
+	BOOST_ERROR("corba exception: "+os.str());
 }
 
 /**
@@ -111,46 +111,22 @@ struct vq_test {
 			BOOST_REQUIRE( !CORBA::is_nil(vq) );
 		}
 
-#if 0
 		/**
-		 * Add domain, 
-		 * add users, 
-		 * remove uses, 
-		 * remove domain.
+		 * Try to get id/name of not existing domain.
 		 */
 		void case1() {
-			const char * dom = "case1.pl";
-			const char *users[] = { "s", "asdasd", "vxcvcxvxcvxvcv" };
-			unsigned users_cnt= sizeof(users)/sizeof(*users);
+			const char * dom = "nosuchdomain.pl";
+			const char * did = "234234";
 			
 			CORBA::String_var dom_id;
-			BOOST_CHECK_EQUAL(auth->dom_add(dom, dom_id), vq::iauth::err_no);
+			::vq::ivq::error_var ev(vq->dom_id(dom, dom_id));
+			BOOST_CHECK_EQUAL(ev->ec, ::vq::ivq::err_noent);
 
-			vq::iauth::auth_info ai;
-			ai.id_domain = CORBA::string_dup(dom_id);
-			ai.pass = CORBA::string_dup("pass");
-			ai.dir = CORBA::string_dup("dir");
-
-			for( unsigned i=0; i<users_cnt; ++i ) {
-					ai.login = CORBA::string_dup(users[i]);
-								
-					BOOST_CHECK_EQUAL(auth->user_add(ai, FALSE), 
-						vq::iauth::err_no);
-					BOOST_CHECK(*ai.id_user);
-					BOOST_CHECK(atoi(ai.id_user)>0);
-			}
-
-			CORBA::String_var id_user;
-			for( unsigned i=0; i<users_cnt; ++i ) {
-					BOOST_CHECK_EQUAL(auth->user_id(dom_id, users[i], id_user),
-						vq::iauth::err_no);
-					BOOST_CHECK_EQUAL(auth->user_rm(dom_id, id_user),
-						vq::iauth::err_no);
-			}
-
-			BOOST_CHECK_EQUAL(auth->dom_rm(dom_id), vq::iauth::err_no);
+			CORBA::String_var dom_name;
+			ev = vq->dom_name(did, dom_name);
+			BOOST_CHECK_EQUAL(ev->ec, ::vq::ivq::err_noent);
 		}
-
+#if 0
 		/**
 		 * 1. Adding domain, adding the same domain again (err_exists),
 		 * 2. getting id from domain's name
@@ -484,12 +460,12 @@ struct vq_test_suite : test_suite {
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&vq_test::init, test );
 			add(ts_init);
-#if 0
+
 			test_case * ts_case1 = BOOST_CLASS_TEST_CASE( 
 				&vq_test::case1, test );
 			ts_case1->depends_on(ts_init);
 			add(ts_case1);
-			
+#if 0		
 			test_case * ts_case2 = BOOST_CLASS_TEST_CASE( 
 				&vq_test::case2, test );
 			ts_case2->depends_on(ts_init);

@@ -103,15 +103,20 @@ module vq {
 					/// can't remove
 					err_unlink,
 					/// domain doesn't exist
-					err_dom_nf
+					err_dom_nf,
+					/// invalid password
+					err_pass_inv,
+					/// internal function returned unexpected value
+					err_func_res
 			};
 
 			/// errors
 			struct error {
-					err_code ec;
-					string what;
-					string file;
-					unsigned long line;
+					err_code ec; //!< code
+					string what; //!< description
+					string file; //!< source file
+					unsigned long line; //!< line number
+					boolean auth; //!< is this from authorization db?
 			};
 		/*@}*/
 				

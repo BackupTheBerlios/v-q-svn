@@ -37,15 +37,8 @@ module vq {
 			typedef ivq::email_banned_list email_banned_list;
 			typedef ivq::domain_re_alias domain_re_alias;
 			typedef ivq::domain_re_alias_list domain_re_alias_list;
-
-			enum error {
-				err_no, //!< no errors
-				err_func_res, //!< incorrect return from function
-				err_user_inv, //!< invalid user name
-				err_exists, //!< entry exists
-				err_noent, //!< no such element
-				err_pass_inv //!< invalid password
-			};
+			typedef ivq::err_code err_code;
+			typedef ivq::error error;
 
 		/**
 		 * \defgroup dom Domains manipulation

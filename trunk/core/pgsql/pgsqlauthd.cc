@@ -40,14 +40,14 @@ int cppmain(int ac, char **av) {
 	CORBA::ORB_var orb = CORBA::ORB_init (ac, av);
 	
 	if( ac < 2 ) {
-			cout<<"usage: "<<*av<<" [ORB options] configuration_dir"<<endl;
+			cout<<"usage: "<<*av<<" [ORB options] base_dir"<<endl;
 			return 100;
 	}
 
 	string conf_dir(*(av+1));
-	conf_dir += '/';
+	conf_dir += "/etc/iauth/pgsql/";
 	conf::clnconf pgsql(conf_dir+"pgsql", "dbname=mail password=mail user=mail");
-	conf::clnconf objname(conf_dir+"objname", "vq::iauth");
+	conf::clnconf iauth_name(conf_dir+"iauth_name", "vq::iauth");
 	
 	/*
 	 * Obtain a reference to the RootPOA and its Manager
@@ -85,7 +85,7 @@ int cppmain(int ac, char **av) {
 	 */
 	CosNaming::Name name;
 	name.length (1);
-	name[0].id = CORBA::string_dup (objname.val_str().c_str());
+	name[0].id = CORBA::string_dup (iauth_name.val_str().c_str());
 	name[0].kind = CORBA::string_dup ("");
 
     /*
@@ -94,7 +94,7 @@ int cppmain(int ac, char **av) {
 	 * name "Bank" is already registered, but silently overwrites it (the
 	 * existing reference is probably from an old incarnation of this server).
 	 */
-	cout << "Binding "<<objname.val_str()<<" in the Naming Service ... " << flush;
+	cout << "Binding "<<iauth_name.val_str()<<" in the Naming Service ... " << flush;
 	nc->rebind(name, ref);
 	cout << "done." << endl;
 

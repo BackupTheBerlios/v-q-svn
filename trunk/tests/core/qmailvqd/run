@@ -12,13 +12,20 @@ nsd_pid=$!
 trap "kill $nsd_pid" 0
 sleep 1
 
-echo "starting qmailvqd server ..."
-../../../core/qmailvqd/qmailvqd \
--ORBInitRef NameService=corbaloc::$host:12456/NameService \
-/var/vq &
-server_pid=$!
+echo "starting iauth(pgsqlauthd) server ..."
+../../../core/pgsql/pgsqlauthd \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 1
 
-trap "kill $nsd_pid $server_pid" 0
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+../../../core/qmailvqd/qmailvqd \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
 sleep 1
 
 echo "running client ..."

@@ -54,7 +54,8 @@ namespace POA_vq {
 					typedef ::vq::ivq::string_list_out string_list_out;
 					typedef ::vq::ivq::email_banned_list_out email_banned_list_out;
 
-					cqmailvq( const std::string &, unsigned, unsigned, 
+					cqmailvq( const std::string &, ::vq::iauth_var &,
+						unsigned, unsigned, 
 						mode_t, mode_t, mode_t, 
 						const std::string &, uid_t, gid_t );
 					virtual ~cqmailvq() {}
@@ -80,6 +81,9 @@ namespace POA_vq {
 				    virtual error* eb_ls( email_banned_list_out ebs );
 #endif // if 0
 			protected:
+					static const char tmp_end[]; //!< temporary file extension
+					static const char ud_sup[]; //!< array of supported udot types
+						
 					std::string home; //!< home directory
 					unsigned dom_split;
 					unsigned user_split;
@@ -90,10 +94,7 @@ namespace POA_vq {
 					uid_t uid; //!< user's id.
 					gid_t gid; //!< group's id.
 
-					static const char tmp_end[]; //!< temporary file extension
-					static const char ud_sup[]; //!< array of supported udot types
-						
-					std::auto_ptr< ::vq::iauth > auth; //!< authorization module
+					::vq::iauth_var & auth; //!< authorization module
 	
 					error * assign_ex(const std::string &);
 					error * assign_add(const std::string &);
@@ -141,8 +142,6 @@ namespace POA_vq {
 							std::string & );
 				//@}
 	
-					void assert_auth();
-				
 				/**
 				 * \ingroup udot
 				 */

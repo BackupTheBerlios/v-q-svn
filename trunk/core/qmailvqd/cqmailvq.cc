@@ -22,6 +22,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys.hpp>
 #include <text.hpp>
 
+#include <coss/CosNaming.h>
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -49,11 +51,12 @@ namespace POA_vq {
 	
 	/**
 	 */
-	cqmailvq::cqmailvq( const std::string & h, unsigned s_dom, unsigned s_user,
+	cqmailvq::cqmailvq( const std::string & h, ::vq::iauth_var & auth,
+				unsigned s_dom, unsigned s_user,
 				mode_t fm, mode_t mm, mode_t dm,
 				const std::string & user, uid_t uid, gid_t gid ) 
 			: home(h), dom_split(s_dom), user_split(s_user), 
-			fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), gid(gid) {
+			fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), gid(gid), auth(auth) {
 	}
 	
 	/**
@@ -669,8 +672,6 @@ namespace POA_vq {
 	
 		string dom(text::lower(d)), user(text::lower(u));
 	
-		assert_auth();
-		
 		if( ! qb && ! qf ) {
 				string fn(maildir_path(dom, user)+"maildirquota");
 				if( unlink(fn.c_str()) && errno != ENOENT )
@@ -728,7 +729,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::qt_get(const string &d, const string &u, 
 			quota_type &qb, quota_type & qf) {
-		assert_auth();
 		if( auth->qt_get(text::lower(d), text::lower(u), qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -752,7 +752,6 @@ namespace POA_vq {
 	 * \return ::vq::ivq::err_no on success
 	 */
 	cqmailvq::error * cqmailvq::qt_def_set(const string &d, quota_type qb, quota_type qf ) {
-		assert_auth();
 		if( auth->qt_def_set(text::lower(d), qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -765,7 +764,6 @@ namespace POA_vq {
 	 * \return ::vq::ivq::err_no on success
 	 */
 	cqmailvq::error * cqmailvq::qt_global_def_set(quota_type qb, quota_type qf ) {
-		assert_auth();
 		if( auth->qt_global_def_set(qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -779,7 +777,6 @@ namespace POA_vq {
 	 * \return ::vq::ivq::err_no on success
 	 */
 	cqmailvq::error * cqmailvq::qt_def_get(const string &d, quota_type & qb, quota_type & qf) {
-		assert_auth();
 		if( auth->qt_def_get(text::lower(d), qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -792,7 +789,6 @@ namespace POA_vq {
 	 * \return ::vq::ivq::err_no on success
 	 */
 	cqmailvq::error * cqmailvq::qt_global_def_get(quota_type & qb, quota_type & qf) {
-		assert_auth();
 		if( auth->qt_global_def_get(qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -812,16 +808,6 @@ namespace POA_vq {
 	}
 #endif // if 0
 	
-	/**
-	 * Checks whether auth is initalized, if not try to do that
-	 */
-	void cqmailvq::assert_auth() {
-		/*
-		if(!auth.get())
-				auth.reset(cauth::alloc());
-		*/
-	}
-
 #if 0
 	/**
 	 * Adds mailbox configuration
@@ -832,7 +818,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::udot_add(const string &d, const string &u, const string &e,
 			udot_info & ui ) {
-		assert_auth();
 		string dom(text::lower(d)), user(text::lower(u)), ext(text::lower(e));
 		string df(dotfile(dom, user, ext)), dftmp;
 		string ln(udot_ln(ui));
@@ -862,7 +847,6 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::udot_rm(const string &d, 
 					const string &user, const string &ext,
 					const string & id) {
-		assert_auth();
 		string dom(text::lower(d));
 		udot_info ui;
 		ui.id = id;
@@ -906,7 +890,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::udot_ls(const string &d, const string &u,
 			const string &e, vector<udot_info> & uideq) {
-		assert_auth();
 		string dom(text::lower(d)), user(text::lower(u));
 		if(auth->udot_ls(dom,user,text::lower(e),uideq)) return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -922,7 +905,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::udot_ls(const string &d, const string &u,
 			const string &e, udot_type type, vector<udot_info> & uideq) {
-		assert_auth();
 		if(auth->udot_ls(text::lower(d),text::lower(u),text::lower(e),type,uideq)) 
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -933,7 +915,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::udot_rep(const string &d, const string &u, 
 			const string &e, const udot_info & uin) {
-		assert_auth();
 		string dom(text::lower(d));
 		udot_info uio;
 		uio.id = uin.id;
@@ -980,7 +961,6 @@ namespace POA_vq {
 	 * Get all configuration for domain
 	 */
 	cqmailvq::error * cqmailvq::udot_get(const string &dom, udot_info &ui) {
-		assert_auth();
 		if(auth->udot_get(text::lower(dom), ui))
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -1080,7 +1060,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::udot_has(const string &dom, const string &user, 
 			const string &ext, udot_type type) {
-		assert_auth();
 		if(auth->udot_has(text::lower(dom), text::lower(user), text::lower(ext), type))
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -1125,7 +1104,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::udot_rm(const string &d, const string &u,
 			const string &e, udot_type type) {
-		assert_auth();
 		vector<udot_info> uis;
 		vector<udot_info>::iterator uis_end, uis_cur;
 		if(udot_ls(d, u, e, type, uis)) return(lastret);
@@ -1176,7 +1154,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::udot_type_cnt( const string &d, const string &u, const string &e,
 			udot_type type, size_type &cnt) {
-		assert_auth();
 		if( auth->udot_type_cnt(d,u,e,type,cnt) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report() );
 		return lr(::vq::ivq::err_no, "");
@@ -1254,6 +1231,7 @@ namespace POA_vq {
 		err->what = CORBA::string_dup(what); // string_dup not really needed
 		err->file = CORBA::string_dup(file);
 		err->line = line;
+		err->auth = FALSE;
 		return err.release();
 	}
 

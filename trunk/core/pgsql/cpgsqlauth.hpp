@@ -29,6 +29,7 @@ namespace POA_vq {
 	class cpgsqlauth : public iauth {
 			public:
 					typedef ::vq::iauth::error error;
+					typedef ::vq::iauth::err_code err_code;
 					typedef ::vq::iauth::string_list string_list;
 					typedef ::vq::iauth::string_list_out string_list_out;
 					typedef ::vq::iauth::udot_info udot_info;
@@ -49,48 +50,47 @@ namespace POA_vq {
 					virtual ~cpgsqlauth();
 					
 	
-				    virtual error dom_add( const char* dom, 
+				    virtual error * dom_add( const char* dom, 
 							CORBA::String_out dom_id );
-					virtual error dom_rm( const char* dom );
-				    virtual error dom_id( const char* dom, 
+					virtual error * dom_rm( const char* dom );
+				    virtual error * dom_id( const char* dom, 
 							CORBA::String_out dom_id );
-    				virtual error dom_name( const char* dom_id, 
+    				virtual error * dom_name( const char* dom_id, 
 							CORBA::String_out domain );
 
-					error dra_add( const char* dom_id, const char* rea );
-    				error dra_rm( const char* dom_id, const char* rea );
-    				error dra_rm_by_dom( const char* dom_id );
-    				error dra_ls_by_dom( const char* dom_id, 
+					virtual error * dra_add( const char* dom_id, const char* rea );
+    				virtual error * dra_rm( const char* dom_id, const char* rea );
+    				virtual error * dra_rm_by_dom( const char* dom_id );
+    				virtual error * dra_ls_by_dom( const char* dom_id, 
 							string_list_out rea );
 
-				    virtual error user_add( auth_info & ai,
+				    virtual error * user_add( auth_info & ai,
 							CORBA::Boolean is_banned );
-				    virtual error user_rm( const char* dom, const char* user );
-				    virtual error user_pass( const char* dom, const char* user, 
+				    virtual error * user_rm( const char* dom, const char* user );
+				    virtual error * user_pass( const char* dom, const char* user, 
 							const char* pass );
-					virtual error user_id( const char* dom_id, 
+					virtual error * user_id( const char* dom_id, 
 							const char* login, CORBA::String_out user_id );
-    				virtual error user_name( const char* dom_id, 
+    				virtual error * user_name( const char* dom_id, 
 							const char* uid, CORBA::String_out name );
-					virtual error user_auth( auth_info& ai );
+					virtual error * user_auth( auth_info& ai );
 					
-				    virtual error eb_add( const char * re_domain, 
+				    virtual error * eb_add( const char * re_domain, 
 							const char * re_login );
-    				virtual error eb_rm( const char * re_domain,
+    				virtual error * eb_rm( const char * re_domain,
 							const char * re_login );
-    				virtual error eb_ls( email_banned_list_out ebs );
+    				virtual error * eb_ls( email_banned_list_out ebs );
     
-					virtual error qt_user_get( const char* dom_id, 
+					virtual error * qt_user_get( const char* dom_id, 
 							const char* user_id, 
 							quota_type_out bytes_max, quota_type_out files_max );
-    				virtual error qt_user_set( const char* dom_id, 
+    				virtual error * qt_user_set( const char* dom_id, 
 							const char* user_id, 
 							quota_type bytes_max, quota_type files_max );
-    				virtual error qt_user_def_set( const char* dom_id, 
+    				virtual error * qt_user_def_set( const char* dom_id, 
 							quota_type bytes_max, quota_type files_max );
-    				virtual error qt_user_def_get( const char* dom_id, 
+    				virtual error * qt_user_def_get( const char* dom_id, 
 							quota_type_out bytes_max, quota_type_out files_max );
-
 
 					/*
 				    virtual error udot_add( const char* dom, const char* user, 
@@ -125,6 +125,27 @@ namespace POA_vq {
 					void qt_def_get(const std::string &);
 					void qt_def_set(const std::string &);
 					*/
+				/**
+				 * \defgroup err Errors handling
+				 */
+				/*@{*/
+#define lr(ec, what) lr_wrap(ec, what, __FILE__, __LINE__) //!< return lastret
+					inline error * lr_wrap(err_code, const std::string &, 
+							const char *, CORBA::ULong );
+					error * lr_wrap(err_code, const char *, 
+							const char *, CORBA::ULong );
+				/*@}*/	
+
 	};
+
+	/**
+	 *
+	 */
+	inline cpgsqlauth::error * cpgsqlauth::lr_wrap(err_code ec, 
+			const std::string & what, 
+			const char *file, CORBA::ULong line) {
+		return lr_wrap( ec, what.c_str(), file, line);
+	}
+
 
 } // namespace POA_vq

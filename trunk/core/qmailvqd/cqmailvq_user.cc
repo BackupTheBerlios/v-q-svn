@@ -82,7 +82,6 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::user_add( const auth_info & ai, 
 			CORBA::Boolean is_banned )
 	{
-		assert_auth();
 		string user(lower(ai.login));
 	
 		string domdir(this->home+"/domains/"+split_dom(dom, this->dom_split)+'/'+dom+'/');
@@ -145,8 +144,6 @@ namespace POA_vq {
 		if( ! dom_id || ! user_id ) 
 				throw ::vq::null_error(__FILE__, __LINE__);
 
-		assert_auth();
-	
 		if( auth->user_rm(dom_id, user_id) ) 
 				return lr(::vq::ivq::err_auth, "");
 	
@@ -201,8 +198,6 @@ namespace POA_vq {
 		if(!dom_id || !user_id || !p)
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
-		assert_auth();
-
 		if(auth->user_pass(dom_id, user_id, p))
 				return lr(::vq::ivq::err_auth, "");
 
@@ -215,7 +210,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::user_auth(auth_info & ai)
 	{
-		assert_auth();
 		if( ai.user.empty() )
 				return lr(::vq::ivq::err_user_inv, "it's empty");
 				
@@ -243,7 +237,6 @@ namespace POA_vq {
 	 * \return ::vq::ivq::err_no if user exists
 	 */
 	cqmailvq::error * cqmailvq::user_ex( const string &dom, const string &user ) {
-		assert_auth();
 		return lr(auth->user_ex(dom, user), user+'@'+dom);
 	}
 

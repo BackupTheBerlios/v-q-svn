@@ -8,7 +8,7 @@ all: .depend qmailvqd
 include $(BASE)/Makefile.common
 
 qmailvqd: $(BASE)/load $(BASE)/boost.lib $(BASE)/corba.lib qmailvqd.o
-	$(BASE)/load qmailvqd qmailvqd.o $(LIBS)
+	$(BASE)/load qmailvqd $(LIBS)
 
 ##################
 

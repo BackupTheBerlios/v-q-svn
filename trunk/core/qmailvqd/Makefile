@@ -12,7 +12,7 @@ all: .auto auto/d_namlen.h .depend qmailvqd
 include $(BASE)/Makefile.common
 
 qmailvqd: $(BASE)/load $(BASE)/corba.lib $(OBJS)
-	$(BASE)/load qmailvqd $(OBJS) $(LIBS)
+	$(BASE)/load qmailvqd qmail_files.o cqmailvq_dom.o cqmailvq.o $(LIBS)
 
 auto/d_namlen.h: $(BASE)/compile try/d_namlen.cc d_namlen.h1 d_namlen.h2
 	( ( cd try && $(BASE)/compile d_namlen.cc ) >/dev/null 2>&1 \

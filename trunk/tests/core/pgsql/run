@@ -12,8 +12,9 @@ nsd_pid=$!
 trap "kill $nsd_pid" 0
 sleep 1
 
-echo "starting pgsqlauthd server ..."
-../../../core/pgsql/pgsqlauthd -ORBInitRef NameService=corbaloc::$host:12456/NameService &
+echo "starting iauth(pgsqlauthd) server ..."
+../../../core/pgsql/pgsqlauthd \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 server_pid=$!
 
 trap "kill $nsd_pid $server_pid" 0

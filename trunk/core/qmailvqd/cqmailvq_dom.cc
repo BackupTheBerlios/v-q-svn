@@ -70,7 +70,6 @@ namespace POA_vq {
 	{
 		if( !d ) throw ::vq::null_error(__FILE__, __LINE__);
 
-		assert_auth();
 		string dom(lower(d));
 		auto_ptr<error> ret;
 		
@@ -79,8 +78,7 @@ namespace POA_vq {
 		ret.reset(virt_rm(dom));
 		ret.reset(assign_rm(dom));
 	
-		if(auth->dom_rm(dom.c_str())) 
-			ret.reset(lr(::vq::ivq::err_auth, ""));
+		ret.reset(auth->dom_rm(dom.c_str()));
 	
 		string restart(home+"/bin/qmail_run");
 		char prog[] = { qp_send_restart, '\0' };
@@ -108,7 +106,6 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::dom_add(const char *d)
 	{
 		if( ! d ) throw ::vq::null_error(__FILE__, __LINE__);
-		assert_auth();
 
 		string dom(lower(d));
 		auto_ptr<error> ret;
@@ -117,8 +114,9 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_dom_inv, dom);
 	
 		CORBA::String_var did;
-		if( ::vq::iauth::err_no != auth->dom_add(dom.c_str(), did) ) { 
-				return lr(::vq::ivq::err_auth, ""); 
+		ret.reset(auth->dom_add(dom.c_str(), did));
+		if( ::vq::ivq::err_no != ret->ec ) { 
+				return ret.release();
 		}
 	
 		string dom_add_dir(this->home+"/domains/"
@@ -126,7 +124,7 @@ namespace POA_vq {
 
 		if(!mkdirhier(dom_add_dir.c_str(), 
 			this->dmode, this->uid, this->gid)) {
-				auth->dom_rm(did);
+				delete auth->dom_rm(did);
 				return lr(::vq::ivq::err_mkdir, dom);
 		}
 	
@@ -134,21 +132,21 @@ namespace POA_vq {
 		string dotfile(dom_add_dir+"/.qmail-default");
 		if(!dumpstring( dotfile, (string)"|"+this->home+"/bin/deliver\n") ) {
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(did);
+				delete auth->dom_rm(did);
 				return lr(::vq::ivq::err_wr, dotfile);
 		}
 	
 		ret.reset( virt_add(dom, dom) );
 		if( ret->ec != ::vq::ivq::err_no ) {
 				rmdirrec(dom_add_dir);
-				auth->dom_rm(did);
+				delete auth->dom_rm(did);
 				return ret.release();
 		}
 		
 		ret.reset( locals_rm(dom) );
 		if( ::vq::ivq::err_no != ret->ec ) {
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(did);
+				delete auth->dom_rm(did);
 				delete virt_rm(dom);
 				return ret.release(); 
 		}
@@ -161,14 +159,14 @@ namespace POA_vq {
 				if( ret->ec == ::vq::ivq::err_no) break;
 		default:
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(did);
+				delete auth->dom_rm(did);
 				delete virt_rm(dom);
 				return ret.release(); 
 		}
 		ret.reset(assign_add(dom));
 		if( ret->ec != ::vq::ivq::err_no ) {
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(did);
+				delete auth->dom_rm(did);
 				delete virt_rm(dom);
 				return ret.release();
 		}
@@ -183,7 +181,7 @@ namespace POA_vq {
 		int rr = run(args);
 		if( ! WIFEXITED(rr) || WEXITSTATUS(rr) ) {
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(did);
+				delete auth->dom_rm(did);
 				delete virt_rm(dom);
 				return lr(::vq::ivq::err_temp, "wrong exit value");
 		}
@@ -239,7 +237,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error cqmailvq::dom_ip_add(const char *d, const char *i)
 	{
-		assert_auth();
 		if(auth->dom_ip_add(lower(d).c_str(),lower(i).c_str()))
 				return lr(::vq::ivq::err_auth, auth->err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -253,7 +250,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error cqmailvq::dom_ip_rm(const char *d, const char *i)
 	{
-		assert_auth();
 		if(auth->dom_ip_rm(lower(d).c_str(),lower(i).c_str()))
 				return lr(::vq::ivq::err_auth, auth->err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -266,7 +262,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error cqmailvq::dom_ip_rm_all(const char *d)
 	{
-		assert_auth();
 		if(auth->dom_ip_rm_all(lower(d).c_str()))
 				return lr(::vq::ivq::err_auth, auth->err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -280,7 +275,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error cqmailvq::dom_ip_ls(const char *d, vector<string> &ips)
 	{
-		assert_auth();
 		if(auth->dom_ip_ls(lower(d).c_str(),ips))
 				return lr(::vq::ivq::err_auth, auth->err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -293,7 +287,6 @@ namespace POA_vq {
 	 */
 	cqmailvq::error cqmailvq::dom_ip_ls_dom(vector<string> &doms)
 	{
-		assert_auth();
 		if(auth->dom_ip_ls_dom(doms.c_str()))
 				return lr(::vq::ivq::err_auth, auth->err_report());
 		return lr(::vq::ivq::err_no, "");
@@ -341,8 +334,9 @@ namespace POA_vq {
 	cqmailvq::error* cqmailvq::dom_id( const char* dom, 
 			CORBA::String_out dom_id ) {
 		if( ! dom )	throw ::vq::null_error(__FILE__, __LINE__);
-		if( auth->dom_id(dom, dom_id) != ::vq::iauth::err_no )
-				return lr(::vq::ivq::err_auth, "");
+		auto_ptr<error> ret(auth->dom_id(dom, dom_id)); 
+		if( ret->ec != ::vq::ivq::err_no )
+				return ret.release();
 		return lr(::vq::ivq::err_no, "");
 	}
 
@@ -352,8 +346,9 @@ namespace POA_vq {
 	cqmailvq::error* cqmailvq::dom_name( const char* dom_id, 
 			CORBA::String_out dom_name ) {
 		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
-		if( auth->dom_name(dom_id, dom_name) != ::vq::iauth::err_no )
-				return lr(::vq::ivq::err_auth, "");
+		auto_ptr<error> ret(auth->dom_name(dom_id, dom_name));
+		if( ret->ec != ::vq::ivq::err_no )
+				return ret.release();
 		return lr(::vq::ivq::err_no, "");
 	}
 
