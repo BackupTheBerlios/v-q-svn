@@ -18,9 +18,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cqmailvq.hpp"
 
-#include "conf_home.hpp"
 #include "vq_conf.hpp"
-#include "auto/d_namlen.h"
 #include "qmail_files.hpp"
 
 #include <sys.hpp>
@@ -53,8 +51,7 @@ namespace POA_vq {
 	/**
 	 */
 	cqmailvq::cqmailvq( const std::string & h, unsigned s_dom ) 
-			: home(h), dom_split(s_dom), 
-			lr_errno(0), lastret(::vq::ivq::err_no), lastret_blkd(false) {
+			: home(h), dom_split(s_dom) {
 	}
 	
 	/**
@@ -75,9 +72,9 @@ namespace POA_vq {
 	 * 
 	 * \return error code, 0 on success, or value of ex if entry was found.
 	 */
-	cqmailvq::error cqmailvq::file_add(const string &fn, mode_t mode, 
+	cqmailvq::error * cqmailvq::file_add(const string &fn, mode_t mode, 
 			const string &eof_mark, const string &item_mark, 
-			bool item_whole, const string &item_add, cqmailvq::error ex, string &fntmp) {
+			bool item_whole, const string &item_add, string &fntmp) {
 	
 		string fnlck(fn+".lock");
 		opfstream l(fnlck.c_str());
@@ -104,7 +101,7 @@ namespace POA_vq {
 							&& ln.substr(0,item_mark.length())==item_mark)
 							|| (item_whole && ln == item_mark) ) {
 								unlink(fntmp.c_str());
-								return lr(ex, fn);
+								return lr(::vq::ivq::err_exists, fn);
 						}
 						tmp << ln << endl;
 				}
@@ -148,7 +145,7 @@ namespace POA_vq {
 	
 		switch((pid=vfork())) {
 		case -1: 
-				return lr(::vq::ivq::err_temp,"fork failed");
+				return -1;
 		case 0: 
 				execv( *args, args );
 				_exit(111);
@@ -163,16 +160,16 @@ namespace POA_vq {
 	 * \param dom name
 	 * \return 0 on success
 	 */
-	cqmailvq::error cqmailvq::assign_add( const string &dom )
+	cqmailvq::error * cqmailvq::assign_add( const string &dom )
 	{   
 		ostringstream domln;
 		domln << '+'<< dom << "-:" << ac_vq_user.val_str() << ':' 
-			<< ac_vq_uid.val_str() << ':' << ac_vq_gid.val_str() << ':'
-			<< conf_home << "/domains/" << text::split_dom(dom)
+			<< geteuid() << ':' << getegid() << ':'
+			<< home << "/domains/" << text::split_dom(dom, this->dom_split)
 			<< '/' << dom << ":-::";
 		
 		string ln(domln.str());
-		string prog(conf_home+"/bin/qmail_assign_add");
+		string prog(home+"/bin/qmail_assign_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -196,9 +193,9 @@ namespace POA_vq {
 	 * Checks whether domain is in assign, if it's not returns 0, 
 	 * if it is returns ::vq::ivq::err_dom_ex, on errors returns something else
 	 */
-	cqmailvq::error cqmailvq::assign_ex( const string &dom )
+	cqmailvq::error * cqmailvq::assign_ex( const string &dom )
 	{
-		string prog(conf_home+"/bin/qmail_assign_ex");
+		string prog(home+"/bin/qmail_assign_ex");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -222,16 +219,16 @@ namespace POA_vq {
 	 * \param dom domain
 	 * \return 0 on success
 	 */
-	cqmailvq::error cqmailvq::assign_rm( const string &dom )
+	cqmailvq::error * cqmailvq::assign_rm( const string &dom )
 	{   
 		ostringstream domln;
 		domln << '+'<< dom << "-:" << ac_vq_user.val_str() << ':' 
-			<< ac_vq_uid.val_str() << ':' << ac_vq_gid.val_str() << ':'
-			<< conf_home << "/domains/" << text::split_dom(dom)
+			<< geteuid() << ':' << getegid() << ':'
+			<< home << "/domains/" << text::split_dom(dom, this->dom_split)
 			<< '/' << dom << ":-::";
 		
 		string ln(domln.str());
-		string prog(conf_home+"/bin/qmail_assign_rm");
+		string prog(home+"/bin/qmail_assign_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(ln.c_str()),
@@ -253,9 +250,9 @@ namespace POA_vq {
 	 * (name in tmpfs.rcpt_add) which you should rename to rcpthosts on success,
 	 * if morercpthosts is changed rcpthosts is set to "", tmpfs.morercpt_add is set
 	 */
-	cqmailvq::error cqmailvq::rcpt_add(const string &dom)
+	cqmailvq::error * cqmailvq::rcpt_add(const string &dom)
 	{
-		string prog(conf_home+"/bin/qmail_rcpthosts_add");
+		string prog(home+"/bin/qmail_rcpthosts_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -278,10 +275,10 @@ namespace POA_vq {
 	 * Remove host to rcpthosts, it creates temp. file 
 	 * (name in tmpfs.rcpt_rm) which you should rename to rcpthosts on success
 	 */
-	cqmailvq::error cqmailvq::rcpt_rm(const string &dom)
+	cqmailvq::error * cqmailvq::rcpt_rm(const string &dom)
 	{
 		char file[] = { qf_rcpthosts, '\0' };
-		string prog(conf_home+"/bin/qmail_file_rm");
+		string prog(home+"/bin/qmail_file_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				file,
@@ -303,10 +300,10 @@ namespace POA_vq {
 	 * Removes domain from locals, sets tmpfs.locals_rm to
 	 * name of created file, on success you have to rename it to locals
 	 */
-	cqmailvq::error cqmailvq::locals_rm(const string &dom)
+	cqmailvq::error * cqmailvq::locals_rm(const string &dom)
 	{
 		char file[] = { qf_locals, '\0' };
-		string prog(conf_home+"/bin/qmail_file_rm");
+		string prog(home+"/bin/qmail_file_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				file,
@@ -332,7 +329,7 @@ namespace POA_vq {
 	 * \param fntmp temporary file name
 	 * \return 0 if success
 	 */
-	cqmailvq::error cqmailvq::file_rm( const std::string & fn, const std::string & item,
+	cqmailvq::error * cqmailvq::file_rm( const std::string & fn, const std::string & item,
 			std::string & fntmp ) {
 	
 		fntmp = fn+sys::uniq();
@@ -382,10 +379,10 @@ namespace POA_vq {
 	 * Adds domain to virtualdomains, it creates temp. file (name in
 	 * tmpfs.virt_add) which should be renamed to virtualdomains on success
 	 */
-	cqmailvq::error cqmailvq::virt_add(const string &dom,const string &al)
+	cqmailvq::error * cqmailvq::virt_add(const string &dom,const string &al)
 	{
 		string ln(dom+':'+al);
-		string prog(conf_home+"/bin/qmail_virtualdomains_add");
+		string prog(home+"/bin/qmail_virtualdomains_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -411,9 +408,9 @@ namespace POA_vq {
 	 * check whether alias is in users/assign, if it is it means it's not an
 	 * alias).
 	 */
-	cqmailvq::error cqmailvq::virt_rm(const string &ali)
+	cqmailvq::error * cqmailvq::virt_rm(const string &ali)
 	{
-		string prog(conf_home+"/bin/qmail_virtualdomains_rm");
+		string prog(home+"/bin/qmail_virtualdomains_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(ali.c_str()),
@@ -434,9 +431,9 @@ namespace POA_vq {
 	 * Adds domain to morercpthosts, creates temp. file which should
 	 * be renamed to morercpthosts, you should also run morercpt_comp.
 	 */
-	cqmailvq::error cqmailvq::morercpt_add(const string &dom)
+	cqmailvq::error * cqmailvq::morercpt_add(const string &dom)
 	{
-		string prog(conf_home+"/bin/qmail_mrh_add");
+		string prog(home+"/bin/qmail_mrh_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -462,7 +459,7 @@ namespace POA_vq {
 	 * \param beg_at if true add line at begining
 	 * \return ::vq::ivq::err_no if success
 	 */
-	cqmailvq::error cqmailvq::file_add( const string & fn, const string &item,
+	cqmailvq::error * cqmailvq::file_add( const string & fn, const string &item,
 			string & fntmp, bool beg_at ) {
 	
 		fntmp = fn+sys::uniq();
@@ -526,7 +523,7 @@ namespace POA_vq {
 	 * \param fntmp temp. file's name
 	 * \return ::vq::ivq::err_no if success
 	 */
-	cqmailvq::error cqmailvq::file_first_rep( const string & fn, const string &item,
+	cqmailvq::error * cqmailvq::file_first_rep( const string & fn, const string &item,
 			string & fntmp ) {
 	
 		fntmp = fn+sys::uniq();
@@ -590,9 +587,9 @@ namespace POA_vq {
 	 * Adds domain to morercpthosts, creates temp. file which should
 	 * be renamed to morercpthosts, you should also run morercpt_comp.
 	 */
-	cqmailvq::error cqmailvq::morercpt_rm(const string &dom)
+	cqmailvq::error * cqmailvq::morercpt_rm(const string &dom)
 	{
-		string prog(conf_home+"/bin/qmail_mrh_rm");
+		string prog(home+"/bin/qmail_mrh_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -614,24 +611,27 @@ namespace POA_vq {
 	 * \param d directory for maildir (new,cur,tmp will be created as subdirectories of it)
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::maildir_make(const string & d)
+	cqmailvq::error * cqmailvq::maildir_make(const string & d)
 	{
+		int uid = geteuid();
+		int gid = getegid();
+
 		if( mkdir(d.c_str(), ac_vq_mode.val_int() )
-			|| chown(d.c_str(), ac_vq_uid.val_int(), ac_vq_gid.val_int())) 
-				return ::vq::ivq::err_temp;
+			|| chown(d.c_str(), uid, gid)) 
+				return lr(::vq::ivq::err_temp, d.c_str());
 		string dir = d+"/new"; 
 		if( mkdir(dir.c_str(), ac_vq_mode.val_int() ) 
-			|| chown(dir.c_str(), ac_vq_uid.val_int(), ac_vq_gid.val_int())) 
-				return ::vq::ivq::err_temp;
+			|| chown(dir.c_str(), uid, gid)) 
+				return lr(::vq::ivq::err_temp, dir);
 		dir = d+"/cur";
 		if( mkdir(dir.c_str(), ac_vq_mode.val_int() ) 
-			|| chown(dir.c_str(), ac_vq_uid.val_int(), ac_vq_gid.val_int())) 
-				return ::vq::ivq::err_temp;
+			|| chown(dir.c_str(), uid, gid)) 
+				return lr(::vq::ivq::err_temp, dir);
 		dir = d+"/tmp";
 		if( mkdir(dir.c_str(), ac_vq_mode.val_int() ) 
-			|| chown(dir.c_str(), ac_vq_uid.val_int(), ac_vq_gid.val_int())) 
-				return ::vq::ivq::err_temp;
-		return ::vq::ivq::err_no;
+			|| chown(dir.c_str(), uid, gid)) 
+				return lr(::vq::ivq::err_temp, dir);
+		return lr(::vq::ivq::err_no, dir);
 	}
 	
 	/**
@@ -640,7 +640,7 @@ namespace POA_vq {
 	 */
 	string cqmailvq::maildir_path(const string &d, const string &u) {
 		string dom(text::lower(d)), user(text::lower(u));
-		return conf_home+"/domains/"+text::split_dom(dom)+'/'+dom
+		return home+"/domains/"+text::split_dom(dom, this->dom_split)+'/'+dom
 				+'/'+text::split_user(user)+'/'+user+"/Maildir/";
 	}
 	
@@ -650,7 +650,7 @@ namespace POA_vq {
 	 * \param u user
 	 * \param c value added to current usage
 	 */
-	cqmailvq::error cqmailvq::qt_cur_set(const string&d, const string &u, int32_t c) {
+	cqmailvq::error * cqmailvq::qt_cur_set(const string&d, const string &u, int32_t c) {
 	#warning there is nothing here
 			return ::vq::ivq::err_no;
 	//		return qtf_cur_set(qtfile(d,u), c);
@@ -664,7 +664,7 @@ namespace POA_vq {
 	 * \param qf files limit
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::qt_set(const string &d, const string &u, 
+	cqmailvq::error * cqmailvq::qt_set(const string &d, const string &u, 
 			quota_type qb, quota_type qf ) {
 	
 		string dom(text::lower(d)), user(text::lower(u));
@@ -726,7 +726,7 @@ namespace POA_vq {
 	 * \param qb bytes limit
 	 * \param qf files limit
 	 */
-	cqmailvq::error cqmailvq::qt_get(const string &d, const string &u, 
+	cqmailvq::error * cqmailvq::qt_get(const string &d, const string &u, 
 			quota_type &qb, quota_type & qf) {
 		assert_auth();
 		if( auth->qt_get(text::lower(d), text::lower(u), qb, qf) )
@@ -738,7 +738,7 @@ namespace POA_vq {
 	 * Checks whether user is over quota
 	 * \see cqmailvq::qtf_over
 	 */
-	cqmailvq::error cqmailvq::qt_over(const string &d, const string &u) {
+	cqmailvq::error * cqmailvq::qt_over(const string &d, const string &u) {
 	#warning empty function		
 	//	return qtf_over(qtfile(d,u));
 		return ::vq::ivq::err_no;
@@ -751,7 +751,7 @@ namespace POA_vq {
 	 * \param qf files limit
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::qt_def_set(const string &d, quota_type qb, quota_type qf ) {
+	cqmailvq::error * cqmailvq::qt_def_set(const string &d, quota_type qb, quota_type qf ) {
 		assert_auth();
 		if( auth->qt_def_set(text::lower(d), qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
@@ -764,7 +764,7 @@ namespace POA_vq {
 	 * \param qf files limit
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::qt_global_def_set(quota_type qb, quota_type qf ) {
+	cqmailvq::error * cqmailvq::qt_global_def_set(quota_type qb, quota_type qf ) {
 		assert_auth();
 		if( auth->qt_global_def_set(qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
@@ -778,7 +778,7 @@ namespace POA_vq {
 	 * \param qf files limit
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::qt_def_get(const string &d, quota_type & qb, quota_type & qf) {
+	cqmailvq::error * cqmailvq::qt_def_get(const string &d, quota_type & qb, quota_type & qf) {
 		assert_auth();
 		if( auth->qt_def_get(text::lower(d), qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
@@ -791,7 +791,7 @@ namespace POA_vq {
 	 * \param qf files limit
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::qt_global_def_get(quota_type & qb, quota_type & qf) {
+	cqmailvq::error * cqmailvq::qt_global_def_get(quota_type & qb, quota_type & qf) {
 		assert_auth();
 		if( auth->qt_global_def_get(qb, qf) )
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
@@ -801,10 +801,10 @@ namespace POA_vq {
 	/**
 	 * set user's quota from default domain's quota
 	 */
-	cqmailvq::error cqmailvq::qt_def_cp(const string &d, const string &u) {
+	cqmailvq::error * cqmailvq::qt_def_cp(const string &d, const string &u) {
 	#warning empty function
 		return ::vq::ivq::err_no;
-	/*	cqmailvq::error ret;
+	/*	cqmailvq::error * ret;
 		quota_type qc, qm;
 		ret = qtf_get(qtfile_def(d), qm, qc);
 		if( ret ) return lr(ret, "");
@@ -826,7 +826,7 @@ namespace POA_vq {
 	 * \param e address's extension
 	 * \param ui configuration
 	 */
-	cqmailvq::error cqmailvq::udot_add(const string &d, const string &u, const string &e,
+	cqmailvq::error * cqmailvq::udot_add(const string &d, const string &u, const string &e,
 			udot_info & ui ) {
 		assert_auth();
 		string dom(text::lower(d)), user(text::lower(u)), ext(text::lower(e));
@@ -855,7 +855,7 @@ namespace POA_vq {
 	 * \param ext address's extention
 	 * \param id entry's id.
 	 */
-	cqmailvq::error cqmailvq::udot_rm(const string &d, 
+	cqmailvq::error * cqmailvq::udot_rm(const string &d, 
 					const string &user, const string &ext,
 					const string & id) {
 		assert_auth();
@@ -900,7 +900,7 @@ namespace POA_vq {
 	 * \param e extension
 	 * \param uideq information read from database
 	 */
-	cqmailvq::error cqmailvq::udot_ls(const string &d, const string &u,
+	cqmailvq::error * cqmailvq::udot_ls(const string &d, const string &u,
 			const string &e, vector<udot_info> & uideq) {
 		assert_auth();
 		string dom(text::lower(d)), user(text::lower(u));
@@ -916,7 +916,7 @@ namespace POA_vq {
 	 * \param uideq information read from database
 	 * \param type type of entries
 	 */
-	cqmailvq::error cqmailvq::udot_ls(const string &d, const string &u,
+	cqmailvq::error * cqmailvq::udot_ls(const string &d, const string &u,
 			const string &e, udot_type type, vector<udot_info> & uideq) {
 		assert_auth();
 		if(auth->udot_ls(text::lower(d),text::lower(u),text::lower(e),type,uideq)) 
@@ -927,7 +927,7 @@ namespace POA_vq {
 	/**
 	 * Changes entry
 	 */
-	cqmailvq::error cqmailvq::udot_rep(const string &d, const string &u, 
+	cqmailvq::error * cqmailvq::udot_rep(const string &d, const string &u, 
 			const string &e, const udot_info & uin) {
 		assert_auth();
 		string dom(text::lower(d));
@@ -975,7 +975,7 @@ namespace POA_vq {
 	/**
 	 * Get all configuration for domain
 	 */
-	cqmailvq::error cqmailvq::udot_get(const string &dom, udot_info &ui) {
+	cqmailvq::error * cqmailvq::udot_get(const string &dom, udot_info &ui) {
 		assert_auth();
 		if(auth->udot_get(text::lower(dom), ui))
 				return lr(::vq::ivq::err_auth, auth->::vq::ivq::err_report());
@@ -992,9 +992,9 @@ namespace POA_vq {
 		string user(u), ext(e);
 		string dotfile;
 		dotfile.reserve(2000);
-		dotfile.append(conf_home);
+		dotfile.append(home);
 		dotfile.append("/domains/");
-		dotfile.append(text::split_dom(dom));
+		dotfile.append(text::split_dom(dom, this->dom_split));
 		dotfile.append("/", 1);
 		dotfile.append(dom);
 		dotfile.append("/", 1);
@@ -1012,7 +1012,7 @@ namespace POA_vq {
 	/**
 	 * \return 0 if type is not supported
 	 */
-	cqmailvq::error cqmailvq::udot_sup_is(udot_type t) {
+	cqmailvq::error * cqmailvq::udot_sup_is(udot_type t) {
 		unsigned ud_supl = sizeof(ud_supl);
 		if(!ud_supl) return 0;
 		ud_supl--;
@@ -1037,7 +1037,7 @@ namespace POA_vq {
 				break;
 		case autoresp:
 				ret = "|";
-				ret += conf_home+"/bin/autoresp ";
+				ret += home+"/bin/autoresp ";
 				tmp1 = hex_from(ui.val);
 	
 				pos = tmp1.find('\0');
@@ -1050,14 +1050,14 @@ namespace POA_vq {
 				pos1 = tmp1.find('\0', ++pos);
 				tmp = tmp1.substr(pos, pos1 - pos);
 				ret += ' ';
-				ret += to_hex((cqmailvq::error *) tmp.data(), tmp.length());
+				ret += to_hex((cqmailvq::error * *) tmp.data(), tmp.length());
 				
 				if( pos1 != string::npos 
 					&& (pos1 = tmp1.find('\0', (pos=pos1+1))) != string::npos ) {
 						tmp = tmp1.substr(pos, pos1-pos);
 						if( ! tmp.empty() ) {
 								ret+=' ';
-								ret+=to_hex((cqmailvq::error *) tmp.data(), tmp.length());
+								ret+=to_hex((cqmailvq::error * *) tmp.data(), tmp.length());
 						}
 				}
 				break;
@@ -1074,7 +1074,7 @@ namespace POA_vq {
 	 * \param ext extension
 	 * \param type type to find
 	 */
-	cqmailvq::error cqmailvq::udot_has(const string &dom, const string &user, 
+	cqmailvq::error * cqmailvq::udot_has(const string &dom, const string &user, 
 			const string &ext, udot_type type) {
 		assert_auth();
 		if(auth->udot_has(text::lower(dom), text::lower(user), text::lower(ext), type))
@@ -1085,7 +1085,7 @@ namespace POA_vq {
 	/**
 	 * Add to dot-qmail default entries
 	 */
-	cqmailvq::error cqmailvq::udot_add_md_def(const string &d, const string &u,
+	cqmailvq::error * cqmailvq::udot_add_md_def(const string &d, const string &u,
 			const string &e) {
 		udot_info ui;
 		ui.type = maildir;
@@ -1096,7 +1096,7 @@ namespace POA_vq {
 	/**
 	 * creates temporary file, chown(vq), chmod(vq_mode)
 	 */
-	cqmailvq::error cqmailvq::tmp_crt(const string &fn, opfstream & out, string &fnout) {
+	cqmailvq::error * cqmailvq::tmp_crt(const string &fn, opfstream & out, string &fnout) {
 		ostringstream pid;
 		pid<<getpid();
 		
@@ -1105,7 +1105,7 @@ namespace POA_vq {
 		out.open(fnout.c_str(), ios::trunc);
 		if(!out) return lr(::vq::ivq::err_open, fnout);
 	
-		if( fchown(out.rdbuf()->fd(), ac_vq_uid.val_int(), ac_vq_gid.val_int()) )
+		if( fchown(out.rdbuf()->fd(), geteuid(), getegid()) )
 				return lr(::vq::ivq::err_chown, fnout);
 		if( fchmod(out.rdbuf()->fd(), ac_vq_fmode.val_int() ) )
 				return lr(::vq::ivq::err_chmod, fnout);
@@ -1119,7 +1119,7 @@ namespace POA_vq {
 	 * \param e extension
 	 * \param type delete this type
 	 */
-	cqmailvq::error cqmailvq::udot_rm(const string &d, const string &u,
+	cqmailvq::error * cqmailvq::udot_rm(const string &d, const string &u,
 			const string &e, udot_type type) {
 		assert_auth();
 		vector<udot_info> uis;
@@ -1170,7 +1170,7 @@ namespace POA_vq {
 	 * \param type
 	 * \param cnt number of entries found
 	 */
-	cqmailvq::error cqmailvq::udot_type_cnt( const string &d, const string &u, const string &e,
+	cqmailvq::error * cqmailvq::udot_type_cnt( const string &d, const string &u, const string &e,
 			udot_type type, size_type &cnt) {
 		assert_auth();
 		if( auth->udot_type_cnt(d,u,e,type,cnt) )
@@ -1296,7 +1296,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cqmailvq::error cqmailvq::lr( error ret, const std::string & msg ) { 
+	cqmailvq::error * cqmailvq::lr( error ret, const std::string & msg ) { 
 			if( ret != ::vq::ivq::err_no && ret != lastret && ! lastret_blkd ) {
 					lastret = ret;
 					lr_info = msg;
@@ -1327,7 +1327,7 @@ namespace POA_vq {
 	 * \param files quota_value, if not present will be set to 0
 	 * \return ::vq::ivq::err_no if values were correct
 	 */
-	cqmailvq::error cqmailvq::qt_parse( const string & str, 
+	cqmailvq::error * cqmailvq::qt_parse( const string & str, 
 			quota_value & bytes, quota_value & files ) {
 		
 		bytes = files = 0;
@@ -1357,4 +1357,18 @@ namespace POA_vq {
 		
 		return is.eof() ? lr(::vq::ivq::err_no,"") : lr(::vq::ivq::err_temp,"Invalid quota");
 	}
+
+	/**
+	 *
+	 */
+	cqmailvq::error * cqmailvq::lr_wrap(err_code ec, const char *what,
+			const char * file, CORBA::ULong line ) {
+		error * err = new error;
+		err->ec = ec;
+		err->what = CORBA::string_dup(what); // string_dup not really needed
+		err->file = CORBA::string_dup(file);
+		err->line = line;
+		return err;
+	}
+
 } // namespace vq

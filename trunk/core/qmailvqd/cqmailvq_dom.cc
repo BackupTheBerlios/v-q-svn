@@ -294,7 +294,7 @@ namespace POA_vq {
 	 * Lock deliveries to specified domain
 	 * \return 0 on success
 	 */
-	cqmailvq::error cqmailvq::dom_del_lock( const std::string & dom ) {
+	cqmailvq::error * cqmailvq::dom_del_lock( const std::string & dom ) {
 		struct stat st;
 		if(stat(dom.c_str(), &st)) return lr(::vq::ivq::err_stat, dom);
 		if(! S_ISDIR(st.st_mode)) return lr(::vq::ivq::err_notdir, dom);
@@ -307,7 +307,7 @@ namespace POA_vq {
 	 * \brief unlock delivieries to specified domain
 	 * \return 0 on success
 	 */
-	cqmailvq::error cqmailvq::dom_del_unlock( const std::string & dom ) {
+	cqmailvq::error * cqmailvq::dom_del_unlock( const std::string & dom ) {
 		struct stat st;
 		if(stat(dom.c_str(), &st)) return lr(::vq::ivq::err_stat, dom);
 		if(! S_ISDIR(st.st_mode)) return lr(::vq::ivq::err_notdir, dom);
