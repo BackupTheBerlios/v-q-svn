@@ -313,42 +313,57 @@ make >&amp; out
 				allow these programs to change qmail's configuration.
 			</para>
 		</section>
-	</section>
-	
-<!--
-	<sec tit="Using PostgreSQL as a database server">
-		<ol>
-			<li>
-				Install <a href="http://www.postgresql.org">PostgreSQL</a>.<br/>
-				I try to keep using the most current stable version.
-				I don't support older versions. Install also libpqxx, use
-				newest stable version.
-			</li>
-			<li>
-				Create user, default is &quot;mail&quot;.
-			</li>
-			<li>
-				Create database, default is &quot;mail&quot;. It's adviced
-				to set encoding to UTF-8 (programs in contrib relay on this
-				setting).
-			</li>
-			<li>
-				Go to the doc/pgsql directory. There's list of things
-				you need to do. It also contains SQL files that are
-				used to create basic database structure.
-			</li>
-		</ol>
-	</sec>
 
-	<sec tit="Programs in contrib">
-		<p>
-			I think that after installing vq you'll be able to install the
-			rest of programs. There may be problems with hosting and
-			freemail modules. They require to add some specific tables to database.
-			Run some daemons. I assume that senior administrators will
-			handle this. If you are interested in developing/using them
-			on your site you can contact me, I'll try to help.
-		</p>
-	</sec>
--->
+		<section>
+			<title>Special steps for PostgreSQL</title>
+
+			<para>
+				First you need to create user for v-q. Default
+				user is &quot;mail&quot;, but you can use any name. 
+				To create user you can use following command:
+<screen>
+<userinput>
+createuser -A -D -P mail
+</userinput>
+</screen>
+			</para>
+
+			<para>
+				Then you need to create a database for v-q. Default
+				name is &quot;mail&quot;. But you can use any name.
+<screen>
+<userinput>
+createdb -E utf-8 -O mail mail
+</userinput>
+</screen>
+			</para>
+
+			<para>
+				To create objects in a database you can use PERL script
+				<application>install.pgsql</application>. This
+				document doesn't desribe how to manually create them.
+				If you don't want to use this script check it's
+				source to see what needs to be created.
+
+				<note>
+					<para>
+						Before running this script check whether
+						it suits you needs (for example schema name).
+					</para>
+				</note>
+			</para>
+		</section>
+
+		<section>
+			<title>What if I have problems?</title>
+
+			<para>
+				If you have problems installing v-q check
+				<ulink url="http://v-q.foo-baz.com">home page</ulink>,
+				check also 
+				<ulink url="http://sf.net/projects/v-q">v-q's page on SourceForge</ulink>.
+				There you will find mailing list, forums, etc.
+			</para>
+		</section>
+	</section>
 </chapter>
