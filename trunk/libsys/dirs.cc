@@ -91,33 +91,33 @@ namespace sys {
 	 */
 	bool rmdirrec( const string & n )
 	{
-			DIR *d = opendir(n.c_str());
-			if( ! d ) {
-					return false;
-			}
-			struct dirent *de;
-			struct stat st;
-			std::string fn;
-			while( (de=readdir(d)) ) {
-					if( de->d_name[0] == '.' && ( de->d_name[1] == '\0' 
-						|| (de->d_name[1] == '.' && de->d_name[2] == '\0' )) )
-							continue;
+		cdir_ptr d(opendir(n.c_str()));
+		if( ! d.get() ) {
+				return false;
+		}
+		struct dirent *de;
+		struct stat st;
+		std::string fn;
+		while( (de=readdir(d.get())) ) {
+				if( de->d_name[0] == '.' && ( de->d_name[1] == '\0' 
+					|| (de->d_name[1] == '.' && de->d_name[2] == '\0' )) )
+						continue;
 
-					fn = n + '/' + de->d_name;
-							
-					if( ::remove( fn.c_str() ) ) {
-							if( stat( fn.c_str(), & st) ) {
-									return false;
-							}
-							if( S_ISDIR(st.st_mode) ) {
-									if( ! rmdirrec( fn ) )
-											return false;
-							} else {
-									return false;
-							}
-					}
-			}
-			return remove(n.c_str()) ? false : true;
+				fn = n + '/' + de->d_name;
+						
+				if( ::remove( fn.c_str() ) ) {
+						if( stat( fn.c_str(), & st) ) {
+								return false;
+						}
+						if( S_ISDIR(st.st_mode) ) {
+								if( ! rmdirrec( fn ) )
+										return false;
+						} else {
+								return false;
+						}
+				}
+		}
+		return remove(n.c_str()) ? false : true;
 	}
 
 } // namespace sys

@@ -163,12 +163,12 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_ren, dir+user);
 		
 		replace(user.begin(),user.end(),'.',':');
-		DIR *dotdir = opendir(dir.c_str());
-		if( dotdir ) {
+		cdir_ptr dotdir(opendir(dir.c_str()));
+		if( dotdir.get() ) {
 				struct dirent *de;
 				char * name;
 				string::size_type userl = user.length(); // +6 = .qmail-
-				while( (de=readdir(dotdir)) ) {
+				while( (de=readdir(dotdir.get())) ) {
 						name = de->d_name;
 						if( _D_EXACT_NAMLEN(de) < 7
 						  || _D_EXACT_NAMLEN(de)-7 < userl 
@@ -181,7 +181,6 @@ namespace POA_vq {
 							   && strncmp(name+userl,user.c_str(),userl) ) )
 								unlink((dir+de->d_name).c_str());
 				}
-				closedir(dotdir);
 		} else return lr(::vq::ivq::err_rd, dir);
 		
 		return lr(::vq::ivq::err_no, "");

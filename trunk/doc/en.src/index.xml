@@ -13,6 +13,7 @@
 	<!ENTITY life SYSTEM "life.xml">
 	<!ENTITY life.conf SYSTEM "life.conf.xml">
 	<!ENTITY life.security SYSTEM "life.security.xml">
+	<!ENTITY life.os SYSTEM "life.os.xml">
 	]
 >
 <book lang="en">

@@ -21,10 +21,40 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define __DIRS_HPP
 
 #include <sys/types.h>
+#include <dirent.h>
+
 #include <stdexcept>
 #include <string>
 
 namespace sys {
+
+	/**
+	 * Simple wrapper for DIR *
+	 */
+	class cdir_ptr {
+			public:
+				typedef DIR dir_type;
+
+				cdir_ptr( dir_type * d ) : dp(d) {}
+				cdir_ptr() : dp(0) {}
+				~cdir_ptr() { free(); }
+
+				inline const dir_type * get() const {
+						return dp;
+				}
+				inline dir_type * get() {
+						return dp;
+				}
+				inline void free() {
+						if( dp ) {
+								closedir(dp);
+								dp = 0;
+						}
+				}
+				
+			protected:
+				dir_type * dp;
+	};
 
 	bool mkdirhier( const char *, mode_t );
 	bool mkdirhier( const char *, mode_t, int, int );

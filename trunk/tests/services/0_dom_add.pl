@@ -7,7 +7,10 @@ use conf;
 
 BEGIN { plan tests => 2 }
 
-my $cmd = "dom_add -q ".join(" ", @conf::domains);
-`$cmd`;
-ok($?>>8, 0);
-ok($? & 127, 0);
+foreach my $d ( @conf::domains ) {
+	my $cmd = "dom_add -q \"$d\"";
+	print "$cmd\n";
+	`$cmd`;
+	ok($?>>8, 0);
+	ok($? & 127, 0);
+}
