@@ -1,4 +1,4 @@
-SUBDIR=ivq iauth qmailvqd
+SUBDIR=ivq iauth qmailvqd ilogger
 
 .PHONY: all clean
 

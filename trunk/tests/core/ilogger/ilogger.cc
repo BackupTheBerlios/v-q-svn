@@ -362,7 +362,34 @@ struct logger_test {
 		 * supported correctly.
 		 */
 		void case5() {
-				BOOST_REQUIRE(0);
+			BOOST_CHECK_NO_THROW(obj->clear());
+			BOOST_CHECK_NO_THROW(obj->rm_all());
+
+			CORBA::ULong i, j, si, limit = 50, steps[] = {1, 3, 5, 10, 20, 50, 70};
+			CORBA::ULong stepsl = sizeof steps/sizeof *steps;
+			for( i=0; i<limit; ++i ) {
+					IVQ_ERROR_EQUAL(obj->write(::vq::ilogger::re_unknown, 
+						boost::lexical_cast<std::string>(i).c_str()), 
+						::vq::ivq::err_no);
+			}
+
+			::vq::ilogger::log_entry_list_var les;
+			for( si=0; si<stepsl; ++si ) {
+					for( i=0; i<limit; i+= steps[si] ) {
+							IVQ_ERROR_EQUAL(obj->read(i, steps[si], les),
+								::vq::ivq::err_no );
+							
+							for( j=i; j<steps[si] && j<limit; ++j ) {
+									BOOST_CHECK_EQUAL( 
+										boost::lexical_cast<std::string>
+											(limit-j-1),
+										static_cast<const char *>
+											(les[j-i].msg));
+							}
+					}
+			}
+
+			BOOST_CHECK_NO_THROW(obj->rm_all());
 		}
 	
 }; // struct logger_test
