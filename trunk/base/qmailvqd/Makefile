@@ -3,10 +3,10 @@ OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o cqmailvq_user_conf.
 	qmail_assign_add.o qmail_assign_ex.o qmail_assign_rm.o qmail_common.o qmail_file_add.o \
 	qmail_file_rm.o qmail_files.o qmail_mrh_add.o qmail_mrh_rm.o qmail_rcpthosts_add.o \
 	qmail_virtualdomains_add.o qmail_virtualdomains_rm.o qmailvqd.o
-INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
+INCS=-I$(BASE)/base -I$(BASE) -I$(BASE)/libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf `cat $(BASE)/corba.inc`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
-	-L$(BASE)/libvqmain -lvqmain -L$(BASE)/core -lvq \
+	-L$(BASE)/libvqmain -lvqmain -L$(BASE)/base -lvq \
 	-L$(BASE)/libconf -lconf \
 	-L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext
 

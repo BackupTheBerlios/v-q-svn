@@ -1,4 +1,4 @@
-SUBDIR=core
+SUBDIR=base
 
 .PHONY: all clean
 

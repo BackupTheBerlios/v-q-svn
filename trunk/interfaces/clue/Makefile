@@ -5,10 +5,10 @@ OBJS=cluemain.o dom_add.o dom_alias_add.o dom_alias_rm.o dom_ip_add.o \
 	user_auth.o user_pass.o user_rm.o autoresp.o error2str.o cdom_name2id.o \
 	user_pass.o user_conf_add.o user_conf_ls.o user_conf_rm.o dom_id.o \
 	dom_ls.o dom_alias_ls.o
-INCS=-I$(BASE)/core -I$(BASE) -I$(BASE)/libsys -I$(BASE)/libtext \
+INCS=-I$(BASE)/base -I$(BASE) -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libvqmain -I$(BASE)/libconf `cat $(BASE)/corba.inc`
 LIBS=-L$(BASE)/libmain -lmain -L$(BASE)/libvqmain -lvqmain -L. -lcluemain \
-	-L$(BASE)/libconf -lconf -L$(BASE)/core -lvq
+	-L$(BASE)/libconf -lconf -L$(BASE)/base -lvq
 
 all: .depend libcluemain.a dom_add dom_rm user_add user_rm user_pass \
 user_conf_add user_conf_ls \

@@ -1,4 +1,4 @@
-SUBDIR=tools libconf libmain libvqmain libsys libtext core interfaces
+SUBDIR=tools libconf libmain libvqmain libsys libtext base interfaces
 
 .PHONY: all clean pgsql
 
@@ -12,7 +12,7 @@ all::
 	done
 
 pgsql::
-	@for entry in core/pgsql; do \
+	@for entry in base/pgsql; do \
 		( \
 			echo "===> $$entry" ; \
 			cd $$entry ; \
