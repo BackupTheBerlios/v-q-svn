@@ -1,6 +1,7 @@
 #!/bin/sh
+export BASE=../../..
 export LD_LIBRARY_PATH="/tmp" 
-cp -f ../../../lib*/*.so* /tmp
+cp -f $BASE/lib*/*.so* /tmp
 
 host=localhost
 
@@ -12,7 +13,7 @@ trap "kill $nsd_pid" 0
 sleep 2
 
 echo "starting ilogger(pgsqllogd) server ..."
-../../../base/pgsql/pgsqllogd \
+$BASE/base/pgsql/pgsqllogd \
 -ORBIIOPAddr inet:$host:34343 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 server_pid=$!

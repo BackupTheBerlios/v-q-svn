@@ -9,11 +9,11 @@ qmail/control/virtualdomains qmail/control/virtualdomains.lock
 for p in qmail_virtualdomains_add qmail_rcpthosts_add qmail_assign_add \
 qmail_locals_rm qmail_file_add qmail_file_rm qmail_mrh_rm \
 qmail_virtualdomains_rm qmail_assign_rm qmail_run; do
-	ln -sf $BASE/../base/qmailvqd/$p bin
+	ln -sf $BASE/base/qmailvqd/$p bin
 done
 
 export LD_LIBRARY_PATH="/tmp" 
-cp -f ../../../lib*/*.so* /tmp
+cp -f $BASE/lib*/*.so* /tmp
 
 host=localhost
 
@@ -25,7 +25,7 @@ trap "kill $nsd_pid" 0
 sleep 2
 
 echo "starting iauth(pgsqlauthd) server ..."
-../../../base/pgsql/pgsqlauthd \
+$BASE/base/pgsql/pgsqlauthd \
 -ORBIIOPAddr inet:$host:33333 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService . &
 iauth_pid=$!
@@ -34,7 +34,7 @@ sleep 2
 
 echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
 echo "starting ivq(qmailvqd) server ..."
-../../../base/qmailvqd/qmailvqd \
+$BASE/base/qmailvqd/qmailvqd \
 -ORBIIOPAddr inet:$host:44444 \
 -ORBInitRef NameService=corbaloc::$host:12456/NameService `pwd` &
 ivq_pid=$!
