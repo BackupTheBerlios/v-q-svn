@@ -80,13 +80,11 @@
 					</para>
 				</listitem>
 				<listitem>
-					<para>support real users, authorization based on /etc/passwd</para>
+					<para>support real users, authorization based on 
+						<filename>/etc/passwd</filename></para>
 				</listitem>
 				<listitem>
 					<para>support for any other mailboxes type than Maildir</para>
-				</listitem>
-				<listitem>
-					<para>quota support</para>
 				</listitem>
 			</itemizedlist>
 		</para>
