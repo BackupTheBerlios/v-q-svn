@@ -1,1 +1,2 @@
 auto
+cqmailvq.o cqmailvq_dom.o qmail_files.o qmailvqd.o

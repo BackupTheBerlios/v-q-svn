@@ -25,9 +25,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // CORBA
 #include <coss/CosNaming.h>
 
+#include <sys/types.h>
+#include <unistd.h>
+
 #include <memory>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 using namespace POA_vq;
@@ -44,6 +48,16 @@ int cppmain(int ac, char **av) {
 	conf::clnconf objname(conf_dir+"objname", "vq::ivq");
 	conf::cintconf split_dom(conf_dir+"split_dom", "3");
 	conf::cintconf split_user(conf_dir+"split_user", "3");
+	conf::cintconf fmode(conf_dir+"fmode", "0640");
+	conf::cintconf mmode(conf_dir+"mmode", "0750");
+	conf::cintconf dmode(conf_dir+"dmode", "0750");
+	conf::clnconf user(conf_dir+"vq_user", "vq");
+	ostringstream os;
+	os<<geteuid();
+	conf::cuidconf uid(conf_dir+"vq_uid", os.str());
+	os.str("");
+	os<<getegid();
+	conf::cgidconf gid(conf_dir+"vq_gid", os.str());
 
 	/*
 	 * Initialize the ORB
@@ -63,7 +77,9 @@ int cppmain(int ac, char **av) {
 	 * Create authorization object
 	 */
 	auto_ptr<cqmailvq> vqimp(new cqmailvq(*(av+1), 
-		split_dom.val_int(), split_user.val_int()));
+		split_dom.val_int(), split_user.val_int(),
+		fmode.val_int(), mmode.val_int(), dmode.val_int(),
+		user.val_str(), uid.val_int(), gid.val_int() ));
 	
 	/*
 	 * Activate the Servant

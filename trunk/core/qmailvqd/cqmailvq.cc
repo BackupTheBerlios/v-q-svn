@@ -17,8 +17,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cqmailvq.hpp"
-
-#include "vq_conf.hpp"
 #include "qmail_files.hpp"
 
 #include <sys.hpp>
@@ -28,15 +26,16 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
-#include <sstream>
 #include <unistd.h>
 #include <stdio.h>
-#include <cerrno>
-#include <inttypes.h>
-#include <algorithm>
 #include <dirent.h>
 #include <signal.h>
+
+#include <cerrno>
+#include <algorithm>
 #include <iomanip>
+#include <sstream>
+#include <memory>
 
 namespace POA_vq {
 
@@ -50,15 +49,18 @@ namespace POA_vq {
 	
 	/**
 	 */
-	cqmailvq::cqmailvq( const std::string & h, unsigned s_dom, unsigned s_user ) 
-			: home(h), dom_split(s_dom), user_split(s_user) {
+	cqmailvq::cqmailvq( const std::string & h, unsigned s_dom, unsigned s_user,
+				mode_t fm, mode_t mm, mode_t dm,
+				const std::string & user, uid_t uid, gid_t gid ) 
+			: home(h), dom_split(s_dom), user_split(s_user), 
+			fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), gid(gid) {
 	}
 	
 	/**
 	 * Write data to file in a safe maner. It opens file, creates temporary file,
 	 * copies data to it (until end of file or specified line was found),
 	 * closes data. It stats original file, and change mode and owner of created
-	 * file. It write information about temporary file name into fntmp. Caller
+	 * file. It writes information about temporary file name into fntmp. Caller
 	 * needs to rename it.
 	 *
 	 * \param fn path to file that is going to be changed
@@ -129,7 +131,7 @@ namespace POA_vq {
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else 
 						return lr(::vq::ivq::err_stat, fn);
-		} else if( chmod(fntmp.c_str(), ac_vq_fmode.val_int()) )
+		} else if( chmod(fntmp.c_str(), this->fmode) )
 				return lr(::vq::ivq::err_chmod, fntmp);
 		
 		return lr(::vq::ivq::err_no, "");
@@ -163,8 +165,8 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::assign_add( const string &dom )
 	{   
 		ostringstream domln;
-		domln << '+'<< dom << "-:" << ac_vq_user.val_str() << ':' 
-			<< geteuid() << ':' << getegid() << ':'
+		domln << '+'<< dom << "-:" << this->user << ':' 
+			<< this->uid << ':' << this->gid << ':'
 			<< home << "/domains/" << text::split_dom(dom, this->dom_split)
 			<< '/' << dom << ":-::";
 		
@@ -222,8 +224,8 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::assign_rm( const string &dom )
 	{   
 		ostringstream domln;
-		domln << '+'<< dom << "-:" << ac_vq_user.val_str() << ':' 
-			<< geteuid() << ':' << getegid() << ':'
+		domln << '+'<< dom << "-:" << this->user << ':' 
+			<< this->uid << ':' << this->gid << ':'
 			<< home << "/domains/" << text::split_dom(dom, this->dom_split)
 			<< '/' << dom << ":-::";
 		
@@ -509,7 +511,7 @@ namespace POA_vq {
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else
 						return lr(::vq::ivq::err_stat, fn);
-		} else if( chmod(fntmp.c_str(), ac_vq_fmode.val_int()) )
+		} else if( chmod(fntmp.c_str(), this->fmode) )
 				return lr(::vq::ivq::err_chmod, fntmp);
 		
 		return lr(::vq::ivq::err_no, "");
@@ -577,7 +579,7 @@ namespace POA_vq {
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else
 						return lr(::vq::ivq::err_stat, fn);
-		} else if( chmod(fntmp.c_str(), ac_vq_fmode.val_int()) )
+		} else if( chmod(fntmp.c_str(), this->fmode) )
 				return lr(::vq::ivq::err_chmod, fntmp);
 		
 		return lr(::vq::ivq::err_no, "");
@@ -613,23 +615,20 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::maildir_make(const string & d)
 	{
-		int uid = geteuid();
-		int gid = getegid();
-
-		if( mkdir(d.c_str(), ac_vq_mode.val_int() )
-			|| chown(d.c_str(), uid, gid)) 
+		if( mkdir(d.c_str(), this->mmode )
+			|| chown(d.c_str(), this->uid, this->gid)) 
 				return lr(::vq::ivq::err_temp, d.c_str());
 		string dir = d+"/new"; 
-		if( mkdir(dir.c_str(), ac_vq_mode.val_int() ) 
-			|| chown(dir.c_str(), uid, gid)) 
+		if( mkdir(dir.c_str(), this->mmode ) 
+			|| chown(dir.c_str(), this->uid, this->gid)) 
 				return lr(::vq::ivq::err_temp, dir);
 		dir = d+"/cur";
-		if( mkdir(dir.c_str(), ac_vq_mode.val_int() ) 
-			|| chown(dir.c_str(), uid, gid)) 
+		if( mkdir(dir.c_str(), this->mmode ) 
+			|| chown(dir.c_str(), this->uid, this->gid)) 
 				return lr(::vq::ivq::err_temp, dir);
 		dir = d+"/tmp";
-		if( mkdir(dir.c_str(), ac_vq_mode.val_int() ) 
-			|| chown(dir.c_str(), uid, gid)) 
+		if( mkdir(dir.c_str(), this->mmode ) 
+			|| chown(dir.c_str(), this->uid, this->gid)) 
 				return lr(::vq::ivq::err_temp, dir);
 		return lr(::vq::ivq::err_no, dir);
 	}
@@ -811,15 +810,19 @@ namespace POA_vq {
 		if( ret ) return lr(ret, "");
 		return lr(qt_set(d,u,qm), "");*/
 	}
+#endif // if 0
 	
 	/**
 	 * Checks whether auth is initalized, if not try to do that
 	 */
 	void cqmailvq::assert_auth() {
+		/*
 		if(!auth.get())
 				auth.reset(cauth::alloc());
+		*/
 	}
-	
+
+#if 0
 	/**
 	 * Adds mailbox configuration
 	 * \param d domain
@@ -1106,9 +1109,9 @@ namespace POA_vq {
 		out.open(fnout.c_str(), ios::trunc);
 		if(!out) return lr(::vq::ivq::err_open, fnout);
 	
-		if( fchown(out.rdbuf()->fd(), geteuid(), getegid()) )
+		if( fchown(out.rdbuf()->fd(), this->uid, this->gid) )
 				return lr(::vq::ivq::err_chown, fnout);
-		if( fchmod(out.rdbuf()->fd(), ac_vq_fmode.val_int() ) )
+		if( fchmod(out.rdbuf()->fd(), this->fmode ) )
 				return lr(::vq::ivq::err_chmod, fnout);
 		return lr(::vq::ivq::err_no, "");
 	}
@@ -1199,32 +1202,6 @@ namespace POA_vq {
 		return lr(::vq::ivq::err_dom_inv, "illegal chars");
 	}
 	
-	/**
-	@return 1 if user name is valid, 0 otherwise
-	*/
-	cqmailvq::error * cqmailvq::user_val(const char *ptr)
-	{
-		if( !ptr )
-				throw null_error(__FILE__, __LINE__);
-		for( ; *ptr; ptr++ ) {
-				if( (*ptr >= 'a' && *ptr <= 'z')
-					|| (*ptr >= 'A' && *ptr <= 'Z' )
-					|| (*ptr >= '0' && *ptr <= '9' ) )
-						continue;
-	
-				switch(*ptr) {
-				case '$': case '%': case '&': case '\'':
-				case '*': case '+': case '-': case '/':
-				case '=': case '?': case '^': case '_':
-				case '`': case '{': case '|': case '}':
-				case '~': case '.': case '!': case '#':
-						continue;
-				default: 
-						return lr(::vq::ivq::err_no, "");
-				}
-		}
-		return lr(::vq::ivq::err_user_inv, "illegal chars");
-	}
 	
 #if 0
 	/**
@@ -1272,12 +1249,12 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::lr_wrap(err_code ec, const char *what,
 			const char * file, CORBA::ULong line ) {
-		error * err = new error;
+		auto_ptr<error> err(new error);
 		err->ec = ec;
 		err->what = CORBA::string_dup(what); // string_dup not really needed
 		err->file = CORBA::string_dup(file);
 		err->line = line;
-		return err;
+		return err.release();
 	}
 
 } // namespace vq

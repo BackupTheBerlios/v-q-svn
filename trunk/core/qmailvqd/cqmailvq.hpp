@@ -25,6 +25,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <pfstream.hpp>
 
+#include <sys/types.h>
+
 #include <stdexcept>
 #include <string>
 #include <memory>
@@ -52,13 +54,17 @@ namespace POA_vq {
 					typedef ::vq::ivq::string_list_out string_list_out;
 					typedef ::vq::ivq::email_banned_list_out email_banned_list_out;
 
-					cqmailvq( const std::string &, unsigned, unsigned );
+					cqmailvq( const std::string &, unsigned, unsigned, 
+						mode_t, mode_t, mode_t, 
+						const std::string &, uid_t, gid_t );
 					virtual ~cqmailvq() {}
 
 					virtual error* dom_add( const char* dom );
 				    virtual error* dom_rm( const char* dom );
 				    virtual error* dom_val( const char* dom );
 				    virtual error* dom_id( const char* dom, CORBA::String_out dom_id );
+    				virtual error* dom_name( const char* dom_id, CORBA::String_out dom_name );
+#if 0
 				    virtual error* dra_add( const char* dom_id, const char* rea );
 				    virtual error* dra_rm( const char* dom_id, const char* rea );
 				    virtual error* dra_rm_by_dom( const char* dom_id );
@@ -68,15 +74,21 @@ namespace POA_vq {
 				    virtual error* user_val( const char* user );
 				    virtual error* user_auth( auth_info& ai );
 				    virtual error* user_id( const char* dom_id, const char* login, CORBA::String_out uid );
+    				virtual error* user_name( const char* dom_id, const char* uid, CORBA::String_out login );
 				    virtual error* eb_add( const char* re_domain, const char* re_login );
 				    virtual error* eb_rm( const char* re_domain, const char* re_login );
 				    virtual error* eb_ls( email_banned_list_out ebs );
-
+#endif // if 0
 			protected:
 					std::string home; //!< home directory
 					unsigned dom_split;
 					unsigned user_split;
-
+					mode_t fmode; //!< permissions of created files
+					mode_t mmode; //!< permissions of created directories in Maildir
+					mode_t dmode; //!< permissions of directories created
+					std::string user; //!< user name we are working as
+					uid_t uid; //!< user's id.
+					gid_t gid; //!< group's id.
 
 					static const char tmp_end[]; //!< temporary file extension
 					static const char ud_sup[]; //!< array of supported udot types

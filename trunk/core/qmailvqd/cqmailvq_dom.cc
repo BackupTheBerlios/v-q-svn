@@ -17,9 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "cqmailvq.hpp"
-#include "vq_conf.hpp"
-//#include "auto/d_namlen.h"
-//#include "qmail_progs.h"
+#include "qmail_progs.hpp"
 
 #include <pfstream.hpp>
 #include <sys.hpp>
@@ -29,15 +27,16 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
-#include <sstream>
 #include <unistd.h>
 #include <stdio.h>
-#include <cerrno>
-#include <inttypes.h>
-#include <algorithm>
 #include <dirent.h>
 #include <signal.h>
+
+#include <sstream>
 #include <iomanip>
+#include <memory>
+#include <cerrno>
+#include <algorithm>
 
 namespace POA_vq {
 
@@ -45,41 +44,45 @@ namespace POA_vq {
 	using namespace posix;
 	using namespace text;
 	using namespace sys;
-	
+
 #if 0
 	/**
 	 * Remove aliass.
 	 * \param a alias name
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::dom_alias_rm( const char * a )
+	cqmailvq::error * cqmailvq::dom_alias_rm( const char * a )
 	{
-		error ret;
+		auto_ptr<error> ret;
 		string alias(lower(a));
-		ret=assign_ex(alias);
-		if( ret != ::vq::ivq::err_no ) return(ret);
+		ret.reset( assign_ex(alias) );
+		if( ret->ec != ::vq::ivq::err_no ) return ret.release();
 		return virt_rm(alias);
 	}
-	
+#endif // if 0
+
 	/**
 	 * Remove domain. It removes domain from qmail control file, authorization
 	 * then from filesystem. It ignores errors (so it may not remove something).
 	 * \return last cqmailvq::error code returned by any called function. So only ::vq::ivq::err_no means that everything was removed.
 	 */
-	cqmailvq::error cqmailvq::dom_rm(const char *d)
+	cqmailvq::error * cqmailvq::dom_rm(const char *d)
 	{
+		if( !d ) throw ::vq::null_error(__FILE__, __LINE__);
+
 		assert_auth();
 		string dom(lower(d));
-		error ret;
+		auto_ptr<error> ret;
 		
-		ret=rcpt_rm(dom);
-		ret=morercpt_rm(dom);
-		ret=virt_rm(dom);
-		ret=assign_rm(dom);
+		ret.reset(rcpt_rm(dom));
+		ret.reset(morercpt_rm(dom));
+		ret.reset(virt_rm(dom));
+		ret.reset(assign_rm(dom));
 	
-		if(auth->dom_rm(dom.c_str())) ret = lr(::vq::ivq::err_auth, auth->err_report());
+		if(auth->dom_rm(dom.c_str())) 
+			ret.reset(lr(::vq::ivq::err_auth, ""));
 	
-		string restart(conf_home+"/bin/qmail_run");
+		string restart(home+"/bin/qmail_run");
 		char prog[] = { qp_send_restart, '\0' };
 		char *const args[] = {
 				const_cast<char *>(restart.c_str()),
@@ -87,81 +90,90 @@ namespace POA_vq {
 				NULL
 		};
 		int rr = run(args);
-		if( ! WIFEXITED(rr) || WEXITSTATUS(rr) ) ret = ::vq::ivq::err_temp;
+		if( ! WIFEXITED(rr) || WEXITSTATUS(rr) ) 
+				ret.reset(lr(::vq::ivq::err_temp, "wrong exit value"));
 	
-		string dir(conf_home+"/domains/"+split_dom(dom)+'/'+dom);
+		string dir(home+"/domains/"+split_dom(dom, dom_split)+'/'+dom);
 		if(!rmdirrec(dir)) {
-				ret = lr(::vq::ivq::err_wr, dir);
+				ret.reset(lr(::vq::ivq::err_wr, dir));
 		}
-	
-		return(ret);
+		return ret.release();
 	}
-	
+
 	/**
 	 * Adds domain to system
 	 * \param d valid domain name
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error cqmailvq::dom_add(const char *d)
+	cqmailvq::error * cqmailvq::dom_add(const char *d)
 	{
+		if( ! d ) throw ::vq::null_error(__FILE__, __LINE__);
 		assert_auth();
+
 		string dom(lower(d));
-		if(!dom_val(dom)) return lr(::vq::ivq::err_dom_inv, dom);
+		auto_ptr<error> ret;
+		ret.reset( dom_val(dom.c_str()) );
+		if( ::vq::ivq::err_no != ret->ec ) 
+				return lr(::vq::ivq::err_dom_inv, dom);
 	
-		if(auth->dom_add(dom.c_str())) { 
-				return lr(::vq::ivq::err_auth, auth->err_report()); 
+		CORBA::String_var did;
+		if( ::vq::iauth::err_no != auth->dom_add(dom.c_str(), did) ) { 
+				return lr(::vq::ivq::err_auth, ""); 
 		}
 	
-		string dom_add_dir(conf_home+"/domains/"+split_dom(dom)+'/'+dom);
+		string dom_add_dir(this->home+"/domains/"
+			+split_dom(dom, this->dom_split)+'/'+dom);
+
 		if(!mkdirhier(dom_add_dir.c_str(), 
-			ac_vq_mode.val_int(), getuid(), getgid())) {
-				auth->dom_rm(dom.c_str());
+			this->dmode, this->uid, this->gid)) {
+				auth->dom_rm(did);
 				return lr(::vq::ivq::err_mkdir, dom);
 		}
 	
 		/* dot file with a call to deliver */
 		string dotfile(dom_add_dir+"/.qmail-default");
-		if(!dumpstring( dotfile, (string)"|"+conf_home+"/bin/deliver\n") ) {
+		if(!dumpstring( dotfile, (string)"|"+this->home+"/bin/deliver\n") ) {
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(dom.c_str());
+				auth->dom_rm(did);
 				return lr(::vq::ivq::err_wr, dotfile);
 		}
 	
-		if( virt_add(dom,dom) ) {
+		ret.reset( virt_add(dom, dom) );
+		if( ret->ec != ::vq::ivq::err_no ) {
 				rmdirrec(dom_add_dir);
-				auth->dom_rm(dom.c_str());
-				return lastret;
+				auth->dom_rm(did);
+				return ret.release();
 		}
-			
-		if(locals_rm(dom)) {
+		
+		ret.reset( locals_rm(dom) );
+		if( ::vq::ivq::err_no != ret->ec ) {
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(dom.c_str());
-				virt_rm(dom);
-				return lastret; 
+				auth->dom_rm(did);
+				delete virt_rm(dom);
+				return ret.release(); 
 		}
 	
-		switch(rcpt_add(dom)) {
+		ret.reset( rcpt_add(dom.c_str()) );
+		switch(ret->ec) {
 		case ::vq::ivq::err_no: break;
 		case ::vq::ivq::err_over:
-				if(morercpt_add(dom) == ::vq::ivq::err_no) break;
+				ret.reset(morercpt_add( dom.c_str() ) );
+				if( ret->ec == ::vq::ivq::err_no) break;
 		default:
-				lastret_blkd=true;
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(dom.c_str());
-				virt_rm(dom);
-				lastret_blkd=false;
-				return lastret; 
+				auth->dom_rm(did);
+				delete virt_rm(dom);
+				return ret.release(); 
 		}
-		if(assign_add(dom)) {
-				lastret_blkd=true;
+		ret.reset(assign_add(dom));
+		if( ret->ec != ::vq::ivq::err_no ) {
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(dom.c_str());
-				virt_rm(dom);
-				lastret_blkd=false;
-				return lastret;
+				auth->dom_rm(did);
+				delete virt_rm(dom);
+				return ret.release();
 		}
 	
-		string restart(conf_home+"/bin/qmail_run");
+		string restart(this->home+"/bin/qmail_run");
 		char prog[] = { qp_send_restart, '\0' };
 		char *const args[] = {
 				const_cast<char *>(restart.c_str()),
@@ -170,17 +182,15 @@ namespace POA_vq {
 		};
 		int rr = run(args);
 		if( ! WIFEXITED(rr) || WEXITSTATUS(rr) ) {
-				lastret_blkd=true;
 				rmdirrec(dom_add_dir); 
-				auth->dom_rm(dom.c_str());
-				virt_rm(dom);
-				lastret_blkd=false;
-				return lastret;
+				auth->dom_rm(did);
+				delete virt_rm(dom);
+				return lr(::vq::ivq::err_temp, "wrong exit value");
 		}
-	
 		return lr(::vq::ivq::err_no, "");
 	}
 
+#if 0
 	/**
 	 * Add alias for domain
 	 * \param d domain
@@ -324,6 +334,28 @@ namespace POA_vq {
 	string cqmailvq::dompath(const std::string &dom) {
 		return this->home+"/domains/"+split_dom(dom, this->dom_split)+dom;
 	}
-	
+
+	/**
+	 * Returns id. number of domain
+	 */
+	cqmailvq::error* cqmailvq::dom_id( const char* dom, 
+			CORBA::String_out dom_id ) {
+		if( ! dom )	throw ::vq::null_error(__FILE__, __LINE__);
+		if( auth->dom_id(dom, dom_id) != ::vq::iauth::err_no )
+				return lr(::vq::ivq::err_auth, "");
+		return lr(::vq::ivq::err_no, "");
+	}
+
+	/**
+	 * Returns name of domain with given id. number
+	 */
+	cqmailvq::error* cqmailvq::dom_name( const char* dom_id, 
+			CORBA::String_out dom_name ) {
+		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
+		if( auth->dom_name(dom_id, dom_name) != ::vq::iauth::err_no )
+				return lr(::vq::ivq::err_auth, "");
+		return lr(::vq::ivq::err_no, "");
+	}
+
 } // namespace POA_vq
 

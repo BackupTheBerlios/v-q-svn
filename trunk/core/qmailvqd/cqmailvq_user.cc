@@ -45,6 +45,33 @@ namespace POA_vq {
 	using namespace text;
 	
 	/**
+	@return 1 if user name is valid, 0 otherwise
+	*/
+	cqmailvq::error * cqmailvq::user_val(const char *ptr)
+	{
+		if( !ptr )
+				throw null_error(__FILE__, __LINE__);
+		for( ; *ptr; ptr++ ) {
+				if( (*ptr >= 'a' && *ptr <= 'z')
+					|| (*ptr >= 'A' && *ptr <= 'Z' )
+					|| (*ptr >= '0' && *ptr <= '9' ) )
+						continue;
+	
+				switch(*ptr) {
+				case '$': case '%': case '&': case '\'':
+				case '*': case '+': case '-': case '/':
+				case '=': case '?': case '^': case '_':
+				case '`': case '{': case '|': case '}':
+				case '~': case '.': case '!': case '#':
+						continue;
+				default: 
+						return lr(::vq::ivq::err_no, "");
+				}
+		}
+		return lr(::vq::ivq::err_user_inv, "illegal chars");
+	}
+
+	/**
 	 * Add user
 	 * \param u user's name
 	 * \param d domain's name
