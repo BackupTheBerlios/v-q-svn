@@ -22,29 +22,31 @@
 			I used files from Fedora Core 2 release (packages: 
 			docbook-style-dsssl-1.78-2.noarch.rpm
 			and docbook-dtds-1.0-22.1.noarch.rpm). I unpacked them
-			with <command>rpm2cpio</command>, copied everything from 
-			usr/share/ to /usr/local/share/sgml/redhat. Then
+			with <application>rpm2cpio</application>, copied everything from 
+			<filename>usr/share/</filename> to 
+			<filename>/usr/local/share/sgml/redhat</filename>. Then
 			added following lines:
-			<screen>
-				CATALOG "redhat/sgml/docbook/xml-dtd-4.1.2-1.0-22.1/catalog"
-				CATALOG "redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/catalog"
-				CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog" 
-			</screen>
-			to /usr/local/share/sgml/catalog.
+<screen>
+<userinput>
+CATALOG "redhat/sgml/docbook/xml-dtd-4.1.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog" 
+</userinput>
+</screen>
+			to <filename>/usr/local/share/sgml/catalog</filename>.
 		</para>
 
 		<para>
-			Then using following command I was able to create RTF version of
+			Then using following application I was able to create RTF version of
 			documentation:
-			<command>env SGML_CATALOG_FILES=/usr/local/share/sgml/catalog 
-			openjade -t rtf -d 
-			/usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
-			/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
-			</command>. Changing RTF to SGML produces HTML files.
-
+<synopsis>
+env <envar>SGML_CATALOG_FILES</envar>=/usr/local/share/sgml/catalog 
+openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
+/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
+</synopsis>. Changing RTF to SGML produces HTML files.
 			<note>
 				<para>
-					<command>openjade</command> may print warnings
+					<application>openjade</application> may print warnings
 					about DTDDECL which is not supported but you
 					should ignore them.
 				</para>

@@ -63,6 +63,38 @@
 				</listitem>
 			</itemizedlist>
 		</para>
+
+		<section>
+			<title>Mail transfer agent</title>
+
+			<para>
+				At this time only <application>qmail</application> is supported.
+				So before you begin you must install it.
+			</para>
+
+			<para>
+				We suggest you installing <application>qmail</application>
+				patched using <ulink url="http://q-p.foo-baz.com">Qmail-patches</ulink>.
+				But v-q doesn't require that, you can use any version you want.
+			</para>
+
+			<para>
+				We hope that as time comes other MTAs will be supported.
+			</para>
+		</section>
+
+		<section>
+			<title>PostgreSQL version</title>
+
+			<para>
+				First you need to download <application>PostgreSQL</application>.
+				Using newest stable version is suggested. You also
+				need libpqxx and PERL module called Pg (if you want to
+				use automatic installation script). All progams
+				you can download from <ulink url="http://www.postgresql.org">
+				http://www.postgresql.org</ulink>.
+			</para>
+		</section>
 	</section>
 
 	<section id="install.prep">
@@ -85,8 +117,8 @@
 			<para>
 			You can use following commands to do that (works under
 			Linux and OpenBSD):
-				<command>groupadd _vq</command>
-				<command>useradd -g _vq -d /var/vq _vq</command>
+<synopsis>groupadd _vq
+useradd -g _vq -d /var/vq _vq</synopsis>
 			</para>
 		</section>
 
@@ -94,85 +126,196 @@
 			<title>Unpacking sources</title>
 
 			<para>
-				If source
+				Depending on package format you can use <application>tar</application>,
+				<application>bzip2</application>, <application>gzip</application>
+				to decompress archive.
+			</para>
+
+			<para>
+				If archive's name ends with <filename>.tar.gz</filename> you
+				can unpack it with following commands:
+<synopsis>
+tar -xzvf v-q.*.tar.gz
+</synopsis>
+				If you tar doesn't supports gzip unpacking use:
+<synopsis>
+gzip -dc v-q.*.tar.gz | tar -xvf -
+</synopsis>
+			</para>
+
+			<para>
+				If archive's name ends with <filename>.tar.bz2</filename> you can
+				unpack it using:
+<synopsis>
+bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
+</synopsis>
+			</para>
+
+			<para>
+				At this time sources are released only with specified formats.
+		
+				<note>
+					<para>
+						<application>Bzip2</application> gives 
+						better compression rate than <application>gzip</application>
+						but it's not as popular as <application>gzip</application> so before
+						downloading archive in this format check 
+						if you have it installed on your system.
+					</para>
+				</note>
 			</para>
 		</section>
-			
-<!--
-			<li>bunzip2 -c vq-*.tar.bz2 | tar -xf -</li>
-			<li>cd vq</li>
-			<li>
-				vim *.lib *.inc<br/>
-				Files *.inc includes options for compiler telling where to look
-				for include files. Files *.lib point to libraries and directories.
-				On OpenBSD usually you need add -liconv to iconv.lib, Linux's
-				glibc includes iconv (so you need to remove this line).
-				Default options may not work for you (it's not an error), you
-				must set values depending on your system configuration.
-				Sometimes you will need to add some other libraries, I found
-				that sablotron on OpenBSD 3.4 references functions from readline, 
-				ncurses.
-			</li>
-			<li>
-				vim comp-so compile make-so make-lib<br/>
-				Comp* are used to call compiler so you may put there
-				optimization options. Check files if they match your system.
-				If you compile vq on system not listed in 
-				<a href="ports.html">Documentation::Supported Systems</a> please
-				send me an information.
-			</li>
-			<li>
-				vim conf/*<br/>
-				Edit you configuration files.
-			</li>
 
--->	
+		<section>
+			<title>Configuration before compilation</title>
+
+			<para>
+				Before running <application>make</application>
+				you must configure sources. There's no 
+				<application>configure</application> script. V-q
+				don't use <application>autoconf</application> and
+				it's family.
+			</para>
+
+			<para>
+				But don't be scared. Configuration is quite easy - all you
+				need to do is edit few files.
+			</para>
+
+			<para>
+				First you need to set compiler and its options. In the
+				main directory there are following files:
+				<itemizedlist>
+					<listitem><para>
+						<filename>compile</filename> is used in normal compilation.
+						Default version executes <application>g++</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>comp-so</filename> is used to compile
+						objects that will be included in shared libraries.
+						Default version executes <application>g++</application>
+						with arguments: -fpic -DPIC.
+					</para></listitem>
+					<listitem><para>
+						<filename>load</filename> is used to link
+						objects. Default version executes <application>g++</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>make-lib</filename> is used to create
+						statically linked library. It executes 
+						<application>ar</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>make-so</filename> is used to
+						create dynamically linked library. It executes
+						<application>g++</application> with -shared option.
+					</para></listitem>
+					<listitem><para>
+						<filename>idl</filename> is used to
+						process IDL definitions to C++ files. Remember that
+						it creates 2 files with extensions: .hpp and .cc.
+						Default version calls <application>idl</application>
+						(<ulink url="http://www.mico.org">MICO</ulink> has
+						such program).
+					</para></listitem>
+				</itemizedlist>
+			</para>
+
+			<para>
+				If you use other options or programs to compile your
+				version of v-q please send information about them to
+				<link linkend="pniewiadomski">Pawe³ Niewiadomski</link>
+			</para>
+
+			<para>
+				Next step is to edit files with extensions:
+				<filename>.inc</filename> and <filename>.lib</filename>.
+				First are used during compilation, they include informations
+				about directories used in searching included files.
+				Second are used while linking, they include references
+				to libraries. You don't need to edit all of them. For example
+				if you don't want to compile PostgreSQL modules
+				you don't need to edit <filename>pgsql.inc</filename> and
+				<filename>pgsql.lib</filename>. Usually these files
+				include description inside them.
+			</para>
+		</section>
+	</section>
+
+	<section>
+		<title>Compilation</title>
+		
+		<para>Now it's time to compile sources. If you configured
+		everything properly you should be able to successfully
+		compile it.</para>
+
+		<para>
+			To compile program use <application>make</application>.
+			You can use both flavors: BSD or GNU. Depending on the shell
+			you use you can, for <application>sh</application>, write:
+<screen>
+<userinput>
+make 2>&amp;1 > out
+</userinput>
+</screen>
+			If you use tcsh you can use:
+<screen>
+<userinput>
+make >&amp; out
+</userinput>
+</screen>
+			When <application>make</application> finishes check
+			<filename>out</filename> to see output generated during
+			compilation.
+		</para>
+
+		<para>
+			If you can't compile v-q please send <filename>out</filename>
+			to <link linkend="pniewiadomski">Pawe³ Niewiadomski</link>.
+		</para>
+
+		<para>
+			Running <application>make</application> generates
+			only base system without any database based modules or WWW
+			interface. Makefile includes following useful targets:
+			<itemizedlist>
+				<listitem><para>pgsql - PostgreSQL based modules</para></listitem>
+				<listitem><para>clean - removes all objects created during compilation</para></listitem>
+<!--				<listitem><para></para></listitem>
+				<listitem><para></para></listitem>-->
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section>
+		<title>Installation</title>
+
+		<para>
+			After succesful compilation you're ready to install software.
+			It's easy as writing:
+<screen>
+<userinput>
+./install
+</userinput>
+</screen>
+		</para>
+
+		<section>
+			<title>Special steps for Qmail</title>
+		
+			<para>
+				After installing v-q you can tweak some settings.
+				For example if qmail's configuration owner
+				is other than user running <application>qmailvqd</application>
+				you can change owner and set SETUID permission
+				for <filename>bin/qmail*</filename> programs (except 
+				<application>qmailvqd</application>). This will
+				allow these programs to change qmail's configuration.
+			</para>
+		</section>
 	</section>
 	
 <!--
-	<sec tit="Common part">
-		<p>
-			First you need to install MTA (at this time only qmail is supported).
-			I created patch for qmail including most needed stuff like
-			smtp-auth, ssl, etc., more informations are located at 
-			<a href="http://new.foo-baz.com/proj/q-p/">http://new.foo-baz.com/proj/q-p/</a>.
-		</p>
-
-		<p>
-			Following installation procedure was created using OpenBSD 3.4 box, but
-			it will work also for Linux. Commands are executed as root:
-		</p>
-	
-		<ol>
-			<li>
-				make<br/>
-				This starts compilation. I'm using gcc 2.95.5 and 3.2.2.
-				If you encounter any problems please give me feedback.
-				I'll try to fix them ASAP. Also if you want to port this
-				package on other systems I will help.
-			</li>
-			<li>
-				./install<br/>
-				Installing files in home.
-			</li>
-			<li>
-				Add home/lib to linker's seach path. On OpenBSD you need
-				to edit /etc/rc.conf, variable shlib_dirs (this works
-				after restart, to update current database run 
-				ldconfig -m home/lib). On Linux add path to /etc/ld.so.conf and
-				run ldconfig.
-			</li>
-			<li>
-				Depending on system you should set SUID/SGID and owners
-				for all home/bin/qmail* files. They must have an access
-				to qmail/control, qmail/users, and qmail's processes (qmail-send).
-			</li>
-			<li>
-				That should be all. You have now working vq system.
-			</li>
-		</ol>
-	</sec>
-
 	<sec tit="Using PostgreSQL as a database server">
 		<ol>
 			<li>
