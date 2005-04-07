@@ -167,7 +167,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 
-%doc INSTALL VERSION README README.pl_PL doc/en.html doc/pl.html
+%doc INSTALL VERSION README README.pl_PL doc/en.html doc/pl.html corbautil/doc/corba_utils.pdf
 
 %dir %{_sysconfdir}/vq
 %dir %{_sysconfdir}/vq/ivq
