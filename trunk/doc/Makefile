@@ -18,9 +18,10 @@ doc-html:
 		openjade -t sgml -i output-html -d ../$$l.src/stylesheet.dsl \
 		/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl \
 		../$$l.src/index.xml ) || exit 1 ; \
-		cp -f $$l.src/arch.en.png $$l.html ; \
+		cp -f $$l.src/arch.*.png $$l.html ; \
 		cp -f $$l.src/GPL.txt $$l.html ; \
 		cp -f $$l.src/stylesheet.css $$l.html ; \
+		cp -f common/* $$l.html ; \
 		(cd $$l.html && ../mime-type.sh) || exit 1; \
 	done
 

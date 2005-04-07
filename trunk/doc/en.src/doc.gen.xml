@@ -47,7 +47,7 @@ env <envar>SGML_CATALOG_FILES</envar>=/usr/local/share/sgml/catalog
 openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
 /usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
 </synopsis>
-			Changing RTF to SGML produces HTML files.
+			Changing rtf to sgml produces HTML files.
 			<note>
 				<para>
 					<application>openjade</application> may print warnings

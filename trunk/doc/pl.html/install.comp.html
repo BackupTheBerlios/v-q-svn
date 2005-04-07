@@ -1,7 +1,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Compilation</TITLE
+>Kompilacja</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
@@ -10,19 +10,19 @@ REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
 REL="UP"
-TITLE="Installation"
+TITLE="Instalacja"
 HREF="install.html"><LINK
 REL="PREVIOUS"
-TITLE="Preparation"
+TITLE="Przygotowania"
 HREF="install.prep.html"><LINK
 REL="NEXT"
-TITLE="Installation"
+TITLE="Instalacja"
 HREF="install.install.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-03-22T22:13:25"><META
+CONTENT="2005-04-07T23:20:34"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -54,13 +54,13 @@ VALIGN="bottom"
 ><A
 HREF="install.prep.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="80%"
 ALIGN="center"
 VALIGN="bottom"
->Chapter 7. Installation</TD
+>Rozdzia&#322; 7. Instalacja</TD
 ><TD
 WIDTH="10%"
 ALIGN="right"
@@ -68,7 +68,7 @@ VALIGN="bottom"
 ><A
 HREF="install.install.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ></TABLE
@@ -81,22 +81,23 @@ CLASS="section"
 CLASS="section"
 ><A
 NAME="install.comp"
->7.4. Compilation</A
+>7.4. Kompilacja</A
 ></H1
 ><P
->Now it's time to compile sources. If you configured
-		everything properly you should be able to successfully
-		compile it.</P
+>Najwy¿szy czas aby skompilowaæ ¼ród³a. Je¿eli skonfigurowa³e¶
+		wszystko poprawnie powiniene¶ bez problemów skompilowaæ
+		Virtual Qmail.</P
 ><P
->&#13;			To compile program use <SPAN
+>&#13;			Aby rozpocz±æ kompilacjê skorzystaj z <SPAN
 CLASS="application"
 >make</SPAN
 >.
-			You can use both flavors: BSD or GNU. Depending on the shell
-			you use you can, for <SPAN
+			Obie wersje programu s± obs³ugiwane: BSD lub GNU. 
+			Zale¿nie od pow³oki u¿ywanej przez Ciebie, dla 
+			<SPAN
 CLASS="application"
 >sh</SPAN
->, write:
+> napisz:
 </P><PRE
 CLASS="screen"
 >&#13;<TT
@@ -108,7 +109,7 @@ CLASS="userinput"
 >
 </PRE
 ><P>
-			If you use tcsh you can use:
+			Dla tcsh napisz:
 </P><PRE
 CLASS="screen"
 >&#13;<TT
@@ -120,43 +121,45 @@ CLASS="userinput"
 >
 </PRE
 ><P>
-			When <SPAN
+			Po tym jak <SPAN
 CLASS="application"
 >make</SPAN
-> finishes check
+> zakoñczy dzia³anie
+			sprawd¼ plik <TT
+CLASS="filename"
+>out</TT
+> aby sprawdziæ przebieg
+			kompilacji.
+		</P
+><P
+>&#13;			Je¿eli nie jeste¶ w stanie skompilowaæ v-q wy¶lij
 			<TT
 CLASS="filename"
 >out</TT
-> to see output generated during
-			compilation.
-		</P
-><P
->&#13;			If you can't compile v-q please send <TT
-CLASS="filename"
->out</TT
->
-			to <A
+> do 
+			<A
 HREF="community.authors.html#pniewiadomski"
->Pawe³ Niewiadomski</A
+>Paw³a Niewiadomskiego</A
 >.
 		</P
 ><P
->&#13;			Running <SPAN
+>&#13;			Wykonanie <SPAN
 CLASS="application"
 >make</SPAN
-> generates
-			only base system without any database based modules or WWW
-			interface. Makefile includes following useful targets:
+> bez argumentów
+			generuje tylko podstawow± czê¶æ systemu, bez obs³ugi
+			baz danych czy interfejsu WWW.
+			Makefile zawiera nastêpuj±ce cele:
 			<P
 ></P
 ></P><UL
 ><LI
 ><P
->pgsql - PostgreSQL based modules</P
+>pgsql - generacja modu³ów korzystaj±cych z PostgreSQL</P
 ></LI
 ><LI
 ><P
->clean - removes all objects created during compilation</P
+>clean - usuwanie obiektów utworzonych w czasie kompilacji</P
 ></LI
 ></UL
 ><P>
@@ -180,7 +183,7 @@ VALIGN="top"
 ><A
 HREF="install.prep.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="34%"
@@ -189,7 +192,7 @@ VALIGN="top"
 ><A
 HREF="index.html"
 ACCESSKEY="H"
->Home</A
+>Spis tre&#347;ci</A
 ></TD
 ><TD
 WIDTH="33%"
@@ -198,7 +201,7 @@ VALIGN="top"
 ><A
 HREF="install.install.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ><TR
@@ -206,7 +209,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Preparation</TD
+>Przygotowania</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -214,13 +217,13 @@ VALIGN="top"
 ><A
 HREF="install.html"
 ACCESSKEY="U"
->Up</A
+>Pocz&#261;tek rozdzia&#322;u</A
 ></TD
 ><TD
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Installation</TD
+>Instalacja</TD
 ></TR
 ></TABLE
 ></DIV

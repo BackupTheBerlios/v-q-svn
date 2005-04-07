@@ -1,0 +1,276 @@
+<HTML
+><HEAD
+><TITLE
+>Baza danych</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Architektura"
+HREF="arch.html"><LINK
+REL="PREVIOUS"
+TITLE="Klienci: programy linii poleceñ, interfejs WWW, etc."
+HREF="arch.clients.html"><LINK
+REL="NEXT"
+TITLE="¯ycie z Virtual Qmail"
+HREF="life.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-04-07T23:20:34"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 2. Architektura</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="life.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="arch.db"
+>2.5. Baza danych</A
+></H1
+><P
+>&#13;			Sekcja opisuje ogóln± strukturê bazy danych.
+			Niektóre bazy mog± mieæ inn± strukturê, sprawd¼ ich dokumentacjê.
+		</P
+><DIV
+CLASS="figure"
+><A
+NAME="AEN134"
+></A
+><P
+><B
+>Rysunek 2-2. Baza danych w obrazku</B
+></P
+><P
+><IMG
+SRC="arch.db.png"></P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_domains. </B
+>	
+			Tabela przechowuje informacje o zarejestrowanych domenach.
+			Na dzieñ dzisiejszy poza nazw± zawiera domy¶lne ustawienia
+			quoty dla u¿ytkowników. Istnieje specjalna domena zwana
+			"global" zawiera ona konfiguracjê, która jest
+			przypisywana nowym domenom.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_domains_aliases. </B
+>
+			Tabela zawiera informacje o aliasach dla zarejestrowanych
+			domen. Aliasem mo¿e byæ inna nazwa, adres IP. Cokolwiek
+			co zechcesz. Tabela u¿ywana jest podczas okre¶lania
+			rzeczywistej nazwy domeny.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_domains_ips. </B
+>	
+			Zawiera adresy IP przypisane domenom. Dla ka¿dej domeny
+			mo¿na zapisaæ tylko jeden adres IP.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_users. </B
+>
+			Ka¿dy zarejestrowany w systemie v-q u¿ytkownik posiada
+			wpis w tej tabeli. Wszyscy u¿ytkownicy dla wszystkich
+			domen zapisywani s± w jednej tabeli. Koniec z g³upim
+			podej¶ciem u¿ywanym w wersji poprzedniej - w której ka¿da
+			domena posiada³a w³asn± tabelê, uniemo¿liwia³o to tworzenie
+			prostych, globalnych relacji.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_users_conf. </B
+>
+			Konfiguracja skrzynek. Tutaj zapisywane s± informacje
+			o przekierowaniach, automatycznych odpowiedziach i czymkolwiek
+			jeszcze chcesz.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_emails_banned. </B
+>
+			Tabela zawiera listê domen i loginów, których nie mo¿na
+			rejestrowaæ.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_info. </B
+>
+			Informacje o strukturze bazy danych, na dzieñ dzisiejszy
+			zapisywana jest tylko informacja o wersji schematu.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_log. </B
+>
+			Tabela zawiera logi o zdarzeniach w systemie.
+			Zapisywana jest miêdzy innymi przez <SPAN
+CLASS="application"
+>user_auth</SPAN
+>.
+			Zawiera tylko informacje dotycz±ce logowania u¿ytkowników.
+			Inne zdarzenia logowane s± w innych miejscach.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_view_*. </B
+>
+			Widoki u¿ywane s± w celu pobierania informacji z bazy danych
+			bez konieczno¶ci zapisywania zapytañ w kodzie aplikacji.
+			Dziêki temu mo¿liwa jest zmiana struktury bazy danych,
+			wystarczy zaktualizowaæ widoki. Nie trzeba kompilowaæ
+			programów ponownie.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="life.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Klienci: programy linii poleceñ, interfejs WWW, etc.</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="arch.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>¯ycie z Virtual Qmail</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,7 +1,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Generating documentation</TITLE
+>Generowanie dokumentacji</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
@@ -10,16 +10,16 @@ REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
 REL="PREVIOUS"
-TITLE="Installation"
+TITLE="Instalacja"
 HREF="install.install.html"><LINK
 REL="NEXT"
-TITLE="Using makefile"
+TITLE="Korzystanie z pliku makefile"
 HREF="doc.gen.makefile.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-03-22T22:13:25"><META
+CONTENT="2005-04-07T23:20:34"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -51,7 +51,7 @@ VALIGN="bottom"
 ><A
 HREF="install.install.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="80%"
@@ -65,7 +65,7 @@ VALIGN="bottom"
 ><A
 HREF="doc.gen.makefile.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ></TABLE
@@ -77,14 +77,14 @@ CLASS="chapter"
 ><H1
 ><A
 NAME="doc.gen"
->Chapter 8. Generating documentation</A
+>Rozdzia&#322; 8. Generowanie dokumentacji</A
 ></H1
 ><DIV
 CLASS="TOC"
 ><DL
 ><DT
 ><B
->Table of Contents</B
+>Spis tre&#347;ci</B
 ></DT
 ><DT
 >8.1. <A
@@ -94,13 +94,13 @@ HREF="doc.gen.html#doc.gen.openbsd"
 ><DT
 >8.2. <A
 HREF="doc.gen.makefile.html"
->Using makefile</A
+>Korzystanie z pliku makefile</A
 ></DT
 ></DL
 ></DIV
 ><P
->&#13;		This chapter describes how to process DocBook XML documentation
-		into other formats such as: HTML, RTF.
+>&#13;		Rozdzia³ zawiera informacje dotycz±ce przetwarzania dokumentacji
+		zapisanej w formacie DocBook XML na inne formaty, takie jak: HTML, RTF.
 	</P
 ><DIV
 CLASS="section"
@@ -111,40 +111,41 @@ NAME="doc.gen.openbsd"
 >8.1. OpenBSD</A
 ></H1
 ><P
->&#13;			First you need install openjade and dockbook-* packages.
-			This packages allows you to process SGML documents into
-			some formats. Sadly (as in 3.6 release) there is no
-			package with DocBook XML style-sheets so you need to
-			download appropriate.
+>&#13;			Musisz zainstalowaæ pakiety openjade i dockbook-*.
+			Umo¿liwiaj± one translacjê plików SGML na inne formaty.
+			Niestety (dotyczy wersji 3.6 i wcze¶niejszych) nie ma
+			pakiety zawieraj±cego szablony DocBook XML. Musisz samodzielnie
+			je ¶ci±gn±æ.
 		</P
 ><P
->&#13;			I used files from Fedora Core 2 release (packages: 
-			docbook-style-dsssl-1.78-2.noarch.rpm
-			and docbook-dtds-1.0-22.1.noarch.rpm). I unpacked them
-			with <SPAN
+>&#13;			Na dzieñ dzisiejszy dokumentacja t³umaczona jest za
+			pomoc± plików z Fedora Core 2 (pakiety: 
+			docbook-style-dsssl-1.78-2.noarch.rpm i
+			docbook-dtds-1.0-22.1.noarch.rpm). Pakiety rozpakowane zosta³y
+			za pomoc± <SPAN
 CLASS="application"
 >rpm2cpio</SPAN
->, copied everything from 
+>, pliki z 
 			<TT
 CLASS="filename"
 >usr/share/</TT
-> to 
+> skopiowane zosta³y do
 			<TT
 CLASS="filename"
 >/usr/local/share/sgml/redhat</TT
->. Then
-			added following lines:
+>. Nastêpnie
+			poni¿sze linie:
 <DIV
 CLASS="example"
 ><A
-NAME="AEN545"
+NAME="AEN733"
 ></A
 ><P
 ><B
->Example 8-1. Content of <TT
+>Przyk&#322;ad 8-1. Zawarto¶æ pliku <TT
 CLASS="filename"
 >catalog</TT
-> file</B
+></B
 ></P
 ><PRE
 CLASS="screen"
@@ -160,14 +161,14 @@ CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog"
 </PRE
 ></DIV
 >
-			to <TT
+			zosta³y dodane do <TT
 CLASS="filename"
 >/usr/local/share/sgml/catalog</TT
 >.
 		</P
 ><P
->&#13;			Then using following application I was able to create RTF version of
-			documentation:
+>&#13;			Po tych czynno¶ciach mo¿liwe sta³o siê generowanie wersji
+			RTF dokumentacji:
 </P><PRE
 CLASS="synopsis"
 >&#13;env <TT
@@ -178,21 +179,22 @@ openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl
 /usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
 </PRE
 ><P>
-			Changing RTF to SGML produces HTML files.
+			Aby wygenerowaæ dokumentacjê w formacie HTML nale¿y
+			zmieniæ rtf na sgml.
 			</P><DIV
 CLASS="note"
 ><BLOCKQUOTE
 CLASS="note"
 ><P
 ><B
->Note: </B
+>Notatka: </B
 >
 					<SPAN
 CLASS="application"
 >openjade</SPAN
-> may print warnings
-					about DTDDECL which is not supported but you
-					should ignore them.
+> mo¿e wypisaæ ostrze¿enia
+					dotycz±ce DTDDECL, który nie jest obs³ugiwany, nale¿y
+					je ignorowaæ.
 				</P
 ></BLOCKQUOTE
 ></DIV
@@ -218,7 +220,7 @@ VALIGN="top"
 ><A
 HREF="install.install.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="34%"
@@ -227,7 +229,7 @@ VALIGN="top"
 ><A
 HREF="index.html"
 ACCESSKEY="H"
->Home</A
+>Spis tre&#347;ci</A
 ></TD
 ><TD
 WIDTH="33%"
@@ -236,7 +238,7 @@ VALIGN="top"
 ><A
 HREF="doc.gen.makefile.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ><TR
@@ -244,7 +246,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Installation</TD
+>Instalacja</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -254,7 +256,7 @@ VALIGN="top"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Using makefile</TD
+>Korzystanie z pliku makefile</TD
 ></TR
 ></TABLE
 ></DIV

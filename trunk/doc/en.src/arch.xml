@@ -136,4 +136,113 @@
 		</para>
 	</section>
 
+	<section id="arch.db">
+		<title>Database</title>
+		
+		<para>
+			This section describes generic database architecture.
+			Some databases may have different structure, check their
+			documentation.
+		</para>
+
+		<figure>
+			<title>Database in a picture</title>
+			<graphic fileref="arch.db.png" format="PNG"/>
+		</figure>
+
+		<formalpara>
+			<title>vq_domains</title>
+
+			<para>
+			This is a table that keeps informations about registered
+			domains. At this time it includes only domains default
+			quota values for users. There's special domains called
+			&quot;global&quot; it is used to keep information that
+			are copied to newly created domains.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_domains_aliases</title>
+
+			<para>
+			This table has informations about aliases for registered
+			domains. Alias can be another name, or an IP address.
+			Anything what you want. This table is used when
+			trying to guess domain's real name.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_domains_ips</title>
+
+			<para>	
+			Includes IP address associated with domain, only
+			one IP address for a domain is allowed.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_users</title>
+
+			<para>
+			Every user registered in v-q system has an entry in this
+			table. All users for all domains are stored in one table.
+			Dropped stupid design from previous version where
+			every domain has it's own table - it was not possible
+			to create simple, global relations.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_users_conf</title>
+
+			<para>
+			Mailbox configuration. Here a stored informations
+			about redirections, automatic responses and whatever you
+			version supports.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_emails_banned</title>
+
+			<para>
+			Table keeps list of domains and logins that are not
+			allowed to be registered.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_info</title>
+
+			<para>
+			Informations about database schema, at this time
+			only one is supported - schema version.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_log</title>
+
+			<para>
+			This table is used to store logs about events in
+			system. It's used for example by <application>user_auth</application>.
+			It includes only informations about users logins. Other
+			events are stored elsewhere.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_view_*</title>
+
+			<para>
+			Views that are used to retrieve informations from
+			the database without the need to write queries in
+			code. Thanks to this you can change database organization
+			and all you need is to update views. No need to compile program again.
+			</para>
+		</formalpara>
+	</section>
+
 </chapter>

@@ -1,7 +1,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Architecture</TITLE
+>Architektura</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
@@ -10,16 +10,16 @@ REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
 REL="PREVIOUS"
-TITLE="License"
+TITLE="Licencja"
 HREF="license.html"><LINK
 REL="NEXT"
-TITLE="Interface ivq"
+TITLE="Interfejs ivq"
 HREF="arch.ivq.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-03-22T22:13:25"><META
+CONTENT="2005-04-07T23:20:34"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -51,7 +51,7 @@ VALIGN="bottom"
 ><A
 HREF="license.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="80%"
@@ -65,7 +65,7 @@ VALIGN="bottom"
 ><A
 HREF="arch.ivq.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ></TABLE
@@ -77,39 +77,44 @@ CLASS="chapter"
 ><H1
 ><A
 NAME="arch"
->Chapter 2. Architecture</A
+>Rozdzia&#322; 2. Architektura</A
 ></H1
 ><DIV
 CLASS="TOC"
 ><DL
 ><DT
 ><B
->Table of Contents</B
+>Spis tre&#347;ci</B
 ></DT
 ><DT
 >2.1. <A
 HREF="arch.html#arch.parts"
->Main parts</A
+>G³ówne czê¶ci</A
 ></DT
 ><DT
 >2.2. <A
 HREF="arch.ivq.html"
->Interface ivq</A
+>Interfejs ivq</A
 ></DT
 ><DT
 >2.3. <A
 HREF="arch.iauth.html"
->Interface iauth</A
+>Interfejs iauth</A
 ></DT
 ><DT
 >2.4. <A
 HREF="arch.clients.html"
->Clients: command line programs, WWW interface, etc.</A
+>Klienci: programy linii poleceñ, interfejs WWW, etc.</A
+></DT
+><DT
+>2.5. <A
+HREF="arch.db.html"
+>Baza danych</A
 ></DT
 ></DL
 ></DIV
 ><P
->&#13;		This chapter describes different parts of v-q system.
+>&#13;		Rozdzia³ ten opisuje poszczególne czê¶ci systemu v-q.
 	</P
 ><DIV
 CLASS="section"
@@ -117,28 +122,29 @@ CLASS="section"
 CLASS="section"
 ><A
 NAME="arch.parts"
->2.1. Main parts</A
+>2.1. G³ówne czê¶ci</A
 ></H1
 ><P
->&#13;			V-q is a modularized system. Each of subsystems is a separate
-			interface accessed via CORBA protocol. This means that you
-			can replace any part at any time. It's matter of configuration.
+>&#13;			V-q jest modularnym systemem. Ka¿dy z podsystemów jest osobnym
+			obiektem dostêpnym za pomoc± protoko³u CORBA. Oznacza to, ¿e
+			ka¿d± czê¶æ systemu mo¿na wymieniæ w dowolnym momencie.
+			Jest to kwestia konfiguracji.
 		</P
 ><DIV
 CLASS="figure"
 ><A
-NAME="AEN85"
+NAME="AEN96"
 ></A
 ><P
 ><B
->Figure 2-1. Architecture in a picture</B
+>Rysunek 2-1. Architektura w obrazku</B
 ></P
 ><P
 ><IMG
-SRC="arch.en.png"></P
+SRC="arch.pl.png"></P
 ></DIV
 ><P
->&#13;			In following sections each part is described.
+>&#13;			Dalsze sekcje opisuj± poszczególne czê¶ci.
 		</P
 ></DIV
 ></DIV
@@ -160,7 +166,7 @@ VALIGN="top"
 ><A
 HREF="license.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="34%"
@@ -169,7 +175,7 @@ VALIGN="top"
 ><A
 HREF="index.html"
 ACCESSKEY="H"
->Home</A
+>Spis tre&#347;ci</A
 ></TD
 ><TD
 WIDTH="33%"
@@ -178,7 +184,7 @@ VALIGN="top"
 ><A
 HREF="arch.ivq.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ><TR
@@ -186,7 +192,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->License</TD
+>Licencja</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -196,7 +202,7 @@ VALIGN="top"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Interface ivq</TD
+>Interfejs ivq</TD
 ></TR
 ></TABLE
 ></DIV

@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
 <chapter id="devs">
-	<title>Tworzenie aplikacji wykorzystujących v-q</title>
+	<title>Tworzenie aplikacji korzystających z v-q</title>
 
 	<para>
-		Na dzień dzisiejszy nie wiele tu jest. Ten rozdział będzie
-		rozszerzony w przyszłej wersji.
+		Zbyt dużo tutaj nie ma. Rozdział ten będzie rozwinięty w przyszłej
+		wersji.
 	</para>
 
 	<para>
-		Aktualnie najobszerniejszym źródłem informacji oraz przykładów
-		są same źródła v-q. Warto obejrzeć pliki w
+		Na dzień dzisiejszy głównym źródłem informacji są źródła v-q.
+		Możesz również sprawdzić następujące katalogi:
 		<filename>interfaces/clue</filename>,
-		<filename>tests</filename>.
+		<filename>tests</filename>. Dostępne są również
+		przykłady demonstrujące w jaki sposób korzystać z
+		v-q za pomocą języka innego niż C++, są one w katalogu
+		<filename>examples</filename>.
 	</para>
 
 	<section id="devs.python">
@@ -151,4 +154,178 @@ echo "running client ..."
 			</note>
 		</para>
 	</section>
+
+	<section id="devs.java">
+		<title>Używanie v-q z poziomu Java</title>
+		<para>
+			<ulink url="http://java.sun.com">Java</ulink> jest jednym
+			z najpopularniejszych języków używanych do tworzenia
+			systemów biznesowych.
+		</para>
+
+		<para>
+			Java zawiera wbudowane wsparcie dla protokołu CORBA. 
+			Nie musisz instalować dodatkowego oprogramowania, jedyne
+			co potrzebujesz to SDK.
+		</para>
+
+		<para>
+			Na początku należy przetłumaczyć pliki IDL na klasy
+			języka Java. Można to wykonać za pomocą następującego
+			polecenia:
+<synopsis>idlj vq.idl</synopsis>
+			To wygeneruje następujące pliki i katalogi:
+<screen><computeroutput>
+vq
+vq/exceptHelper.java
+vq/exceptHolder.java
+vq/except.java
+vq/db_errorHelper.java
+vq/db_errorHolder.java
+vq/db_error.java
+vq/null_errorHelper.java
+vq/null_errorHolder.java
+vq/null_error.java
+vq/_ivqStub.java
+vq/ivqHolder.java
+vq/ivqHelper.java
+vq/ivq.java
+vq/ivqPackage
+vq/ivqPackage/quota_typeHelper.java
+vq/ivqPackage/size_typeHelper.java
+vq/ivqPackage/uif_typeHelper.java
+vq/ivqPackage/user_conf_typeHelper.java
+vq/ivqPackage/string_listHolder.java
+vq/ivqPackage/string_listHelper.java
+vq/ivqPackage/gid_typeHelper.java
+vq/ivqPackage/uid_typeHelper.java
+vq/ivqPackage/err_codeHolder.java
+vq/ivqPackage/err_codeHelper.java
+vq/ivqPackage/err_code.java
+vq/ivqPackage/errorHelper.java
+vq/ivqPackage/errorHolder.java
+vq/ivqPackage/error.java
+vq/ivqPackage/user_infoHelper.java
+vq/ivqPackage/user_infoHolder.java
+vq/ivqPackage/user_info.java
+vq/ivqPackage/user_conf_infoHelper.java
+vq/ivqPackage/user_conf_infoHolder.java
+vq/ivqPackage/user_conf_info.java
+vq/ivqPackage/user_conf_info_listHolder.java
+vq/ivqPackage/user_conf_info_listHelper.java
+vq/ivqPackage/email_bannedHelper.java
+vq/ivqPackage/email_bannedHolder.java
+vq/ivqPackage/email_banned.java
+vq/ivqPackage/email_banned_listHolder.java
+vq/ivqPackage/email_banned_listHelper.java
+vq/ivqPackage/domain_infoHelper.java
+vq/ivqPackage/domain_infoHolder.java
+vq/ivqPackage/domain_info.java
+vq/ivqPackage/domain_info_listHolder.java
+vq/ivqPackage/domain_info_listHelper.java
+vq/ivqOperations.java
+</computeroutput></screen>
+		</para>
+
+		<para>
+			Poniżej prosty przykład, program wywołuje funkcję
+			vq::ivq::dom_val w celu weryfikacji poprawności nazwy
+			domeny:
+<!--INSERT:../../examples/java/DomVal.java-->
+<programlisting><![CDATA[
+/**
+ * Simple example of using v-q from Java
+ * @author Paweł Niewiadomski
+ */
+
+import vq.*;
+import vq.ivqPackage.*;
+import org.omg.CORBA.*;
+import org.omg.CosNaming.*;
+
+public class DomVal {
+
+	static public void main( String [] args ) throws Exception {
+		ORB orb = ORB.init(args, null);
+
+		org.omg.CORBA.Object obj = orb.resolve_initial_references("NameService");
+
+		NamingContext rootCtx = NamingContextHelper.narrow(obj);
+		if( rootCtx == null ) {
+			System.out.println("Failed to narrow the root naming context");
+			System.exit(1);
+		}
+
+		NameComponent name = new NameComponent("vq::ivq", "");
+		NameComponent [] path = { name };
+		ivq vqo = ivqHelper.narrow(rootCtx.resolve(path));
+		
+		String dom = "123123.asd.com.pl";
+		error err = vqo.dom_val(dom);
+		if( err.ec == err_code.err_no ) {
+			System.out.println("It's a valid domain name");
+		} else {
+			System.out.println("It's an invalid domain name");
+		}
+		System.exit(0);
+	}
+}
+
+]]></programlisting>
+			Poniższy skrypt uruchamia omniNames (serwer nazw),
+			iauth (pgsqlauthd) oraz ivq (qmailvqd), następnie DomVal (powyższy
+			przykład). Program znajduje się w <filename>examples/java</filename>.
+<!--INSERT:../../examples/java/run-->
+<programlisting><![CDATA[
+#!/bin/sh
+export BASE=../..
+export VQ_HOME=.
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+rm -f /tmp/omninames-*
+omniNames -start 12456 -logdir /tmp &
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+java DomVal -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
+]]></programlisting>
+			<note>
+				<para>
+					qmailvqd i pgsqlauthd skompilowane były przy wykorzystaniu
+					biblioteki MICO, serwer nazw reprezentowany był przez
+					<application>omniNames</application> z pakietu omniORB.
+					Klient zaś napisany był za pomocą Java. Przykład
+					kompatybilności implementacji CORBA.
+				</para>
+			</note>
+		</para>
+	</section>
+
 </chapter>

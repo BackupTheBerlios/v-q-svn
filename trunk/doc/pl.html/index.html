@@ -7,13 +7,13 @@ NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
 "><LINK
 REL="NEXT"
-TITLE="Foreword"
+TITLE="S³owo wstêpne"
 HREF="foreword.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-03-22T22:13:25"><META
+CONTENT="2005-04-07T23:20:34"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -44,7 +44,7 @@ NAME="AEN5"
 ></H3
 ><P
 CLASS="copyright"
->Copyright &copy; 2003, 2004, 2005 by <A
+>Copyright &copy; 2003, 2004, 2005  <A
 HREF="http://foo-baz.com"
 TARGET="_top"
 >foo-baz.com</A
@@ -55,63 +55,68 @@ CLASS="TOC"
 ><DL
 ><DT
 ><B
->Table of Contents</B
+>Spis tre&#347;ci</B
 ></DT
 ><DT
 ><A
 HREF="foreword.html"
->Foreword</A
+>S³owo wstêpne</A
 ></DT
 ><DT
 >1. <A
 HREF="intro.html"
->Introduction</A
+>Wprowadzenie</A
 ></DT
 ><DD
 ><DL
 ><DT
 >1.1. <A
 HREF="intro.html#intro.goal"
->Project goal</A
+>Cel projektu</A
 ></DT
 ><DT
 >1.2. <A
 HREF="intro.features.html"
->Current main features</A
+>G³ówne cechy aktualnego systemu</A
 ></DT
 ><DT
 >1.3. <A
 HREF="intro.todo.html"
->Planned features</A
+>Planowane w³a¶ciwo¶ci</A
 ></DT
 ><DT
 >1.4. <A
 HREF="intro.missing.html"
->Missing features</A
+>Niedostêpne funkcje</A
 ></DT
 ><DT
 >1.5. <A
+HREF="intro.trans.html"
+>T³umaczenia dokumentacji</A
+></DT
+><DT
+>1.6. <A
 HREF="license.html"
->License</A
+>Licencja</A
 ></DT
 ></DL
 ></DD
 ><DT
 >2. <A
 HREF="arch.html"
->Architecture</A
+>Architektura</A
 ></DT
 ><DD
 ><DL
 ><DT
 >2.1. <A
 HREF="arch.html#arch.parts"
->Main parts</A
+>G³ówne czê¶ci</A
 ></DT
 ><DT
 >2.2. <A
 HREF="arch.ivq.html"
->Interface ivq</A
+>Interfejs ivq</A
 ></DT
 ><DD
 ><DL
@@ -125,7 +130,7 @@ HREF="arch.ivq.html#arch.ivq.cqmailvq"
 ><DT
 >2.3. <A
 HREF="arch.iauth.html"
->Interface iauth</A
+>Interfejs iauth</A
 ></DT
 ><DD
 ><DL
@@ -139,55 +144,74 @@ HREF="arch.iauth.html#arch.iauth.cpgsqlauth"
 ><DT
 >2.4. <A
 HREF="arch.clients.html"
->Clients: command line programs, WWW interface, etc.</A
+>Klienci: programy linii poleceñ, interfejs WWW, etc.</A
+></DT
+><DT
+>2.5. <A
+HREF="arch.db.html"
+>Baza danych</A
 ></DT
 ></DL
 ></DD
 ><DT
 >3. <A
 HREF="life.html"
->Life with Virtual Qmail</A
+>¯ycie z Virtual Qmail</A
 ></DT
 ><DD
 ><DL
 ><DT
 >3.1. <A
 HREF="life.html#life.conf"
->Configuration</A
+>Konfiguracja</A
 ></DT
 ><DD
 ><DL
 ><DT
 >3.1.1. <A
 HREF="life.html#life.env"
->Environment variables</A
+>Zmienne ¶rodowiska</A
 ></DT
 ><DT
 >3.1.2. <A
-HREF="life.html#AEN134"
->Configuration for Qmail part</A
+HREF="life.html#AEN183"
+>Konfiguracja modu³u Qmail</A
 ></DT
 ><DT
 >3.1.3. <A
-HREF="life.html#AEN216"
->Configuration for PostgreSQL authorization part</A
+HREF="life.html#AEN278"
+>Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
 ></DT
 ><DT
 >3.1.4. <A
-HREF="life.html#AEN240"
->Configuration for PostgreSQL logging part</A
+HREF="life.html#AEN314"
+>Konfiguracja modu³u loguj±cego PostgreSQL</A
 ></DT
 ></DL
 ></DD
 ><DT
 >3.2. <A
 HREF="life.security.html"
->Security not by obscurity</A
+>Bezpieczeñstwo bez ¶ciemniania</A
 ></DT
+><DD
+><DL
+><DT
+>3.2.1. <A
+HREF="life.security.html#life.security.steps"
+>Kroki maj±ce na celu uczyniæ system bezpieczniejszym</A
+></DT
+><DT
+>3.2.2. <A
+HREF="life.security.html#life.security.sockets"
+>Ograniczanie dostêpu do gniazd sieciowych</A
+></DT
+></DL
+></DD
 ><DT
 >3.3. <A
 HREF="life.integration.html"
->Integration with other software</A
+>Integracja z zewnêtrznym oprogramowaniem</A
 ></DT
 ><DD
 ><DL
@@ -203,7 +227,7 @@ HREF="life.integration.html#life.inte.omail"
 ><DT
 >4. <A
 HREF="devs.html"
->Tworzenie aplikacji wykorzystuj±cych v-q</A
+>Tworzenie aplikacji korzystaj±cych z v-q</A
 ></DT
 ><DD
 ><DL
@@ -212,49 +236,54 @@ HREF="devs.html"
 HREF="devs.html#devs.python"
 >U¿ywanie v-q z poziomu pythona</A
 ></DT
+><DT
+>4.2. <A
+HREF="devs.java.html"
+>U¿ywanie v-q z poziomu Java</A
+></DT
 ></DL
 ></DD
 ><DT
 >5. <A
 HREF="community.html"
->Community</A
+>Wspólnota</A
 ></DT
 ><DD
 ><DL
 ><DT
 >5.1. <A
 HREF="community.html#community.list"
->Mailing list</A
+>Lista dyskusyjna</A
 ></DT
 ><DT
 >5.2. <A
 HREF="community.forums.html"
->Forums</A
+>Forum</A
 ></DT
 ><DT
 >5.3. <A
 HREF="community.requests.html"
->Requests</A
+>¯±dania</A
 ></DT
 ><DT
 >5.4. <A
 HREF="community.success.html"
->Success stories</A
+>Udane wdro¿enia</A
 ></DT
 ><DT
 >5.5. <A
 HREF="community.bugs.html"
->Reporting bugs</A
+>Zg³aszanie b³êdów</A
 ></DT
 ><DT
 >5.6. <A
 HREF="community.blog.html"
->Virtual Qmail has it's blog</A
+>Virtual Qmail ma swój blog</A
 ></DT
 ><DT
 >5.7. <A
 HREF="community.authors.html"
->Authors</A
+>Autorzy</A
 ></DT
 ><DD
 ><DL
@@ -270,89 +299,89 @@ HREF="community.authors.html#pniewiadomski"
 ><DT
 >6. <A
 HREF="com.support.html"
->Commercial support</A
+>Komercyjne wsparcie</A
 ></DT
 ><DT
 >7. <A
 HREF="install.html"
->Installation</A
+>Instalacja</A
 ></DT
 ><DD
 ><DL
 ><DT
 >7.1. <A
 HREF="install.html#install.download"
->Downloading</A
+>¦ci±ganie</A
 ></DT
 ><DT
 >7.2. <A
 HREF="install.deps.html"
->Dependencies</A
+>Zale¿no¶ci</A
 ></DT
 ><DD
 ><DL
 ><DT
 >7.2.1. <A
 HREF="install.deps.html#install.mta"
->Mail transfer agent</A
+>Agent transferu poczty (MTA)</A
 ></DT
 ><DT
 >7.2.2. <A
 HREF="install.deps.html#install.pgsql"
->PostgreSQL version</A
+>U¿ywanie PostgreSQL</A
 ></DT
 ></DL
 ></DD
 ><DT
 >7.3. <A
 HREF="install.prep.html"
->Preparation</A
+>Przygotowania</A
 ></DT
 ><DD
 ><DL
 ><DT
 >7.3.1. <A
-HREF="install.prep.html#AEN413"
->Creating user and group</A
+HREF="install.prep.html#AEN539"
+>Tworzenie u¿ytkownika i grupy</A
 ></DT
 ><DT
 >7.3.2. <A
 HREF="install.prep.html#install.unpack"
->Unpacking sources</A
+>Rozpakowywanie ¼róde³</A
 ></DT
 ><DT
 >7.3.3. <A
 HREF="install.prep.html#install.conf"
->Configuration before compilation</A
+>Konfiguracja przed instalacj±</A
 ></DT
 ></DL
 ></DD
 ><DT
 >7.4. <A
 HREF="install.comp.html"
->Compilation</A
+>Kompilacja</A
 ></DT
 ><DT
 >7.5. <A
 HREF="install.install.html"
->Installation</A
+>Instalacja</A
 ></DT
 ><DD
 ><DL
 ><DT
 >7.5.1. <A
 HREF="install.install.html#install.steps.qmail"
->Special steps for Qmail</A
+>Specjalne kroki dla Qmail</A
 ></DT
 ><DT
 >7.5.2. <A
 HREF="install.install.html#install.steps.pgsql"
->Special steps for PostgreSQL</A
+>Specjalne kroki dla PostgreSQL</A
 ></DT
 ><DT
 >7.5.3. <A
 HREF="install.install.html#install.problems"
->What if I have problems?</A
+>Mam problem, co zrobiæ?</A
 ></DT
 ></DL
 ></DD
@@ -361,7 +390,7 @@ HREF="install.install.html#install.problems"
 ><DT
 >8. <A
 HREF="doc.gen.html"
->Generating documentation</A
+>Generowanie dokumentacji</A
 ></DT
 ><DD
 ><DL
@@ -373,7 +402,7 @@ HREF="doc.gen.html#doc.gen.openbsd"
 ><DT
 >8.2. <A
 HREF="doc.gen.makefile.html"
->Using makefile</A
+>Korzystanie z pliku makefile</A
 ></DT
 ></DL
 ></DD
@@ -385,22 +414,22 @@ CLASS="LOT"
 CLASS="LOT"
 ><DT
 ><B
->List of Tables</B
+>Spis tabel</B
 ></DT
 ><DT
 >3-1. <A
-HREF="life.html#AEN139"
->Configuration files for Qmail part</A
+HREF="life.html#AEN188"
+>Konfiguracja modu³u Qmail</A
 ></DT
 ><DT
 >3-2. <A
-HREF="life.html#AEN221"
->Configuration files for PostgreSQL authorization part</A
+HREF="life.html#AEN283"
+>Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
 ></DT
 ><DT
 >3-3. <A
-HREF="life.html#AEN245"
->Configuration files for PostgreSQL logging part</A
+HREF="life.html#AEN319"
+>Konfiguracja modu³u loguj±cego PostgreSQL</A
 ></DT
 ></DL
 ></DIV
@@ -410,12 +439,17 @@ CLASS="LOT"
 CLASS="LOT"
 ><DT
 ><B
->List of Figures</B
+>Spis rysunków</B
 ></DT
 ><DT
 >2-1. <A
-HREF="arch.html#AEN85"
->Architecture in a picture</A
+HREF="arch.html#AEN96"
+>Architektura w obrazku</A
+></DT
+><DT
+>2-2. <A
+HREF="arch.db.html#AEN134"
+>Baza danych w obrazku</A
 ></DT
 ></DL
 ></DIV
@@ -425,15 +459,35 @@ CLASS="LOT"
 CLASS="LOT"
 ><DT
 ><B
->List of Examples</B
+>Spis przyk&#322;adów</B
+></DT
+><DT
+>7-1. <A
+HREF="install.prep.html#AEN630"
+>corba.inc dla MICO zainstalowanego w /usr/local/progs/mico</A
+></DT
+><DT
+>7-2. <A
+HREF="install.prep.html#AEN634"
+>corba.lib dla MICO zainstalowanego w /usr/local/progs/mico</A
+></DT
+><DT
+>7-3. <A
+HREF="install.prep.html#AEN638"
+>corba.inc dla omniORB zainstalowanego w /usr/local/progs/omniorb</A
+></DT
+><DT
+>7-4. <A
+HREF="install.prep.html#AEN642"
+>corba.lib dla omniORB zainstalowanego w /usr/local/progs/omniorb</A
 ></DT
 ><DT
 >8-1. <A
-HREF="doc.gen.html#AEN545"
->Content of <TT
+HREF="doc.gen.html#AEN733"
+>Zawarto¶æ pliku <TT
 CLASS="filename"
 >catalog</TT
-> file</A
+></A
 ></DT
 ></DL
 ></DIV
@@ -466,7 +520,7 @@ VALIGN="top"
 ><A
 HREF="foreword.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ><TR
@@ -484,7 +538,7 @@ VALIGN="top"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Foreword</TD
+>S³owo wstêpne</TD
 ></TR
 ></TABLE
 ></DIV

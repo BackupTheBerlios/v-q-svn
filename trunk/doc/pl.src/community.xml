@@ -1,158 +1,166 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
 <chapter id="community">
-	<title>Community</title>
+	<title>Wspólnota</title>
 
 	<para>
-		Here you can find out where to look for help, share ideas.
+		Poniższy rozdział opisuje sposoby uzyskiwania pomocy, dzielenia
+		się pomysłami.
 	</para>
 
 	<section id="community.list">
-		<title>Mailing list</title>
+		<title>Lista dyskusyjna</title>
 
 		<para>
-			At this time there's only one list available. It's hosted
-			on <ulink url="http://sf.net">SourceForge</ulink>.
+			Aktualnie istnieje tylko jedna lista. Utrzymywana jest na serwerze
+			<ulink url="http://sf.net">SourceForge</ulink>.
 		</para>
 		
 		<para>
-			To subscribe to it check following address 
+			Aby się na nią zapisać wejdź na stronę 
 			<ulink url="http://sourceforge.net/mail/?group_id=87916">http://sourceforge.net/mail/?group_id=87916</ulink>.
 		</para>
 
 		<para>
-			You can also read archive at 
+			Archiwum znajduje się pod adresem
 			<ulink url="http://sourceforge.net/mailarchive/forum.php?forum=v-q-misc">http://sourceforge.net/mailarchive/forum.php?forum=v-q-misc</ulink>.
 		</para>
 	</section>
 
 	<section id="community.forums">
-		<title>Forums</title>
+		<title>Forum</title>
 
 		<para>
-			If you don't want to use <link linkend="community.list">mailing list</link>
-			you can always use 
-			<ulink url="http://sourceforge.net/forum/?group_id=87916">forums</ulink>
-			available at project's SourceForge
-			<ulink url="http://sourceforge.net/projects/v-q">site</ulink>.
+			Jeżeli nie chcesz używać <link linkend="community.list">listy 
+			dyskusyjnej</link> możesz zawsze skorzystać z 
+			<ulink url="http://sourceforge.net/forum/?group_id=87916">forum</ulink>
+			dostępnego na
+			<ulink url="http://sourceforge.net/projects/v-q">stronie projektu</ulink>
+			na serwerze SourceForge.
 		</para>
 
 		<para>
-			There you can discuss about this software, projects
-			around it. Users' experiences, etc.
+			Możesz tam podyskutować na temat tego programu, projektów
+			związanych z nim, podzielić się doświadczeniami, etc.
 		</para>
 	</section>
 
 	<section id="community.requests">
-		<title>Requests</title>
+		<title>Żądania</title>
 
 		<para>
-			<ulink url="http://sf.net">SourceForge</ulink> offers
-			set of pages that allows you easily issue 
-			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584856">feature request</ulink>,
-			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584854">support request</ulink> where
-			you're in trouble. You can also issue 
-			<link linkend="community.bugs">a bug report</link>.
+			<ulink url="http://sf.net">SourceForge</ulink> udostępnia
+			zestaw stron, które umożliwiają zarządzanie żądaniami
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584856">modyfikacji</ulink>,
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584854">wsparcia</ulink> 
+			gdy jesteś w potrzebie. Można również zgłosić
+			<link linkend="community.bugs">raport błędu</link>.
 		</para>
 
 		<para>
-			You can also contact 
-			<link linkend="pniewiadomski">Paweł Niewiadomski</link> directly.
+			Możesz również kontaktować się z 
+			<link linkend="pniewiadomski">Pawłem Niewiadomskim</link> bezpośrednio.
 		</para>
 	</section>
 
 	<section id="community.success">
-		<title>Success stories</title>
+		<title>Udane wdrożenia</title>
 
 		<para>
-			It would be great if you could share with us your story.
-			This will help grow community around v-q. We all
-			now that a good community around project is a great thing :-)
+			Byłoby wspaniale gdybyś podzielił się z nami twoją
+			historią. Pomoże to rozwijać wspólnotę v-q.
+			Wszyscy wiemy, że nie ma to jak dobra wspólnota związana z
+			projektem :-)
 		</para>
 	</section>
 
 	<section id="community.bugs">
-		<title>Reporting bugs</title>
+		<title>Zgłaszanie błędów</title>
 
 		<para>
-			As all software in the world this one has also bugs.
-			I try my best to lowerage number of them. But as with
-			all bugs it's hard to kill them all. So if you find any 
-			please notify me.
+			Tak jak każde oprogramowane na tym świece to jedno również
+			ma błędy. Staram się minimalizować ich ilość. Ale tak jak
+			z wszystkimi pluskwami trudno wybić je wszystkie.
+			Dlatego jeżeli znajdziesz jakąś daj znać.
 		</para>
 
 		<para>
-			If you find a bug please try to reproduce it. Reproducing
-			a bug means a lot about it and helps developers to remove
-			it ASAP. But if you're not able to reproduce it also
-			please give us a message about it.
+			Jeżeli znalazłeś coś co wydaje się pluskwą staraj się
+			to powtórzyć. Możliwość ponownego wywołania pluskwy
+			oznacza bardzo wiele i pomaga programistą w usunięciu jej
+			najszybciej jak to możliwe. Jeżeli nie jesteś w stanie
+			ponownie wywołać błędy również daj nam znać.
 		</para>
 
 		<para>
-			Project maintains public bug list which is available on
-			SourceForge under following URL 
+			Projekt zarządza publiczną listą błędów, która dostępna jest
+			na serwerze SourceForge pod następującym adresem URL 
 			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584853">http://sourceforge.net/tracker/?group_id=87916&amp;atid=584853</ulink>.
-			Anyone is allowed to insert entries into it. So if you find a bug
-			go straigth to this page and write all informations that
-			you think could help.
+			Każdy może wstawić raport błędu. Jeżeli znajdziesz błąd
+			wejdź na tą stronę od razu i zapisz swoje spostrzeżenia. Wszystko
+			co wydaje się pomocne w ustaleniu przyczyny błędu.
 		</para>
 
 		<para>
-			Informations you should include in a bug report:
-			v-q's version, architecture, operating system, 
-			error description, messages printed by program, 
-			configuration (except of passwords of course :-), 
-			action description. And of course if you can reproduce it
-			please write all actions to do it.
+			Informacje, które powinieneś zawrzeć w raporcie:
+			wersja v-q, architektura maszyny, system operacyjny, 
+			opis błędu, komunikaty wypisane przez program, 
+			zawartość konfiguracji (oczywiście oprócz haseł :-), 
+			opis wykonywanych czynności. Jeżeli jesteś w stanie
+			powtórzyć błąd opisz wszelkie niezbędne w tym celu czynności.
 		</para>
 
 		<para>
-			If you can please write a test case for a bug and send
-			us a patch. It will mean a lot for us.
+			Jeżeli jesteś w stanie cudownie byłoby otrzymać
+			odpowiedni przypadek testowy i łatkę. Wiele to dla nas
+			znaczy.
 		</para>
 	</section>
 
 	<section id="community.blog">
-		<title>Virtual Qmail has it's blog</title>
+		<title>Virtual Qmail ma swój blog</title>
 
 		<para>
-			Well, not exactly - <link linkend="pniewiadomski">its maintainer</link> has a 
-			<ulink url="http://new.foo-baz.com">blog</ulink> which has
-			a <ulink url="http://new.foo-baz.com/en/index.php/archives/category/virtual-qmail/">separate section</ulink>
-			only for Virtual Qmail. If you want to know what going
-			on in the project you should look there.
+			No cóż, nie dokładnie - <link linkend="pniewiadomski">jego
+			główny programista</link> ma  
+			<ulink url="http://new.foo-baz.com">blog</ulink>, który zawiera
+			<ulink url="http://new.foo-baz.com/pl/index.php/archives/category/virtual-qmail/">oddzielną sekcję</ulink>
+			Virtual Qmail. Jeżeli jesteś ciekaw co się dzieje w projekcie
+			powinieneś tam zajrzeć.
 		</para>
 	</section>
 
 	<section id="community.authors">
-		<title>Authors</title>
+		<title>Autorzy</title>
 
 		<para>
-			At this time this software is developed by a single man
-			company called <ulink url="http://foo-baz.com">foo-baz.com</ulink>
-			which is owned by <link linkend="pniewiadomski">Paweł Niewiadomski</link>.
+			Na dzień dzisiejszy system rozwijany jest przez
+			jednoosobową firmę zwaną <ulink url="http://foo-baz.com">foo-baz.com</ulink>,
+			jej właścicielem jest <link linkend="pniewiadomski">Paweł Niewiadomski</link>.
 		</para>
 
 		<section id="pniewiadomski">
 			<title>Paweł Niewiadomski</title>
 
 			<para>
-				Don't know what to put here. I have an 
-				<ulink url="http://new.foo-baz.com/me/cv.html">online CV</ulink>
-				where you can read about my work experience. 
-				I also run <ulink url="http://new.foo-baz.com">a blog</ulink>
-				where you can read some articles about Virtual Qmail,
-				Unix and other stuff that I wanted to write about.
+				Nie wiem co by tu napisać. Posiadam 
+				<ulink url="http://new.foo-baz.com/me/cv.html">CV on-line</ulink>,
+				z którego możesz dowiedzieć się czegoś na temat mojego
+				doświadczenia. Prowadzę również 
+				<ulink url="http://new.foo-baz.com">blog</ulink>,
+				w którym piszę m.in. na temat Virtual Qmail,
+				Unix oraz innych rzeczy.
 			</para>
 
-			<para>
-				In short I'm an Unix guy which loves creating good
-				applications. I work as a developer and manager of a
-				programming division. I live in a small city called
-				Koszalin in Poland. I try to run small company
-				called <ulink url="http://foo-baz.com">foo-baz.com</ulink>.
-				At this time my only product is my knowledge about
-				v-q, qmail, apache, Linux, OpenBSD and databases. May be some
-				day it will make foo-baz.com a profitable company :-)
+			<para> 
+				W skrócie, jestem programistą Unix, który uwielbia
+				tworzyć dobre oprogramowanie. Pracuję jako programista
+				i kierownik działu programistycznego. Mieszkam w małym
+				mieście zwanym Koszalin, w Polsce. Staram się prowadzić
+				małą firmę nazwaną <ulink url="http://foo-baz.com">foo-baz.com</ulink>.
+				Na dzień dzisiejszy jedynym produktem jest moja wiedza
+				na temat v-q, qmail, apache, Linux, OpenBSD oraz baz danych. 
+				Mam nadzieję, że któregoś dnia foo-baz.com stanie się
+				zyskowną firmą, której będę się mógł poświęcić bez reszty :-)
 			</para>
 		</section>
 	</section>

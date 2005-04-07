@@ -1,7 +1,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Life with Virtual Qmail</TITLE
+>¯ycie z Virtual Qmail</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
@@ -10,16 +10,16 @@ REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
 REL="PREVIOUS"
-TITLE="Clients: command line programs, WWW interface, etc."
-HREF="arch.clients.html"><LINK
+TITLE="Baza danych"
+HREF="arch.db.html"><LINK
 REL="NEXT"
-TITLE="Security not by obscurity"
+TITLE="Bezpieczeñstwo bez ¶ciemniania"
 HREF="life.security.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-03-22T22:13:25"><META
+CONTENT="2005-04-07T23:20:34"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -49,9 +49,9 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="arch.clients.html"
+HREF="arch.db.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="80%"
@@ -65,7 +65,7 @@ VALIGN="bottom"
 ><A
 HREF="life.security.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ></TABLE
@@ -77,59 +77,73 @@ CLASS="chapter"
 ><H1
 ><A
 NAME="life"
->Chapter 3. Life with Virtual Qmail</A
+>Rozdzia&#322; 3. ¯ycie z Virtual Qmail</A
 ></H1
 ><DIV
 CLASS="TOC"
 ><DL
 ><DT
 ><B
->Table of Contents</B
+>Spis tre&#347;ci</B
 ></DT
 ><DT
 >3.1. <A
 HREF="life.html#life.conf"
->Configuration</A
+>Konfiguracja</A
 ></DT
 ><DD
 ><DL
 ><DT
 >3.1.1. <A
 HREF="life.html#life.env"
->Environment variables</A
+>Zmienne ¶rodowiska</A
 ></DT
 ><DT
 >3.1.2. <A
-HREF="life.html#AEN134"
->Configuration for Qmail part</A
+HREF="life.html#AEN183"
+>Konfiguracja modu³u Qmail</A
 ></DT
 ><DT
 >3.1.3. <A
-HREF="life.html#AEN216"
->Configuration for PostgreSQL authorization part</A
+HREF="life.html#AEN278"
+>Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
 ></DT
 ><DT
 >3.1.4. <A
-HREF="life.html#AEN240"
->Configuration for PostgreSQL logging part</A
+HREF="life.html#AEN314"
+>Konfiguracja modu³u loguj±cego PostgreSQL</A
 ></DT
 ></DL
 ></DD
 ><DT
 >3.2. <A
 HREF="life.security.html"
->Security not by obscurity</A
+>Bezpieczeñstwo bez ¶ciemniania</A
 ></DT
+><DD
+><DL
+><DT
+>3.2.1. <A
+HREF="life.security.html#life.security.steps"
+>Kroki maj±ce na celu uczyniæ system bezpieczniejszym</A
+></DT
+><DT
+>3.2.2. <A
+HREF="life.security.html#life.security.sockets"
+>Ograniczanie dostêpu do gniazd sieciowych</A
+></DT
+></DL
+></DD
 ><DT
 >3.3. <A
 HREF="life.integration.html"
->Integration with other software</A
+>Integracja z zewnêtrznym oprogramowaniem</A
 ></DT
 ></DL
 ></DIV
 ><P
->&#13;		This chapter describes how to configure and use v-q. It
-		includes also part about securing v-q system.
+>&#13;		Rozdzia³ opisuje konfiguracje oraz u¿ytkowanie v-q. 
+		Zawiera równie¿ czê¶æ po¶wiêcon± zabezpieczaniu systemu.
 	</P
 ><DIV
 CLASS="section"
@@ -137,11 +151,11 @@ CLASS="section"
 CLASS="section"
 ><A
 NAME="life.conf"
->3.1. Configuration</A
+>3.1. Konfiguracja</A
 ></H1
 ><P
->&#13;		V-q is a highly configurable system. Almost all options
-		can be set at the runtime.
+>&#13;		V-q jest wysoce konfigurowalnym systemem. Prawie wszystkie opcje
+		mo¿na zmieniæ w czasie dzia³ania.
 	</P
 ><DIV
 CLASS="section"
@@ -149,11 +163,12 @@ CLASS="section"
 CLASS="section"
 ><A
 NAME="life.env"
->3.1.1. Environment variables</A
+>3.1.1. Zmienne ¶rodowiska</A
 ></H2
 ><P
->&#13;			Some programs can be customized using environment variables,
-			below is a list of globally used variables.
+>&#13;			Niektóre programy korzystaj± ze zmiennych ¶rodowiska,
+			poni¿ej znajduje siê lista zmiennych obs³ugiwanych przez
+			prawie wszystkie programy.
 			
 			<P
 ></P
@@ -166,13 +181,31 @@ NAME="life.vq_home"
 >&#13;						<TT
 CLASS="envar"
 >VQ_HOME</TT
-> this is the most important
-						variable. It points to a base directory
-						when v-q files are stored. Default value is set
-						during compilation, usually it is
-						<TT
+> jest jedn± z najwa¿niejszych
+						zmiennych. Wskazuje na katalog, w którym
+						zainstalowany zosta³ v-q. Domy¶lna warto¶æ
+						ustalana jest podczas kompilacji, zazwyczaj jest
+						to <TT
 CLASS="filename"
 >/var/vq</TT
+>.
+					</P
+></LI
+><LI
+><A
+NAME="life.vq_etc_dir"
+></A
+><P
+>&#13;						<TT
+CLASS="envar"
+>VQ_ETC_DIR</TT
+> wskazuje katalog, w którym
+						zapisana jest konfiguracja systemu.
+						Domy¶lna warto¶æ
+						ustalana jest podczas kompilacji, zazwyczaj jest
+						to <TT
+CLASS="filename"
+>/var/vq/etc</TT
 >.
 					</P
 ></LI
@@ -185,27 +218,27 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN134"
->3.1.2. Configuration for Qmail part</A
+NAME="AEN183"
+>3.1.2. Konfiguracja modu³u Qmail</A
 ></H2
 ><P
->&#13;			Configurations files are stored in
+>&#13;			Pliki konfiguracyjne przechowywane s± w katalogu
 			<TT
 CLASS="filename"
 ><A
-HREF="life.html#life.vq_home"
->VQ_HOME</A
->/etc/ivq/qmail/</TT
+HREF="life.html#life.vq_etc_dir"
+>VQ_ETC_DIR</A
+>/ivq/qmail/</TT
 >.
 		</P
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN139"
+NAME="AEN188"
 ></A
 ><P
 ><B
->Table 3-1. Configuration files for Qmail part</B
+>Tabela 3-1. Konfiguracja modu³u Qmail</B
 ></P
 ><TABLE
 BORDER="1"
@@ -215,15 +248,15 @@ CLASS="CALSTABLE"
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->File</TH
+>Plik</TH
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Default value</TH
+>Domy¶lna warto¶æ</TH
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Description</TH
+>Opis</TH
 ></TR
 ></THEAD
 ><TBODY
@@ -233,17 +266,21 @@ ALIGN="LEFT"
 VALIGN="MIDDLE"
 ><TT
 CLASS="filename"
->ivq_name</TT
+>autoresp_ttl</TT
 ></TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->vq::ivq</TD
+>60</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Name of an interface which will be registered
-							in a NameService.
+>&#13;							Czas liczony w minutach przez ile autoresp
+							bêdzie pamiêta³, ¿e wys³a³ na dany adres
+							wiadomo¶æ. Zazwyczaj nie chcesz odpowiadaæ
+							na ka¿d± wiadomo¶æ przychodz±c± spod tego
+							samego adresu. Je¿eli chcesz aby program
+							odpowiada³ na ka¿d± wiadomo¶æ podaj 0.
 						</TD
 ></TR
 ><TR
@@ -252,17 +289,22 @@ ALIGN="LEFT"
 VALIGN="MIDDLE"
 ><TT
 CLASS="filename"
->iauth_name</TT
+>iauth_import</TT
 ></TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->vq::iauth</TD
+>name_service#Auth.iauth</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Name of a iauth interface we will search
-							for in a NameService.
+>&#13;							Instrukcja okre¶laj±ca w jaki¶ sposób mo¿na
+							siê dostaæ do obiektu implementuj±cego
+							interfejs vq::iauth. Zobacz równie¿
+							<TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
 						</TD
 ></TR
 ><TR
@@ -280,7 +322,13 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							How many times split a path for a domain.
+>&#13;							Ilo¶æ podzia³ów, którym podlega ¶cie¿ka do
+							domeny (warto¶æ ró¿na wiêksza od 1 powoduje
+							zmniejszenie liczby katalogów na tym samym poziomie).
+							Mo¿esz zmieniaæ t± warto¶æ tylko je¿eli nie
+							ma w systemie ¿adnych zarejestrowanych domen.
+							Je¿eli zmienisz t± warto¶æ w innej sytuacji
+							domeny i u¿ytkownicy nie bêd± widoczni w programach.
 						</TD
 ></TR
 ><TR
@@ -298,7 +346,10 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							How many times split a path for user's directory.
+>&#13;							Ilo¶æ podzia³ów, którym podlega ¶cie¿ka do skrzynki
+							u¿ytkownika. Tak jak w przypadku split_dom
+							mo¿esz zmieniaæ t± warto¶æ tylko w przypadku
+							braku u¿ytkowników.
 						</TD
 ></TR
 ><TR
@@ -316,7 +367,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Mode of created files.
+>&#13;							Prawa dostêpu ustawiane tworzonym plikom.
 						</TD
 ></TR
 ><TR
@@ -334,7 +385,8 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Mode of subdirectories in Maildir.
+>&#13;							Prawa dostêpu ustawiane podkatalogom
+							katalogu Maildir.
 						</TD
 ></TR
 ><TR
@@ -352,7 +404,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Mode of other created directories.
+>&#13;							Prawa dostêpu ustawiane tworzonym katalogom.
 						</TD
 ></TR
 ><TR
@@ -370,7 +422,8 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Name of a v-q's user. It is put in
+>&#13;							Nazwa u¿ytkownika, który uruchamia
+							us³ugi. Jest ona wstawiana do
 							<TT
 CLASS="filename"
 >qmail/users/assign</TT
@@ -388,11 +441,11 @@ CLASS="filename"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Uid of this process</TD
+>UID aktualnego procesu</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							It is put into
+>&#13;							Warto¶æ wstawiana do
 							<TT
 CLASS="filename"
 >qmail/users/assign</TT
@@ -410,11 +463,11 @@ CLASS="filename"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Gid of this process</TD
+>GID aktualnego procesu</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							It is put into
+>&#13;							Warto¶æ wstawiana do
 							<TT
 CLASS="filename"
 >qmail/users/assign</TT
@@ -427,16 +480,17 @@ ALIGN="LEFT"
 VALIGN="MIDDLE"
 ><TT
 CLASS="filename"
->domains</TT
+>data</TT
 ></TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->base/domains</TD
+>/var/vq</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Directory where domains are stored.
+>&#13;							Katalog, w którym Virtual Qmail przechowuje
+							domeny i skrzynki u¿ytkowników.
 						</TD
 ></TR
 ><TR
@@ -454,7 +508,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Qmail's home directory.
+>&#13;							Katalog, w którym zainstalowany jest Qmail.
 						</TD
 ></TR
 ><TR
@@ -472,7 +526,53 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Mode of files created in a qmail's directory.
+>&#13;							Prawa dostêpu ustawiane plikom tworzonym
+							w katalogu qmail.
+						</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><TT
+CLASS="filename"
+>dep_mod</TT
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>fixed_ports_no_imr</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;							Deployment model opisany w <TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
+							Okre¶la kontekst dzia³ania us³ugi CORBA.
+						</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><TT
+CLASS="filename"
+>policy</TT
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>single_thread_model</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;							Okre¶la politykê dzia³ania servanta CORBA -
+							wykorzystanie w±tków, trwa³o¶æ obiektu, etc.
+							Zobacz <TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
 						</TD
 ></TR
 ></TBODY
@@ -484,27 +584,27 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN216"
->3.1.3. Configuration for PostgreSQL authorization part</A
+NAME="AEN278"
+>3.1.3. Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
 ></H2
 ><P
->&#13;			Configurations files are stored in
+>&#13;			Pliki konfiguracyjne zapisywane s± w 
 			<TT
 CLASS="filename"
 ><A
-HREF="life.html#life.vq_home"
->VQ_HOME</A
->/etc/iauth/pgsql/</TT
+HREF="life.html#life.vq_etc_dir"
+>VQ_ETC_DIR</A
+>/iauth/pgsql/</TT
 >.
 		</P
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN221"
+NAME="AEN283"
 ></A
 ><P
 ><B
->Table 3-2. Configuration files for PostgreSQL authorization part</B
+>Tabela 3-2. Konfiguracja modu³u autoryzacyjnego PostgreSQL</B
 ></P
 ><TABLE
 BORDER="1"
@@ -514,15 +614,15 @@ CLASS="CALSTABLE"
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->File</TH
+>Plik</TH
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Default value</TH
+>Domy¶lna warto¶æ</TH
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Description</TH
+>Opis</TH
 ></TR
 ></THEAD
 ><TBODY
@@ -541,7 +641,8 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							String used to connect to a database.
+>&#13;							£añcuch okre¶laj±cy informacje niezbêdne
+							do po³±czenia. Pamiêtaj aby zmieniæ has³o.
 						</TD
 ></TR
 ><TR
@@ -550,17 +651,65 @@ ALIGN="LEFT"
 VALIGN="MIDDLE"
 ><TT
 CLASS="filename"
->iauth_name</TT
+>pgsql_pool</TT
 ></TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->vq::iauth</TD
+>1</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Name of an interface which will be registered
-							in a NameService.
+>&#13;							Ilo¶æ po³±czeñ do serwera bazy danych, które
+							s± tworzone podczas startu. Mo¿esz spróbowaæ
+							u¿yæ kilku po³±czeñ je¿eli wybrana implementacja
+							CORBA posiada obs³ugê w±tków i wybrana polityka
+							zezwala na wykorzystanie jej.
+						</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><TT
+CLASS="filename"
+>dep_mod</TT
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>fixed_ports_no_imr</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;							Deployment model opisany w <TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
+							Okre¶la kontekst dzia³ania us³ugi CORBA.
+						</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><TT
+CLASS="filename"
+>policy</TT
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>single_thread_model</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;							Okre¶la politykê dzia³ania servanta CORBA -
+							wykorzystanie w±tków, trwa³o¶æ obiektu, etc.
+							Zobacz <TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
 						</TD
 ></TR
 ></TBODY
@@ -572,27 +721,27 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN240"
->3.1.4. Configuration for PostgreSQL logging part</A
+NAME="AEN314"
+>3.1.4. Konfiguracja modu³u loguj±cego PostgreSQL</A
 ></H2
 ><P
->&#13;			Configurations files are stored in
+>&#13;			Pliki konfiguracyjne znajduj± siê w
 			<TT
 CLASS="filename"
 ><A
-HREF="life.html#life.vq_home"
->VQ_HOME</A
->/etc/ilogger/pgsql/</TT
+HREF="life.html#life.vq_etc_dir"
+>VQ_ETC_DIR</A
+>/ilogger/pgsql/</TT
 >.
 		</P
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN245"
+NAME="AEN319"
 ></A
 ><P
 ><B
->Table 3-3. Configuration files for PostgreSQL logging part</B
+>Tabela 3-3. Konfiguracja modu³u loguj±cego PostgreSQL</B
 ></P
 ><TABLE
 BORDER="1"
@@ -602,15 +751,15 @@ CLASS="CALSTABLE"
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->File</TH
+>Plik</TH
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Default value</TH
+>Domy¶lna warto¶æ</TH
 ><TH
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->Description</TH
+>Opis</TH
 ></TR
 ></THEAD
 ><TBODY
@@ -629,7 +778,8 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							String used to connect to a database.
+>&#13;							£añcuch okre¶laj±cy informacje niezbêdne
+							do po³±czenia. Pamiêtaj aby zmieniæ has³o.
 						</TD
 ></TR
 ><TR
@@ -638,17 +788,65 @@ ALIGN="LEFT"
 VALIGN="MIDDLE"
 ><TT
 CLASS="filename"
->ilogger_name</TT
+>pgsql_pool</TT
 ></TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->vq::ilogger</TD
+>1</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->&#13;							Name of an interface which will be registered
-							in a NameService.
+>&#13;							Ilo¶æ po³±czeñ do serwera bazy danych, które
+							s± tworzone podczas startu. Mo¿esz spróbowaæ
+							u¿yæ kilku po³±czeñ je¿eli wybrana implementacja
+							CORBA posiada obs³ugê w±tków i wybrana polityka
+							zezwala na wykorzystanie jej.
+						</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><TT
+CLASS="filename"
+>dep_mod</TT
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>fixed_ports_no_imr</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;							Deployment model opisany w <TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
+							Okre¶la kontekst dzia³ania us³ugi CORBA.
+						</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><TT
+CLASS="filename"
+>policy</TT
+></TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>single_thread_model</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;							Okre¶la politykê dzia³ania servanta CORBA -
+							wykorzystanie w±tków, trwa³o¶æ obiektu, etc.
+							Zobacz <TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
 						</TD
 ></TR
 ></TBODY
@@ -673,9 +871,9 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="arch.clients.html"
+HREF="arch.db.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="34%"
@@ -684,7 +882,7 @@ VALIGN="top"
 ><A
 HREF="index.html"
 ACCESSKEY="H"
->Home</A
+>Spis tre&#347;ci</A
 ></TD
 ><TD
 WIDTH="33%"
@@ -693,7 +891,7 @@ VALIGN="top"
 ><A
 HREF="life.security.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ><TR
@@ -701,7 +899,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Clients: command line programs, WWW interface, etc.</TD
+>Baza danych</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -711,7 +909,7 @@ VALIGN="top"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Security not by obscurity</TD
+>Bezpieczeñstwo bez ¶ciemniania</TD
 ></TR
 ></TABLE
 ></DIV

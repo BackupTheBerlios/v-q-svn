@@ -1,7 +1,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Installation</TITLE
+>Instalacja</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
@@ -10,16 +10,16 @@ REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
 REL="PREVIOUS"
-TITLE="Commercial support"
+TITLE="Komercyjne wsparcie"
 HREF="com.support.html"><LINK
 REL="NEXT"
-TITLE="Dependencies"
+TITLE="Zale¿no¶ci"
 HREF="install.deps.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-03-22T22:13:25"><META
+CONTENT="2005-04-07T23:20:34"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -51,7 +51,7 @@ VALIGN="bottom"
 ><A
 HREF="com.support.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="80%"
@@ -65,7 +65,7 @@ VALIGN="bottom"
 ><A
 HREF="install.deps.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ></TABLE
@@ -77,96 +77,96 @@ CLASS="chapter"
 ><H1
 ><A
 NAME="install"
->Chapter 7. Installation</A
+>Rozdzia&#322; 7. Instalacja</A
 ></H1
 ><DIV
 CLASS="TOC"
 ><DL
 ><DT
 ><B
->Table of Contents</B
+>Spis tre&#347;ci</B
 ></DT
 ><DT
 >7.1. <A
 HREF="install.html#install.download"
->Downloading</A
+>¦ci±ganie</A
 ></DT
 ><DT
 >7.2. <A
 HREF="install.deps.html"
->Dependencies</A
+>Zale¿no¶ci</A
 ></DT
 ><DD
 ><DL
 ><DT
 >7.2.1. <A
 HREF="install.deps.html#install.mta"
->Mail transfer agent</A
+>Agent transferu poczty (MTA)</A
 ></DT
 ><DT
 >7.2.2. <A
 HREF="install.deps.html#install.pgsql"
->PostgreSQL version</A
+>U¿ywanie PostgreSQL</A
 ></DT
 ></DL
 ></DD
 ><DT
 >7.3. <A
 HREF="install.prep.html"
->Preparation</A
+>Przygotowania</A
 ></DT
 ><DD
 ><DL
 ><DT
 >7.3.1. <A
-HREF="install.prep.html#AEN413"
->Creating user and group</A
+HREF="install.prep.html#AEN539"
+>Tworzenie u¿ytkownika i grupy</A
 ></DT
 ><DT
 >7.3.2. <A
 HREF="install.prep.html#install.unpack"
->Unpacking sources</A
+>Rozpakowywanie ¼róde³</A
 ></DT
 ><DT
 >7.3.3. <A
 HREF="install.prep.html#install.conf"
->Configuration before compilation</A
+>Konfiguracja przed instalacj±</A
 ></DT
 ></DL
 ></DD
 ><DT
 >7.4. <A
 HREF="install.comp.html"
->Compilation</A
+>Kompilacja</A
 ></DT
 ><DT
 >7.5. <A
 HREF="install.install.html"
->Installation</A
+>Instalacja</A
 ></DT
 ><DD
 ><DL
 ><DT
 >7.5.1. <A
 HREF="install.install.html#install.steps.qmail"
->Special steps for Qmail</A
+>Specjalne kroki dla Qmail</A
 ></DT
 ><DT
 >7.5.2. <A
 HREF="install.install.html#install.steps.pgsql"
->Special steps for PostgreSQL</A
+>Specjalne kroki dla PostgreSQL</A
 ></DT
 ><DT
 >7.5.3. <A
 HREF="install.install.html#install.problems"
->What if I have problems?</A
+>Mam problem, co zrobiæ?</A
 ></DT
 ></DL
 ></DD
 ></DL
 ></DIV
 ><P
->&#13;		Step-by-step installation guide.
+>&#13;		Krok po kroku, czyli przepis na instalacjê.
 	</P
 ><DIV
 CLASS="section"
@@ -174,24 +174,24 @@ CLASS="section"
 CLASS="section"
 ><A
 NAME="install.download"
->7.1. Downloading</A
+>7.1. ¦ci±ganie</A
 ></H1
 ><P
->&#13;			First it is good to check project's 
+>&#13;			Warto rozpocz±æ od sprawdzenia 
 			<A
 HREF="http://v-q.foo-baz.com"
 TARGET="_top"
->home page</A
+>strony projektu</A
 >.
 		</P
 ><P
 >&#13;			<A
 HREF="http://sf.net/project/showfiles.php?group_id=87916"
 TARGET="_top"
->Download page</A
+>Udostêpnione pliki</A
 >
-			at SourceForge includes all files released by this project.
-			You can go there and get the newest version.
+			przechowywane s± na serwerze SourceForge. Sprawd¼ czy nie ma
+			nowych wersji.
 		</P
 ></DIV
 ></DIV
@@ -213,7 +213,7 @@ VALIGN="top"
 ><A
 HREF="com.support.html"
 ACCESSKEY="P"
->Prev</A
+>Poprzedni</A
 ></TD
 ><TD
 WIDTH="34%"
@@ -222,7 +222,7 @@ VALIGN="top"
 ><A
 HREF="index.html"
 ACCESSKEY="H"
->Home</A
+>Spis tre&#347;ci</A
 ></TD
 ><TD
 WIDTH="33%"
@@ -231,7 +231,7 @@ VALIGN="top"
 ><A
 HREF="install.deps.html"
 ACCESSKEY="N"
->Next</A
+>Nastêpny</A
 ></TD
 ></TR
 ><TR
@@ -239,7 +239,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Commercial support</TD
+>Komercyjne wsparcie</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -249,7 +249,7 @@ VALIGN="top"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Dependencies</TD
+>Zale¿no¶ci</TD
 ></TR
 ></TABLE
 ></DIV

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
 <section id="license">
-	<title>License</title>
+	<title>Licencja</title>
 
 	<para>
 <screen>
@@ -24,7 +24,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	</para>
 
 	<para>
-		Full text of GNU General Public License is 
-		available <ulink url="GPL.txt">here</ulink>.
+		Dostępny jest <ulink url="GPL.txt">pełen tekst GNU General Public Licens</ulink>.
 	</para>
 </section>

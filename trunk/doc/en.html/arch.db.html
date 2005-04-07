@@ -1,0 +1,275 @@
+<HTML
+><HEAD
+><TITLE
+>Database</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Architecture"
+HREF="arch.html"><LINK
+REL="PREVIOUS"
+TITLE="Clients: command line programs, WWW interface, etc."
+HREF="arch.clients.html"><LINK
+REL="NEXT"
+TITLE="Life with Virtual Qmail"
+HREF="life.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-04-07T23:20:06"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 2. Architecture</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="life.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="arch.db"
+>2.5. Database</A
+></H1
+><P
+>&#13;			This section describes generic database architecture.
+			Some databases may have different structure, check their
+			documentation.
+		</P
+><DIV
+CLASS="figure"
+><A
+NAME="AEN134"
+></A
+><P
+><B
+>Figure 2-2. Database in a picture</B
+></P
+><P
+><IMG
+SRC="arch.db.png"></P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_domains. </B
+>
+			This is a table that keeps informations about registered
+			domains. At this time it includes only domains default
+			quota values for users. There's special domains called
+			"global" it is used to keep information that
+			are copied to newly created domains.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_domains_aliases. </B
+>
+			This table has informations about aliases for registered
+			domains. Alias can be another name, or an IP address.
+			Anything what you want. This table is used when
+			trying to guess domain's real name.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_domains_ips. </B
+>	
+			Includes IP address associated with domain, only
+			one IP address for a domain is allowed.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_users. </B
+>
+			Every user registered in v-q system has an entry in this
+			table. All users for all domains are stored in one table.
+			Dropped stupid design from previous version where
+			every domain has it's own table - it was not possible
+			to create simple, global relations.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_users_conf. </B
+>
+			Mailbox configuration. Here a stored informations
+			about redirections, automatic responses and whatever you
+			version supports.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_emails_banned. </B
+>
+			Table keeps list of domains and logins that are not
+			allowed to be registered.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_info. </B
+>
+			Informations about database schema, at this time
+			only one is supported - schema version.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_log. </B
+>
+			This table is used to store logs about events in
+			system. It's used for example by <SPAN
+CLASS="application"
+>user_auth</SPAN
+>.
+			It includes only informations about users logins. Other
+			events are stored elsewhere.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>vq_view_*. </B
+>
+			Views that are used to retrieve informations from
+			the database without the need to write queries in
+			code. Thanks to this you can change database organization
+			and all you need is to update views. No need to compile program again.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="life.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Clients: command line programs, WWW interface, etc.</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="arch.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Life with Virtual Qmail</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

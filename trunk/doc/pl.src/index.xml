@@ -12,9 +12,11 @@
 	<!ENTITY com.support SYSTEM "com.support.xml">
 	<!ENTITY life SYSTEM "life.xml">
 	<!ENTITY life.conf SYSTEM "life.conf.xml">
+	<!ENTITY life.security SYSTEM "life.security.xml">
+	<!ENTITY life.os SYSTEM "life.os.xml">
 	]
 >
-<book lang="en">
+<book lang="pl">
 	<bookinfo>
 		<title>Virtual Qmail</title>
 		<authorgroup>
@@ -35,9 +37,10 @@
 		<title>S³owo wstêpne</title>
 
 		<para>
-			Oto podrêcznik dla Virtual Qmail. Mam nadziejê, ¿e
-			czytanie go sprawi Ci przyjemno¶æ. Wszelkie pytania,
-			b³edy, sugestie proszê przesy³aæ do
+			Podrêcznik opisuje system
+			<ulink url="http://v-q.foo-baz.com">Virtual Qmail</ulink>. 
+			Mam nadziejê, ¿e czytanie go sprawi Ci przyjemno¶æ. Wszelkie
+			sugestie, raporty b³êdów, pytania kieruj do
 			Paw³a Niewiadomskiego
 			&lt;<literal>new [__at__] foo-baz [__dot__] com</literal>&gt;.
 		</para>

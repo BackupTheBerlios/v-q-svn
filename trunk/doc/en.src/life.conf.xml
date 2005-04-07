@@ -41,7 +41,7 @@
 		<title>Configuration for Qmail part</title>
 
 		<para>
-			Configurations files are stored in
+			Configuration files are stored in
 			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ivq/qmail/</filename>.
 		</para>
 
@@ -57,19 +57,23 @@
 				</thead>
 				<tbody>
 					<row>
-						<entry><filename>ivq_name</filename></entry>
-						<entry>vq::ivq</entry>
+						<entry><filename>autoresp_ttl</filename></entry>
+						<entry>60</entry>
 						<entry>
-							Name of an interface which will be registered
-							in a NameService.
+							How many minutes autoresp will remeber that
+							it sent a message to specified address. Usually
+							you don't want to automatically answer to every 
+							incoming mail from the same address. If you want
+							to answer on every incoming mail set it to 0.
 						</entry>
 					</row>
 					<row>
-						<entry><filename>iauth_name</filename></entry>
-						<entry>vq::iauth</entry>
+						<entry><filename>iauth_import</filename></entry>
+						<entry>name_service#Auth.iauth</entry>
 						<entry>
-							Name of a iauth interface we will search
-							for in a NameService.
+							Instruction how to find object program
+							should use as a vq::iauth implementation.
+							See <filename>corba_utils.pdf</filename>.
 						</entry>
 					</row>
 					<row>
@@ -77,6 +81,10 @@
 						<entry>1</entry>
 						<entry>
 							How many times split a path for a domain.
+							You can change this value only if you don't
+							have any domains registered. If you change it
+							in other situation programs won't be able to
+							find domains and users.
 						</entry>
 					</row>
 					<row>
@@ -84,6 +92,8 @@
 						<entry>3</entry>
 						<entry>
 							How many times split a path for user's directory.
+							Like split_dom you can change it only when
+							you don't have any users.
 						</entry>
 					</row>
 					<row>
@@ -117,7 +127,7 @@
 					</row>
 					<row>
 						<entry><filename>uid</filename></entry>
-						<entry>Uid of this process</entry>
+						<entry>UID of this process</entry>
 						<entry>
 							It is put into
 							<filename>qmail/users/assign</filename>.
@@ -125,7 +135,7 @@
 					</row>
 					<row>
 						<entry><filename>gid</filename></entry>
-						<entry>Gid of this process</entry>
+						<entry>GID of this process</entry>
 						<entry>
 							It is put into
 							<filename>qmail/users/assign</filename>.
@@ -153,6 +163,23 @@
 							Mode of files created in a qmail's directory.
 						</entry>
 					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
@@ -162,7 +189,7 @@
 		<title>Configuration for PostgreSQL authorization part</title>
 
 		<para>
-			Configurations files are stored in
+			Configuration files are stored in
 			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/iauth/pgsql/</filename>.
 		</para>
 
@@ -182,16 +209,38 @@
 						<entry>dbname=mail password=mail user=mail</entry>
 						<entry>
 							String used to connect to a database.
+							Remember to use different password.
 						</entry>
 					</row>
 					<row>
-						<entry><filename>iauth_name</filename></entry>
-						<entry>vq::iauth</entry>
+						<entry><filename>pgsql_pool</filename></entry>
+						<entry>1</entry>
 						<entry>
-							Name of an interface which will be registered
-							in a NameService.
+							Number of connections to a database server
+							that are created during statup.
+							You can try to use few connections if your
+							CORBA implementation implements threading
+							and policy allows using it.
 						</entry>
 					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+
 				</tbody>
 			</tgroup>
 		</table>
@@ -201,7 +250,7 @@
 		<title>Configuration for PostgreSQL logging part</title>
 
 		<para>
-			Configurations files are stored in
+			Configuration files are stored in
 			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ilogger/pgsql/</filename>.
 		</para>
 
@@ -224,13 +273,23 @@
 						</entry>
 					</row>
 					<row>
-						<entry><filename>ilogger_name</filename></entry>
-						<entry>vq::ilogger</entry>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
 						<entry>
-							Name of an interface which will be registered
-							in a NameService.
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
 						</entry>
 					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+
 				</tbody>
 			</tgroup>
 		</table>
