@@ -16,6 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+import com.foo_baz.v_q.*;
+import com.foo_baz.Getopt;
+
+import com.iona.corbautil.*;
+
 import org.omg.CORBA.*;
 
 public class jdbclogd {
@@ -30,8 +35,8 @@ public class jdbclogd {
 	/**
 	 * @param args arguments from main
 	 */
-	void run( String[] args ) {
-		ORB org = ORB.init(args, null);
+	int run( String[] args ) {
+		ORB orb = ORB.init(args, null);
 	
 		if( args.length < 1 ) {
 				usage();
@@ -60,9 +65,42 @@ public class jdbclogd {
 			case '?':
 			default:
 				usage();
-				System.exit(111);
+				return 111;
 			}
 		}
+
+		POAHier poa;
+		try {
+			poa = new POAHier(orb, "fixed_ports_no_imr", "");
+		} catch( PoaUtilityException e ) {
+			System.err.println(e.getMessage());
+			System.exit(111);
+		}
+
+		JDBCLog log = new JDBCLog("");
+
+		byte[] oid = poa.getCorePoa().activate_object(log);
+		org.omg.CORBA.Object ref = poa.getCorePoa().id_to_reference(oid);
+		log._remove_ref();
+
+		if(exp) {
+			try {
+				ImportExport.exportObjRef(orb, ref, exp_ins);
+			} catch( ImportExportException e ) {
+				System.err.println(e.getMessage());
+				run = false;
+			}
+		}
+
+		if(run) {
+			System.out.println("Running.");
+			poa.getCoreMgr().activate();
+			orb.run();
+		}
+
+		orb.destroy();
+		orb = null;
+		return 0;
 	}
 	
 	/**
@@ -70,6 +108,6 @@ public class jdbclogd {
 	 * @see void run( String[] args )
 	 */
 	public static void main( String[] args ) {
-		new jdbclogd().run(args);
+		System.exit(new jdbclogd().run(args));
 	}
 }

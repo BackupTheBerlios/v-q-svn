@@ -3,6 +3,8 @@ Class implements getopt interface. Placed in public domain.
 @author Pawel Niewiadomski &lt;paweln@iidea.pl&gt;
 @version 1
 */
+package com.foo_baz;
+
 public class Getopt  {
     /**
     if you want to parse another command line, set it to 0

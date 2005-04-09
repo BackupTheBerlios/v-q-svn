@@ -1,5 +1,5 @@
-BASE=../..
-SUBDIR=com/foo_baz
+BASE=../../../..
+SUBDIR=v_q
 
 .PHONY: all
 .SUFFIXES: .class .java
@@ -8,7 +8,7 @@ all:
 
 include $(BASE)/Makefile.common
 
-all:
+all: Getopt.class
 	@for entry in $(SUBDIR); do \
 		( \
 			echo "===> $$entry" ; \
@@ -19,9 +19,3 @@ all:
 
 .java.class:
 	$(JAVAC) -classpath $(BASE)/corbautil/corbautil.jar:. $<
-
-vq/ilogger.java: ../logger.idl ../vq.idl
-	idlj -i.. -fserver ../logger.idl
-
-vq/iauth.java: ../auth.idl ../vq.idl
-	idlj -i.. -fserver ../auth.idl
