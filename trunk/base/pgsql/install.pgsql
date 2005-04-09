@@ -267,7 +267,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_dom_name AS
+"CREATE VIEW vq_view_dom_name AS
 SELECT domain,id_domain FROM vq_domains;",
 
 "CREATE or replace FUNCTION dom_rm (vq_domains.id_domain\%TYPE) RETURNS VOID AS '
@@ -280,7 +280,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';", 
 
-"CREATE OR REPLACE VIEW vq_view_dom_ls 
+"CREATE VIEW vq_view_dom_ls 
 AS SELECT id_domain,domain FROM vq_domains ORDER BY DOMAIN",
 
 "CREATE FUNCTION vq_domains_qt_user_trig() RETURNS TRIGGER AS '
@@ -327,7 +327,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_da_ls AS
+"CREATE VIEW vq_view_da_ls AS
 SELECT alias,id_domain FROM vq_domains_aliases ORDER BY alias",
 
 "CREATE FUNCTION da_rm
@@ -363,7 +363,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_dip_ls
+"CREATE VIEW vq_view_dip_ls
 AS SELECT ip,id_domain FROM vq_domains_ips ORDER BY ip",
 
 "CREATE FUNCTION dip_rm
@@ -378,7 +378,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE FUNCTION eb_add 
+"CREATE FUNCTION eb_add 
 (vq_emails_banned.re_domain\%TYPE, vq_emails_banned.re_login\%TYPE) RETURNS INT4 AS '
 DECLARE
 	_re_domain ALIAS FOR \$1;
@@ -397,7 +397,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_eb_ls 
+"CREATE VIEW vq_view_eb_ls 
 AS SELECT re_domain,re_login FROM vq_emails_banned ORDER BY re_domain,re_login",
 
 "CREATE FUNCTION eb_rm 
@@ -413,7 +413,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_QT_USER_DEF_GET AS
+"CREATE VIEW vq_view_QT_USER_DEF_GET AS
 SELECT qt_user_bytes_def,qt_user_files_def,id_domain FROM vq_domains;",
 
 "CREATE FUNCTION qt_user_def_set
@@ -432,7 +432,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_qt_user_get AS
+"CREATE VIEW vq_view_qt_user_get AS
 SELECT qt_bytes_max,qt_files_max,id_domain,login FROM vq_users;",
 
 "CREATE FUNCTION qt_user_set
@@ -474,7 +474,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql'",
 
-"CREATE OR REPLACE VIEW vq_view_user_conf_ls
+"CREATE VIEW vq_view_user_conf_ls
 AS SELECT id_conf,val,type,id_domain,login,ext FROM vq_users_conf",
 
 "CREATE FUNCTION user_conf_rm (vq_users_conf.id_conf\%TYPE) RETURNS VOID AS '
@@ -503,7 +503,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';", 
 
-"CREATE OR REPLACE VIEW vq_view_user_conf_get AS
+"CREATE VIEW vq_view_user_conf_get AS
 SELECT type,val,id_conf FROM vq_users_conf;",
 
 "CREATE FUNCTION user_conf_rep
@@ -525,10 +525,10 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_user_conf_type_has AS
+"CREATE VIEW vq_view_user_conf_type_has AS
 SELECT id_domain,login,ext,type FROM vq_users_conf;",
 
-"CREATE OR REPLACE VIEW vq_view_user_conf_type_cnt AS
+"CREATE VIEW vq_view_user_conf_type_cnt AS
 SELECT COUNT(*) as count,id_domain,login,ext,type FROM vq_users_conf
 GROUP BY id_domain,login,ext,type;",
 
@@ -588,10 +588,10 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE VIEW vq_view_user_get AS
+"CREATE VIEW vq_view_user_get AS
 SELECT id_domain,login,pass,dir,flags FROM vq_users;",
 
-"CREATE OR REPLACE VIEW vq_view_user_ex AS
+"CREATE VIEW vq_view_user_ex AS
 SELECT id_domain,login FROM vq_users;",
 
 "CREATE FUNCTION user_rm
@@ -652,14 +652,14 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE OR REPLACE FUNCTION log_rm_all() RETURNS VOID AS '
+"CREATE FUNCTION log_rm_all() RETURNS VOID AS '
 BEGIN
 	DELETE FROM vq_log;
 	NOTIFY log_rm;
 	RETURN;
 END;' LANGUAGE 'plpgsql'",
 
-"CREATE OR REPLACE FUNCTION log_rm_by_dom(vq_log.domain\%TYPE) RETURNS VOID AS '
+"CREATE FUNCTION log_rm_by_dom(vq_log.domain\%TYPE) RETURNS VOID AS '
 DECLARE
 	_domain ALIAS FOR \$1;
 BEGIN
@@ -668,7 +668,7 @@ BEGIN
 	RETURN;
 END;' LANGUAGE 'plpgsql'",
 
-"CREATE OR REPLACE FUNCTION log_rm_by_user(
+"CREATE FUNCTION log_rm_by_user(
 vq_log.domain\%TYPE,vq_log.login\%TYPE) RETURNS VOID AS '
 DECLARE
 	_domain ALIAS FOR \$1;
@@ -679,70 +679,15 @@ BEGIN
 	RETURN;
 END;' LANGUAGE 'plpgsql'",
 
-"CREATE OR REPLACE FUNCTION log_count() RETURNS INT AS '
-DECLARE
-	cnt INT;
-BEGIN
-	cnt:=(SELECT COUNT(*) FROM vq_log);
-	RETURN cnt;
-END;' LANGUAGE 'plpgsql'",
+"CREATE VIEW vq_view_log_count AS SELECT COUNT(*) FROM vq_log",
 
-"CREATE OR REPLACE FUNCTION log_count_by_dom(vq_log.domain\%TYPE) RETURNS INT AS '
-DECLARE
-	_domain ALIAS FOR \$1;
-	cnt INT;
-BEGIN
-	cnt:=(SELECT COUNT(*) FROM vq_log WHERE domain=_domain);
-	RETURN cnt;
-END;' LANGUAGE 'plpgsql'",
+"CREATE VIEW vq_view_log_count_by_dom AS SELECT COUNT(*),domain FROM vq_log GROUP BY domain",
 
-"CREATE OR REPLACE FUNCTION log_count_by_user(
-vq_log.domain\%TYPE,vq_log.login\%TYPE) RETURNS INT AS '
-DECLARE
-	_domain ALIAS FOR \$1;
-	_login ALIAS FOR \$2;
-	cnt INT;
-BEGIN
-	cnt:=(SELECT COUNT(*) FROM vq_log WHERE domain=_domain AND login=_login);
-	RETURN cnt;
-END;' LANGUAGE 'plpgsql'",
+"CREATE VIEW vq_view_log_count_by_user AS "
+."SELECT COUNT(*),domain,login FROM vq_log GROUP BY domain,login",
 
-"CREATE FUNCTION log_read() RETURNS SETOF vq_log AS '
-DECLARE
-	ban RECORD;
-BEGIN
-	FOR ban IN SELECT * FROM vq_log LOOP
-		RETURN NEXT ban;
-	END LOOP;
-	RETURN;
-END;
-' LANGUAGE 'plpgsql';",
-
-"CREATE FUNCTION log_read_by_dom(vq_log.domain\%TYPE) RETURNS SETOF vq_log AS '
-DECLARE
-	_domain ALIAS FOR \$1;
-	ban RECORD;
-BEGIN
-	FOR ban IN SELECT * FROM vq_log WHERE domain=_domain LOOP
-		RETURN NEXT ban;
-	END LOOP;
-	RETURN;
-END;
-' LANGUAGE 'plpgsql';",
-
-"CREATE FUNCTION log_read_by_user(vq_log.domain\%TYPE,
-	vq_log.login\%TYPE) RETURNS SETOF vq_log AS '
-DECLARE
-	_domain ALIAS FOR \$1;
-	_login ALIAS FOR \$2;
-	ban RECORD;
-BEGIN
-	FOR ban IN SELECT * FROM vq_log WHERE domain=_domain AND login=_login LOOP
-		RETURN NEXT ban;
-	END LOOP;
-	RETURN;
-END;
-' LANGUAGE 'plpgsql';"
+"CREATE VIEW vq_view_log_read AS "
+."SELECT id_log,time,ip,service,domain,login,result,msg FROM vq_log"
 
 );
 

@@ -110,14 +110,14 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count( size_type & cnt ) std_try {
-		return count_by_func( "log_count()" , cnt);
+		return count_by_func( "vq_view_log_count" , cnt);
 	} std_catch
 
 	/**
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count_by_dom( size_type & cnt ) std_try {
-  		return count_by_func( "log_count_by_dom("+pqxx::Quote(this->dom)+")", 
+  		return count_by_func( "vq_view_log_count_by_dom WHERE domain="+pqxx::Quote(this->dom), 
 			cnt);
 	} std_catch
 
@@ -125,8 +125,8 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count_by_user( size_type & cnt ) std_try {
-  		return count_by_func( "log_count_by_user("+pqxx::Quote(this->dom)
-			+','+pqxx::Quote(this->log)+")", cnt);
+  		return count_by_func( "vq_view_log_count_by_user WHERE domain="+pqxx::Quote(this->dom)
+			+" AND login="+pqxx::Quote(this->log), cnt);
 	} std_catch
 
 	/**
@@ -149,7 +149,7 @@ namespace POA_vq {
 	 */
 	cpgsqllog::error * cpgsqllog::read( size_type start, size_type end,
 			log_entry_list_out les ) std_try {
-		return read_by_func(make_pair(0, "log_read()"), start, end, les);
+		return read_by_func(make_pair(0, "vq_view_log_read"), start, end, les);
 	} std_catch
 	
 	/**
@@ -158,7 +158,7 @@ namespace POA_vq {
 	cpgsqllog::error * cpgsqllog::read_by_dom( size_type start, size_type end,
 			log_entry_list_out les ) std_try {
 		return read_by_func(
-			make_pair(rbf_ignore_domain, "log_read_by_dom("+pqxx::Quote(this->dom)+")"), 
+			make_pair(rbf_ignore_domain, "vq_view_log_read WHERE domain="+pqxx::Quote(this->dom)), 
 			start, end, les);
 	} std_catch
 
@@ -169,8 +169,8 @@ namespace POA_vq {
 			log_entry_list_out les ) std_try {
 		return read_by_func(
 			make_pair(rbf_ignore_domain | rbf_ignore_login,
-				"log_read_by_user("+pqxx::Quote(this->dom)
-				+','+pqxx::Quote(this->log)+")" ), 
+				"vq_view_log_read WHERE domain="+pqxx::Quote(this->dom)
+				+" AND login="+pqxx::Quote(this->log) ), 
 			start, end, les);
 	} std_catch
 
