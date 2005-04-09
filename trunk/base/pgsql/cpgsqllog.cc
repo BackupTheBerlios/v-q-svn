@@ -135,7 +135,7 @@ namespace POA_vq {
 	cpgsqllog::error * cpgsqllog::count_by_func( const std::string & func,
 			size_type & cnt ) std_try {
 
-		string qr("SELECT "+func);
+		string qr("SELECT count FROM "+func);
 		cpgsqlpool::value_ptr pg(pool.get());
 		result res(pqxx::nontransaction(*pg.get()).exec(qr));
 		if( res.empty() ) return lr(::vq::ivq::err_func_res, func.c_str());
