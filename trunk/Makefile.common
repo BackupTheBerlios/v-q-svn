@@ -1,5 +1,7 @@
 PREFIX?=/var/vq
 INSTALL=install
+JAVAC=javac
+JAVA=java
 
 .PHONY: auto-mkdir
 

@@ -93,6 +93,8 @@ module vq {
 	
 			/**
 			 * Read all entries from global log (log table)
+			 * \param start 0 means first entry
+			 * \param cnt number of rows that should be read (can be less returned)
 			 */ 
 			error read( in size_type start, in size_type cnt,
 					out log_entry_list les )
