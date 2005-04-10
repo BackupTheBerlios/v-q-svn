@@ -22,7 +22,6 @@ import com.foo_baz.v_q.iloggerPackage.*;
 
 import java.sql.*;
 import javax.sql.*;
-import javax.naming.*;
 import java.util.*;
 import org.omg.CORBA.*;
 
@@ -30,10 +29,10 @@ public class JDBCLog extends iloggerPOA {
 	/**
 	 *
 	 */
-	public JDBCLog( String info ) throws NamingException, SQLException {
+	public JDBCLog( Connection con ) throws SQLException {
 		clear();
-		con = ((DataSource) new InitialContext().lookup(info)).getConnection();
-		con.setAutoCommit(true);
+		this.con = con;
+		this.con.setAutoCommit(true);
 	}
 	
 	/**
