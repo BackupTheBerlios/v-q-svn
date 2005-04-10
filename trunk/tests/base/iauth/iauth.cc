@@ -42,16 +42,6 @@ using boost::lexical_cast;
 
 /**
  *
- */
-std::string error2str( const vq::ivq::error_var & err ) {
-	std::ostringstream os;
-	os<<"error: "<<err->what<<" in "<<err->file<<" at "<<err->line;
-	return os.str();
-}
-
-
-/**
- *
  */ 
 struct auth_test {
 		vq::iauth_var auth;

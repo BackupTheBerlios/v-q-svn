@@ -37,4 +37,15 @@ do { \
 		BOOST_ERROR(error2str(ev)); \
 } while(0)
 
+/**
+ *
+ */
+std::string error2str( const vq::ivq::error_var & err ) {
+	std::ostringstream os;
+	os<<"error: "<<err->what<<" in "<<err->file<<" at "<<err->line;
+	return os.str();
+}
+
+
+
 #endif // ifndef __IAUTH_COMMON_HPP

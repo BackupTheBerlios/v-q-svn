@@ -28,6 +28,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <sstream>
 
+#ifdef minor
+	#undef minor
+#endif
+#ifdef major
+	#undef major
+#endif
+
 /**
  * 
  */

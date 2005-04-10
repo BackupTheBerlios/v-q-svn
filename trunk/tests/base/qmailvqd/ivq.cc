@@ -37,15 +37,6 @@ using namespace boost::unit_test_framework;
 
 /**
  *
- */
-std::string error2str( const vq::ivq::error_var & err ) {
-	std::ostringstream os;
-	os<<"error: "<<err->what<<" in "<<err->file<<" at "<<err->line;
-	return os.str();
-}
-
-/**
- *
  */ 
 struct vq_test {
 		vq::ivq_var vq;
