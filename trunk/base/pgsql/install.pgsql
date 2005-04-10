@@ -270,13 +270,13 @@ END;
 "CREATE VIEW vq_view_dom_name AS
 SELECT domain,id_domain FROM vq_domains;",
 
-"CREATE or replace FUNCTION dom_rm (vq_domains.id_domain\%TYPE) RETURNS VOID AS '
+"CREATE or replace FUNCTION dom_rm (vq_domains.id_domain\%TYPE) RETURNS INTEGER AS '
 DECLARE
     _id_domain alias for \$1;
 BEGIN
 	DELETE FROM vq_domains WHERE id_domain = _id_domain;
 	NOTIFY dom_rm;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';", 
 
@@ -332,13 +332,13 @@ SELECT alias,id_domain FROM vq_domains_aliases ORDER BY alias",
 
 "CREATE FUNCTION da_rm
 (vq_domains_aliases.alias\%TYPE) 
-RETURNS VOID AS '
+RETURNS INTEGER AS '
 DECLARE
     _alias alias for \$1;
 BEGIN
 	DELETE FROM vq_domains_aliases WHERE alias=_alias;
 	NOTIFY da_rm;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
@@ -368,13 +368,13 @@ AS SELECT ip,id_domain FROM vq_domains_ips ORDER BY ip",
 
 "CREATE FUNCTION dip_rm
 (vq_domains_ips.ip\%TYPE) 
-RETURNS VOID AS '
+RETURNS INTEGER AS '
 DECLARE
     _alias alias for \$1;
 BEGIN
 	DELETE FROM vq_domains_ips WHERE ip=_alias;
 	NOTIFY DIP_RM;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
@@ -402,7 +402,7 @@ AS SELECT re_domain,re_login FROM vq_emails_banned ORDER BY re_domain,re_login",
 
 "CREATE FUNCTION eb_rm 
 (vq_emails_banned.re_domain\%TYPE, vq_emails_banned.re_login\%TYPE) 
-RETURNS VOID AS '
+RETURNS INTEGER AS '
 DECLARE
     _re_domain alias for \$1;
     _re_login alias for \$2;
@@ -419,7 +419,7 @@ SELECT qt_user_bytes_def,qt_user_files_def,id_domain FROM vq_domains;",
 "CREATE FUNCTION qt_user_def_set
 (vq_domains.id_domain\%TYPE, 
 vq_domains.qt_user_bytes_def\%TYPE,
-vq_domains.qt_user_files_def\%TYPE) RETURNS VOID AS '
+vq_domains.qt_user_files_def\%TYPE) RETURNS INTEGER AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
 	bytes_max ALIAS FOR \$2;
@@ -428,7 +428,7 @@ BEGIN
 	UPDATE vq_domains SET qt_user_bytes_def=bytes_max,qt_user_files_def=files_max
 		WHERE id_domain=_id_domain;
 	NOTIFY qt_user_def_set;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
@@ -437,7 +437,7 @@ SELECT qt_bytes_max,qt_files_max,id_domain,login FROM vq_users;",
 
 "CREATE FUNCTION qt_user_set
 (vq_users.id_domain\%TYPE, vq_users.login\%TYPE,
-vq_users.qt_bytes_max\%TYPE, vq_users.qt_files_max\%TYPE) RETURNS VOID AS '
+vq_users.qt_bytes_max\%TYPE, vq_users.qt_files_max\%TYPE) RETURNS INTEGER AS '
 DECLARE
 	_id_domain ALIAS FOR \$1;
 	_login ALIAS FOR \$2;
@@ -447,7 +447,7 @@ BEGIN
 	UPDATE vq_users SET qt_bytes_max=bytes_max,qt_files_max=files_max
 		WHERE id_domain=_id_domain AND login=_login;
 	NOTIFY qt_user_set;
-	RETURN;
+	RETURN 0; 
 END;
 ' LANGUAGE 'plpgsql';",
 
@@ -477,19 +477,19 @@ END;
 "CREATE VIEW vq_view_user_conf_ls
 AS SELECT id_conf,val,type,id_domain,login,ext FROM vq_users_conf",
 
-"CREATE FUNCTION user_conf_rm (vq_users_conf.id_conf\%TYPE) RETURNS VOID AS '
+"CREATE FUNCTION user_conf_rm (vq_users_conf.id_conf\%TYPE) RETURNS INTEGER AS '
 DECLARE
     _id_conf alias for \$1;
 BEGIN
 	DELETE FROM vq_users_conf WHERE id_conf = _id_conf;
 	NOTIFY user_conf_rm;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';", 
 
 "CREATE FUNCTION user_conf_rm_by_type (vq_users_conf.id_domain\%TYPE,
 	vq_users_conf.login\%TYPE, vq_users_conf.ext\%TYPE,
-	vq_users_conf.type\%TYPE) RETURNS VOID AS '
+	vq_users_conf.type\%TYPE) RETURNS INTEGER AS '
 DECLARE
     _id_domain alias for \$1;
     _login alias for \$2;
@@ -499,7 +499,7 @@ BEGIN
 	DELETE FROM vq_users_conf WHERE id_domain = _id_domain
 		AND login=_login AND ext=_ext AND type=_type;
 	NOTIFY user_conf_rm;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';", 
 
@@ -595,14 +595,14 @@ SELECT id_domain,login,pass,dir,flags FROM vq_users;",
 SELECT id_domain,login FROM vq_users;",
 
 "CREATE FUNCTION user_rm
-(vq_users.id_domain\%TYPE, vq_users.login\%TYPE) RETURNS VOID AS '
+(vq_users.id_domain\%TYPE, vq_users.login\%TYPE) RETURNS INTEGER AS '
 DECLARE
     _id_domain alias for \$1;
     _login alias for \$2;
 BEGIN
 	DELETE FROM vq_users WHERE id_domain=_id_domain AND login=_login;
 	NOTIFY user_rm;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
@@ -635,7 +635,7 @@ vq_log.service\%TYPE,
 vq_log.domain\%TYPE,
 vq_log.login\%TYPE,
 vq_log.result\%TYPE,
-vq_log.msg\%TYPE) RETURNS VOID AS '
+vq_log.msg\%TYPE) RETURNS INTEGER AS '
 DECLARE
     _ip alias for \$1;
     _service alias for \$2;
@@ -648,35 +648,35 @@ BEGIN
 		VALUES(_ip, _service, _domain, _login, _result, _msg);
 
 	NOTIFY log_write;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
-"CREATE FUNCTION log_rm_all() RETURNS VOID AS '
+"CREATE FUNCTION log_rm_all() RETURNS INTEGER AS '
 BEGIN
 	DELETE FROM vq_log;
 	NOTIFY log_rm;
-	RETURN;
+	RETURN 0;
 END;' LANGUAGE 'plpgsql'",
 
-"CREATE FUNCTION log_rm_by_dom(vq_log.domain\%TYPE) RETURNS VOID AS '
+"CREATE FUNCTION log_rm_by_dom(vq_log.domain\%TYPE) RETURNS INTEGER AS '
 DECLARE
 	_domain ALIAS FOR \$1;
 BEGIN
 	DELETE FROM vq_log WHERE domain=_domain;
 	NOTIFY log_rm_by_dom;
-	RETURN;
+	RETURN 0;
 END;' LANGUAGE 'plpgsql'",
 
 "CREATE FUNCTION log_rm_by_user(
-vq_log.domain\%TYPE,vq_log.login\%TYPE) RETURNS VOID AS '
+vq_log.domain\%TYPE,vq_log.login\%TYPE) RETURNS INTEGER AS '
 DECLARE
 	_domain ALIAS FOR \$1;
 	_login ALIAS FOR \$2;
 BEGIN
 	DELETE FROM vq_log WHERE domain=_domain AND login=_login;
 	NOTIFY log_rm_by_user;
-	RETURN;
+	RETURN 0;
 END;' LANGUAGE 'plpgsql'",
 
 "CREATE VIEW vq_view_log_count AS SELECT COUNT(*) FROM vq_log",
