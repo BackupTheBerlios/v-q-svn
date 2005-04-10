@@ -46,8 +46,10 @@ public class jdbclogd {
 		String exp_ins = "name_service#Logger.ilogger";
 		Getopt go = new Getopt();
 		int opt;
-		while((opt=go.parse(args, "e:ErR"))!= -1) {
+		while((opt=go.parse(args, "O:e:ErR"))!= -1) {
 			switch(opt) {
+			case 'O':
+				break;
 			case 'e':
 				exp = true;
 				exp_ins = go.optarg;
@@ -74,6 +76,8 @@ public class jdbclogd {
 		String policy_prop = "com.foo_baz.v_q."+me+".policy";
 		String ds_prop = "com.foo_baz.v_q."+me+".ds";
 		String jdbc_prop = "com.foo_baz.v_q."+me+".jdbc";
+		String jdbc_user_prop = "com.foo_baz.v_q."+me+".jdbc.user";
+		String jdbc_pass_prop = "com.foo_baz.v_q."+me+".jdbc.pass";
 		
 		String dep_mod = props.getProperty(dep_mod_prop) == null 
 			? "fixed_ports_no_imr" : props.getProperty(dep_mod_prop);
@@ -81,12 +85,18 @@ public class jdbclogd {
 			? "" : props.getProperty(policy_prop);
 		String ds = props.getProperty(ds_prop);
 		String jdbc = props.getProperty(jdbc_prop);
+		String jdbc_user = props.getProperty(jdbc_user_prop) == null
+			? "mail" : props.getProperty(jdbc_user_prop);
+		String jdbc_pass = props.getProperty(jdbc_pass_prop) == null 
+			? "mail" : props.getProperty(jdbc_pass_prop);
 
 		System.out.println("Configuration: ");
 		System.out.println(dep_mod_prop+": "+dep_mod);
 		System.out.println(policy_prop+": "+policy);
 		System.out.println(ds_prop+": "+ds);
 		System.out.println(jdbc_prop+": "+jdbc);
+		System.out.println(jdbc_user_prop+": "+jdbc_user);
+		System.out.println(jdbc_pass_prop+": <secret>");
 
 		POAHier poa = null;
 		try {
@@ -101,7 +111,7 @@ public class jdbclogd {
 			con = ((DataSource) new InitialContext().lookup(ds)).getConnection();
 		}
 		if( jdbc != null ) {
-			con = DriverManager.getConnection(jdbc);
+			con = DriverManager.getConnection(jdbc, jdbc_user, jdbc_pass);
 		}
 
 		JDBCLog log = new JDBCLog(con);

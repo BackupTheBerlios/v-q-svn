@@ -76,8 +76,9 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error write( short res, String msg ) throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall( "{ call log_write(?, ?, ?, ?, ?) }" );
-		int idx=0;
+		CallableStatement call = con.prepareCall( "{ ? = call log_write(?, ?, ?, ?, ?, ?) }" );
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, ip);
 		call.setShort(idx++, ser);
 		call.setString(idx++, dom);
@@ -85,6 +86,9 @@ public class JDBCLog extends iloggerPOA {
 		call.setShort(idx++, res);
 		call.setString(idx++, msg);
 		call.execute();
+
+		if( call.getInt(1) != 0 )
+			return lr(err_code.err_func_res, "LOG_WRITE");
 		
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {
@@ -99,7 +103,7 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error count( IntHolder cnt ) throws null_error, db_error, except { try {
-		cnt = new IntHolder(0);
+		cnt.value = 0;
 
 		Statement st = null;
 		ResultSet res = null; 
@@ -107,7 +111,8 @@ public class JDBCLog extends iloggerPOA {
 			st = con.createStatement();
 			res = st.executeQuery("SELECT count FROM vq_view_log_count");
 			while(res.next()) {
-				cnt = new IntHolder(res.getInt(1));
+				cnt.value = res.getInt(1);
+				break;
 			}
 		} finally {
 			try { if( res != null ) res.close(); } catch(Exception e) {}
@@ -128,7 +133,7 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error count_by_dom( IntHolder cnt ) throws null_error, db_error, except { try {
-		cnt = new IntHolder(0);
+		cnt.value = 0;
 
 		PreparedStatement st = null;
 		ResultSet res = null;
@@ -137,7 +142,7 @@ public class JDBCLog extends iloggerPOA {
 			st.setString(1, dom);
 			res = st.executeQuery();
 			while(res.next()) {
-				cnt = new IntHolder(res.getInt(1));
+				cnt.value = res.getInt(1);
 			}
 		} finally {
 			try { if( res != null ) res.close(); } catch(Exception e) {}
@@ -157,18 +162,18 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error count_by_user( IntHolder cnt ) throws null_error, db_error, except { try {
-		cnt = new IntHolder(0);
+		cnt.value = 0;
 
 		PreparedStatement st = null;
 		ResultSet res = null;
 		try {
 			st = con.prepareStatement(
-				"SELECT count FROM vq_view_log_count_by_dom WHERE domain=? AND login=?");
+				"SELECT count FROM vq_view_log_count_by_user WHERE domain=? AND login=?");
 			st.setString(1, dom);
 			st.setString(2, log);
 			res = st.executeQuery();
 			while(res.next()) {
-				cnt = new IntHolder(res.getInt(1));
+				cnt.value = res.getInt(1);
 			}
 		} finally {
 			try { if( res != null ) res.close(); } catch(Exception e) {}
@@ -189,7 +194,7 @@ public class JDBCLog extends iloggerPOA {
 	 */
 	public error read( int start, int end, log_entry_listHolder les ) 
 			throws null_error, db_error, except {
-		return read_by_func( rbf_all, start, end, les);
+		return read_by_func( rbf_all, start, end, les );
 	}
 	
 	/**
@@ -197,7 +202,7 @@ public class JDBCLog extends iloggerPOA {
 	 */
 	public error read_by_dom( int start, int end, log_entry_listHolder les ) 
 			throws null_error, db_error, except {
-		return read_by_func( rbf_by_dom, start, end, les);
+		return read_by_func( rbf_by_dom, start, end, les );
 	}
 
 	/**
@@ -211,9 +216,10 @@ public class JDBCLog extends iloggerPOA {
 	/**
 	 *
 	 */
-	protected error read_by_func( short rbf, int start, int cnt, log_entry_listHolder les ) 
+	protected error read_by_func( short rbf, int start, int cnt, 
+			log_entry_listHolder les ) 
 			throws null_error, db_error, except { try {
-		les = new log_entry_listHolder();
+		les.value = new log_entry[0];
 		ArrayList ales = new ArrayList();
 
 		PreparedStatement st = null;
@@ -231,7 +237,6 @@ public class JDBCLog extends iloggerPOA {
 				qr = "SELECT id_log,time,ip,service,result,msg FROM vq_view_log_read WHERE "
 					+" domain=? AND login=? ORDER BY time DESC";
 
-
 			st = con.prepareStatement(qr);
 			if( rbf == rbf_by_dom || rbf == rbf_by_user )
 				st.setString(1, dom);
@@ -241,8 +246,8 @@ public class JDBCLog extends iloggerPOA {
 			res = st.executeQuery();
 
 			if( ! res.absolute(start+1) ) return lr(err_code.err_noent, "");
-			--cnt; // if it's zero means that we want to read all entries
-			for( int idx=0; res.next() && cnt-- != 0; idx = 0 ) {
+			if( cnt == 0 ) --cnt; // if it's zero means that we want to read all entries
+			for( int idx=1; cnt-- != 0; idx = 1 ) {
 				log_entry le = new log_entry();
 				
 				le.id_log = res.getString(idx);
@@ -268,19 +273,25 @@ public class JDBCLog extends iloggerPOA {
 					le.domain = res.getString(idx);
 					if( res.wasNull() ) le.domain = "";
 					++idx;
-				}
+				} else
+					le.domain = "";
 				if( rbf != rbf_by_user ) {
 					le.login = res.getString(idx);
 					if( res.wasNull() ) le.login = "";
 					++idx;
-				}
+				} else
+					le.login = "";
 				ales.add(le);
+
+				if(!res.next()) break;
 			}
 
-			les.value = (log_entry[])ales.toArray();
+			les.value = new log_entry[ ales.size() ];
+			for( int i=0, s=ales.size(); i<s; ++i )
+				les.value[i] = (log_entry) ales.get(i);
 		} finally {
 			try { if( res != null ) res.close(); } catch(Exception e) {}
-			try { if( st != null) st.close(); } catch(Exception e) {}
+			try { if( st != null ) st.close(); } catch(Exception e) {}
 		}
 
 		return lr(err_code.err_no, "");
@@ -296,8 +307,12 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error rm_all() throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall( "{ call log_rm_all() }" );
+		CallableStatement call = con.prepareCall( "{ ? = call log_rm_all() }" );
+		call.registerOutParameter(1, Types.INTEGER);
 		call.execute();
+
+		if( call.getInt(1) != 0 )
+			return lr(err_code.err_func_res, "LOG_RM_ALL");
 		
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {
@@ -312,10 +327,14 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error rm_by_dom() throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall( "{ call log_rm_by_dom(?) }" );
-		int idx=0;
+		CallableStatement call = con.prepareCall( "{ ? = call log_rm_by_dom(?) }" );
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom);
 		call.execute();
+	
+		if( call.getInt(1) != 0 )
+			return lr(err_code.err_func_res, "LOG_RM_BY_DOM");
 		
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {
@@ -330,12 +349,16 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error rm_by_user() throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall( "{ call log_rm_by_dom(?, ?) }" );
-		int idx=0;
+		CallableStatement call = con.prepareCall( "{ ? = call log_rm_by_user(?, ?) }" );
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom);
 		call.setString(idx++, log);
 		call.execute();
-		
+	
+		if( call.getInt(1) != 0 )
+			return lr(err_code.err_func_res, "LOG_RM_BY_USER");
+	
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {
 		throw new db_error(e.getMessage(), getClass().getName(), 0);
