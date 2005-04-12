@@ -94,15 +94,19 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		cpgsqlpool::value_ptr pg(pool.get());
-		pqxx::nontransaction(*pg.get()).exec(
+		pqxx::result res(pqxx::nontransaction(*pg.get()).exec(
 			"SELECT log_write("
 			+pqxx::Quote(this->ip)+","
 			+this->ser+","
 			+pqxx::Quote(this->dom)+","
 			+pqxx::Quote(this->log)+","
 			+pqxx::to_string(static_cast<unsigned>(res))+","
-			+pqxx::Quote(msg)+')');
+			+pqxx::Quote(msg)+')'));
 		
+		if( res.empty() || res[0][0].is_null() 
+			|| strcmp(res[0][0].c_str(), "0") )
+				return lr(::vq::ivq::err_func_res, "LOG_WRITE");
+
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
@@ -259,7 +263,12 @@ namespace POA_vq {
 	 */
 	cpgsqllog::error * cpgsqllog::rm_by_func( const std::string & func ) std_try {
 		cpgsqlpool::value_ptr pg(pool.get());
-		pqxx::nontransaction(*pg.get()).exec("SELECT "+func);
+		pqxx::result res(pqxx::nontransaction(*pg.get()).exec("SELECT "+func));
+
+		if( res.empty() || res[0][0].is_null() 
+			|| strcmp(res[0][0].c_str(), "0") )
+				return lr(::vq::ivq::err_func_res, func);
+
   		return lr(::vq::ivq::err_no, "");
 	} std_catch
 

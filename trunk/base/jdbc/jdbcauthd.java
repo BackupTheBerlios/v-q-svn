@@ -43,7 +43,7 @@ public class jdbcauthd {
 		ORB orb = ORB.init(args, null);
 	
 		boolean run = true, exp = true;
-		String exp_ins = "name_service#Logger.iauthger";
+		String exp_ins = "name_service#Auth.iauth";
 		Getopt go = new Getopt();
 		int opt;
 		while((opt=go.parse(args, "O:e:ErR"))!= -1) {

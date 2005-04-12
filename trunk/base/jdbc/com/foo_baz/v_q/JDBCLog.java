@@ -286,10 +286,9 @@ public class JDBCLog extends iloggerPOA {
 				if(!res.next()) break;
 			}
 
-//			les.value = new log_entry[ ales.size() ];
-//			for( int i=0, s=ales.size(); i<s; ++i )
-//			les.value[i] = (log_entry) ales.get(i);
-			les.value = (log_entry []) ales.toArray();
+			les.value = new log_entry[ ales.size() ];
+			for( int i=0, s=ales.size(); i<s; ++i )
+				les.value[i] = (log_entry) ales.get(i);
 		} finally {
 			try { if( res != null ) res.close(); } catch(Exception e) {}
 			try { if( st != null ) st.close(); } catch(Exception e) {}

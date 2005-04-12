@@ -52,28 +52,28 @@ namespace POA_vq {
 					typedef ::vq::iauth::email_banned_list email_banned_list;
 					typedef ::vq::iauth::domain_info_list_out domain_info_list_out;
 					typedef ::vq::iauth::domain_info_list domain_info_list;
+					typedef ::vq::iauth::id_type id_type;
 
 					cpgsqlauth( const std::string &pginfo, size_type pgs );
 					virtual ~cpgsqlauth();
 					
-	
 				    virtual error * dom_add( const char* dom, 
-							CORBA::String_out dom_id );
+							id_type & dom_id );
 					virtual error * dom_rm( const char* dom );
 				    virtual error * dom_id( const char* dom, 
-							CORBA::String_out dom_id );
-    				virtual error * dom_name( const char* dom_id, 
-							CORBA::String_out domain );
+							id_type & dom_id );
+    				virtual error * dom_name( id_type dom_id, 
+							id_type & domain );
 					virtual error * dom_ls( domain_info_list_out dis );
 
-					virtual error * da_add( const char* dom_id, const char* rea );
+					virtual error * da_add( id_type dom_id, const char* rea );
     				virtual error * da_rm( const char* rea );
-    				virtual error * da_ls_by_dom( const char* dom_id, 
+    				virtual error * da_ls_by_dom( id_type dom_id, 
 							string_list_out rea );
 
-					virtual error * dip_add( const char* dom_id, const char* rea );
+					virtual error * dip_add( id_type dom_id, const char* rea );
     				virtual error * dip_rm( const char* rea );
-    				virtual error * dip_ls_by_dom( const char* dom_id, 
+    				virtual error * dip_ls_by_dom( id_type dom_id, 
 							string_list_out rea );
 
 				    virtual error * user_add( const user_info & ai,
@@ -90,32 +90,32 @@ namespace POA_vq {
 							const char * re_login );
     				virtual error * eb_ls( email_banned_list_out ebs );
     
-					virtual error* qt_user_get( const char* dom_id, 
+					virtual error* qt_user_get( id_type dom_id, 
 							const char* user, quota_type_out bytes_max, 
 							quota_type_out files_max );
-				    virtual error* qt_user_set( const char* dom_id, const char* user, 
+				    virtual error* qt_user_set( id_type dom_id, const char* user, 
 							quota_type bytes_max, quota_type files_max );
-				    virtual error* qt_user_def_set( const char* dom_id, 
+				    virtual error* qt_user_def_set( id_type dom_id, 
 							quota_type bytes_max, quota_type files_max );
-				    virtual error* qt_user_def_get( const char* dom_id, 
+				    virtual error* qt_user_def_get( id_type dom_id, 
 							quota_type_out bytes_max, quota_type_out files_max );
 				    
-					virtual error* user_conf_add( const char* dom_id, const char* user, 
+					virtual error* user_conf_add( id_type dom_id, const char* user, 
 							const char* pfix, user_conf_info &ui );
-				    virtual error* user_conf_rm_by_type( const char* dom_id, 
+				    virtual error* user_conf_rm_by_type( id_type dom_id, 
 							const char* user, const char *pfix, user_conf_type ut );
 				    virtual error* user_conf_rm( const char* id );
-				    virtual error* user_conf_ls( const char* dom_id,
+				    virtual error* user_conf_ls( id_type dom_id,
 							const char* user, const char* pfix, 
 							user_conf_info_list_out uis );
-				    virtual error* user_conf_ls_by_type( const char* dom_id, 
+				    virtual error* user_conf_ls_by_type( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, user_conf_info_list_out uis );
 				    virtual error* user_conf_rep( const user_conf_info& ui );
 				    virtual error* user_conf_get( user_conf_info& ui );
-			    	virtual error* user_conf_type_has( const char* dom_id, 
+			    	virtual error* user_conf_type_has( id_type dom_id, 
 							const char* user, const char* pfix, user_conf_type ut );
-			    	virtual error* user_conf_type_cnt( const char* dom_id, 
+			    	virtual error* user_conf_type_cnt( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, size_type_out cnt );
 
@@ -142,14 +142,18 @@ namespace POA_vq {
 				 * \defgroup da_dip functions used by da_... and dip_...
 				 */
 				//@{
-					virtual error * da_dip_add( const char* dom_id, 
+					virtual error * da_dip_add( id_type dom_id, 
 							const char* val, const std::string & func );
     				virtual error * da_dip_rm( const char* rea,
 							const std::string & func );
-    				virtual error * da_dip_ls_by_dom( const char* dom_id, 
+    				virtual error * da_dip_ls_by_dom( id_type dom_id, 
 							string_list_out rea, 
 							const std::string &, const std::string & func );
 				//@}
+
+					virtual error * user_eb_rm( id_type dom_id, 
+							const char* val, const std::string & func );
+
 	};
 
 	/**

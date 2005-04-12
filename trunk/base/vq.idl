@@ -54,6 +54,7 @@ module vq {
 			typedef sequence<string> string_list;
 			typedef short gid_type;
 			typedef short uid_type;
+			typedef long id_type;
 
 		/**
 		 * \ingroup err
@@ -142,7 +143,7 @@ module vq {
 			 * user's information.
 			 */
 			struct user_info {
-					string id_domain; //!< domain
+					id_type id_domain; //!< domain
 					string login;
 					string pass; //!< password
 					string dir; //!< mailbox directory
@@ -159,7 +160,7 @@ module vq {
 
 			/// user's dot file info
 			struct user_conf_info {
-					string id_conf; //!< identificator
+					id_type id_conf; //!< identificator
 					string val; //!< value
 					user_conf_type type; //!< type of entry
 			};
@@ -174,7 +175,7 @@ module vq {
 
 			/// domains
 			struct domain_info {
-					string id_domain;
+					id_type id_domain;
 					string domain;
 			};
 			typedef sequence<domain_info> domain_info_list;
@@ -184,19 +185,19 @@ module vq {
 		 */
 		 //@{
 			/// Add domain
-			error dom_add(in string dom, out string dom_id) 
+			error dom_add(in string dom, out id_type dom_id) 
 					raises (null_error, except, db_error); 
 			/// Removes domain
-			error dom_rm(in string dom_id)
+			error dom_rm(in id_type dom_id)
 					raises (null_error, except, db_error);
 			/// Validates domain name
 			error dom_val(in string dom)
 					raises (null_error, except, db_error);
 			/// Gets ID of domain
-			error dom_id(in string dom, out string dom_id)
+			error dom_id(in string dom, out id_type dom_id)
 					raises (null_error, except, db_error);
 			/// Gets name of a domain
-			error dom_name(in string dom_id, out string dom_name )
+			error dom_name(in id_type dom_id, out string dom_name )
 					raises (null_error, except, db_error);
 			/// List all domains
 			error dom_ls( out domain_info_list dis )
@@ -208,13 +209,13 @@ module vq {
 		 */
 		//@{
 			/// add alias for a domain
-			error da_add(in string dom_id, in string ali)
+			error da_add(in id_type dom_id, in string ali)
 					raises (null_error, except, db_error);
 			/// Removes alias
 			error da_rm(in string ali)
 					raises (null_error, except, db_error);
 			/// Lists all aliases for a domain
-			error da_ls_by_dom(in string dom_id, out string_list alis )
+			error da_ls_by_dom(in id_type dom_id, out string_list alis )
 					raises (null_error, except, db_error);
 		//@}
 
@@ -223,13 +224,13 @@ module vq {
 		 */
 		//@{
 			/// add IP address for a domain
-			error dip_add(in string dom_id, in string ip)
+			error dip_add(in id_type dom_id, in string ip)
 					raises (null_error, except, db_error);
 			/// Removes IP address
 			error dip_rm(in string ip)
 					raises (null_error, except, db_error);
 			/// Lists all IP addresses for a domain
-			error dip_ls_by_dom(in string dom_id, out string_list ips )
+			error dip_ls_by_dom(in id_type dom_id, out string_list ips )
 					raises (null_error, except, db_error);
 		//@}
 
@@ -241,10 +242,10 @@ module vq {
 			error user_add(in user_info ai, in boolean is_banned )
 					raises (null_error, except, db_error);
 			/// Removes user
-			error user_rm(in string dom_id, in string login)
+			error user_rm(in id_type dom_id, in string login)
 					raises (null_error, except, db_error);
 			/// Changes password
-			error user_pass(in string dom_id, in string login, in string pass)
+			error user_pass(in id_type dom_id, in string login, in string pass)
 					raises (null_error, except, db_error);
 			/// Checks if user name is valid (not if user exists)
 			error user_val(in string user)
@@ -253,7 +254,7 @@ module vq {
 			error user_get(inout user_info ai)
 					raises (null_error, except, db_error);
 			/// Checks whether user exists
-			error user_ex(in string dom_id, in string login)
+			error user_ex(in id_type dom_id, in string login)
 					raises (null_error, except, db_error);
 		//@}
 
@@ -326,39 +327,39 @@ module vq {
 		 */
 		 //@{
 			/// Adds mailbox configuration
-			error user_conf_add(in string dom_id, in string user,
+			error user_conf_add(in id_type dom_id, in string user,
 					in string pfix, inout user_conf_info ui )
 					raises (null_error, db_error, except);
 			/// Removes all mailbox configuration entries
-			error user_conf_rm_by_type(in string dom_id, in string user,
+			error user_conf_rm_by_type(in id_type dom_id, in string user,
 					in string pfix, in user_conf_type ut )
 					raises (null_error, db_error, except);
 			/// Removes mailbox configuration entry
-			error user_conf_rm( in string dom_id, in string user,
+			error user_conf_rm( in id_type dom_id, in string user,
 					in string pfix, in string id )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuration
-			error user_conf_ls(in string dom_id, in string user,
+			error user_conf_ls(in id_type dom_id, in string user,
 					in string pfix, out user_conf_info_list uis )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuation of specified type
-			error user_conf_ls_by_type(in string dom_id, in string user,
+			error user_conf_ls_by_type(in id_type dom_id, in string user,
 					in string pfix, in user_conf_type ut,
 					out user_conf_info_list uis )
 					raises (null_error, db_error, except);
 			/// Changes existing entry
-			error user_conf_rep( in string dom_id, in string user, 
+			error user_conf_rep( in id_type dom_id, in string user, 
 					in string pfix, in user_conf_info ui )
 					raises (null_error, db_error, except);
 			/// Gets existing entry
 			error user_conf_get( inout user_conf_info ui )
 					raises (null_error, db_error, except);
 			/// Checks whether mailbox has entry of specified type
-			error user_conf_type_has(in string dom_id, in string user,
+			error user_conf_type_has(in id_type dom_id, in string user,
 					in string pfix, in user_conf_type ut )
 					raises (null_error, db_error, except);
 			/// Counts entries of specified type
-			error user_conf_type_cnt(in string dom_id, in string user,
+			error user_conf_type_cnt(in id_type dom_id, in string user,
 					in string pfix, in user_conf_type ut, 
 					out size_type cnt )
 					raises (null_error, db_error, except);

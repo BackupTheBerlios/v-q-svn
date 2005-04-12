@@ -44,9 +44,9 @@ public class JDBCAuth extends iauthPOA {
 
 		dom = dom.toLowerCase();
 
-		CallableStatement call = con.prepareCall("{? = dom_add(?)}");
+		CallableStatement call = con.prepareCall("{? = call dom_add(?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom);
 		call.execute();
 
@@ -76,22 +76,15 @@ public class JDBCAuth extends iauthPOA {
 		dom_id.value = "";
 		dom = dom.toLowerCase();
 
-		PreparedStatement st = null;
-		ResultSet res = null;
+		String func = "DOM_ID";
+		CallableStatement call = con.prepareCall( "{ ? = call "+func+"(?) }" );
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
+		call.setString(idx++, dom);
 
-		try {
-			st = con.prepareStatement( 
-				"SELECT id_domain FROM vq_view_DOM_ID WHERE domain = ?" );
-			st.setString(1, dom);
-			res = st.executeQuery();
-			while(res.next()) {
-				dom_id.value = res.getString(1);
-				if( res.wasNull() ) return lr(err_code.err_noent, dom);
-			}
-		} finally {
-			try { if(res != null) res.close(); } catch(Exception e) {}
-			try { if(st != null) st.close(); } catch(Exception e) {}
-		}
+		Integer res = call.getInt(1);
+		if( call.wasNull() ) return lr(err_code.err_noent, dom);
+		dom_id.value = res.toString();
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {
 		throw new db_error(e.getMessage(), getClass().getName(), 0);
@@ -162,7 +155,9 @@ public class JDBCAuth extends iauthPOA {
 				adis.add(di);
 			}
 
-			dis.value = (domain_info []) adis.toArray();
+			dis.value = new domain_info [adis.size()];
+			for(int i=0, s=adis.size(); i<s; ++i) 
+				dis.value[i] = (domain_info) adis.get(i);
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
 			try { if(st != null) st.close(); } catch(Exception e) {}
@@ -180,9 +175,9 @@ public class JDBCAuth extends iauthPOA {
 	*/
 	public error user_add( user_info ai, boolean is_banned ) 
 			throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall("{ ? = user_add(?, ?, ?, ?, ?)}");
+		CallableStatement call = con.prepareCall("{ ? = call user_add(?, ?, ?, ?, ?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, ai.id_domain);
 		call.setString(idx++, ai.login.toLowerCase());
 		call.setString(idx++, ai.pass);
@@ -297,7 +292,9 @@ public class JDBCAuth extends iauthPOA {
 				areas.add(item);
 			}
 
-			reas.value = (String []) areas.toArray();
+			reas.value = new String [areas.size()];
+			for( int i=0, s=areas.size(); i<s; ++i )
+				reas.value[i] = (String) areas.get(i);
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
 			try { if(st != null) st.close(); } catch(Exception e) {}
@@ -317,9 +314,9 @@ public class JDBCAuth extends iauthPOA {
 	public error user_pass( String dom_id, String login, String pass ) 
 			throws null_error, db_error, except { try {
 		
-		CallableStatement call = con.prepareCall("{ ? = user_pass(?, ?, ?)}");
+		CallableStatement call = con.prepareCall("{ ? = call user_pass(?, ?, ?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.setString(idx++, login.toLowerCase());
 		call.setString(idx++, pass);
@@ -427,7 +424,9 @@ public class JDBCAuth extends iauthPOA {
 				if( res.wasNull() ) eb.re_login = "";
 				aebs.add(eb);
 			}
-			ebs.value = (email_banned []) aebs.toArray();
+			ebs.value = new email_banned [aebs.size()];
+			for(int i=0, s=aebs.size(); i<s; ++i )
+				ebs.value[i] = (email_banned) aebs.get(i);
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
 			try { if(st != null) st.close(); } catch(Exception e) {}
@@ -487,9 +486,9 @@ public class JDBCAuth extends iauthPOA {
 			throws null_error, db_error, except { try {
 
 		String func = "USER_CONF_ADD";
-		CallableStatement call = con.prepareCall("{? = "+func+"(?, ?, ?, ?, ?)}");
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?, ?, ?, ?, ?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.setString(idx++, login.toLowerCase());
 		call.setString(idx++, pfix.toLowerCase());
@@ -594,7 +593,9 @@ public class JDBCAuth extends iauthPOA {
 				auis.add(uci);
 			}
 
-			uis.value = (user_conf_info []) auis.toArray();
+			uis.value = new user_conf_info [auis.size()];
+			for(int i=0, s=auis.size(); i<s; ++i )
+				uis.value[i] = (user_conf_info) auis.get(i);
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
 			try { if(st != null) st.close(); } catch(Exception e) {}
@@ -624,9 +625,9 @@ public class JDBCAuth extends iauthPOA {
 			throws null_error, db_error, except { try {
 
 		String func = "USER_CONF_RM_BY_TYPE";
-		CallableStatement call = con.prepareCall("{? = "+func+"(?,?,?,?)}");
+		CallableStatement call = con.prepareCall("{? = callcall  "+func+"(?,?,?,?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.setString(idx++, login.toLowerCase());
 		call.setString(idx++, ext.toLowerCase());
@@ -692,9 +693,9 @@ public class JDBCAuth extends iauthPOA {
 			throws null_error, db_error, except { try {
 	
 		String func = "USER_CONF_REP";
-		CallableStatement call = con.prepareCall("{ ? = "+func+"(?, ?, ?)}");
+		CallableStatement call = con.prepareCall("{ ? = call "+func+"(?, ?, ?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, ui.id_conf);
 		call.setShort(idx++, ui.type);
 		call.setString(idx++, ui.val);
@@ -803,9 +804,9 @@ public class JDBCAuth extends iauthPOA {
 	public error qt_user_def_set( String dom_id, int bytes_max, int files_max )
 			throws null_error, db_error, except { try {
 		String func = "QT_USER_DEF_SET";
-		CallableStatement call = con.prepareCall("{? = "+func+"(?,?,?)}");
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?,?,?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.setInt(idx++, bytes_max);
 		call.setInt(idx++, files_max);
@@ -909,9 +910,9 @@ public class JDBCAuth extends iauthPOA {
 			throws null_error, db_error, except { try {
 
 		String func = "QT_USER_SET";
-		CallableStatement call = con.prepareCall("{? = "+func+"(?,?,?,?)}");
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?,?,?,?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.setString(idx++, login.toLowerCase());
 		call.setInt(idx++, bytes_max);
@@ -939,9 +940,9 @@ public class JDBCAuth extends iauthPOA {
 	 */
 	protected error func_rm( String dom_id, String func )
 			throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall("{? = "+func+"(?)}");
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.execute();
 
@@ -966,10 +967,10 @@ public class JDBCAuth extends iauthPOA {
 	 */
 	protected error da_dip_add( String dom_id, String rea, String func )
 			throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall("{ ? = "+func+"(?, ?) }");
+		CallableStatement call = con.prepareCall("{ ? = call "+func+"(?, ?) }");
 		
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.setString(idx++, rea);
 		call.execute();
@@ -998,9 +999,9 @@ public class JDBCAuth extends iauthPOA {
 	 */
 	protected error user_eb_rm( String dom_id, String login, String func )
 			throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall("{? = "+func+"(?, ?)}");
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?, ?)}");
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom_id);
 		call.setString(idx++, login);
 		call.execute();
@@ -1026,10 +1027,10 @@ public class JDBCAuth extends iauthPOA {
 	 */
 	protected error da_dip_rm( String rea, String func )
 			throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall("{ ? = "+func+"(?) }");
+		CallableStatement call = con.prepareCall("{ ? = call "+func+"(?) }");
 		
 		int idx=1;
-		call.registerOutParameter(idx++, Types.VARCHAR);
+		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, rea);
 		call.execute();
 

@@ -149,6 +149,9 @@ mkdir -p $RPM_BUILD_ROOT/%{datadir}
 mkdir -p $RPM_BUILD_ROOT/%{datadir}/domains
 mkdir -p $RPM_BUILD_ROOT/%{datadir}/sockets
 
+# make %{localstatedir}/log/{pgsqlauthd,qmailvqd,pgsqllogd}
+mkdir -p $RPM_BUILD_ROOT/%{localstatedir}/log/{pgsqlauthd,qmailvqd,pgsqllogd}
+
 # move usr/etc
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}
 mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
@@ -157,6 +160,10 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 # Add the "_vq" user
 /usr/sbin/useradd -c "Virtual Qmail" -u 111 \
 	-s /sbin/nologin -r -d %{datadir} _vq 2> /dev/null || :
+
+# Add the "_log" user
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 111 \
+	-s /sbin/nologin -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
 %post
 /sbin/ldconfig
@@ -194,6 +201,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,_vq,_vq) %dir %{datadir}
 %attr(0750,_vq,_vq) %dir %{datadir}/domains
 %attr(0750,_vq,_vq) %dir %{datadir}/sockets
+
+%attr(750,_log,_log) %{_localstatedir}/log/*
 
 %files devel
 %defattr(-,root,root)
