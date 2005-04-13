@@ -59,6 +59,7 @@ namespace POA_vq {
 					typedef ::vq::ivq::string_list_var string_list_var;
 					typedef ::vq::ivq::email_banned_list_out email_banned_list_out;
 					typedef ::vq::ivq::domain_info_list_out domain_info_list_out;
+					typedef ::vq::ivq::id_type id_type;
 
 					cqmailvq( const std::string &, const std::string &,
 						::vq::iauth_var &,
@@ -67,32 +68,32 @@ namespace POA_vq {
 						const std::string &, uid_t, gid_t );
 					virtual ~cqmailvq() {}
 
-					virtual error* dom_add( const char* dom, CORBA::String_out dom_id );
-				    virtual error* dom_rm( const char* dom_id );
+					virtual error* dom_add( const char* dom, id_type & dom_id );
+				    virtual error* dom_rm( id_type dom_id );
 				    virtual error* dom_val( const char* dom );
-				    virtual error* dom_id( const char* dom, CORBA::String_out dom_id );
-    				virtual error* dom_name( const char* dom_id, CORBA::String_out dom_name );
+				    virtual error* dom_id( const char* dom, id_type & dom_id );
+    				virtual error* dom_name( id_type dom_id, CORBA::String_out dom_name );
 					virtual error* dom_ls( domain_info_list_out dis );
 
 				    virtual error* user_add( const user_info& ai, 
 							CORBA::Boolean is_banned );
-				    virtual error* user_rm( const char* dom_id, 
+				    virtual error* user_rm( id_type dom_id, 
 							const char* login );
-				    virtual error* user_pass( const char* dom_id, 
+				    virtual error* user_pass( id_type dom_id, 
 							const char* login, const char* pass );
 				    virtual error* user_val( const char* user );
 				    virtual error* user_get( user_info& ai );
-				    virtual error* user_ex( const char* dom_id, 
+				    virtual error* user_ex( id_type dom_id, 
 							const char* login );
 
-					virtual error* da_add( const char* dom_id, const char* ali );
+					virtual error* da_add( id_type dom_id, const char* ali );
 					virtual error* da_rm( const char* ali );
-					virtual error* da_ls_by_dom( const char* dom_id, 
+					virtual error* da_ls_by_dom( id_type dom_id, 
 							string_list_out alis );
 
-					virtual error* dip_add( const char* dom_id, const char* ip );
+					virtual error* dip_add( id_type dom_id, const char* ip );
 					virtual error* dip_rm( const char* ip );
-					virtual error* dip_ls_by_dom( const char* dom_id, 
+					virtual error* dip_ls_by_dom( id_type dom_id, 
 							string_list_out ips );
 
 					virtual error* eb_add( const char* re_domain, 
@@ -101,29 +102,29 @@ namespace POA_vq {
 							const char* re_login );
 					virtual error* eb_ls( email_banned_list_out ebs );
 
-					virtual error* user_conf_add( const char* dom_id, 
+					virtual error* user_conf_add( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_info& ui );
-				    virtual error* user_conf_rm_by_type( const char* dom_id, 
+				    virtual error* user_conf_rm_by_type( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut );
-				    virtual error* user_conf_rm( const char* dom_id, 
+				    virtual error* user_conf_rm( id_type dom_id, 
 							const char* user, const char* pfix, 
-							const char* id );
-				    virtual error* user_conf_ls( const char* dom_id, 
+							id_type id );
+				    virtual error* user_conf_ls( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_info_list_out uis );
-				    virtual error* user_conf_ls_by_type( const char* dom_id, 
+				    virtual error* user_conf_ls_by_type( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, user_conf_info_list_out uis );
-				    virtual error* user_conf_rep( const char* dom_id, 
+				    virtual error* user_conf_rep( id_type dom_id, 
 							const char* user, const char* pfix, 
 							const user_conf_info& ui );
 				    virtual error* user_conf_get( user_conf_info& ui );
-				    virtual error* user_conf_type_has( const char* dom_id, 
+				    virtual error* user_conf_type_has( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut );
-				    virtual error* user_conf_type_cnt( const char* dom_id, 
+				    virtual error* user_conf_type_cnt( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, size_type_out cnt );
 			
@@ -142,8 +143,8 @@ namespace POA_vq {
 
 					::vq::iauth_var & auth; //!< authorization module
 
-					virtual error* dip_rm_by_dom( const char* dom_id );
-					virtual error* da_rm_by_dom( const char* dom_id );
+					virtual error* dip_rm_by_dom( id_type dom_id );
+					virtual error* da_rm_by_dom( id_type dom_id );
 
 					error * send_restart();
 					error * assign_ex(const std::string &);

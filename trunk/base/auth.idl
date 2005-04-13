@@ -52,7 +52,7 @@ module vq {
 			error dom_rm(in id_type dom_id)
 					raises (null_error, db_error, except);
 			/// Translates domain name to id.
-			error dom_id(in string dom, out string did)
+			error dom_id(in string dom, out id_type dom_id)
 					raises (null_error, db_error, except);
 			error dom_name(in id_type dom_id, out string domain)
 					raises (null_error, db_error, except);
@@ -156,7 +156,7 @@ module vq {
 					in string pfix, in user_conf_type ut )
 					raises (null_error, db_error, except);
 			/// Removes mailbox configuration entry
-			error user_conf_rm( in string id )
+			error user_conf_rm( in id_type id )
 					raises (null_error, db_error, except);
 			/// Lists mailbox configuration
 			error user_conf_ls(in id_type dom_id, in string user,

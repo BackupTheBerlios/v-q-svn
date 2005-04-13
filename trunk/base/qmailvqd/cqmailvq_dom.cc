@@ -21,6 +21,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <sys.hpp>
 
+#include <boost/lexical_cast.hpp>
+
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -43,7 +45,7 @@ namespace POA_vq {
 	 * then from filesystem. It ignores errors (so it may not remove something).
 	 * \return last cqmailvq::error code returned by any called function. So only ::vq::ivq::err_no means that everything was removed.
 	 */
-	cqmailvq::error * cqmailvq::dom_rm(const char *dom_id) std_try {
+	cqmailvq::error * cqmailvq::dom_rm(id_type dom_id) std_try {
 		auto_ptr<error> ret;
 		std::string dom;
 		
@@ -70,7 +72,7 @@ namespace POA_vq {
 		ret.reset(virt_rm(dom));
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
-		ret.reset(assign_rm(dom_id));
+		ret.reset(assign_rm(boost::lexical_cast<std::string>(dom_id)));
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
 	
@@ -88,7 +90,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_temp, "wrong exit value");
 		}
 
-		string dir(paths.dom_path(dom_id));
+		string dir(paths.dom_path(boost::lexical_cast<std::string>(dom_id)));
 		if(!rmdirrec(dir) && errno != ENOENT) {
 				return lr(::vq::ivq::err_unlink, dir);
 		}
@@ -100,11 +102,11 @@ namespace POA_vq {
 	 * \param d valid domain name
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::dom_add(const char *d, CORBA::String_out did)
+	cqmailvq::error * cqmailvq::dom_add(const char *d, id_type & did)
 	std_try {
 		if( ! d ) throw ::vq::null_error(__FILE__, __LINE__);
 
-		did = CORBA::string_dup("");
+		did = id_type();
 
 		string dom(lower(d));
 		auto_ptr<error> ret;
@@ -117,7 +119,7 @@ namespace POA_vq {
 				return ret.release();
 		}
 	
-		string dom_add_dir(paths.dom_path(static_cast<const char *>(did)));
+		string dom_add_dir(paths.dom_path(boost::lexical_cast<std::string>(did)));
 
 		if(!mkdirhier(dom_add_dir.c_str(), 
 			this->dmode, this->uid, this->gid)) {
@@ -133,7 +135,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_wr, dotfile);
 		}
 	
-		ret.reset( virt_add(dom, static_cast<const char *>(did)) );
+		ret.reset( virt_add(dom, boost::lexical_cast<std::string>(did)) );
 		if( ret->ec != ::vq::ivq::err_no ) {
 				rmdirrec(dom_add_dir);
 				delete auth->dom_rm(did);
@@ -160,7 +162,7 @@ namespace POA_vq {
 				delete virt_rm(dom);
 				return ret.release(); 
 		}
-		ret.reset(assign_add(static_cast<const char *>(did)));
+		ret.reset(assign_add(boost::lexical_cast<std::string>(did)));
 		if( ret->ec != ::vq::ivq::err_no ) {
 				rmdirrec(dom_add_dir); 
 				delete auth->dom_rm(did);
@@ -234,11 +236,7 @@ namespace POA_vq {
 	 * \param a alias name
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::da_rm_by_dom( const char * dom_id ) std_try {
-
-		if( ! dom_id )
-				throw ::vq::null_error(__FILE__, __LINE__);
-	
+	cqmailvq::error * cqmailvq::da_rm_by_dom( id_type dom_id ) std_try {
 		string_list_var alis;
 		auto_ptr<error> ret(auth->da_ls_by_dom( dom_id, alis ));
 		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
@@ -257,14 +255,15 @@ namespace POA_vq {
 	 * \param a alias
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::da_add(const char *dom_id, 
+	cqmailvq::error * cqmailvq::da_add(id_type dom_id, 
 			const char *ali) std_try {
 
-		if( ! dom_id || ! ali )
+		if( ! ali )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		string alias(text::lower(ali));
-		auto_ptr<error> ret( virt_add(alias, static_cast<const char *>(dom_id)) );
+		auto_ptr<error> ret( virt_add(alias, 
+			boost::lexical_cast<std::string>(dom_id)) );
 		if( ::vq::ivq::err_no != ret->ec )
 				return ret.release();
 		
@@ -294,10 +293,8 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cqmailvq::error * cqmailvq::da_ls_by_dom( const char * dom_id,
+	cqmailvq::error * cqmailvq::da_ls_by_dom( id_type dom_id,
 			string_list_out alis ) std_try {
-		if( ! dom_id )
-				throw ::vq::null_error(__FILE__, __LINE__);
 		alis = new ::vq::ivq::string_list;
 		return auth->da_ls_by_dom( dom_id, alis );
 	} std_catch
@@ -326,11 +323,7 @@ namespace POA_vq {
 	 * \param a alias name
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::dip_rm_by_dom( const char * dom_id ) std_try {
-
-		if( ! dom_id )
-				throw ::vq::null_error(__FILE__, __LINE__);
-	
+	cqmailvq::error * cqmailvq::dip_rm_by_dom( id_type dom_id ) std_try {
 		string_list_var alis;
 		auto_ptr<error> ret(auth->dip_ls_by_dom( dom_id, alis ));
 		if( ::vq::ivq::err_no != ret->ec ) return ret.release();
@@ -349,10 +342,10 @@ namespace POA_vq {
 	 * \param a alias
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::dip_add(const char *dom_id, 
+	cqmailvq::error * cqmailvq::dip_add(id_type dom_id, 
 			const char *ali) std_try {
 
-		if( ! dom_id || ! ali )
+		if( ! ali )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		in_addr addr;
@@ -376,10 +369,8 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cqmailvq::error * cqmailvq::dip_ls_by_dom( const char * dom_id,
+	cqmailvq::error * cqmailvq::dip_ls_by_dom( id_type dom_id,
 			string_list_out alis ) std_try {
-		if( ! dom_id )
-				throw ::vq::null_error(__FILE__, __LINE__);
 		alis = new ::vq::ivq::string_list;
 		return auth->dip_ls_by_dom( dom_id, alis );
 	} std_catch
@@ -414,9 +405,9 @@ namespace POA_vq {
 	 * Returns id. number of domain
 	 */
 	cqmailvq::error* cqmailvq::dom_id( const char* dom, 
-			CORBA::String_out dom_id ) std_try {
+			id_type & dom_id ) std_try {
 		if( ! dom )	throw ::vq::null_error(__FILE__, __LINE__);
-		dom_id = CORBA::string_dup("");
+		dom_id = id_type();
 
 		auto_ptr<error> ret(auth->dom_id(dom, dom_id)); 
 		if( ret->ec != ::vq::ivq::err_no )
@@ -427,9 +418,8 @@ namespace POA_vq {
 	/**
 	 * Returns name of domain with given id. number
 	 */
-	cqmailvq::error* cqmailvq::dom_name( const char* dom_id, 
+	cqmailvq::error* cqmailvq::dom_name( id_type dom_id, 
 			CORBA::String_out dom_name ) std_try {
-		if( ! dom_id ) throw ::vq::null_error(__FILE__, __LINE__);
 		dom_name = CORBA::string_dup("");
 		
 		auto_ptr<error> ret(auth->dom_name(dom_id, dom_name));

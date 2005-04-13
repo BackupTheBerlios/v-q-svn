@@ -22,6 +22,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <pfstream.hpp>
 #include <text.hpp>
 
+#include <boost/lexical_cast.hpp>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -40,10 +42,10 @@ namespace POA_vq {
 	 * \param e address's extension
 	 * \param ui configuration
 	 */
-	cqmailvq::error * cqmailvq::user_conf_add(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_add(id_type dom_id, 
 			const char *_login, const char *_pfix, user_conf_info & ui ) std_try {
 
-		if( !dom_id || !_login || !_pfix )
+		if( !_login || !_pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		string login(text::lower(_login)), pfix(text::lower(_pfix));
@@ -55,7 +57,7 @@ namespace POA_vq {
 					pfix.c_str(), ui);
 		}
 		
-		string df(dotfile(dom_id, login, pfix)), dftmp;
+		string df(dotfile(boost::lexical_cast<std::string>(dom_id), login, pfix)), dftmp;
 
 		ret.reset(file_add(df, ln, dftmp, ui.type == ::vq::ivq::uc_autoresp ));
 		if( ::vq::ivq::err_no != ret->ec )
@@ -80,11 +82,11 @@ namespace POA_vq {
 	 * \param ext address's extention
 	 * \param id entry's id.
 	 */
-	cqmailvq::error * cqmailvq::user_conf_rm(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_rm( id_type dom_id, 
 			const char *_login, const char *_pfix,
-			const char * id) std_try {
+			id_type id) std_try {
 
-		if( ! dom_id || ! _login || ! _pfix || ! id )
+		if( ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		user_conf_info ui;
@@ -99,7 +101,8 @@ namespace POA_vq {
 				return auth->user_conf_rm(ui.id_conf);
 		}
 		
-		string df(dotfile(dom_id, text::lower(_login), text::lower(_pfix)));
+		string df(dotfile(boost::lexical_cast<std::string>(dom_id), 
+			text::lower(_login), text::lower(_pfix)));
 	
 		// is it portable?? may be on some systems it will block?
 		opfstream dout;
@@ -139,11 +142,11 @@ namespace POA_vq {
 	 * \param e extension
 	 * \param uideq information read from database
 	 */
-	cqmailvq::error * cqmailvq::user_conf_ls(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_ls( id_type dom_id, 
 			const char * _login, const char * _pfix,
 			user_conf_info_list_out ucis ) std_try {
 		
-		if( ! dom_id || ! _login || ! _pfix )
+		if( ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		ucis = new ::vq::ivq::user_conf_info_list;
@@ -161,11 +164,11 @@ namespace POA_vq {
 	 * \param uideq information read from database
 	 * \param type type of entries
 	 */
-	cqmailvq::error * cqmailvq::user_conf_ls_by_type(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_ls_by_type( id_type dom_id, 
 			const char * _login, const char * _pfix,
 			user_conf_type ut, user_conf_info_list_out ucis ) std_try {
 
-		if( ! dom_id || ! _login || ! _pfix )
+		if( ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		ucis = new ::vq::ivq::user_conf_info_list;
@@ -179,11 +182,11 @@ namespace POA_vq {
 	/**
 	 * Changes entry
 	 */
-	cqmailvq::error * cqmailvq::user_conf_rep(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_rep( id_type dom_id, 
 			const char * _login, const char * _pfix,
 			const user_conf_info & uin ) std_try {
 
-		if( ! dom_id || ! _login || ! _pfix )
+		if( ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		user_conf_info uio;
@@ -207,7 +210,8 @@ namespace POA_vq {
 				return auth->user_conf_rep(uin);
 		}
 
-		string df(dotfile(dom_id, text::lower(_login), text::lower(_pfix)));
+		string df(dotfile(boost::lexical_cast<std::string>(dom_id), 
+			text::lower(_login), text::lower(_pfix)));
 	
 		// is it portable?? may be on some systems it will block?
 		opfstream dout;
@@ -339,11 +343,11 @@ namespace POA_vq {
 	 * \param ext extension
 	 * \param type type to find
 	 */
-	cqmailvq::error * cqmailvq::user_conf_type_has(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_type_has( id_type dom_id, 
 			const char * _login, const char * _pfix,
 			user_conf_type type) std_try {
 
-		if( ! dom_id || ! _login || ! _pfix )
+		if( ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		string login(text::lower(_login));
@@ -378,7 +382,7 @@ namespace POA_vq {
 	 * \param e extension
 	 * \param type delete this type
 	 */
-	cqmailvq::error * cqmailvq::user_conf_rm_by_type(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_rm_by_type( id_type dom_id, 
 			const char * _login, const char * _pfix,
 			user_conf_type type) std_try {
 
@@ -410,7 +414,7 @@ namespace POA_vq {
 		// is it portable?? may be on some systems it will block?
 		opfstream dout;
 		string dftmp;
-		string df(dotfile(dom_id, login, pfix));
+		string df(dotfile(boost::lexical_cast<std::string>(dom_id), login, pfix));
 		ret.reset(tmp_crt(df, dout, dftmp));
 		if( ::vq::ivq::err_no != ret->ec ) 
 				return ret.release();
@@ -464,11 +468,11 @@ namespace POA_vq {
 	 * \param type
 	 * \param cnt number of entries found
 	 */
-	cqmailvq::error * cqmailvq::user_conf_type_cnt( const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_conf_type_cnt( id_type dom_id, 
 			const char * _login, const char * _pfix,
 			user_conf_type ut, size_type &cnt) std_try {
 
-		if( ! dom_id || ! _login || ! _pfix )
+		if( ! _login || ! _pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		string login(text::lower(_login));

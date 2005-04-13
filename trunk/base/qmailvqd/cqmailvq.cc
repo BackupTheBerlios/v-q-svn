@@ -22,6 +22,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <sys.hpp>
 
+#include <boost/lexical_cast.hpp>
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -177,7 +179,7 @@ namespace POA_vq {
 	 * \param dom_id domain's id.
 	 * \return 0 on success
 	 */
-	cqmailvq::error * cqmailvq::assign_add( const string &dom_id ) std_try {   
+	cqmailvq::error * cqmailvq::assign_add( const std::string &dom_id ) std_try {   
 		string ln(assign_ln(dom_id));
 		string prog(home+"/bin/qmail_assign_add");
 		char * const args[] = {
@@ -202,7 +204,7 @@ namespace POA_vq {
 	 * Checks whether domain is in assign, if it's not returns 0, 
 	 * if it is returns ::vq::ivq::err_dom_ex, on errors returns something else
 	 */
-	cqmailvq::error * cqmailvq::assign_ex( const string &dom_id ) std_try {
+	cqmailvq::error * cqmailvq::assign_ex( const std::string &dom_id ) std_try {
 		string prog(home+"/bin/qmail_assign_ex");
 		string prefix(virt_prefix(dom_id));
 		char * const args[] = {
@@ -228,7 +230,7 @@ namespace POA_vq {
 	 * \param dom_id domain's id.
 	 * \return 0 on success
 	 */
-	cqmailvq::error * cqmailvq::assign_rm( const string &dom_id ) std_try {   
+	cqmailvq::error * cqmailvq::assign_rm( const std::string &dom_id ) std_try {   
 		string ln(assign_ln(dom_id));
 		string prog(home+"/bin/qmail_assign_rm");
 		char * const args[] = {

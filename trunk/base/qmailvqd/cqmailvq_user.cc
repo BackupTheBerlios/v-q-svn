@@ -22,6 +22,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <sys.hpp>
 
+#include <boost/lexical_cast.hpp>
+
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -75,10 +77,10 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		string user(lower(static_cast<const char *>(ai.login)));
-		string spuser(paths.user_root_path(static_cast<const char *>(ai.id_domain), 
-				user));
-		string user_add_dir(paths.user_dir_path(static_cast<const char *>(ai.id_domain), 
-				user));
+		string spuser(paths.user_root_path(
+				boost::lexical_cast<std::string>(ai.id_domain), user));
+		string user_add_dir(paths.user_dir_path(
+				boost::lexical_cast<std::string>(ai.id_domain), user));
 	
 		/* check wheter domain has default quota for users */
 	#warning Quota setting removed temporarily	
@@ -98,8 +100,8 @@ namespace POA_vq {
 					? ::vq::ivq::err_exists : ::vq::ivq::err_mkdir, user_add_dir);
 	
 		auto_ptr<error> ret;
-		ret.reset(maildir_make(
-			paths.user_md_path(static_cast<const char *>(ai.id_domain), user)));
+		ret.reset(maildir_make( 
+			paths.user_md_path(boost::lexical_cast<std::string>(ai.id_domain), user)));
 		if( ::vq::ivq::err_no != ret->ec ) {
 				sys::rmdirrec(user_add_dir);
 				return ret.release();
@@ -115,7 +117,7 @@ namespace POA_vq {
 				sys::rmdirrec(user_add_dir);
 				return ret.release();
 		}
-		string dotuser(dotfile(static_cast<const char *>(ai.id_domain), 
+		string dotuser(dotfile(boost::lexical_cast<std::string>(ai.id_domain), 
 				user, ""));
 		if( ! sys::dumpstring(dotuser, paths.user_md_subpath(user)+"\n") ) {
 				delete auth->user_rm(ai.id_domain, user.c_str());
@@ -131,10 +133,10 @@ namespace POA_vq {
 	 * \param login
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::user_rm(const char * dom_id, 
+	cqmailvq::error * cqmailvq::user_rm( id_type dom_id, 
 			const char *_login) std_try {
 
-		if( ! dom_id || ! _login ) 
+		if( ! _login ) 
 				throw ::vq::null_error(__FILE__, __LINE__);
 		std::string login(lower(static_cast<const char *>(_login)));
 		auto_ptr<error> ret;
@@ -142,13 +144,14 @@ namespace POA_vq {
 		if( ::vq::ivq::err_no != ret->ec ) 
 				return ret.release();
 	
-		string dir(paths.user_root_path(dom_id, login)+'/');
+		string dir(paths.user_root_path(
+			boost::lexical_cast<std::string>(dom_id), login)+'/');
 		ostringstream dir_mv;
 		struct timeval time_mv;
 		gettimeofday(&time_mv, NULL);
 		dir_mv<<this->home<<"/deleted/@"<<time_mv.tv_sec
 				<<'.'<<time_mv.tv_usec<<'.'<<user<<'@'
-				<<static_cast<const char *>(dom_id);
+				<<boost::lexical_cast<std::string>(dom_id);
 	
 		if(rename((dir+user).c_str(), dir_mv.str().c_str())) 
 				return lr(::vq::ivq::err_ren, dir+user);
@@ -184,10 +187,10 @@ namespace POA_vq {
 	 * \param p new password
 	 * \return ::vq::ivq::err_no on success
 	 */
-	cqmailvq::error * cqmailvq::user_pass(const char * dom_id,
+	cqmailvq::error * cqmailvq::user_pass(id_type dom_id,
 			const char *login, const char * pass ) std_try {
 	
-		if(!dom_id || !login || !pass)
+		if(!login || !pass)
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
 		return auth->user_pass(dom_id, login, pass);
@@ -206,7 +209,7 @@ namespace POA_vq {
 		if( ::vq::ivq::err_no == ret->ec ) {
 				if( '\0' == *ai.dir ) {
 						ai.dir = paths.user_dir_path(
-							static_cast<const char *>(ai.id_domain),
+							boost::lexical_cast<std::string>(ai.id_domain),
 							lower(static_cast<const char *>(ai.login))).c_str();
 				}
 				ai.gid = this->gid;
@@ -222,8 +225,7 @@ namespace POA_vq {
 	 * \param login user
 	 * \return ::vq::ivq::err_no if user exists
 	 */
-	cqmailvq::error * cqmailvq::user_ex( const char * dom_id, 
-			const char *login ) std_try {
+	cqmailvq::error * cqmailvq::user_ex( id_type dom_id, const char *login ) std_try {
 		return auth->user_ex(dom_id, login);
 	} std_catch
 

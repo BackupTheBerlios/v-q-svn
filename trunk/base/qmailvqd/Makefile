@@ -10,7 +10,7 @@ OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o \
 INCS=-I$(BASE)/base -I$(BASE) -I../libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf -I$(BASE)/corbautil/cxx/import_export -I$(BASE)/corbautil/cxx/portability \
 	-I$(BASE)/corbautil/cxx/PoaUtility \
-	`cat $(BASE)/corba.inc`
+	`cat $(BASE)/corba.inc` `cat $(BASE)/boost.inc`
 LIBS=-L$(BASE) -L$(BASE)/libmain -lmain \
 	-L../libvqmain -lvqmain -L$(BASE)/base -lvq \
 	-L$(BASE)/libconf -lconf -L$(BASE)/libsys -lsys -L$(BASE)/libtext -ltext \
@@ -75,7 +75,7 @@ auto/d_namlen.h: $(BASE)/compile try/d_namlen.cc d_namlen.h1 d_namlen.h2
 ##################
 
 qmail_files.o qmailvqd.o cqmailvq_dom.o cqmailvq.o cqmailvq_user.o \
-cqmailvq_eb.o cqmailvq_user_conf.o: $(BASE)/corba.inc
+cqmailvq_eb.o cqmailvq_user_conf.o: $(BASE)/corba.inc $(BASE)/boost.inc
 
 $(OBJS): $(BASE)/compile conf/qmail_home 
 

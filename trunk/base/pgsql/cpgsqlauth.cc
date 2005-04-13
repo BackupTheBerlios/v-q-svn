@@ -53,7 +53,7 @@ namespace POA_vq {
 	/**
 	*/
 	cpgsqlauth::error * cpgsqlauth::dom_add( const char * _dom,
-			CORBA::String_out dom_id ) std_try {
+			id_type & dom_id ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
 
 		dom_id = CORBA::string_dup("");
@@ -82,7 +82,7 @@ namespace POA_vq {
 	/**
 	*/
 	cpgsqlauth::error * cpgsqlauth::dom_id( const char * _dom,
-			CORBA::String_out dom_id ) std_try {
+			id_type & dom_id ) std_try {
 		if( ! _dom ) throw ::vq::null_error(__FILE__, __LINE__);
 		
 		dom_id = CORBA::string_dup("");
@@ -222,7 +222,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::da_dip_add( const char* dom_id, 
+	cpgsqlauth::error * cpgsqlauth::da_dip_add( id_type dom_id, 
 			const char* rea, const std::string & func ) std_try {
 		if( ! dom_id || ! rea )
 				throw ::vq::null_error(__FILE__, __LINE__);
@@ -282,7 +282,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::da_ls_by_dom( const char* dom_id, 
+	cpgsqlauth::error * cpgsqlauth::da_ls_by_dom( id_type dom_id, 
 			string_list_out reas ) std_try {
 
 		return da_dip_ls_by_dom( dom_id, reas, "alias", "vq_view_DA_LS");
@@ -291,7 +291,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::dip_ls_by_dom( const char* dom_id, 
+	cpgsqlauth::error * cpgsqlauth::dip_ls_by_dom( id_type dom_id, 
 			string_list_out reas ) std_try {
 
 		return da_dip_ls_by_dom( dom_id, reas, "ip", "vq_view_DIP_LS");
@@ -300,7 +300,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::da_dip_ls_by_dom( const char* dom_id, 
+	cpgsqlauth::error * cpgsqlauth::da_dip_ls_by_dom( id_type dom_id, 
 			string_list_out reas, 
 			const std::string & field, const std::string & view ) std_try {
 
