@@ -97,8 +97,10 @@ namespace POA_vq {
 				 */
 				/*@{*/
 #define lr(ec, what) lr_wrap(ec, what, __FILE__, __LINE__) //!< return lastret
-					inline error * lr_wrap(err_code, const std::string &, 
-							const char *, CORBA::ULong );
+					inline error * lr_wrap(err_code ec, const std::string &w, 
+							const char *f, CORBA::ULong l) {
+						return lr_wrap(ec, w.c_str(), f, l);
+					}
 					error * lr_wrap(err_code, const char *, 
 							const char *, CORBA::ULong );
 				/*@}*/	

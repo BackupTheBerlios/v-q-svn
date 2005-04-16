@@ -96,12 +96,12 @@ namespace POA_vq {
 		cpgsqlpool::value_ptr pg(pool.get());
 		pqxx::result res(pqxx::nontransaction(*pg.get()).exec(
 			"SELECT log_write("
-			+pqxx::Quote(this->ip)+","
+			+'\''+sqlesc(this->ip)+'\''+","
 			+this->ser+","
-			+pqxx::Quote(this->dom)+","
-			+pqxx::Quote(this->log)+","
-			+pqxx::to_string(static_cast<unsigned>(res))+","
-			+pqxx::Quote(msg)+')'));
+			+'\''+sqlesc(this->dom)+'\''+","
+			+'\''+sqlesc(this->log)+'\''+","
+			+to_string(static_cast<unsigned>(res))+","
+			+'\''+sqlesc(msg)+'\''+')'));
 		
 		if( res.empty() || res[0][0].is_null() 
 			|| strcmp(res[0][0].c_str(), "0") )
@@ -121,7 +121,7 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count_by_dom( size_type & cnt ) std_try {
-  		return count_by_func( "vq_view_log_count_by_dom WHERE domain="+pqxx::Quote(this->dom), 
+  		return count_by_func( "vq_view_log_count_by_dom WHERE domain="+'\''+sqlesc(this->dom)+'\'', 
 			cnt);
 	} std_catch
 
@@ -129,8 +129,8 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count_by_user( size_type & cnt ) std_try {
-  		return count_by_func( "vq_view_log_count_by_user WHERE domain="+pqxx::Quote(this->dom)
-			+" AND login="+pqxx::Quote(this->log), cnt);
+  		return count_by_func( "vq_view_log_count_by_user WHERE domain="+'\''+sqlesc(this->dom)+'\''
+			+" AND login="+'\''+sqlesc(this->log)+'\'', cnt);
 	} std_catch
 
 	/**
@@ -162,7 +162,7 @@ namespace POA_vq {
 	cpgsqllog::error * cpgsqllog::read_by_dom( size_type start, size_type end,
 			log_entry_list_out les ) std_try {
 		return read_by_func(
-			make_pair(rbf_ignore_domain, "vq_view_log_read WHERE domain="+pqxx::Quote(this->dom)), 
+			make_pair(rbf_ignore_domain, "vq_view_log_read WHERE domain="+'\''+sqlesc(this->dom)+'\''), 
 			start, end, les);
 	} std_catch
 
@@ -173,8 +173,8 @@ namespace POA_vq {
 			log_entry_list_out les ) std_try {
 		return read_by_func(
 			make_pair(rbf_ignore_domain | rbf_ignore_login,
-				"vq_view_log_read WHERE domain="+pqxx::Quote(this->dom)
-				+" AND login="+pqxx::Quote(this->log) ), 
+				"vq_view_log_read WHERE domain="+'\''+sqlesc(this->dom)+'\''
+				+" AND login="+'\''+sqlesc(this->log)+'\'' ), 
 			start, end, les);
 	} std_catch
 
@@ -247,15 +247,15 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::rm_by_dom() std_try {
-  		return rm_by_func( "log_rm_by_dom("+pqxx::Quote(this->dom)+")" );
+  		return rm_by_func( "log_rm_by_dom("+'\''+sqlesc(this->dom)+'\''+")" );
 	} std_catch
 
 	/**
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::rm_by_user() std_try {
-  		return rm_by_func( "log_rm_by_user("+pqxx::Quote(this->dom)
-			+','+pqxx::Quote(this->log)+")" );
+  		return rm_by_func( "log_rm_by_user("+'\''+sqlesc(this->dom)+'\''
+			+','+'\''+sqlesc(this->log)+'\''+")" );
 	} std_catch
 
 	/**
