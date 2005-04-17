@@ -38,9 +38,9 @@ public class JDBCAuth extends iauthPOA {
 
 	/**
 	*/
-	public error dom_add( String dom, StringHolder dom_id )
+	public error dom_add( String dom, IntHolder dom_id )
 			throws null_error, db_error, except { try {
-		dom_id.value = "";
+		dom_id.value = 0;
 
 		dom = dom.toLowerCase();
 
@@ -50,14 +50,13 @@ public class JDBCAuth extends iauthPOA {
 		call.setString(idx++, dom);
 		call.execute();
 
-		dom_id.value = call.getString(1);
+		dom_id.value = call.getInt(1);
 
-		if( call.wasNull() || dom_id.value.length() == 0 )
+		if( call.wasNull() )
 			return lr(err_code.err_func_res, "DOM_ADD");
 
-		if( dom_id.value.charAt(0) == '-' ) {
-			return ( dom_id.value.length() >= 2 && dom_id.value.charAt(1) == '1' ) 
-				? lr(err_code.err_exists, dom) 
+		if( dom_id.value < 0 ) {
+			return dom_id.value == -1 ? lr(err_code.err_exists, dom)
 				: lr(err_code.err_func_res, "DOM_ADD");
 		}
 		return lr(err_code.err_no, "");
@@ -71,9 +70,9 @@ public class JDBCAuth extends iauthPOA {
 
 	/**
 	*/
-	public error dom_id( String dom, StringHolder dom_id )
+	public error dom_id( String dom, IntHolder dom_id )
 			throws null_error, db_error, except { try {
-		dom_id.value = "";
+		dom_id.value = 0;
 		dom = dom.toLowerCase();
 
 		String func = "DOM_ID";
@@ -81,10 +80,11 @@ public class JDBCAuth extends iauthPOA {
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom);
+		call.execute();
 
-		Integer res = call.getInt(1);
-		if( call.wasNull() ) return lr(err_code.err_noent, dom);
-		dom_id.value = res.toString();
+		dom_id.value = call.getInt(1);
+		if( call.wasNull() || dom_id.value == -1 ) 
+			return lr(err_code.err_noent, dom);
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {
 		throw new db_error(e.getMessage(), getClass().getName(), 0);
@@ -96,7 +96,7 @@ public class JDBCAuth extends iauthPOA {
 
 	/**
 	*/
-	public error dom_name( String dom_id, StringHolder domain )
+	public error dom_name( int dom_id, StringHolder domain )
 			throws null_error, db_error, except { try {
 		domain.value = "";
 
@@ -105,12 +105,13 @@ public class JDBCAuth extends iauthPOA {
 
 		try {
 			st = con.prepareStatement( 
-				"SELECT domain FROM vq_view_DOM_NAME WHERE id_domain = ?" );
-			st.setString(1, dom_id);
+				"SELECT domain FROM vq_view_DOM_NAME WHERE id_domain=?" );
+			st.setInt(1, dom_id);
 			res = st.executeQuery();
 			while(res.next()) {
 				domain.value = res.getString(1);
-				if( res.wasNull() ) return lr(err_code.err_noent, dom_id);
+				if( res.wasNull() ) 
+					return lr(err_code.err_noent, Integer.toString(dom_id));
 			}
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
@@ -127,7 +128,7 @@ public class JDBCAuth extends iauthPOA {
 
 	/**
 	*/
-	public error dom_rm( String dom_id ) 
+	public error dom_rm( int dom_id ) 
 			throws null_error, db_error, except {
 		return func_rm( dom_id, "DOM_RM" );
 	}
@@ -148,8 +149,8 @@ public class JDBCAuth extends iauthPOA {
 
 			for( int idx=1; res.next(); idx=1) {
 				domain_info di = new domain_info();
-				di.id_domain = res.getString(idx++);
-				if( res.wasNull() ) di.id_domain = "";
+				di.id_domain = res.getInt(idx++);
+				if( res.wasNull() ) di.id_domain = 0;
 				di.domain = res.getString(idx++);
 				if( res.wasNull() ) di.domain = "";
 				adis.add(di);
@@ -178,32 +179,31 @@ public class JDBCAuth extends iauthPOA {
 		CallableStatement call = con.prepareCall("{ ? = call user_add(?, ?, ?, ?, ?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, ai.id_domain);
+		call.setInt(idx++, ai.id_domain);
 		call.setString(idx++, ai.login.toLowerCase());
 		call.setString(idx++, ai.pass);
 		call.setInt(idx++, ai.flags);
 		call.setBoolean(idx++, is_banned);
 		call.execute();
 		
-		String res = call.getString(1);
-		if(call.wasNull() || res.length() == 0 )
+		int res = call.getInt(1);
+		if(call.wasNull() )
 			return lr(err_code.err_func_res, "USER_ADD");
 
-		if( res.charAt(0) == '-' ) {
-			if( res.length() == 1 ) 
-				return lr(err_code.err_func_res, "USER_ADD");
-				
-			switch( res.charAt(1) ) {
-			case '2':
+		if( res < 0 ) {
+			switch( res ) {
+			case -3:
+				return lr(err_code.err_noent, Integer.toString(ai.id_domain));
+			case -2:
 				return lr(err_code.err_user_inv, "");
-			case '1':
+			case -1:
 				return lr(err_code.err_exists, "");
 			default:
 				return lr(err_code.err_func_res, "USER_ADD");
 			} 
 		}
 
-		if( "0".equals(res) )
+		if( 0 == res )
 			return lr(err_code.err_no, "");
 		
 		return lr(err_code.err_func_res, "USER_ADD");
@@ -218,7 +218,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error da_add( String dom_id, String ali ) 
+	public error da_add( int dom_id, String ali ) 
 			throws null_error, db_error, except {
 		return da_dip_add(dom_id, ali, "DA_ADD");
 	}
@@ -226,7 +226,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error dip_add( String dom_id, String ali ) 
+	public error dip_add( int dom_id, String ali ) 
 			throws null_error, db_error, except {
 
 		if( IPAddressUtil.textToNumericFormatV4(ali) == null
@@ -255,7 +255,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error da_ls_by_dom( String dom_id, string_listHolder reas ) 
+	public error da_ls_by_dom( int dom_id, string_listHolder reas ) 
 			throws null_error, db_error, except {
 		return da_dip_ls_by_dom( dom_id, reas, "alias", "vq_view_DA_LS" );
 	}
@@ -263,7 +263,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error dip_ls_by_dom( String dom_id, string_listHolder reas ) 
+	public error dip_ls_by_dom( int dom_id, string_listHolder reas ) 
 			throws null_error, db_error, except {
 		return da_dip_ls_by_dom( dom_id, reas, "ip", "vq_view_DIP_LS" );
 	}
@@ -271,7 +271,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error da_dip_ls_by_dom( String dom_id, string_listHolder reas, 
+	public error da_dip_ls_by_dom( int dom_id, string_listHolder reas, 
 			String field, String view )
 			throws null_error, db_error, except { try {
 
@@ -283,7 +283,7 @@ public class JDBCAuth extends iauthPOA {
 		try {
 			st = con.prepareStatement(
 				"SELECT "+field+" FROM "+view+" WHERE id_domain=?");
-			st.setString(1, dom_id);
+			st.setInt(1, dom_id);
 			res = st.executeQuery();
 
 			while( res.next() ) {
@@ -311,27 +311,24 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 * 
 	 */
-	public error user_pass( String dom_id, String login, String pass ) 
+	public error user_pass( int dom_id, String login, String pass ) 
 			throws null_error, db_error, except { try {
 		
 		CallableStatement call = con.prepareCall("{ ? = call user_pass(?, ?, ?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
+		call.setInt(idx++, dom_id);
 		call.setString(idx++, login.toLowerCase());
 		call.setString(idx++, pass);
 		call.execute();
 		
-		String res = call.getString(1);
-		if(call.wasNull() || res.length() == 0 )
+		int res = call.getInt(1);
+		if(call.wasNull() )
 			return lr(err_code.err_func_res, "USER_PASS");
 
-		if( res.charAt(0) == '-' ) {
-			if( res.length() == 1 ) 
-				return lr(err_code.err_func_res, "USER_ADD");
-				
-			switch( res.charAt(1) ) {
-			case '1':
+		if( res < 0 ) {
+			switch( res ) {
+			case -1:
 				return lr(err_code.err_exists, "");
 			default:
 				return lr(err_code.err_func_res, "USER_PASS");
@@ -349,14 +346,35 @@ public class JDBCAuth extends iauthPOA {
 
 	/**
 	*/
-	public error user_rm( String dom_id, String login ) 
-			throws null_error, db_error, except {
-		return user_eb_rm(dom_id, login, "USER_RM");
-	}
+	public error user_rm( int dom_id, String login ) 
+			throws null_error, db_error, except { try {
+		String func = "USER_RM";
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?, ?)}");
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
+		call.setInt(idx++, dom_id);
+		call.setString(idx++, login);
+		call.execute();
+
+		int res = call.getInt(1);
+		if( call.wasNull() )
+			return lr(err_code.err_func_res, func);
+
+		if( 0 == res )
+			return lr(err_code.err_no, "");
+			
+		return lr(err_code.err_func_res, func);
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
 
 	/**
 	*/
-	public error user_ex( String dom_id, String login )
+	public error user_ex( int dom_id, String login )
 			throws null_error, db_error, except { try {
 		PreparedStatement st = null;
 		ResultSet res = null;
@@ -366,12 +384,12 @@ public class JDBCAuth extends iauthPOA {
 				"SELECT EXISTS (SELECT * FROM vq_view_USER_EX "
 				+ "WHERE id_domain=? AND login=?)" );
 			int idx=1;
-			st.setString(idx++, dom_id);
+			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			res = st.executeQuery();
 			while(res.next()) {
 				return lr( res.getBoolean(1) 
-					? err_code.err_noent : err_code.err_no, "" );
+					? err_code.err_no : err_code.err_noent, "" );
 			}
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
@@ -390,17 +408,63 @@ public class JDBCAuth extends iauthPOA {
 	 *
 	 */
 	public error eb_add( String re_domain, String re_login ) 
-			throws null_error, db_error, except {
-		return da_dip_add( re_domain, re_login, "EB_ADD" );
-	}
+			throws null_error, db_error, except { try {
+		String func = "EB_ADD";
+		CallableStatement call = con.prepareCall("{ ? = call "+func+"(?, ?) }");
+		
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
+		call.setString(idx++, re_domain);
+		call.setString(idx++, re_login);
+		call.execute();
+
+		int res = call.getInt(1);
+
+		if( call.wasNull() )
+			return lr(err_code.err_func_res, func);
+
+		if( res < 0 ) {
+			return res == -1 
+				? lr(err_code.err_exists, "") 
+				: lr(err_code.err_func_res, func);
+		}
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
 
 	/**
 	 *
 	 */
 	public error eb_rm( String re_domain, String re_login ) 
-			throws null_error, db_error, except {
-		return user_eb_rm(re_domain, re_login, "EB_RM");
-	}
+			throws null_error, db_error, except { try {
+		String func = "EB_RM";
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?, ?)}");
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
+		call.setString(idx++, re_domain);
+		call.setString(idx++, re_login);
+		call.execute();
+
+		int res = call.getInt(1);
+		if( call.wasNull() )
+			return lr(err_code.err_func_res, func);
+
+		if( 0 == res )
+			return lr(err_code.err_no, "");
+			
+		return lr(err_code.err_func_res, func);
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
 
 	/**
 	 *
@@ -451,7 +515,7 @@ public class JDBCAuth extends iauthPOA {
 				"SELECT pass,dir,flags FROM vq_view_user_get"
 				+" WHERE id_domain=? AND login=?" );
 			int idx=1;
-			st.setString(idx++, ai.value.id_domain);
+			st.setInt(idx++, ai.value.id_domain);
 			st.setString(idx++, ai.value.login.toLowerCase());
 			res = st.executeQuery();
 
@@ -481,25 +545,36 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error user_conf_add( String dom_id, String login, String pfix, 
+	public error user_conf_add( int dom_id, String login, String pfix, 
 			user_conf_infoHolder ui )
 			throws null_error, db_error, except { try {
-
+		login = login.toLowerCase();
 		String func = "USER_CONF_ADD";
-		CallableStatement call = con.prepareCall("{? = call "+func+"(?, ?, ?, ?, ?)}");
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?,?,?,?,?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
-		call.setString(idx++, login.toLowerCase());
+		call.setInt(idx++, dom_id);
+		call.setString(idx++, login);
 		call.setString(idx++, pfix.toLowerCase());
 		call.setShort(idx++, ui.value.type);
 		call.setString(idx++, ui.value.val);
 		call.execute();
 
-		ui.value.id_conf = call.getString(1);
+		ui.value.id_conf = call.getInt(1);
 
-		if( call.wasNull() || ui.value.id_conf.length() == 0 )
+		if( call.wasNull() )
 			return lr(err_code.err_func_res, func);
+
+		if( ui.value.id_conf < 0 ) {
+			switch(ui.value.id_conf) {
+			case -1:
+				return lr(err_code.err_noent, Integer.toString(dom_id));
+			case -2:
+				return lr(err_code.err_noent, login);
+			default:
+				return lr(err_code.err_func_res, func);
+			}
+		}
 
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {
@@ -513,7 +588,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error user_conf_ls(String dom_id, String login, String pfix, 
+	public error user_conf_ls(int dom_id, String login, String pfix, 
 			user_conf_info_listHolder uis)
 			throws null_error, db_error, except { try {
 		
@@ -527,7 +602,7 @@ public class JDBCAuth extends iauthPOA {
 				+ "WHERE id_domain=? AND login=? AND ext=?" );
 
 			int idx=1;
-			st.setString(idx++, dom_id);
+			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			st.setString(idx++, pfix.toLowerCase());
 			res = st.executeQuery();
@@ -535,57 +610,8 @@ public class JDBCAuth extends iauthPOA {
 			for( idx=1; res.next(); idx=1 ) {
 				user_conf_info uci = new user_conf_info();
 
-				uci.id_conf = res.getString(idx++);
-				if( res.wasNull() ) uci.id_conf = "";
-				uci.val = res.getString(idx++);
-				if( res.wasNull() ) uci.val = "";
-				uci.type = res.getShort(idx++);
-				if( res.wasNull() ) uci.type = 0;
-				auis.add(uci);
-			}
-
-			uis.value = (user_conf_info []) auis.toArray();
-		} finally {
-			try { if(res != null) res.close(); } catch(Exception e) {}
-			try { if(st != null) st.close(); } catch(Exception e) {}
-		}
-		return lr(err_code.err_no, "");
-	} catch( SQLException e ) {
-		throw new db_error(e.getMessage(), getClass().getName(), 0);
-	} catch( NullPointerException e ) {
-		throw new null_error(e.getMessage(), getClass().getName(), 0);
-	} catch( Exception e ) {
-		throw new except(e.getMessage(), getClass().getName(), 0);
-	} }
-
-	/**
-	 *
-	 */
-	public error user_conf_ls_by_type(String dom_id, String login, 
-			String pfix, short ut, user_conf_info_listHolder uis)
-			throws null_error, db_error, except { try {
-		uis.value = new user_conf_info[0];	
-		PreparedStatement st = null;
-		ResultSet res = null;
-		ArrayList auis = new ArrayList();
-
-		try {
-			st = con.prepareStatement( 
-				"SELECT id_conf,val,type FROM vq_view_user_conf_ls "
-				+ "WHERE id_domain=? AND login=? AND ext=? AND type=?" );
- 
-			int idx=1;
-			st.setString(idx++, dom_id);
-			st.setString(idx++, login.toLowerCase());
-			st.setString(idx++, pfix.toLowerCase());
-			st.setShort(idx++, ut );
-			res = st.executeQuery();
-
-			for( idx=1; res.next(); idx=1 ) {
-				user_conf_info uci = new user_conf_info();
-
-				uci.id_conf = res.getString(idx++);
-				if( res.wasNull() ) uci.id_conf = "";
+				uci.id_conf = res.getInt(idx++);
+				if( res.wasNull() ) uci.id_conf = 0;
 				uci.val = res.getString(idx++);
 				if( res.wasNull() ) uci.val = "";
 				uci.type = res.getShort(idx++);
@@ -612,7 +638,58 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error user_conf_rm(String user_conf_id) 
+	public error user_conf_ls_by_type(int dom_id, String login, 
+			String pfix, short ut, user_conf_info_listHolder uis)
+			throws null_error, db_error, except { try {
+		uis.value = new user_conf_info[0];	
+		PreparedStatement st = null;
+		ResultSet res = null;
+		ArrayList auis = new ArrayList();
+
+		try {
+			st = con.prepareStatement( 
+				"SELECT id_conf,val,type FROM vq_view_user_conf_ls "
+				+ "WHERE id_domain=? AND login=? AND ext=? AND type=?" );
+ 
+			int idx=1;
+			st.setInt(idx++, dom_id);
+			st.setString(idx++, login.toLowerCase());
+			st.setString(idx++, pfix.toLowerCase());
+			st.setShort(idx++, ut );
+			res = st.executeQuery();
+
+			for( idx=1; res.next(); idx=1 ) {
+				user_conf_info uci = new user_conf_info();
+
+				uci.id_conf = res.getInt(idx++);
+				if( res.wasNull() ) uci.id_conf = 0;
+				uci.val = res.getString(idx++);
+				if( res.wasNull() ) uci.val = "";
+				uci.type = res.getShort(idx++);
+				if( res.wasNull() ) uci.type = 0;
+				auis.add(uci);
+			}
+
+			uis.value = new user_conf_info [auis.size()];
+			for(int i=0, s=auis.size(); i<s; ++i )
+				uis.value[i] = (user_conf_info) auis.get(i);
+		} finally {
+			try { if(res != null) res.close(); } catch(Exception e) {}
+			try { if(st != null) st.close(); } catch(Exception e) {}
+		}
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
+	 *
+	 */
+	public error user_conf_rm(int user_conf_id) 
 			throws null_error, db_error, except {
 		return func_rm(user_conf_id, "USER_CONF_RM");
 	}
@@ -620,25 +697,25 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error user_conf_rm_by_type(String dom_id, String login, 
+	public error user_conf_rm_by_type(int dom_id, String login, 
 			String ext, short ut)
 			throws null_error, db_error, except { try {
 
 		String func = "USER_CONF_RM_BY_TYPE";
-		CallableStatement call = con.prepareCall("{? = callcall  "+func+"(?,?,?,?)}");
+		CallableStatement call = con.prepareCall("{? = call "+func+"(?,?,?,?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
+		call.setInt(idx++, dom_id);
 		call.setString(idx++, login.toLowerCase());
 		call.setString(idx++, ext.toLowerCase());
 		call.setShort(idx++, ut);
 		call.execute();
 
-		String res = call.getString(1);
-		if( call.wasNull() || res.length() == 0 )
+		int res = call.getInt(1);
+		if( call.wasNull() )
 			return lr(err_code.err_func_res, func);
 
-		if( "0".equals(res) )
+		if( 0 == res )
 			return lr(err_code.err_no, "");
 			
 		return lr(err_code.err_func_res, func);
@@ -662,7 +739,7 @@ public class JDBCAuth extends iauthPOA {
 			st = con.prepareStatement( 
 				"SELECT TYPE,VAL FROM vq_view_USER_CONF_GET WHERE id_conf=?");
 			int idx=1;
-			st.setString(idx++, ui.value.id_conf);
+			st.setInt(idx++, ui.value.id_conf);
 			res = st.executeQuery();
 
 			if( ! res.next() )
@@ -696,21 +773,18 @@ public class JDBCAuth extends iauthPOA {
 		CallableStatement call = con.prepareCall("{ ? = call "+func+"(?, ?, ?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, ui.id_conf);
+		call.setInt(idx++, ui.id_conf);
 		call.setShort(idx++, ui.type);
 		call.setString(idx++, ui.val);
 		call.execute();
 		
-		String res = call.getString(1);
-		if(call.wasNull() || res.length() == 0 )
+		int res = call.getInt(1);
+		if(call.wasNull())
 			return lr(err_code.err_func_res, func);
 
-		if( res.charAt(0) == '-' ) {
-			if( res.length() == 1 ) 
-				return lr(err_code.err_func_res, func);
-				
-			switch( res.charAt(1) ) {
-			case '1':
+		if( res < 0) {
+			switch( res ) {
+			case -1:
 				return lr(err_code.err_noent, "");
 			default:
 				return lr(err_code.err_func_res, func);
@@ -729,7 +803,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error user_conf_type_has( String dom_id, String login, 
+	public error user_conf_type_has( int dom_id, String login, 
 			String pfix, short ut )
 			throws null_error, db_error, except { try {
 
@@ -739,16 +813,16 @@ public class JDBCAuth extends iauthPOA {
 		try {
 			st = con.prepareStatement( 
 				"SELECT EXISTS (SELECT * FROM vq_view_user_conf_type_has WHERE "
-				+"id_domain=? AND login=? AND ext=? AND type=?" );
+				+"id_domain=? AND login=? AND ext=? AND type=?)" );
 			int idx=1;
-			st.setString(idx++, dom_id);
+			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			st.setString(idx++, pfix.toLowerCase());
 			st.setShort(idx++, ut );
 			res = st.executeQuery();
 			while(res.next()) {
 				return lr( res.getBoolean(1) 
-					? err_code.err_noent : err_code.err_no, "" );
+					? err_code.err_no : err_code.err_noent, "" );
 			}
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
@@ -766,7 +840,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error user_conf_type_cnt( String dom_id, String login, 
+	public error user_conf_type_cnt( int dom_id, String login, 
 			String pfix, short ut, IntHolder cnt )
 			throws null_error, db_error, except { try {
 		cnt.value = 0;
@@ -779,12 +853,12 @@ public class JDBCAuth extends iauthPOA {
 				"SELECT count FROM vq_view_user_conf_type_cnt WHERE "
 				+"id_domain=? AND login=? AND ext=? AND type=?" );
 			int idx=1;
-			st.setString(idx++, dom_id);
+			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			st.setString(idx++, pfix.toLowerCase());
 			st.setShort(idx++, ut );
 			res = st.executeQuery();
-			cnt.value = res.getInt(1);
+			cnt.value = res.next() ? res.getInt(1) : 0;
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
 			try { if(st != null) st.close(); } catch(Exception e) {}
@@ -801,22 +875,22 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error qt_user_def_set( String dom_id, int bytes_max, int files_max )
+	public error qt_user_def_set( int dom_id, int bytes_max, int files_max )
 			throws null_error, db_error, except { try {
 		String func = "QT_USER_DEF_SET";
 		CallableStatement call = con.prepareCall("{? = call "+func+"(?,?,?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
+		call.setInt(idx++, dom_id);
 		call.setInt(idx++, bytes_max);
 		call.setInt(idx++, files_max);
 		call.execute();
 
-		String res = call.getString(1);
-		if( call.wasNull() || res.length() == 0 )
+		int res = call.getInt(1);
+		if( call.wasNull() )
 			return lr(err_code.err_func_res, func);
 
-		if( "0".equals(res) )
+		if( 0 == res )
 			return lr(err_code.err_no, "");
 			
 		return lr(err_code.err_func_res, func);
@@ -832,7 +906,7 @@ public class JDBCAuth extends iauthPOA {
 	 * Gets default quota for new users and sends it via cso
 	 * \param dom domain
 	 */
-	public error qt_user_def_get( String dom_id,
+	public error qt_user_def_get( int dom_id,
 			IntHolder bytes_max, IntHolder files_max )
 			throws null_error, db_error, except { try {
 		bytes_max.value = 0;
@@ -847,11 +921,13 @@ public class JDBCAuth extends iauthPOA {
 				+"FROM vq_view_QT_USER_DEF_GET WHERE id_domain=?" );
 
 			int idx=1;
-			st.setString(idx++, dom_id);
+			st.setInt(idx++, dom_id);
 			res = st.executeQuery();
 			idx = 1;
-			bytes_max.value = res.getInt(idx++);
-			files_max.value = res.getInt(idx++);
+			if( res.next() ) {
+				bytes_max.value = res.getInt(idx++);
+				files_max.value = res.getInt(idx++);
+			}
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
 			try { if(st != null) st.close(); } catch(Exception e) {}
@@ -868,7 +944,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 * Gets limits for specified user
 	 */
-	public error qt_user_get( String dom_id, String login,
+	public error qt_user_get( int dom_id, String login,
 			IntHolder bytes_max, IntHolder files_max )
 			throws null_error, db_error, except { try {
 		bytes_max.value = 0;
@@ -879,16 +955,18 @@ public class JDBCAuth extends iauthPOA {
 
 		try {
 			st = con.prepareStatement( 
-				"SELECT qt_bytes_max,qt_files_max FROM vq_view_QT_USER_DEF_GET"
+				"SELECT qt_bytes_max,qt_files_max FROM vq_view_QT_USER_GET"
 				+" WHERE id_domain=? AND login=?" );
 
 			int idx=1;
-			st.setString(idx++, dom_id);
+			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			res = st.executeQuery();
 			idx = 1;
-			bytes_max.value = res.getInt(idx++);
-			files_max.value = res.getInt(idx++);
+			if( res.next() ) {
+				bytes_max.value = res.getInt(idx++);
+				files_max.value = res.getInt(idx++);
+			}
 		} finally {
 			try { if(res != null) res.close(); } catch(Exception e) {}
 			try { if(st != null) st.close(); } catch(Exception e) {}
@@ -905,7 +983,7 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 * Sets limits for specified user
 	 */
-	public error qt_user_set( String dom_id, String login,
+	public error qt_user_set( int dom_id, String login,
 			int bytes_max, int files_max )
 			throws null_error, db_error, except { try {
 
@@ -913,17 +991,17 @@ public class JDBCAuth extends iauthPOA {
 		CallableStatement call = con.prepareCall("{? = call "+func+"(?,?,?,?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
+		call.setInt(idx++, dom_id);
 		call.setString(idx++, login.toLowerCase());
 		call.setInt(idx++, bytes_max);
 		call.setInt(idx++, files_max);
 		call.execute();
 
-		String res = call.getString(1);
-		if( call.wasNull() || res.length() == 0 )
+		int res = call.getInt(1);
+		if( call.wasNull() )
 			return lr(err_code.err_func_res, func);
 
-		if( "0".equals(res) )
+		if( 0 == res )
 			return lr(err_code.err_no, "");
 			
 		return lr(err_code.err_func_res, func);
@@ -938,19 +1016,19 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 * Common part for user_rm, and other functions
 	 */
-	protected error func_rm( String dom_id, String func )
+	protected error func_rm( int dom_id, String func )
 			throws null_error, db_error, except { try {
 		CallableStatement call = con.prepareCall("{? = call "+func+"(?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
+		call.setInt(idx++, dom_id);
 		call.execute();
 
-		String res = call.getString(1);
-		if( call.wasNull() || res.length() == 0 )
+		int res = call.getInt(1);
+		if( call.wasNull() )
 			return lr(err_code.err_func_res, func);
 
-		if( "0".equals(res) )
+		if( 0 == res )
 			return lr(err_code.err_no, "");
 			
 		return lr(err_code.err_func_res, func);
@@ -965,55 +1043,27 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 * Common part for da_add and dip_add
 	 */
-	protected error da_dip_add( String dom_id, String rea, String func )
+	protected error da_dip_add( int dom_id, String rea, String func )
 			throws null_error, db_error, except { try {
 		CallableStatement call = con.prepareCall("{ ? = call "+func+"(?, ?) }");
 		
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
+		call.setInt(idx++, dom_id);
 		call.setString(idx++, rea);
 		call.execute();
 
-		String res = call.getString(1);
+		int res = call.getInt(1);
 
-		if( call.wasNull() || res.length() == 0 )
+		if( call.wasNull() )
 			return lr(err_code.err_func_res, func);
 
-		if( res.charAt(0) == '-' ) {
-			return ( res.length() >= 2 && res.charAt(1) == '1' ) 
-				? lr(err_code.err_exists, dom_id) 
+		if( res < 0 ) {
+			return res == -1 
+				? lr(err_code.err_exists, Integer.toString(dom_id)) 
 				: lr(err_code.err_func_res, func);
 		}
 		return lr(err_code.err_no, "");
-	} catch( SQLException e ) {
-		throw new db_error(e.getMessage(), getClass().getName(), 0);
-	} catch( NullPointerException e ) {
-		throw new null_error(e.getMessage(), getClass().getName(), 0);
-	} catch( Exception e ) {
-		throw new except(e.getMessage(), getClass().getName(), 0);
-	} }
-
-	/**
-	 * Common part for user_rm and eb_rm.
-	 */
-	protected error user_eb_rm( String dom_id, String login, String func )
-			throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall("{? = call "+func+"(?, ?)}");
-		int idx=1;
-		call.registerOutParameter(idx++, Types.INTEGER);
-		call.setString(idx++, dom_id);
-		call.setString(idx++, login);
-		call.execute();
-
-		String res = call.getString(1);
-		if( call.wasNull() || res.length() == 0 )
-			return lr(err_code.err_func_res, func);
-
-		if( "0".equals(res) )
-			return lr(err_code.err_no, "");
-			
-		return lr(err_code.err_func_res, func);
 	} catch( SQLException e ) {
 		throw new db_error(e.getMessage(), getClass().getName(), 0);
 	} catch( NullPointerException e ) {
@@ -1034,9 +1084,9 @@ public class JDBCAuth extends iauthPOA {
 		call.setString(idx++, rea);
 		call.execute();
 
-		String res = call.getString(1);
+		int res = call.getInt(1);
 
-		if( call.wasNull() || ! "0".equals(res) )
+		if( call.wasNull() || 0 != res )
 			return lr(err_code.err_func_res, func);
 
 		return lr(err_code.err_no, "");
