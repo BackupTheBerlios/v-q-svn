@@ -464,16 +464,16 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqlauth::error * cpgsqlauth::user_conf_add( id_type dom_id,
-			const char *login, const char * pfix, 
+			const char *_login, const char * pfix, 
 			user_conf_info &ui ) std_try {
 
-		if( ! login || ! pfix )
+		if( ! _login || ! pfix )
 				throw ::vq::null_error(__FILE__, __LINE__);
-		
+		std::string login(lower(_login));	
 		cpgsqlpool::value_ptr pg(pool.get());
 		result res(nontransaction(*pg.get()).exec(
 			"SELECT USER_CONF_ADD("
-			+ to_string(dom_id)+",'"+sqlesc(lower(login))+"','"
+			+ to_string(dom_id)+",'"+sqlesc(login)+"','"
 			+ sqlesc(lower(pfix))+"','"
 			+ sqlesc(to_string(static_cast<CORBA::ULong>(ui.type)))+"','"
 			+ sqlesc(static_cast<const char *>(ui.val)) + "')" ) );
@@ -482,6 +482,11 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_func_res, "USER_CONF_ADD");
 		}
 		ui.id_conf = res[0][0].as<id_type>(id_type());
+		if( static_cast< id_type >(-1) == ui.id_conf )
+				return lr(::vq::ivq::err_noent, 
+					boost::lexical_cast<std::string>(ui.id_conf));
+		if( static_cast< id_type >(-2) == ui.id_conf )
+				return lr(::vq::ivq::err_noent, login);
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	/**

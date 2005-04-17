@@ -528,6 +528,11 @@ struct auth_test_suite : test_suite {
 						&obj_user_conf_test::case13, uc_test );
 					ts_case13->depends_on(ts_init);
 					add(ts_case13);
+
+					test_case * ts_case14 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_conf_test::case14, uc_test );
+					ts_case14->depends_on(ts_init);
+					add(ts_case14);
 			}
 
 			// dom_ls_test

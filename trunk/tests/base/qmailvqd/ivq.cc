@@ -67,7 +67,7 @@ struct vq_test {
 		static const char * uc_dom;
 		static const char * uc_user;
 
-		CORBA::String_var uc_dom_id;
+		::vq::ivq::id_type uc_dom_id;
 		/**
 		 *
 		 */
@@ -98,8 +98,8 @@ struct vq_test {
 		void uc_case2() {
 				std::string path("./domains/"
 					+text::split_id(
-						static_cast<const char *>(this->uc_dom_id), 1)
-					+'/'+static_cast<const char *>(this->uc_dom_id)
+						boost::lexical_cast<std::string>(this->uc_dom_id), 1)
+					+'/'+boost::lexical_cast<std::string>(this->uc_dom_id)
 					+'/'+text::split_user(this->uc_user, 3)
 					+"/.qmail-"+this->uc_user);
 				posix::ipfstream in(path.c_str());
@@ -114,7 +114,7 @@ struct vq_test {
 		 *
 		 */
 		void uc_cleanup() {
-				CORBA::String_var dom_id;
+				::vq::ivq::id_type dom_id;
 				IVQ_ERROR_EQUAL(vq->dom_id(this->uc_dom, dom_id), ::vq::ivq::err_no);
 				IVQ_ERROR_EQUAL(vq->dom_rm(dom_id), ::vq::ivq::err_no);
 		}
@@ -132,12 +132,13 @@ struct vq_test_suite : test_suite {
 				
 				obj_wrap( ::vq::ivq_var & a ) : obj(a) {}
 				
-				::vq::ivq::error * user_conf_rm(const char *dom_id,
-						const char *login, const char *pfix, const char * id ) {
+				::vq::ivq::error * user_conf_rm( ::vq::ivq::id_type dom_id,
+						const char *login, const char *pfix, 
+						::vq::ivq::id_type id ) {
 					return obj->user_conf_rm(dom_id, login, pfix, id);
 				}
 
-				::vq::ivq::error * user_conf_rep( const char *dom_id, 
+				::vq::ivq::error * user_conf_rep( ::vq::ivq::id_type dom_id, 
 						const char * login, const char * pfix, 
 						const ::vq::ivq::user_conf_info & ui ) {
 					return obj->user_conf_rep(dom_id, login, pfix, ui);

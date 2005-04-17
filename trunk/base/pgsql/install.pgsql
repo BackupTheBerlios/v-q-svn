@@ -463,6 +463,14 @@ DECLARE
     _val ALIAS FOR \$5;
     id RECORD;
 BEGIN
+	IF NOT EXISTS (SELECT * FROM vq_domains WHERE id_domain=_id_domain) THEN
+		RETURN -1;
+	END IF;
+
+	IF NOT EXISTS (SELECT * FROM vq_users WHERE id_domain=_id_domain 
+			AND login=_login) THEN
+		RETURN -2;
+	END IF;
 
 	SELECT NEXTVAL(''vq_users_conf_id_conf_seq'') INTO id;
 

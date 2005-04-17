@@ -394,6 +394,22 @@ struct user_conf_test {
 			} std_catch
 			test_dom_rm(dom);
 		}
+
+		/**
+		 * Try to add entry for user in missing domain
+		 */
+		void case14() {
+			::vq::ivq::user_conf_info uci;
+			uci.type = 12;
+			uci.val = static_cast<const char *>("asd");
+
+			IVQ_ERROR_EQUAL(auth->user_conf_add(
+				static_cast< ::vq::ivq::id_type >(-1),
+				static_cast<const char *>("asd"), 
+				static_cast<const char *>("cvxcvxcv"),
+				uci), ::vq::ivq::err_noent);
+		}
+
 }; // struct user_conf_test
 
 #endif // ifndef __IAUTH_USER_CONF_HPP

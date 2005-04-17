@@ -26,10 +26,10 @@ fi
 
 echo "starting Naming Service daemon ..."
 if [ $use_orb = mico ] ; then
-	nsd -ORBIIOPAddr inet:$host:12456 &
+	nsd -ORBIIOPAddr inet:$host:2809 &
 else
 	rm -rf omninames-*
-	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:12456 &
+	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:2809 &
 fi
 nsd_pid=$!
 
@@ -38,7 +38,7 @@ sleep 2
 
 echo "starting iauth(pgsqlauthd) server ..."
 $BASE/base/pgsql/pgsqlauthd \
--ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+-ORBInitRef NameService=corbaloc::$host:2809/NameService . &
 iauth_pid=$!
 trap "kill $nsd_pid $iauth_pid" 0
 sleep 2
@@ -46,14 +46,14 @@ sleep 2
 echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
 echo "starting ivq(qmailvqd) server ..."
 $BASE/base/qmailvqd/qmailvqd \
--ORBInitRef NameService=corbaloc::$host:12456/NameService `pwd` &
+-ORBInitRef NameService=corbaloc::$host:2809/NameService `pwd` &
 ivq_pid=$!
 
 trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
 sleep 2
 
 echo "running client ..."
-./ivq -ORBInitRef NameService=corbaloc::$host:12456/NameService name_service#VQ.ivq
+./ivq -ORBInitRef NameService=corbaloc::$host:2809/NameService name_service#VQ.ivq
 #gdb ./ivq
 
 rm -rf omninames-*
