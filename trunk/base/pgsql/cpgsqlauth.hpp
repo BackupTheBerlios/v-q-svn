@@ -152,7 +152,7 @@ namespace POA_vq {
 				//@}
 
 					virtual error * user_eb_rm( const std::string & dom_id, 
-							const char* val, const std::string & func );
+							const std::string & val, const std::string & func );
 
 	};
 

@@ -95,13 +95,9 @@ namespace POA_vq {
 		
 		cpgsqlpool::value_ptr pg(pool.get());
 		pqxx::result res(pqxx::nontransaction(*pg.get()).exec(
-			"SELECT log_write("
-			+'\''+sqlesc(this->ip)+'\''+","
-			+this->ser+","
-			+'\''+sqlesc(this->dom)+'\''+","
-			+'\''+sqlesc(this->log)+'\''+","
-			+to_string(static_cast<unsigned>(res))+","
-			+'\''+sqlesc(msg)+'\''+')'));
+			"SELECT log_write('"+sqlesc(this->ip)+"',"+this->ser+",'"
+			+sqlesc(this->dom)+"','"+sqlesc(this->log)+"',"
+			+to_string(static_cast<unsigned>(res))+",'"+sqlesc(msg)+"')"));
 		
 		if( res.empty() || res[0][0].is_null() 
 			|| strcmp(res[0][0].c_str(), "0") )
@@ -121,16 +117,18 @@ namespace POA_vq {
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count_by_dom( size_type & cnt ) std_try {
-  		return count_by_func( "vq_view_log_count_by_dom WHERE domain="+'\''+sqlesc(this->dom)+'\'', 
-			cnt);
+  		return count_by_func( 
+			(std::string)"vq_view_log_count_by_dom WHERE domain='"
+			+sqlesc(this->dom)+'\'', cnt);
 	} std_catch
 
 	/**
 	 *
 	 */
 	cpgsqllog::error * cpgsqllog::count_by_user( size_type & cnt ) std_try {
-  		return count_by_func( "vq_view_log_count_by_user WHERE domain="+'\''+sqlesc(this->dom)+'\''
-			+" AND login="+'\''+sqlesc(this->log)+'\'', cnt);
+  		return count_by_func( 
+			(std::string)"vq_view_log_count_by_user WHERE domain='"
+			+sqlesc(this->dom)+"' AND login='"+sqlesc(this->log)+'\'', cnt);
 	} std_catch
 
 	/**
@@ -139,12 +137,12 @@ namespace POA_vq {
 	cpgsqllog::error * cpgsqllog::count_by_func( const std::string & func,
 			size_type & cnt ) std_try {
 
-		string qr("SELECT count FROM "+func);
+		string qr("SELECT count FROM ");
+		qr += func;
 		cpgsqlpool::value_ptr pg(pool.get());
 		result res(pqxx::nontransaction(*pg.get()).exec(qr));
-		if( res.empty() ) return lr(::vq::ivq::err_func_res, func.c_str());
 		
-		cnt = res[0][0].as< size_type >(0);
+		cnt = res.empty() ? 0 : res[0][0].as< size_type >(0);
   		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
@@ -162,7 +160,8 @@ namespace POA_vq {
 	cpgsqllog::error * cpgsqllog::read_by_dom( size_type start, size_type end,
 			log_entry_list_out les ) std_try {
 		return read_by_func(
-			make_pair(rbf_ignore_domain, "vq_view_log_read WHERE domain="+'\''+sqlesc(this->dom)+'\''), 
+			make_pair(rbf_ignore_domain, 
+				(std::string)"vq_view_log_read WHERE domain='"+sqlesc(this->dom)+'\''), 
 			start, end, les);
 	} std_catch
 
@@ -173,8 +172,8 @@ namespace POA_vq {
 			log_entry_list_out les ) std_try {
 		return read_by_func(
 			make_pair(rbf_ignore_domain | rbf_ignore_login,
-				"vq_view_log_read WHERE domain="+'\''+sqlesc(this->dom)+'\''
-				+" AND login="+'\''+sqlesc(this->log)+'\'' ), 
+				(std::string)"vq_view_log_read WHERE domain='"+sqlesc(this->dom)
+				+"' AND login='"+sqlesc(this->log)+'\'' ), 
 			start, end, les);
 	} std_catch
 

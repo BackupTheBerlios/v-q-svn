@@ -409,7 +409,7 @@ DECLARE
 BEGIN
 	DELETE FROM vq_emails_banned WHERE re_domain = _re_domain AND re_login=_re_login;
 	NOTIFY eb_rm;
-	RETURN;
+	RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';",
 
@@ -574,6 +574,10 @@ BEGIN
         RETURN -2;
       END LOOP;
     END IF;
+
+	IF NOT EXISTS (SELECT * FROM vq_domains WHERE id_domain=_id_domain) THEN
+		RETURN -3;
+	END IF;
 
 	IF EXISTS (SELECT * FROM vq_users 
 			WHERE id_domain=_id_domain AND login=_login) THEN
