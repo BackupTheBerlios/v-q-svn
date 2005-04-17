@@ -89,7 +89,7 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqllog::error * cpgsqllog::write( result_type res, const char * msg ) std_try {
+	cpgsqllog::error * cpgsqllog::write( result_type result, const char * msg ) std_try {
 		if( ! msg )
 				throw ::vq::null_error(__FILE__, __LINE__);
 		
@@ -97,7 +97,8 @@ namespace POA_vq {
 		pqxx::result res(pqxx::nontransaction(*pg.get()).exec(
 			"SELECT log_write('"+sqlesc(this->ip)+"',"+this->ser+",'"
 			+sqlesc(this->dom)+"','"+sqlesc(this->log)+"',"
-			+to_string(static_cast<unsigned>(res))+",'"+sqlesc(msg)+"')"));
+			+to_string(static_cast<unsigned>(result))+",'"
+			+sqlesc(msg)+"')"));
 		
 		if( res.empty() || res[0][0].is_null() 
 			|| strcmp(res[0][0].c_str(), "0") )
