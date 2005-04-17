@@ -55,7 +55,7 @@ void ucis_print( ostream & cout, const char * email,
 	for( CORBA::ULong j = 0, size=ucis->length(); j<size; ++j ) {
 			cout<<email<<": "<<ucis[j].id_conf;
 			name_itr = uc_names_map.find(
-				static_cast<const char *>(ucis[j].id_conf));
+				boost::lexical_cast<std::string>(ucis[j].id_conf));
 			if( name_itr != uc_names_map.end() )
 					cout<<" ("<<name_itr->second<<')';
 				
@@ -82,7 +82,7 @@ int cluemain(int ac, char **av, cluemain_env & ce )
 			return(1);
 	}
 
-	CORBA::String_var did;
+	::vq::ivq::id_type did;
 	cdom_name2id dom_name2id;
 	vq::ivq::error_var ret;
 	vq::ivq::user_conf_info_list_var ucis;

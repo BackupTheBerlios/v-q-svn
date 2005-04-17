@@ -50,7 +50,7 @@ bool user_rm(const string &e, ::vq::ivq_var &vq, bool quiet ) {
 			return quiet;
 	}
 	
-	CORBA::String_var did;
+	::vq::ivq::id_type did;
 	::vq::ivq::error_var ret(dom_name2id(vq, esplit.back(), did));
 	if( ::vq::ivq::err_no != ret->ec ) {
 			if( ! quiet )

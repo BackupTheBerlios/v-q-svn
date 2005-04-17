@@ -8,7 +8,7 @@ OBJS=cluemain.o dom_add.o dom_alias_add.o dom_alias_rm.o dom_ip_add.o \
 INCS=-I$(BASE)/base -I$(BASE) -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/base/libvqmain -I$(BASE)/libconf \
 	-I$(BASE)/corbautil/cxx/import_export -I$(BASE)/corbautil/cxx/portability \
-	`cat $(BASE)/corba.inc`
+	`cat $(BASE)/corba.inc` `cat $(BASE)/boost.inc`
 LIBS=-L$(BASE)/libmain -lmain -L$(BASE)/base/libvqmain -lvqmain -L. -lcluemain \
 	-L$(BASE)/libconf -lconf -L$(BASE)/base -lvq -L../../corbautil -lcorbautil \
 	`cat $(BASE)/corba.lib`
@@ -64,18 +64,7 @@ user_auth: $(BASE)/load $(BASE)/corba.lib error2str.o cdom_name2id.o
 	-L$(BASE)/libtext -ltext -L$(BASE)/libsys -lsys \
 	-L$(BASE)/corbautil -lcorbautil `cat $(BASE)/corba.lib`
 
-$(OBJS): $(BASE)/compile $(BASE)/corba.inc
-
-user_conf_add.o user_conf_ls.o user_conf_rm.o: $(BASE)/boost.inc
-
-user_conf_add.o: user_conf_add.cc
-	$(BASE)/compile $(INCS) `cat $(BASE)/boost.inc` $<
-
-user_conf_ls.o: user_conf_ls.cc
-	$(BASE)/compile $(INCS) `cat $(BASE)/boost.inc` $<
-
-user_conf_rm.o: user_conf_rm.cc
-	$(BASE)/compile $(INCS) `cat $(BASE)/boost.inc` $<
+$(OBJS): $(BASE)/compile $(BASE)/corba.inc $(BASE)/boost.inc
 
 .cc.o:
 	$(BASE)/compile $(INCS) $<

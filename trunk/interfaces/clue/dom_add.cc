@@ -64,7 +64,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 
 	if( quiet && ac > 0 ) ac = 1;
 
-	CORBA::String_var dom_id;
+	::vq::ivq::id_type dom_id;
 	::vq::ivq::error_var ret;
 	for(int i=0; i < ac; i++ ) {
 			if(!quiet) cout<<av[i]<<": ";

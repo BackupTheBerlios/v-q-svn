@@ -56,7 +56,7 @@ bool user_pass(const string &e, const string &p,
 			return quiet;
 	}
 
-	CORBA::String_var did;
+	::vq::ivq::id_type did;
 	::vq::ivq::error_var ret(dom_name2id(vq, esplit.back(), did));
 	if( ::vq::ivq::err_no != ret->ec ) {
 			if( ! quiet )

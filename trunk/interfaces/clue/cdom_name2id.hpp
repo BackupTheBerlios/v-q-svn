@@ -34,7 +34,7 @@ namespace clue {
 							const std::string &, T & );
 
 			protected:
-					typedef std::map< std::string, std::string > domain2id_map;
+					typedef std::map< std::string, ::vq::ivq::id_type > domain2id_map;
 					static domain2id_map dom2id;
 	};
 
@@ -45,15 +45,15 @@ namespace clue {
 		domain2id_map::const_iterator did_itr( this->dom2id.find(dom) );
 		::vq::ivq::error_var ret(new ::vq::ivq::error);
 		if( this->dom2id.end() == did_itr ) {
-				CORBA::String_var did;
+				T did;
 				ret = vq->dom_id(dom.c_str(), did);
 				if( ::vq::ivq::err_no != ret->ec ) {
 						return ret;
 				}
 				did_itr = dom2id.insert( dom2id.begin(), 
-					std::make_pair(dom, static_cast<const char *>(did)) );
+					std::make_pair(dom, did) );
 		}
-		id = did_itr->second.c_str();
+		id = did_itr->second;
 		ret->ec = ::vq::ivq::err_no;
 		return ret;
 	}

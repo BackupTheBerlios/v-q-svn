@@ -61,7 +61,7 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 	}
 
 	static cdom_name2id dom_name2id;
-	CORBA::String_var dom_id;
+	::vq::ivq::id_type dom_id;
 	::vq::ivq::error_var ret(dom_name2id(ce.vq, av[0], dom_id));
 	
 	if( ::vq::ivq::err_no != ret->ec ) {

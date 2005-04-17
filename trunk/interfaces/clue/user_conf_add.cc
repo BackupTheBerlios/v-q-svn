@@ -74,7 +74,7 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 	::vq::ivq::user_conf_info ui;
 	std::deque< std::string > esplit;
 	cdom_name2id dom_name2id;
-	CORBA::String_var did;
+	::vq::ivq::id_type did;
 	::vq::ivq::error_var ret;
 	conf::cmapconf::map_type uc_names_map( conf::cmapconf(fn_uc_names).val_map() );
 	conf::cmapconf::map_type::const_iterator name_itr;

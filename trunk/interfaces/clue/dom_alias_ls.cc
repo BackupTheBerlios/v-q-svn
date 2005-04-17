@@ -65,7 +65,7 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 
 	::vq::ivq::domain_info_list_var dis;
 	if( ac ) {
-			CORBA::String_var dom_id;
+			::vq::ivq::id_type dom_id;
 			::vq::ivq::domain_info di;
 			dis = new ::vq::ivq::domain_info_list(ac);
 			

@@ -24,6 +24,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <split.hpp>
 #include <vqmain.hpp>
 
+#include <boost/lexical_cast.hpp>
+
 using namespace std;
 using namespace clue;
 
@@ -61,7 +63,7 @@ int cluemain(int ac, char **av, cluemain_env & ce )
 			return 1;
 	}
 
-	CORBA::String_var did;
+	::vq::ivq::id_type did;
 	cdom_name2id dom_name2id;
 	vq::ivq::error_var ret;
 	vq::ivq::user_conf_info_list_var ucis;
@@ -87,7 +89,7 @@ int cluemain(int ac, char **av, cluemain_env & ce )
 
 			if( types.empty() ) {
 					ret = ce.vq->user_conf_rm(did, esplit.front().c_str(), "", 
-						static_cast<const char *>(av[i+1]) );
+						boost::lexical_cast< ::vq::ivq::id_type >(av[i+1]) );
 					if( vq::ivq::err_no != ret->ec ) {
 							if( ! quiet ) {
 									cout<<av[i]<<": "<<error2str(ret)<<endl;
