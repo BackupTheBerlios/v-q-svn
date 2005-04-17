@@ -92,7 +92,7 @@ struct logger_test {
 			BOOST_REQUIRE(sys::getlines<std::string>(ifs, ips));
 			ifs.close();
 			ifs.clear();
-			::vq::ilogger::service_type ser;
+			::vq::ilogger::service_type ser = ::vq::ilogger::service_type();
 			for( ibeg=ips.begin(), iend=ips.end(); ibeg!=iend; ++ibeg ) {
 					BOOST_CHECK_NO_THROW(
 						ser = lexical_cast< ::vq::ilogger::service_type >(*ibeg) );

@@ -74,10 +74,10 @@ struct auth_test {
 		 */
 		void test_dom_rm(const char * dom) {
 			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
-			err = auth->dom_id(dom, dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
-			err = auth->dom_rm(dom_id);
-			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
+			IVQ_ERROR_EQUAL(auth->dom_id(dom, dom_id), 
+				vq::ivq::err_no );
+			IVQ_ERROR_EQUAL(auth->dom_rm(dom_id),
+				vq::ivq::err_no);
 		}
 
 		/**
@@ -118,6 +118,7 @@ struct auth_test {
 			ai.id_domain = dom_id;
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
+			ai.flags = 0;
 
 			for( unsigned i=0; i<users_cnt; ++i ) {
 					ai.login = CORBA::string_dup(users[i]);
@@ -212,6 +213,7 @@ struct auth_test {
 					ai.id_domain = dom_id;
 					ai.pass = CORBA::string_dup("pass");
 					ai.dir = CORBA::string_dup("dir");
+					ai.flags = 0;
 
 					for( unsigned i=0; i<users_cnt; ++i ) {
 							ai.login = CORBA::string_dup(users[i]);

@@ -14,10 +14,10 @@ fi
 
 echo "starting Naming Service daemon ..."
 if [ $use_orb = mico ] ; then
-	nsd -ORBIIOPAddr inet:$host:12456 &
+	nsd -ORBIIOPAddr inet:$host:2809 &
 else
 	rm -rf omninames-*
-	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:12456 &
+	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:2809 &
 fi
 nsd_pid=$!
 
@@ -26,14 +26,14 @@ sleep 2
 
 echo "starting ilogger(pgsqllogd) server ..."
 $BASE/base/pgsql/pgsqllogd \
--ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+-ORBInitRef NameService=corbaloc::$host:2809/NameService . &
 server_pid=$!
 
 trap "kill $nsd_pid $server_pid" 0
 sleep 2
 
 echo "running client ..."
-./ilogger -ORBInitRef NameService=corbaloc::$host:12456/NameService \
+./ilogger -ORBInitRef NameService=corbaloc::$host:2809/NameService \
 name_service#Logger.ilogger $@
 #gdb ilogger
 
