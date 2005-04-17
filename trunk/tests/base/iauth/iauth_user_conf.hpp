@@ -30,7 +30,7 @@ struct user_conf_test {
 		 *
 		 */
 		void test_dom_rm(const char * dom) {
-			CORBA::String_var dom_id = CORBA::string_dup("");
+			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 			err = auth->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
 			err = auth->dom_rm(dom_id);
@@ -40,12 +40,12 @@ struct user_conf_test {
 		/**
 		 *
 		 */
-		void test_dom_user_add( const char * dom, CORBA::String_var & dom_id ) {
+		void test_dom_user_add( const char * dom, ::vq::ivq::id_type & dom_id ) {
 			err = auth->dom_add(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
 		
 			vq::iauth::user_info ai;
-			ai.id_domain = CORBA::string_dup(dom_id);
+			ai.id_domain = dom_id;
 			ai.pass = CORBA::string_dup("pass");
 			ai.dir = CORBA::string_dup("dir");
 			ai.login = CORBA::string_dup(dom);
@@ -66,7 +66,7 @@ struct user_conf_test {
 		 */
 		void case9() {
 			const char * dom = "case9.pl";
-			CORBA::String_var dom_id = CORBA::string_dup("");
+			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 			std_try {
 					typedef std::deque< std::string > string_array;
 					test_dom_user_add(dom, dom_id);
@@ -83,14 +83,14 @@ struct user_conf_test {
 					::vq::ivq::user_conf_info ui;
 					::vq::ivq::user_info ai;
 					ui.type = ::vq::ivq::uc_redir;
-					typedef std::vector<CORBA::String_var> id_array;
+					typedef std::vector< ::vq::ivq::id_type > id_array;
 					id_array ids;
 					ids.reserve(users.size()*pfixs.size());
 					for( ubeg=users.begin(), uend=users.end(); 
 								ubeg!=uend; ++ubeg) {
 
 							ai.id_domain = dom_id;
-							ai.pass = dom_id;
+							ai.pass = boost::lexical_cast<std::string>(dom_id).c_str();
 							ai.flags = 0;
 							ai.login = ubeg->c_str(); 
 							IVQ_ERROR_EQUAL(auth->user_add(ai, 0),
@@ -100,11 +100,10 @@ struct user_conf_test {
 										pbeg!=pend; ++pbeg ) {
 
 									ui.val = pbeg->c_str();
-									ui.id_conf = static_cast<const char *>("");
+									ui.id_conf = ::vq::ivq::id_type();
 									IVQ_ERROR_EQUAL(auth->user_conf_add(dom_id,
 										ubeg->c_str(), pbeg->c_str(), ui),
 										::vq::ivq::err_no);
-									BOOST_CHECK(*ui.id_conf);
 									ids.push_back(ui.id_conf);
 
 									// Check if user,pfix has entries for
@@ -157,7 +156,7 @@ struct user_conf_test {
 			const char * dom = "case10.pl";
 			std_try {
 					typedef std::deque< std::string > string_array;
-					CORBA::String_var dom_id = CORBA::string_dup("");
+					::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 					test_dom_user_add(dom, dom_id);
 
 					string_array conf;
@@ -266,10 +265,11 @@ struct user_conf_test {
 		 */
 		void case11() {
 			::vq::ivq::user_conf_info uci;
-			uci.id_conf = static_cast<const char *>("123123123");
+			uci.id_conf = static_cast< ::vq::ivq::id_type >(123123123);
 			uci.type = 12;
 			uci.val = static_cast<const char *>("asd");
-			IVQ_ERROR_EQUAL(wrap.user_conf_rep(static_cast<const char *>("12"),
+			IVQ_ERROR_EQUAL(wrap.user_conf_rep(
+				static_cast< ::vq::ivq::id_type >(12),
 				static_cast<const char *>("asd"), 
 				static_cast<const char *>("cvxcvxcv"),
 				uci), ::vq::ivq::err_noent);
@@ -282,7 +282,7 @@ struct user_conf_test {
 		void case12() {
 			const char * dom = "case12.pl";
 			std_try {
-					CORBA::String_var dom_id = CORBA::string_dup("");
+					::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 					test_dom_user_add(dom, dom_id);
 
 					::vq::ivq::user_info ai;
@@ -345,13 +345,13 @@ struct user_conf_test {
 		 */
 		void case13() {
 			IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(
-				static_cast<const char *>("123123123"), 
+				static_cast< ::vq::ivq::id_type >(123123123), 
 				static_cast<const char *>("login"),
 				static_cast<const char *>(""),
 				12), ::vq::ivq::err_no);
 			const char * dom = "case13.pl";
 			std_try {
-					CORBA::String_var dom_id = CORBA::string_dup("");
+					::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 					test_dom_user_add(dom, dom_id);
 
 					IVQ_ERROR_EQUAL(auth->user_conf_rm_by_type(dom_id,

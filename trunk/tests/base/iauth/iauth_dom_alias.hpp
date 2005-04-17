@@ -13,8 +13,8 @@
 template <class OBJ_TYPE>
 struct da_dip_test {
 		typedef std::deque< std::string > string_array; 
-		typedef std::map< CORBA::String_var, std::string > id2name_map;
-		typedef std::map< std::string, CORBA::String_var > name2id_map;
+		typedef std::map< ::vq::ivq::id_type, std::string > id2name_map;
+		typedef std::map< std::string, ::vq::ivq::id_type > name2id_map;
 
 		vq::ivq::error_var err;
 
@@ -29,7 +29,7 @@ struct da_dip_test {
 		 */
 		void case4() {
 			const char * dom = "case4.pl";
-			CORBA::String_var dom_id = CORBA::string_dup("");
+			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 			err = obj->dom_id(dom, dom_id);
 			if( ::vq::ivq::err_noent == err->ec ) {
 					IVQ_ERROR_EQUAL(obj->dom_add(dom, dom_id),
@@ -58,7 +58,7 @@ struct da_dip_test {
 			string_array insert;
 			BOOST_REQUIRE( sys::getlines<std::string>(ifs, insert) );
 			name2id_map dom2id;
-			CORBA::String_var dom_id = CORBA::string_dup("");
+			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 			string_array::const_iterator ib, ie, vb, ve;
 			string_array fields, vals;
 			for( ib=insert.begin(), ie=insert.end(); ib!=ie; ++ib ) {
@@ -103,7 +103,7 @@ struct da_dip_test {
 					
 					ni = dom2id.find(fields[1]);
 					if( ni != ne )
-							BOOST_CHECK(!strcmp(ni->second, dom_id));
+							BOOST_CHECK_EQUAL(ni->second, dom_id);
 			}
 			/*
 			for( ni=dom2id.begin(), ne=dom2id.end(); ni!=ne; ++ni ) {
@@ -125,10 +125,10 @@ struct da_dip_test {
 			string_array ips;
 			BOOST_REQUIRE( sys::getlines<std::string>(ifs, ips) );
 			
-			CORBA::String_var dom_id = CORBA::string_dup("");
+			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 			err = obj->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			BOOST_REQUIRE(*dom_id);
+
 			for( string_array::value_type::size_type i=0, s=ips.size(); i<s; ++i ) {
 					err = obj->dip_add(dom_id, ips[i].c_str());
 					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
@@ -146,7 +146,8 @@ struct da_dip_test {
 					BOOST_CHECK_EQUAL(in_db[ ips[i] ], 1);
 			}
 		
-			err = obj->dip_ls_by_dom(static_cast<const char *>("-1"), from_db1);
+			err = obj->dip_ls_by_dom(
+				static_cast< ::vq::ivq::id_type >(-1), from_db1);
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(from_db1->length(), 0U);
 
@@ -176,10 +177,10 @@ struct da_dip_test {
 				"oloo"
 			};
 			unsigned reas_cnt = sizeof(reas)/sizeof(*reas);
-			CORBA::String_var dom_id = CORBA::string_dup("");
+			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 			err = obj->dom_id(dom, dom_id);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no);
-			BOOST_REQUIRE(*dom_id);
+
 			for( unsigned i=0; i<reas_cnt; ++i ) {
 					err = obj->da_add(dom_id, reas[i]);
 					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
@@ -197,7 +198,8 @@ struct da_dip_test {
 					BOOST_CHECK_EQUAL(in_db[reas[i]], 1);
 			}
 		
-			err = obj->da_ls_by_dom(static_cast<const char *>("-1"), from_db1);
+			err = obj->da_ls_by_dom(
+				static_cast< ::vq::ivq::id_type >(-1), from_db1);
 			IVQ_ERROR_EQUAL(err, vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(from_db1->length(), 0U);
 
