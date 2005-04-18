@@ -28,6 +28,15 @@ pgsql install-pgsql:
 		) || exit 1; \
 	done
 
+jdbc install-jdbc:
+	@for entry in base/jdbc; do \
+		( \
+			echo "===> $$entry" ; \
+			cd $$entry ; \
+			exec $(MAKE) $@; \
+		) || exit 1; \
+	done
+
 install-dirs:
 	for p in etc etc/ivq etc/iauth etc/ilogger bin lib lib/vq include include/vq ; do \
 		$(INSTALL) -d -m 0755 $(PREFIX)/$$p ; \

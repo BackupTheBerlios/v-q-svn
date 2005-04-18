@@ -2,3 +2,4 @@ all:
 
 all clean install:
 	cd cxx && $(MAKE) -f Makefile.unix $@
+	$(INSTALL) -m 0644 corbautil.jar $(PREFIX)/bin/
