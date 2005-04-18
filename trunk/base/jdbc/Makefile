@@ -1,27 +1,26 @@
 BASE=../..
-SUBDIR=com/foo_baz
 
-.PHONY: all
-.SUFFIXES: .class .java
+.PHONY: all jdbc
 
-all:
+jdbc:
 
 include $(BASE)/Makefile.common
 
 all:
-	@for entry in $(SUBDIR); do \
-		( \
-			echo "===> $$entry" ; \
-			cd $$entry ; \
-			$(MAKE) $@; \
-		) || exit 1; \
+
+jdbc:
+	rm -rf build source
+	svn export --force . source/
+	idlj -fall -emitAll -td source -i .. -pkgTranslate vq com.foo_baz.v_q ../auth.idl
+	idlj -fall -emitAll -td source -i .. -pkgTranslate vq com.foo_baz.v_q ../logger.idl
+	mkdir -p build
+	javac -d build -classpath $(BASE)/corbautil/corbautil.jar:source `find source -name "*.java"`
+	jar cf jdbcd.jar -C build .
+
+install:
+
+install-jdbc: jdbcd.jar
+	$(INSTALL) -d -m 0755 $(PREFIX)/bin
+	for p in $(BASE)/corbautil/corbautil.jar jdbcd.jar ; do \
+		$(INSTALL) -m 0644 $$p $(PREFIX)/bin/$$p ; \
 	done
-
-.java.class:
-	$(JAVAC) -classpath $(BASE)/corbautil/corbautil.jar:. $<
-
-vq/ilogger.java: ../logger.idl ../vq.idl
-	idlj -i.. -fserver ../logger.idl
-
-vq/iauth.java: ../auth.idl ../vq.idl
-	idlj -i.. -fserver ../auth.idl
