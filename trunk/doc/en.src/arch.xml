@@ -164,7 +164,7 @@
 			not include functions from this module, you must use it directly.
 		</para>
 
-		<section id="arch.iauth.cpgsqllog">
+		<section id="arch.ilogger.cpgsqllog">
 			<title>cpgsqllog</title>
 
 			<para>
@@ -182,7 +182,7 @@
 			</para>
 		</section>
 
-		<section id="arch.iauth.JDBCLog">
+		<section id="arch.ilogger.JDBCLog">
 			<title>JDBCLog</title>
 
 			<para>

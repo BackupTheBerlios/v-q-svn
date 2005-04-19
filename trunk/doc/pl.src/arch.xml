@@ -118,7 +118,113 @@
 				Obiekt ten reprezentowany jest przez program pgsqlauthd.
 			</para>
 		</section>
+
+		<section id="arch.iauth.JDBCAuth">
+			<title>JDBCAuth</title>
+
+			<para>
+				Jest to implementacja <link linkend="arch.iauth">interfejsu 
+				iauth</link>. Korzysta ona z bazy danych za po¶rednictwem JDBC.
+				Oznacza to, ¿e teoretycznie mo¿na wykorzystaæ ka¿d± bazê danych,
+				która posiada sterownik JDBC.
+			</para>
+
+			<para>
+				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</para>
+
+			<para>
+				Obiekt ten reprezentowany jest przez program jdbcauthd.
+			</para>
+
+			<note>
+				<para>
+					Na dzieñ dzisiejszy klasa JDBCAuth przetestowana zosta³a
+					tylko z PostgreSQL. Mo¿esz u¿ywaæ j± z innymi bazami danych,
+					jednak istniej± pewne wymagania: baza danych musi
+					obs³ugiwaæ procedury sk³adowane w bazie danych oraz widoki.
+					Proszê, je¿eli u¿ywasz innej bazy danych podziel siê 
+					swoim schematem.
+				</para>
+			</note>
+		</section>
 	</section>
+
+	<section id="arch.ilogger">
+		<title>Interfejs ilogger</title>
+
+		<para>
+			Interfejs u¿ywany jest do zapisywania informacji na temat
+			aktywno¶ci u¿ytkowników takich jak logowanie siê, itp.
+		</para>
+
+		<para>
+			Zazwyczaj implementacje tego interfejsu nie korzystaj±
+			z systemu plików bezpo¶rednio. Pracuj± na okre¶lonej bazie
+			danych.
+		</para>
+
+		<para>
+			Na dziên dzisiejszy interfejs u¿ywany jest przez
+			<application>user_auth</application>. Jest to samodzielny
+			interfejs, ivq nie zawiera funkcji z tego modu³u, dlatego
+			nale¿y u¿ywaæ go bezpo¶rednio.
+		</para>
+
+		<section id="arch.ilogger.cpgsqllog">
+			<title>cpgsqllog</title>
+
+			<para>
+				Jest to implementacja <link linkend="arch.ilogger">interfejsu 
+				ilogger</link>. Korzysta ona z bazy danych PostgreSQL.
+			</para>
+
+			<para>
+				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</para>
+
+			<para>
+				Obiekt ten reprezentowany jest przez program pgsqllogd.
+			</para>
+		</section>
+
+		<section id="arch.ilogger.JDBCLog">
+			<title>JDBCLog</title>
+
+			<para>
+				Jest to implementacja <link linkend="arch.ilogger">interfejsu 
+				ilogger</link>. Korzysta ona z bazy danych za po¶rednictwem JDBC.
+				Oznacza to, ¿e teoretycznie mo¿na wykorzystaæ ka¿d± bazê danych,
+				która posiada sterownik JDBC.
+			</para>
+
+			<para>
+				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</para>
+
+			<para>
+				Obiekt ten reprezentowany jest przez program jdbclogd.
+			</para>
+
+			<note>
+				<para>
+					Na dzieñ dzisiejszy klasa JDBCLog przetestowana zosta³a
+					tylko z PostgreSQL. Mo¿esz u¿ywaæ j± z innymi bazami danych,
+					jednak istniej± pewne wymagania: baza danych musi
+					obs³ugiwaæ procedury sk³adowane w bazie danych oraz widoki.
+					Proszê, je¿eli u¿ywasz innej bazy danych podziel siê 
+					swoim schematem.
+				</para>
+			</note>
+		</section>
+	</section>
+
 
 	<section id="arch.clients">
 		<title>Klienci: programy linii poleceñ, interfejs WWW, etc.</title>

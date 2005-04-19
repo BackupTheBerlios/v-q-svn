@@ -35,12 +35,13 @@
 			
 			<itemizedlist>
 				<listitem><para>logowanie i autoryzacja oparte o PostgreSQL</para></listitem>
+				<listitem><para>logowanie i autoryzacja oparte o JDBC</para></listitem>
 				<listitem><para>integracja z Qmail</para></listitem>
 				<listitem><para>komunikacja oparta o CORBA, oznacza to mo¿liwo¶æ u¿ywania dowolnego jêzyka posiadaj±cego mapowanie IDL</para></listitem>
 				<listitem><para>mo¿na ³atwo korzystaæ z poziomu: C, C++, PHP, Java, Smalltalk, python</para></listitem>
 				<listitem><para>rozproszony hosting</para></listitem>
 				<listitem><para>wszystkie programy mog± pracowaæ bez uprawnieñ root</para></listitem>
-				<listitem><para>napisany przy wykorzystaniu C++, STL i boost</para></listitem>
+				<listitem><para>napisany przy wykorzystaniu C++, STL i boost, niektóre czê¶ci w Javie</para></listitem>
 				<listitem><para>interfejs WWW dla u¿ytkowników</para></listitem>
 			</itemizedlist>
 		</para>
