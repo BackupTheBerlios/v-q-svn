@@ -1,0 +1,7 @@
+#!/bin/sh
+# To run it under different UID/GID you can use sudo:
+# Add following line in /etc/sudoers
+# %_vq    ALL=NOPASSWD: /command/svc -h /service/qmail
+# and add "sudo" after exec. This will allow script to execute /command/svc
+# as root. You can also run it as other user, see man sudoers.
+exec /command/svc -h /service/qmail

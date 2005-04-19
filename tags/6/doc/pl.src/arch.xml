@@ -1,0 +1,363 @@
+<chapter id="arch">
+	<title>Architektura</title>
+
+	<para>
+		Rozdzia³ ten opisuje poszczególne czê¶ci systemu v-q.
+	</para>
+
+	<section id="arch.parts">
+		<title>G³ówne czê¶ci</title>
+
+		<para>
+			V-q jest modularnym systemem. Ka¿dy z podsystemów jest osobnym
+			obiektem dostêpnym za pomoc± protoko³u CORBA. Oznacza to, ¿e
+			ka¿d± czê¶æ systemu mo¿na wymieniæ w dowolnym momencie.
+			Jest to kwestia konfiguracji.
+		</para>
+
+		<figure>
+			<title>Architektura w obrazku</title>
+			<graphic fileref="arch.pl.png" format="PNG"/>
+		</figure>
+
+		<para>
+			Dalsze sekcje opisuj± poszczególne czê¶ci.
+		</para>
+	</section>
+
+	<section id="arch.ivq">
+		<title>Interfejs ivq</title>
+
+		<para>
+			Jest to najwa¿niejszy interfejs. U¿ywany jest on bezpo¶rednio
+			przez klientów. Stanowi j±dro systemu. Modu³ ten odpowiada
+			za integracjê programu przesy³aj±cego pocztê.
+			Zazwyczaj implementacja tego interfejsu zarz±dza 
+			struktur± na dysku, konfiguracj± programu pocztowego, itp.
+		</para>
+
+		<para>
+			Wszystkie funkcje dostêpne w v-q realizowane s± za pomoc±
+			tego modu³u. Klienci pod³±czaj± siê do tego obiektu
+			za pomoc± protoko³u CORBA po czym wywo³uj± odpowiednie metody.
+		</para>
+
+		<para>
+			Implementacja ivq wywo³uje metody interfejsu
+			<link linkend="arch.iauth">iauth</link> w celu odczytania
+			informacji o u¿ytkownikach i domenach.
+		</para>
+
+		<section id="arch.ivq.cqmailvq">
+			<title>cqmailvq</title>
+			
+			<para>
+				Aktualnie istnieje tylko jedna implementacja 
+				<link linkend="arch.ivq">ivq</link>. Reprezentowana
+				jest ona przez klasê cqmailvq oraz demon qmailvqd.
+			</para>
+
+			<para>
+				Obiekt ten integruje v-q z 
+				<ulink url="http://www.qmail.org">qmail</ulink> MTA.
+				Zajmuje siê aktualizowaniem konfiguracji qmail,
+				zarz±dzaniem skrzynkami u¿ytkowników, struktur± katalogów,
+				itp.
+			</para>
+
+			<para>
+				Do wykonania niektórych operacji wykorzystuje
+				ma³e programy pomocnicze, g³ównie do zmiany
+				konfiguracji qmail. Dziêki temu mo¿na lepiej kontrolowaæ
+				prawa dostêpu - konfiguracja qmail mo¿e byæ zarz±dzana
+				przez innego u¿ytkownika ni¿ skrzynki obs³ugiwane przez 
+				qmailvqd.
+			</para>
+		</section>
+	</section>
+
+	<section id="arch.iauth">
+		<title>Interfejs iauth</title>
+
+		<para>
+			Interfejs reprezentuje modu³ autoryzacyjny, który zajmuje
+			siê przechowywaniem informacji o istniej±cych u¿ytkownikach
+			i domenach.
+		</para>
+
+		<para>
+			Zazwyczaj implementacje tego interfejsu nie korzystaj±
+			z systemu plików bezpo¶rednio. Pracuj± na okre¶lonej bazie
+			danych.
+		</para>
+
+		<para>
+			Ten interfejs u¿ywany jest przez implementacje
+			<link linkend="arch.ivq">interfejsu ivq</link>. 
+			Nie powiniene¶ korzystaæ z niego bezpo¶rednio.
+			Je¿eli uwa¿asz, ¿e brakuje funkcji w ivq skontaktuj siê
+			z programistami lub zmodyfikuj program i wy¶lij 
+			odpowiedni± ³atkê.
+		</para>
+
+		<section id="arch.iauth.cpgsqlauth">
+			<title>cpgsqlauth</title>
+
+			<para>
+				Jest to implementacja <link linkend="arch.iauth">interfejsu 
+				iauth</link>. Korzysta ona z bazy danych PostgreSQL.
+			</para>
+
+			<para>
+				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</para>
+
+			<para>
+				Obiekt ten reprezentowany jest przez program pgsqlauthd.
+			</para>
+		</section>
+
+		<section id="arch.iauth.JDBCAuth">
+			<title>JDBCAuth</title>
+
+			<para>
+				Jest to implementacja <link linkend="arch.iauth">interfejsu 
+				iauth</link>. Korzysta ona z bazy danych za po¶rednictwem JDBC.
+				Oznacza to, ¿e teoretycznie mo¿na wykorzystaæ ka¿d± bazê danych,
+				która posiada sterownik JDBC.
+			</para>
+
+			<para>
+				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</para>
+
+			<para>
+				Obiekt ten reprezentowany jest przez program jdbcauthd.
+			</para>
+
+			<note>
+				<para>
+					Na dzieñ dzisiejszy klasa JDBCAuth przetestowana zosta³a
+					tylko z PostgreSQL. Mo¿esz u¿ywaæ j± z innymi bazami danych,
+					jednak istniej± pewne wymagania: baza danych musi
+					obs³ugiwaæ procedury sk³adowane w bazie danych oraz widoki.
+					Proszê, je¿eli u¿ywasz innej bazy danych podziel siê 
+					swoim schematem.
+				</para>
+			</note>
+		</section>
+	</section>
+
+	<section id="arch.ilogger">
+		<title>Interfejs ilogger</title>
+
+		<para>
+			Interfejs u¿ywany jest do zapisywania informacji na temat
+			aktywno¶ci u¿ytkowników takich jak logowanie siê, itp.
+		</para>
+
+		<para>
+			Zazwyczaj implementacje tego interfejsu nie korzystaj±
+			z systemu plików bezpo¶rednio. Pracuj± na okre¶lonej bazie
+			danych.
+		</para>
+
+		<para>
+			Na dziên dzisiejszy interfejs u¿ywany jest przez
+			<application>user_auth</application>. Jest to samodzielny
+			interfejs, ivq nie zawiera funkcji z tego modu³u, dlatego
+			nale¿y u¿ywaæ go bezpo¶rednio.
+		</para>
+
+		<section id="arch.ilogger.cpgsqllog">
+			<title>cpgsqllog</title>
+
+			<para>
+				Jest to implementacja <link linkend="arch.ilogger">interfejsu 
+				ilogger</link>. Korzysta ona z bazy danych PostgreSQL.
+			</para>
+
+			<para>
+				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</para>
+
+			<para>
+				Obiekt ten reprezentowany jest przez program pgsqllogd.
+			</para>
+		</section>
+
+		<section id="arch.ilogger.JDBCLog">
+			<title>JDBCLog</title>
+
+			<para>
+				Jest to implementacja <link linkend="arch.ilogger">interfejsu 
+				ilogger</link>. Korzysta ona z bazy danych za po¶rednictwem JDBC.
+				Oznacza to, ¿e teoretycznie mo¿na wykorzystaæ ka¿d± bazê danych,
+				która posiada sterownik JDBC.
+			</para>
+
+			<para>
+				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</para>
+
+			<para>
+				Obiekt ten reprezentowany jest przez program jdbclogd.
+			</para>
+
+			<note>
+				<para>
+					Na dzieñ dzisiejszy klasa JDBCLog przetestowana zosta³a
+					tylko z PostgreSQL. Mo¿esz u¿ywaæ j± z innymi bazami danych,
+					jednak istniej± pewne wymagania: baza danych musi
+					obs³ugiwaæ procedury sk³adowane w bazie danych oraz widoki.
+					Proszê, je¿eli u¿ywasz innej bazy danych podziel siê 
+					swoim schematem.
+				</para>
+			</note>
+		</section>
+	</section>
+
+
+	<section id="arch.clients">
+		<title>Klienci: programy linii poleceñ, interfejs WWW, etc.</title>
+
+		<para>
+			V-q nie oferuje ¿adnej biblioteki do tworzenia oprogramowania.
+			Nie ma takiej potrzeby. Wszystkie operacje wykonywane s±
+			przy u¿yciu interfejsu <link linkend="arch.ivq">ivq</link>.
+		</para>
+
+		<para>
+			Oznacza to, ¿e mo¿esz korzystaæ z systemu z ka¿dego jêzyk
+			posiadaj±cego translator IDL. Na dzieñ dzisiejszy
+			prawie wszystkie popularne jêzyki posiadaj± odpowiednie
+			mechanizmy, np.: C, C++, Java, Smalltalk, PHP, python, PERL.
+		</para>
+
+		<para>
+			Jest równie¿ inna zaleta takiego podej¶cia - klienci
+			nie potrzebuj± praw takich jak implementacje
+			ivq lub iauth. Mog± byæ uruchamiane przez dowolnego
+			u¿ytkownika (zale¿nie od konfiguracji).
+		</para>
+	</section>
+
+	<section id="arch.db">
+		<title>Baza danych</title>
+		
+		<para>
+			Sekcja opisuje ogóln± strukturê bazy danych.
+			Niektóre bazy mog± mieæ inn± strukturê, sprawd¼ ich dokumentacjê.
+		</para>
+
+		<figure>
+			<title>Baza danych w obrazku</title>
+			<graphic fileref="arch.db.png" format="PNG"/>
+		</figure>
+
+		<formalpara>
+			<title>vq_domains</title>
+
+			<para>	
+			Tabela przechowuje informacje o zarejestrowanych domenach.
+			Na dzieñ dzisiejszy poza nazw± zawiera domy¶lne ustawienia
+			quoty dla u¿ytkowników. Istnieje specjalna domena zwana
+			&quot;global&quot; zawiera ona konfiguracjê, która jest
+			przypisywana nowym domenom.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_domains_aliases</title>
+
+			<para>
+			Tabela zawiera informacje o aliasach dla zarejestrowanych
+			domen. Aliasem mo¿e byæ inna nazwa, adres IP. Cokolwiek
+			co zechcesz. Tabela u¿ywana jest podczas okre¶lania
+			rzeczywistej nazwy domeny.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_domains_ips</title>
+
+			<para>	
+			Zawiera adresy IP przypisane domenom. Dla ka¿dej domeny
+			mo¿na zapisaæ tylko jeden adres IP.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_users</title>
+
+			<para>
+			Ka¿dy zarejestrowany w systemie v-q u¿ytkownik posiada
+			wpis w tej tabeli. Wszyscy u¿ytkownicy dla wszystkich
+			domen zapisywani s± w jednej tabeli. Koniec z g³upim
+			podej¶ciem u¿ywanym w wersji poprzedniej - w której ka¿da
+			domena posiada³a w³asn± tabelê, uniemo¿liwia³o to tworzenie
+			prostych, globalnych relacji.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_users_conf</title>
+
+			<para>
+			Konfiguracja skrzynek. Tutaj zapisywane s± informacje
+			o przekierowaniach, automatycznych odpowiedziach i czymkolwiek
+			jeszcze chcesz.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_emails_banned</title>
+
+			<para>
+			Tabela zawiera listê domen i loginów, których nie mo¿na
+			rejestrowaæ.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_info</title>
+
+			<para>
+			Informacje o strukturze bazy danych, na dzieñ dzisiejszy
+			zapisywana jest tylko informacja o wersji schematu.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_log</title>
+
+			<para>
+			Tabela zawiera logi o zdarzeniach w systemie.
+			Zapisywana jest miêdzy innymi przez <application>user_auth</application>.
+			Zawiera tylko informacje dotycz±ce logowania u¿ytkowników.
+			Inne zdarzenia logowane s± w innych miejscach.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>vq_view_*</title>
+
+			<para>
+			Widoki u¿ywane s± w celu pobierania informacji z bazy danych
+			bez konieczno¶ci zapisywania zapytañ w kodzie aplikacji.
+			Dziêki temu mo¿liwa jest zmiana struktury bazy danych,
+			wystarczy zaktualizowaæ widoki. Nie trzeba kompilowaæ
+			programów ponownie.
+			</para>
+		</formalpara>
+	</section>
+
+</chapter>

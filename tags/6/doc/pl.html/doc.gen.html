@@ -1,0 +1,265 @@
+<HTML
+><HEAD
+><TITLE
+>Generowanie dokumentacji</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Instalacja"
+HREF="install.install.html"><LINK
+REL="NEXT"
+TITLE="Korzystanie z pliku makefile"
+HREF="doc.gen.makefile.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-04-19T22:04:44"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="chapter"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.install.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="doc.gen.makefile.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="chapter"
+><H1
+><A
+NAME="doc.gen"
+>Rozdzia&#322; 8. Generowanie dokumentacji</A
+></H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Spis tre&#347;ci</B
+></DT
+><DT
+>8.1. <A
+HREF="doc.gen.html#doc.gen.openbsd"
+>OpenBSD</A
+></DT
+><DT
+>8.2. <A
+HREF="doc.gen.makefile.html"
+>Korzystanie z pliku makefile</A
+></DT
+></DL
+></DIV
+><P
+>&#13;		Rozdzia³ zawiera informacje dotycz±ce przetwarzania dokumentacji
+		zapisanej w formacie DocBook XML na inne formaty, takie jak: HTML, RTF.
+	</P
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="doc.gen.openbsd"
+>8.1. OpenBSD</A
+></H1
+><P
+>&#13;			Musisz zainstalowaæ pakiety openjade i dockbook-*.
+			Umo¿liwiaj± one translacjê plików SGML na inne formaty.
+			Niestety (dotyczy wersji 3.6 i wcze¶niejszych) nie ma
+			pakiety zawieraj±cego szablony DocBook XML. Musisz samodzielnie
+			je ¶ci±gn±æ.
+		</P
+><P
+>&#13;			Na dzieñ dzisiejszy dokumentacja t³umaczona jest za
+			pomoc± plików z Fedora Core 2 (pakiety: 
+			docbook-style-dsssl-1.78-2.noarch.rpm i
+			docbook-dtds-1.0-22.1.noarch.rpm). Pakiety rozpakowane zosta³y
+			za pomoc± <SPAN
+CLASS="application"
+>rpm2cpio</SPAN
+>, pliki z 
+			<TT
+CLASS="filename"
+>usr/share/</TT
+> skopiowane zosta³y do
+			<TT
+CLASS="filename"
+>/usr/local/share/sgml/redhat</TT
+>. Nastêpnie
+			poni¿sze linie:
+<DIV
+CLASS="example"
+><A
+NAME="AEN847"
+></A
+><P
+><B
+>Przyk&#322;ad 8-1. Zawarto¶æ pliku <TT
+CLASS="filename"
+>catalog</TT
+></B
+></P
+><PRE
+CLASS="screen"
+>&#13;<TT
+CLASS="userinput"
+><B
+>&#13;CATALOG "redhat/sgml/docbook/xml-dtd-4.1.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog" 
+</B
+></TT
+>
+</PRE
+></DIV
+>
+			zosta³y dodane do <TT
+CLASS="filename"
+>/usr/local/share/sgml/catalog</TT
+>.
+		</P
+><P
+>&#13;			Po tych czynno¶ciach mo¿liwe sta³o siê generowanie wersji
+			RTF dokumentacji:
+</P><PRE
+CLASS="synopsis"
+>&#13;env <TT
+CLASS="envar"
+>SGML_CATALOG_FILES</TT
+>=/usr/local/share/sgml/catalog 
+openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
+/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
+</PRE
+><P>
+			Aby wygenerowaæ dokumentacjê w formacie HTML nale¿y
+			zmieniæ rtf na sgml.
+			</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+					<SPAN
+CLASS="application"
+>openjade</SPAN
+> mo¿e wypisaæ ostrze¿enia
+					dotycz±ce DTDDECL, który nie jest obs³ugiwany, nale¿y
+					je ignorowaæ.
+				</P
+></BLOCKQUOTE
+></DIV
+><P>
+		</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.install.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="doc.gen.makefile.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Instalacja</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Korzystanie z pliku makefile</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

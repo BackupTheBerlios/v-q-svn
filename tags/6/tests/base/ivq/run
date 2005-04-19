@@ -1,0 +1,58 @@
+#!/bin/sh
+export BASE=../../..
+export VQ_HOME=.
+
+rm -rf domains qmail/users/assign qmail/control/locals.lock \
+qmail/control/rcpthosts qmail/control/rcpthosts.lock \
+qmail/control/virtualdomains qmail/control/virtualdomains.lock
+
+for p in qmail_virtualdomains_add qmail_rcpthosts_add qmail_assign_add \
+qmail_locals_rm qmail_file_add qmail_file_rm qmail_mrh_rm \
+qmail_virtualdomains_rm qmail_assign_rm qmail_run qmail_assign_ex; do
+	ln -sf $BASE/../base/qmailvqd/$p bin
+done
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+prog=ivq
+use_orb=mico
+
+ldd $prog | grep omni > /dev/null
+if [ $? = 0 ] ; then
+	use_orb=omni
+fi
+
+echo "starting Naming Service daemon ..."
+if [ $use_orb = mico ] ; then
+	nsd -ORBIIOPAddr inet:$host:2809 &
+else
+	rm -rf omninames-*
+	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:2809 &
+fi
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBInitRef NameService=corbaloc::$host:2809/NameService . &
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBInitRef NameService=corbaloc::$host:2809/NameService . &
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+./ivq -ORBInitRef NameService=corbaloc::$host:2809/NameService name_service#VQ.ivq
+#gdb ./ivq
+
+rm -rf omninames-*

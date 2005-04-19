@@ -1,0 +1,203 @@
+<HTML
+><HEAD
+><TITLE
+>Interface ivq</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Architecture"
+HREF="arch.html"><LINK
+REL="PREVIOUS"
+TITLE="Architecture"
+HREF="arch.html"><LINK
+REL="NEXT"
+TITLE="Interface iauth"
+HREF="arch.iauth.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-04-19T22:04:19"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="arch.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 2. Architecture</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="arch.iauth.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="arch.ivq"
+>2.2. Interface ivq</A
+></H1
+><P
+>&#13;			This is the most important interface. It is used directly
+			by client programs. It is the core of the system. This module
+			is responsible for integration with a mail transfer agent.
+			Usually this module creates and maintains data structures on
+			disk, MTA's configurations, etc.
+		</P
+><P
+>&#13;			It represents all functions system offers. Client applications
+			connect to it using CORBA protocol and call its methods.
+		</P
+><P
+>&#13;			Ivq module calls methods from <A
+HREF="arch.iauth.html"
+>iauth</A
+>
+			interface to retrieve or store informations about users or domains.
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="arch.ivq.cqmailvq"
+>2.2.1. cqmailvq</A
+></H2
+><P
+>&#13;				At this time there's only one implementation of 
+				<A
+HREF="arch.ivq.html"
+>ivq</A
+> represented
+				by cqmailvq class, and by qmailvqd daemon.
+			</P
+><P
+>&#13;				This object integrates with 
+				<A
+HREF="http://www.qmail.org"
+TARGET="_top"
+>qmail</A
+> MTA. It
+				handles updating qmail's configuration, managing
+				users' maildirs, directories hierarchy, etc.
+			</P
+><P
+>&#13;				For some actions it uses small, helper programs
+				that are responsible for qmail's configuration updates.
+				This way privileges can be separated - qmail's configuration
+				can be owned by a user other than the user which runs
+				qmailvqd.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="arch.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="arch.iauth.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Architecture</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="arch.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Interface iauth</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

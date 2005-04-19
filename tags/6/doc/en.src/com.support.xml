@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="com.support">
+	<title>Commercial support</title>
+
+	<para>
+		Does you business require 24/7 availability? Or maybe some
+		special functions? Integration with other software? If your 
+		answer is yes you can count on foo-baz.com.
+	</para>
+
+	<para>
+		We will customize this software (or other, i.e. qmail, apache)
+		for your needs. We can help you also during installation or upgrading
+		previous version.
+	</para>
+
+	<para>
+		All you need to do is contact us, please send any questions
+		to <link linkend="pniewiadomski">Paweł Niewiadomski</link>.
+	</para>
+</chapter>

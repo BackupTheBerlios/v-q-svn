@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<msgs>
+	<menu>
+		<mod>
+			<m n="loghist">Historia logowań</m>
+		</mod>
+	</menu>
+	<mod>
+		<loghist>
+			<m n="empty">Historia połączeń jest pusta.</m>
+			<m n="getcant">Nie można pobrać danych, spróbuj ponownie za kilka minut, jeżeli problem się powtarza skontaktuj się z administratorem.</m>
+
+			<m n="date">Data</m>
+			<m n="ser">Usługa</m>
+			<m n="addr">Adres IP klienta</m>
+			<m n="res">Rezultat</m>
+
+			<res2txt>
+				<m n="0">Sukces</m>
+				<m n="2">Nieprawidłowe dane</m>
+				<m n="3">Nieprawidłowe hasło</m>
+				<m n="5">Zablokowany dostęp</m>
+				<m n="other">Błąd wewnętrzny</m>
+			</res2txt>
+
+			<ser2txt>
+				<m n="1">Wysyłanie poczty</m>
+				<m n="2">Odbieranie poczty</m>
+				<m n="3">Dostęp przez WWW</m>
+				<m n="4">Dostęp przez bezpieczne WWW</m>
+				<m n="other">Nieznana</m>
+			</ser2txt>
+		</loghist>
+	</mod>
+</msgs>

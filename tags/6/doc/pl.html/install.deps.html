@@ -1,0 +1,277 @@
+<HTML
+><HEAD
+><TITLE
+>Zale¿no¶ci</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Instalacja"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Instalacja"
+HREF="install.html"><LINK
+REL="NEXT"
+TITLE="Przygotowania"
+HREF="install.prep.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-04-19T22:04:44"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 7. Instalacja</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.prep.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.deps"
+>7.2. Zale¿no¶ci</A
+></H1
+><P
+>&#13;			To jest z³o¿ony system, który zale¿y od innych projektów.
+		</P
+><P
+>&#13;			G³ówne zale¿no¶ci:
+
+			<P
+></P
+></P><UL
+><LI
+><P
+>&#13;						nowoczesny kompilator C++, je¿eli u¿ywasz gcc
+						to powinien on byæ w wersji &#62;= 3.
+					</P
+></LI
+><LI
+><P
+>&#13;						implementacja protoko³u CORBA posiadaj±ca obs³ugê C++, 
+						przyk³adowo: <A
+HREF="http://www.mico.org"
+TARGET="_top"
+>MICO</A
+> 
+						lub <A
+HREF="http://www.omniorb.org"
+TARGET="_top"
+>omniORB</A
+>
+					</P
+></LI
+><LI
+><P
+>kompatybilny agent transferu poczty</P
+></LI
+><LI
+><P
+>biblioteka <A
+HREF="http://www.boost.org"
+TARGET="_top"
+>boost</A
+></P
+></LI
+><LI
+><P
+>DocBook i doxygen je¿eli chcesz generowaæ now± wersjê dokumentacji</P
+></LI
+><LI
+><P
+>obs³ugiwane biblioteki dostêpu do bazy danych</P
+></LI
+><LI
+><P
+>bibliotek Cgicc je¿eli chcesz generowaæ interfejs WWW</P
+></LI
+><LI
+><P
+>Iconv je¿eli chcesz generowaæ interfejs WWW</P
+></LI
+><LI
+><P
+>Sablotron je¿eli chcesz generowaæ interfejs WWW. 
+						Przynajmniej w wersji 1.0.</P
+></LI
+></UL
+><P>
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.mta"
+>7.2.1. Agent transferu poczty (MTA)</A
+></H2
+><P
+>&#13;				Na dzieñ dzisiejszy tylko <SPAN
+CLASS="application"
+>qmail</SPAN
+> 
+				jest obs³ugiwany. Musisz go zainstalowaæ przed kompilacj±.
+			</P
+><P
+>&#13;				Sugerowane jest u¿ycie <SPAN
+CLASS="application"
+>qmail</SPAN
+>
+				wraz z zestawem ³atek <A
+HREF="http://q-p.foo-baz.com"
+TARGET="_top"
+>Qmail-patches</A
+>.
+				Jednak¿e nie jest to wymagane, mo¿esz u¿ywaæ dowoln± wersjê
+				<SPAN
+CLASS="application"
+>qmail</SPAN
+>.
+			</P
+><P
+>&#13;				Z czasem inne programy MTA powinny byæ obs³ugiwane.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.pgsql"
+>7.2.2. U¿ywanie PostgreSQL</A
+></H2
+><P
+>&#13;				Musisz ¶ci±gn±æ i zainstalowaæ <SPAN
+CLASS="application"
+>PostgreSQL</SPAN
+>.
+				Zalecane jest korzystanie z najnowszej stabilnej wersji.
+				Potrzebujesz równie¿ bibliotekê 
+				libpqxx w wersji co najmniej 2.4.2 oraz PERL i modu³
+				zwany DBI::Pg (tylko je¿eli chcesz korzystaæ ze skryptu
+				instalacyjnego). Wszystkie programy mo¿esz ¶ci±gn±æ z
+				<A
+HREF="http://www.postgresql.org"
+TARGET="_top"
+>http://www.postgresql.org</A
+>.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.prep.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Instalacja</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Przygotowania</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="devs">
+	<title>Developing applications for v-q</title>
+
+	<para>
+		Well, there's nothing here. This chapter will be
+		written in the next release.
+	</para>
+
+	<para>
+		At this time only source of information is v-q's source.
+		You can look into <filename>interfaces/clue</filename>,
+		<filename>tests</filename>, there are also some
+		examples of using v-q from other languages than C++, they
+		are placed in <filename>examples</filename> directory.
+	</para>
+
+	<section id="devs.python">
+		<title>Using v-q from Python</title>
+		<para>
+			<ulink url="http://www.python.org">Python</ulink> language
+			is gaining much on popularity so I think it's worth to
+			publish some information about using v-q from it.
+		</para>
+
+		<para>
+			To start developing applications using v-q in python you need
+			an IDL mapper. I used 
+			<ulink url="http://www.omniorb.org">omniORB 4.0.5</ulink>
+			and companion program omniORBpy 2.5. Installation is very simple.
+		</para>
+
+		<para>
+			After installation you're ready to create python stubs. To do it 
+			execute:
+<synopsis>omniidl -b python vq.idl</synopsis>
+			This will generate some files and directories:
+<screen><computeroutput>
+./vq_idl.py
+./vq/__init__.py
+./vq__POA
+./vq__POA/__init__.py
+</computeroutput></screen>
+		</para>
+
+		<para>
+			While creating example I found that <filename>vq_idl.py</filename>
+			has errors - you need to replace &quot;_d__except&quot; to
+			&quot;_d_except&quot;. If you don't do it you won't be able
+			to use it. If you have other errors please contact us.
+		</para>
+
+		<para>
+			Here's an example I created, it calls vq::ivq::dom_val function
+			to validate domain's name:
+<!--INSERT:../../examples/python/dom_val.py-->
+<programlisting><![CDATA[
+#!/usr/bin/env python
+import sys
+from omniORB import CORBA
+import CosNaming
+import vq
+
+orb = CORBA.ORB_init(sys.argv, CORBA.ORB_ID)
+
+obj = orb.resolve_initial_references("NameService")
+rootCtx = obj._narrow(CosNaming.NamingContext)
+
+if rootCtx is None:
+	print "Failed to narrow the root naming context"
+	sys.exit(1)
+
+name = [ CosNaming.NameComponent("vq::ivq", "") ]
+
+try:
+	obj = rootCtx.resolve(name)
+
+except CosNaming.NamingContext.NotFound, ex:
+	print "Name not found"
+	sys.exit(1)
+
+vqo = obj._narrow(vq.ivq)
+
+if vqo is None:
+	print "Object reference is not an vq::ivq"
+	sys.exit(1)
+
+dom = "123123.asd.com.pl"
+err = vqo.dom_val(dom)
+
+if err.ec is vq.ivq.err_no:
+	print "It's a valid domain name"
+else:
+	print "It's an invalid domain name"
+
+]]></programlisting>
+			Following script executes omniNames (name server),
+			iauth (pgsqlauthd) and ivq (qmailvqd), then dom_val.py (above
+			example). It is also located in <filename>examples/python</filename>.
+<!--INSERT:../../examples/python/run-->
+<programlisting><![CDATA[
+#!/bin/sh
+export BASE=../..
+export VQ_HOME=.
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+rm -f /tmp/omninames-*
+omniNames -start 12456 -logdir /tmp &
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+./dom_val.py -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
+]]></programlisting>
+			<note>
+				<para>
+					qmailvqd and pgsqlauthd were compiled not using omniORB
+					but MICO. So, it's also an example of interoperability :-)
+				</para>
+			</note>
+		</para>
+	</section>
+
+	<section id="devs.java">
+		<title>Using v-q from Java</title>
+		<para>
+			<ulink url="http://java.sun.com">Java</ulink> language
+			is one of most popular languages used in
+			enterprise systems.
+		</para>
+
+		<para>
+			Java includes support for CORBA. You don't need any additional
+			software, all you need is Java SDK.
+		</para>
+
+		<para>
+			To start using v-q from Java you need to translate
+			IDL files into Java classes. To do it 
+			execute:
+<synopsis>idlj vq.idl</synopsis>
+			This will generate some files and directories:
+<screen><computeroutput>
+vq
+vq/exceptHelper.java
+vq/exceptHolder.java
+vq/except.java
+vq/db_errorHelper.java
+vq/db_errorHolder.java
+vq/db_error.java
+vq/null_errorHelper.java
+vq/null_errorHolder.java
+vq/null_error.java
+vq/_ivqStub.java
+vq/ivqHolder.java
+vq/ivqHelper.java
+vq/ivq.java
+vq/ivqPackage
+vq/ivqPackage/quota_typeHelper.java
+vq/ivqPackage/size_typeHelper.java
+vq/ivqPackage/uif_typeHelper.java
+vq/ivqPackage/user_conf_typeHelper.java
+vq/ivqPackage/string_listHolder.java
+vq/ivqPackage/string_listHelper.java
+vq/ivqPackage/gid_typeHelper.java
+vq/ivqPackage/uid_typeHelper.java
+vq/ivqPackage/err_codeHolder.java
+vq/ivqPackage/err_codeHelper.java
+vq/ivqPackage/err_code.java
+vq/ivqPackage/errorHelper.java
+vq/ivqPackage/errorHolder.java
+vq/ivqPackage/error.java
+vq/ivqPackage/user_infoHelper.java
+vq/ivqPackage/user_infoHolder.java
+vq/ivqPackage/user_info.java
+vq/ivqPackage/user_conf_infoHelper.java
+vq/ivqPackage/user_conf_infoHolder.java
+vq/ivqPackage/user_conf_info.java
+vq/ivqPackage/user_conf_info_listHolder.java
+vq/ivqPackage/user_conf_info_listHelper.java
+vq/ivqPackage/email_bannedHelper.java
+vq/ivqPackage/email_bannedHolder.java
+vq/ivqPackage/email_banned.java
+vq/ivqPackage/email_banned_listHolder.java
+vq/ivqPackage/email_banned_listHelper.java
+vq/ivqPackage/domain_infoHelper.java
+vq/ivqPackage/domain_infoHolder.java
+vq/ivqPackage/domain_info.java
+vq/ivqPackage/domain_info_listHolder.java
+vq/ivqPackage/domain_info_listHelper.java
+vq/ivqOperations.java
+</computeroutput></screen>
+		</para>
+
+		<para>
+			Here's an example I created, it calls vq::ivq::dom_val function
+			to validate domain's name:
+<!--INSERT:../../examples/java/DomVal.java-->
+<programlisting><![CDATA[
+/**
+ * Simple example of using v-q from Java
+ * @author Paweł Niewiadomski
+ */
+
+import vq.*;
+import vq.ivqPackage.*;
+import org.omg.CORBA.*;
+import org.omg.CosNaming.*;
+
+public class DomVal {
+
+	static public void main( String [] args ) throws Exception {
+		ORB orb = ORB.init(args, null);
+
+		org.omg.CORBA.Object obj = orb.resolve_initial_references("NameService");
+
+		NamingContext rootCtx = NamingContextHelper.narrow(obj);
+		if( rootCtx == null ) {
+			System.out.println("Failed to narrow the root naming context");
+			System.exit(1);
+		}
+
+		NameComponent name = new NameComponent("vq::ivq", "");
+		NameComponent [] path = { name };
+		ivq vqo = ivqHelper.narrow(rootCtx.resolve(path));
+		
+		String dom = "123123.asd.com.pl";
+		error err = vqo.dom_val(dom);
+		if( err.ec == err_code.err_no ) {
+			System.out.println("It's a valid domain name");
+		} else {
+			System.out.println("It's an invalid domain name");
+		}
+		System.exit(0);
+	}
+}
+
+]]></programlisting>
+			Following script executes omniNames (name server),
+			iauth (pgsqlauthd) and ivq (qmailvqd), then DomVal (above
+			example). It is also located in <filename>examples/java</filename>.
+<!--INSERT:../../examples/java/run-->
+<programlisting><![CDATA[
+#!/bin/sh
+export BASE=../..
+export VQ_HOME=.
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+rm -f /tmp/omninames-*
+omniNames -start 12456 -logdir /tmp &
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService > etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+java DomVal -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
+]]></programlisting>
+			<note>
+				<para>
+					qmailvqd and pgsqlauthd were compiled using MICO,
+					name service was represented by omniORB 
+					<application>omniNames</application> and client was
+					written in Java. So, it's also an example of interoperability :-)
+				</para>
+			</note>
+		</para>
+	</section>
+
+</chapter>

@@ -1,0 +1,344 @@
+<HTML
+><HEAD
+><TITLE
+>Using v-q from Java</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Developing applications for v-q"
+HREF="devs.html"><LINK
+REL="PREVIOUS"
+TITLE="Developing applications for v-q"
+HREF="devs.html"><LINK
+REL="NEXT"
+TITLE="Community"
+HREF="community.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-04-19T22:04:19"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="devs.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 4. Developing applications for v-q</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="community.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="devs.java"
+>4.2. Using v-q from Java</A
+></H1
+><P
+>&#13;			<A
+HREF="http://java.sun.com"
+TARGET="_top"
+>Java</A
+> language
+			is one of most popular languages used in
+			enterprise systems.
+		</P
+><P
+>&#13;			Java includes support for CORBA. You don't need any additional
+			software, all you need is Java SDK.
+		</P
+><P
+>&#13;			To start using v-q from Java you need to translate
+			IDL files into Java classes. To do it 
+			execute:
+</P><PRE
+CLASS="synopsis"
+>idlj vq.idl</PRE
+><P>
+			This will generate some files and directories:
+</P><PRE
+CLASS="screen"
+><TT
+CLASS="computeroutput"
+>&#13;vq
+vq/exceptHelper.java
+vq/exceptHolder.java
+vq/except.java
+vq/db_errorHelper.java
+vq/db_errorHolder.java
+vq/db_error.java
+vq/null_errorHelper.java
+vq/null_errorHolder.java
+vq/null_error.java
+vq/_ivqStub.java
+vq/ivqHolder.java
+vq/ivqHelper.java
+vq/ivq.java
+vq/ivqPackage
+vq/ivqPackage/quota_typeHelper.java
+vq/ivqPackage/size_typeHelper.java
+vq/ivqPackage/uif_typeHelper.java
+vq/ivqPackage/user_conf_typeHelper.java
+vq/ivqPackage/string_listHolder.java
+vq/ivqPackage/string_listHelper.java
+vq/ivqPackage/gid_typeHelper.java
+vq/ivqPackage/uid_typeHelper.java
+vq/ivqPackage/err_codeHolder.java
+vq/ivqPackage/err_codeHelper.java
+vq/ivqPackage/err_code.java
+vq/ivqPackage/errorHelper.java
+vq/ivqPackage/errorHolder.java
+vq/ivqPackage/error.java
+vq/ivqPackage/user_infoHelper.java
+vq/ivqPackage/user_infoHolder.java
+vq/ivqPackage/user_info.java
+vq/ivqPackage/user_conf_infoHelper.java
+vq/ivqPackage/user_conf_infoHolder.java
+vq/ivqPackage/user_conf_info.java
+vq/ivqPackage/user_conf_info_listHolder.java
+vq/ivqPackage/user_conf_info_listHelper.java
+vq/ivqPackage/email_bannedHelper.java
+vq/ivqPackage/email_bannedHolder.java
+vq/ivqPackage/email_banned.java
+vq/ivqPackage/email_banned_listHolder.java
+vq/ivqPackage/email_banned_listHelper.java
+vq/ivqPackage/domain_infoHelper.java
+vq/ivqPackage/domain_infoHolder.java
+vq/ivqPackage/domain_info.java
+vq/ivqPackage/domain_info_listHolder.java
+vq/ivqPackage/domain_info_listHelper.java
+vq/ivqOperations.java
+</TT
+></PRE
+><P>
+		</P
+><P
+>&#13;			Here's an example I created, it calls vq::ivq::dom_val function
+			to validate domain's name:
+
+</P><PRE
+CLASS="programlisting"
+>&#13;/**
+ * Simple example of using v-q from Java
+ * @author Pawe³ Niewiadomski
+ */
+
+import vq.*;
+import vq.ivqPackage.*;
+import org.omg.CORBA.*;
+import org.omg.CosNaming.*;
+
+public class DomVal {
+
+	static public void main( String [] args ) throws Exception {
+		ORB orb = ORB.init(args, null);
+
+		org.omg.CORBA.Object obj = orb.resolve_initial_references("NameService");
+
+		NamingContext rootCtx = NamingContextHelper.narrow(obj);
+		if( rootCtx == null ) {
+			System.out.println("Failed to narrow the root naming context");
+			System.exit(1);
+		}
+
+		NameComponent name = new NameComponent("vq::ivq", "");
+		NameComponent [] path = { name };
+		ivq vqo = ivqHelper.narrow(rootCtx.resolve(path));
+		
+		String dom = "123123.asd.com.pl";
+		error err = vqo.dom_val(dom);
+		if( err.ec == err_code.err_no ) {
+			System.out.println("It's a valid domain name");
+		} else {
+			System.out.println("It's an invalid domain name");
+		}
+		System.exit(0);
+	}
+}
+
+</PRE
+><P>
+			Following script executes omniNames (name server),
+			iauth (pgsqlauthd) and ivq (qmailvqd), then DomVal (above
+			example). It is also located in <TT
+CLASS="filename"
+>examples/java</TT
+>.
+
+</P><PRE
+CLASS="programlisting"
+>&#13;#!/bin/sh
+export BASE=../..
+export VQ_HOME=.
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+rm -f /tmp/omninames-*
+omniNames -start 12456 -logdir /tmp &#38;
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &#38;
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService &#62; etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &#38;
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+java DomVal -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
+</PRE
+><P>
+			</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+					qmailvqd and pgsqlauthd were compiled using MICO,
+					name service was represented by omniORB 
+					<SPAN
+CLASS="application"
+>omniNames</SPAN
+> and client was
+					written in Java. So, it's also an example of interoperability :-)
+				</P
+></BLOCKQUOTE
+></DIV
+><P>
+		</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="devs.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="community.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Developing applications for v-q</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="devs.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Community</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

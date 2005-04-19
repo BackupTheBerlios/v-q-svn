@@ -1,0 +1,33 @@
+#!/bin/sh
+exec 2>&1
+prog="jdbcauthd"
+
+if [ -f /etc/sysconfig/vq ] ; then
+	. /etc/sysconfig/vq
+	[ -n "$VQ_HOME" ] && export VQ_HOME || unset VQ_HOME
+	[ -n "$VQ_ETC_DIR" ] && export VQ_ETC_DIR || unset VQ_ETC_DIR
+fi
+
+if [ ! -z "$VQ_HOME" ] ; then
+    export PATH="$PATH":"$VQ_HOME"
+fi
+
+if [ ! -d $VQ_HOME ] ; then
+    echo "VQ_HOME not set!"
+    exit 1
+fi
+
+# JDBC drivers 
+# add "org.postgresql.Driver" for PostgreSQL
+drivers="org.postgresql.Driver"
+
+# add options for your JDBC driver
+export CLASSPATH="pg74.215.jdbc3.jar"
+
+# v-q jars
+export CLASSPATH="$CLASSPATH":"$VQ_HOME/bin/corbautil.jar":"$VQ_HOME/bin/jdbcd.jar"
+
+java -Djdbc.drivers="$drivers" \
+-Dcom.foo_baz.v_q."$prog".jdbc=jdbc:postgresql://localhost/mail \
+"$prog" -ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService
+

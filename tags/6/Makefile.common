@@ -1,0 +1,19 @@
+PREFIX?=/var/vq
+INSTALL=install
+JAVAC=javac
+JAVA=java
+
+.PHONY: auto-mkdir
+
+auto-mkdir:
+	mkdir -p auto
+
+#################
+$(BASE)/tools/mkdep:
+	(cd $(BASE)/tools/ && $(MAKE) mkdep)
+	
+.depend: $(BASE)/compile $(BASE)/tools/mkdepend *.cc
+	CC=$(BASE)/compile $(BASE)/tools/mkdepend $(INCS) *.cc > .depend
+	if [ -e .depend -a ! -s .depend ]; then \
+		rm -f .depend ; \
+	fi

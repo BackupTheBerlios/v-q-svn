@@ -1,0 +1,239 @@
+<HTML
+><HEAD
+><TITLE
+>Interfejs iauth</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.72
+"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Architektura"
+HREF="arch.html"><LINK
+REL="PREVIOUS"
+TITLE="Interfejs ivq"
+HREF="arch.ivq.html"><LINK
+REL="NEXT"
+TITLE="Interfejs ilogger"
+HREF="arch.ilogger.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-04-19T22:04:44"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="arch.ivq.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 2. Architektura</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="arch.ilogger.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="arch.iauth"
+>2.3. Interfejs iauth</A
+></H1
+><P
+>&#13;			Interfejs reprezentuje modu³ autoryzacyjny, który zajmuje
+			siê przechowywaniem informacji o istniej±cych u¿ytkownikach
+			i domenach.
+		</P
+><P
+>&#13;			Zazwyczaj implementacje tego interfejsu nie korzystaj±
+			z systemu plików bezpo¶rednio. Pracuj± na okre¶lonej bazie
+			danych.
+		</P
+><P
+>&#13;			Ten interfejs u¿ywany jest przez implementacje
+			<A
+HREF="arch.ivq.html"
+>interfejsu ivq</A
+>. 
+			Nie powiniene¶ korzystaæ z niego bezpo¶rednio.
+			Je¿eli uwa¿asz, ¿e brakuje funkcji w ivq skontaktuj siê
+			z programistami lub zmodyfikuj program i wy¶lij 
+			odpowiedni± ³atkê.
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="arch.iauth.cpgsqlauth"
+>2.3.1. cpgsqlauth</A
+></H2
+><P
+>&#13;				Jest to implementacja <A
+HREF="arch.iauth.html"
+>interfejsu 
+				iauth</A
+>. Korzysta ona z bazy danych PostgreSQL.
+			</P
+><P
+>&#13;				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</P
+><P
+>&#13;				Obiekt ten reprezentowany jest przez program pgsqlauthd.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="arch.iauth.JDBCAuth"
+>2.3.2. JDBCAuth</A
+></H2
+><P
+>&#13;				Jest to implementacja <A
+HREF="arch.iauth.html"
+>interfejsu 
+				iauth</A
+>. Korzysta ona z bazy danych za po¶rednictwem JDBC.
+				Oznacza to, ¿e teoretycznie mo¿na wykorzystaæ ka¿d± bazê danych,
+				która posiada sterownik JDBC.
+			</P
+><P
+>&#13;				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</P
+><P
+>&#13;				Obiekt ten reprezentowany jest przez program jdbcauthd.
+			</P
+><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+					Na dzieñ dzisiejszy klasa JDBCAuth przetestowana zosta³a
+					tylko z PostgreSQL. Mo¿esz u¿ywaæ j± z innymi bazami danych,
+					jednak istniej± pewne wymagania: baza danych musi
+					obs³ugiwaæ procedury sk³adowane w bazie danych oraz widoki.
+					Proszê, je¿eli u¿ywasz innej bazy danych podziel siê 
+					swoim schematem.
+				</P
+></BLOCKQUOTE
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="arch.ivq.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="arch.ilogger.html"
+ACCESSKEY="N"
+>Nastêpny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Interfejs ivq</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="arch.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Interfejs ilogger</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
