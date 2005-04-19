@@ -111,6 +111,107 @@
 				It is represented by pgsqlauthd daemon.
 			</para>
 		</section>
+
+		<section id="arch.iauth.JDBCAuth">
+			<title>JDBCAuth</title>
+
+			<para>
+				This is an implementation of <link linkend="arch.iauth">iauth
+				interface</link>. It operates on a database through JDBC
+				connection. This means that it should be possible to use
+				any database which has an JDBC driver.
+			</para>
+
+			<para>
+				It stores all informations in a database. Doesn't create
+				or use any files other than configuration.
+			</para>
+
+			<para>
+				It is represented by jdbcauthd daemon.
+			</para>
+
+			<note>
+				<para>
+					At this time JDBCAuth is only tested with PostgreSQL
+					database. You can use with other databases but
+					there are some requirements: database must support
+					stored procedures and views. Please, share with us
+					your schemas for other databases.
+				</para>
+			</note>
+		</section>
+
+	</section>
+
+	<section id="arch.ilogger">
+		<title>Interface ilogger</title>
+
+		<para>
+			This interface is used by programs which have to log information
+			about user activities such as logins, etc.
+		</para>
+
+		<para>
+			Usually this interface implementations does not create
+			any entries in a file system. They operate only on a specified
+			database.
+		</para>
+
+		<para>
+			At this time interface is used by <application>user_auth</application>. 
+			It is a separate interface, ivq does
+			not include functions from this module, you must use it directly.
+		</para>
+
+		<section id="arch.iauth.cpgsqllog">
+			<title>cpgsqllog</title>
+
+			<para>
+				This is an implementation of <link linkend="arch.ilogger">ilogger
+				interface</link>. It operates on a PostgreSQL database.
+			</para>
+
+			<para>
+				It stores all informations in a database. Doesn't create
+				or use any files other than configuration.
+			</para>
+
+			<para>
+				It is represented by pgsqllogd daemon.
+			</para>
+		</section>
+
+		<section id="arch.iauth.JDBCLog">
+			<title>JDBCLog</title>
+
+			<para>
+				This is an implementation of <link linkend="arch.ilogger">ilogger
+				interface</link>. It operates on a database through JDBC
+				connection. This means that it should be possible to use
+				any database which has an JDBC driver.
+			</para>
+
+			<para>
+				It stores all informations in a database. Doesn't create
+				or use any files other than configuration.
+			</para>
+
+			<para>
+				It is represented by jdbclogd daemon.
+			</para>
+
+			<note>
+				<para>
+					At this time JDBCLog is only tested with PostgreSQL
+					database. You can use with other databases but
+					there are some requirements: database must support
+					stored procedures and views. Please, share with us
+					your schemas for other databases.
+				</para>
+			</note>
+		</section>
+
 	</section>
 
 	<section id="arch.clients">

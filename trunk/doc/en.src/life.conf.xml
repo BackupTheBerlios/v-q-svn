@@ -247,6 +247,88 @@
 	</section>
 
 	<section>
+		<title>Configuration for JDBC authorization part</title>
+
+		<para>
+			All options are passed to application through command line
+			arguments, there are no configuration files. Bellow there
+			is a list of supported options. To pass them to program use
+			something like:
+<screen><userinput>-Dcom.foo_baz.v_q.jdbcauthd.jdbc=jdbc:postgresql://localhost/mail</userinput></screen>
+		</para>
+
+		<table frame="all">
+			<title>Configuration files for JDBC authorization part</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Property</entry>
+						<entry>Default value</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc</entry>
+						<entry>no defaults</entry>
+						<entry>
+							String used to initialize JDBC driver.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc.user</entry>
+						<entry>mail</entry>
+						<entry>
+							User used to connect to a database.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc.pass</entry>
+						<entry>mail</entry>
+						<entry>
+							Password user for authorization.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.ds</entry>
+						<entry>no defaults</entry>
+						<entry>
+							Data source used as a database. If you have
+							configured JNDI server which includes database
+							references you can use them directly. This options
+							is mutually exclusive with com.foo_baz.v_q.jdbcauthd.jdbc.
+							<note>
+								<para>
+									This options has not been tested.
+									At this time I don't know how to use
+									JNDI directly. 
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.dep_mod</entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.policy</entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
 		<title>Configuration for PostgreSQL logging part</title>
 
 		<para>
@@ -290,6 +372,88 @@
 						</entry>
 					</row>
 
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Configuration for JDBC logging part</title>
+
+		<para>
+			All options are passed to application through command line
+			arguments, there are no configuration files. Bellow there
+			is a list of supported options. To pass them to program use
+			something like:
+<screen><userinput>-Dcom.foo_baz.v_q.jdbclogd.jdbc=jdbc:postgresql://localhost/mail</userinput></screen>
+		</para>
+
+		<table frame="all">
+			<title>Configuration files for JDBC logging part</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Property</entry>
+						<entry>Default value</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc</entry>
+						<entry>no defaults</entry>
+						<entry>
+							String used to initialize JDBC driver.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc.user</entry>
+						<entry>mail</entry>
+						<entry>
+							User used to connect to a database.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc.pass</entry>
+						<entry>mail</entry>
+						<entry>
+							Password user for authorization.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.ds</entry>
+						<entry>no defaults</entry>
+						<entry>
+							Data source used as a database. If you have
+							configured JNDI server which includes database
+							references you can use them directly. This options
+							is mutually exclusive with com.foo_baz.v_q.jdbclogd.jdbc.
+							<note>
+								<para>
+									This options has not been tested.
+									At this time I don't know how to use
+									JNDI directly. 
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.dep_mod</entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.policy</entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>

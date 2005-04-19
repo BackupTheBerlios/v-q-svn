@@ -33,12 +33,13 @@
 			
 			<itemizedlist>
 				<listitem><para>PostgreSQL support for authorization and logging</para></listitem>
+				<listitem><para>JDBC support for authorization and logging</para></listitem>
 				<listitem><para>Qmail integration</para></listitem>
-				<listitem><para>CORBA based communication, which means you can use it from any language having IDL mapping</para></listitem>
+				<listitem><para>CORBA based communication, which means you can use daemons from any language having IDL mapping</para></listitem>
 				<listitem><para>can be used easily from: C, C++, PHP, Java, Smalltalk, python</para></listitem>
 				<listitem><para>distributed hosting</para></listitem>
 				<listitem><para>all processes can run without root</para></listitem>
-				<listitem><para>written using C++, STL and boost</para></listitem>
+				<listitem><para>written using C++, STL and boost, some parts in Java</para></listitem>
 				<listitem><para>WWW interface for users</para></listitem>
 			</itemizedlist>
 		</para>
