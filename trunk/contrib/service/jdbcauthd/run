@@ -1,14 +1,15 @@
 #!/bin/sh
-export 2>&1
+exec 2>&1
 prog="jdbcauthd"
+
+if [ -f /etc/sysconfig/vq ] ; then
+	. /etc/sysconfig/vq
+	[ -n "$VQ_HOME" ] && export VQ_HOME || unset VQ_HOME
+	[ -n "$VQ_ETC_DIR" ] && export VQ_ETC_DIR || unset VQ_ETC_DIR
+fi
 
 if [ ! -z "$VQ_HOME" ] ; then
     export PATH="$PATH":"$VQ_HOME"
-else
-    export VQ_HOME=`which "$PROG" | xargs dirname | xargs dirname`
-    if [ ! -d $VQ_HOME ] ; then
-        export VQ_HOME=/var/vq
-    fi
 fi
 
 if [ ! -d $VQ_HOME ] ; then

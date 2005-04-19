@@ -1,13 +1,15 @@
 #!/bin/sh
+exec 2>&1
 export PROG=pgsqlauthd
+
+if [ -f /etc/sysconfig/vq ] ; then
+	. /etc/sysconfig/vq
+	[ -n "$VQ_HOME" ] && export VQ_HOME || unset VQ_HOME
+	[ -n "$VQ_ETC_DIR" ] && export VQ_ETC_DIR || unset VQ_ETC_DIR
+fi
 
 if [ ! -z "$VQ_HOME" ] ; then
     export PATH="$PATH":"$VQ_HOME"
-else
-    export VQ_HOME=`which "$PROG" | xargs dirname | xargs dirname`
-    if [ ! -d $VQ_HOME ] ; then
-        export VQ_HOME=/var/vq
-    fi
 fi
 
 if [ ! -d $VQ_HOME ] ; then
@@ -15,7 +17,12 @@ if [ ! -d $VQ_HOME ] ; then
     exit 1
 fi
 
-exec 2>&1
-exec su _vq -c "exec "$PROG" -ORBIIOPAddr "unix:/var/vq/sockets/$PROG.sock" \
--ORBInitRef NameService=corbaloc::127.0.0.1:12456/NameService \
+# for omniORB
+args="-ORBendPoint \"giop:unix:/var/vq/sockets/$PROG.sock\""
+
+# for MICO
+#args="-ORBIIOPAddr \"unix:/var/vq/sockets/$PROG.sock\""
+
+exec su _vq -c "exec "$PROG" $args \
+-ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService \
 $VQ_HOME"
