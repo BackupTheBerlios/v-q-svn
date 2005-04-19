@@ -1,7 +1,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Interfejs iauth</TITLE
+>Interfejs ilogger</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
@@ -13,11 +13,11 @@ REL="UP"
 TITLE="Architektura"
 HREF="arch.html"><LINK
 REL="PREVIOUS"
-TITLE="Interfejs ivq"
-HREF="arch.ivq.html"><LINK
+TITLE="Interfejs iauth"
+HREF="arch.iauth.html"><LINK
 REL="NEXT"
-TITLE="Interfejs ilogger"
-HREF="arch.ilogger.html"><LINK
+TITLE="Klienci: programy linii poleceñ, interfejs WWW, etc."
+HREF="arch.clients.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
@@ -52,7 +52,7 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="arch.ivq.html"
+HREF="arch.iauth.html"
 ACCESSKEY="P"
 >Poprzedni</A
 ></TD
@@ -66,7 +66,7 @@ WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="arch.ilogger.html"
+HREF="arch.clients.html"
 ACCESSKEY="N"
 >Nastêpny</A
 ></TD
@@ -80,13 +80,12 @@ CLASS="section"
 ><H1
 CLASS="section"
 ><A
-NAME="arch.iauth"
->2.3. Interfejs iauth</A
+NAME="arch.ilogger"
+>2.4. Interfejs ilogger</A
 ></H1
 ><P
->&#13;			Interfejs reprezentuje modu³ autoryzacyjny, który zajmuje
-			siê przechowywaniem informacji o istniej±cych u¿ytkownikach
-			i domenach.
+>&#13;			Interfejs u¿ywany jest do zapisywania informacji na temat
+			aktywno¶ci u¿ytkowników takich jak logowanie siê, itp.
 		</P
 ><P
 >&#13;			Zazwyczaj implementacje tego interfejsu nie korzystaj±
@@ -94,29 +93,27 @@ NAME="arch.iauth"
 			danych.
 		</P
 ><P
->&#13;			Ten interfejs u¿ywany jest przez implementacje
-			<A
-HREF="arch.ivq.html"
->interfejsu ivq</A
->. 
-			Nie powiniene¶ korzystaæ z niego bezpo¶rednio.
-			Je¿eli uwa¿asz, ¿e brakuje funkcji w ivq skontaktuj siê
-			z programistami lub zmodyfikuj program i wy¶lij 
-			odpowiedni± ³atkê.
+>&#13;			Na dziên dzisiejszy interfejs u¿ywany jest przez
+			<SPAN
+CLASS="application"
+>user_auth</SPAN
+>. Jest to samodzielny
+			interfejs, ivq nie zawiera funkcji z tego modu³u, dlatego
+			nale¿y u¿ywaæ go bezpo¶rednio.
 		</P
 ><DIV
 CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="arch.iauth.cpgsqlauth"
->2.3.1. cpgsqlauth</A
+NAME="arch.ilogger.cpgsqllog"
+>2.4.1. cpgsqllog</A
 ></H2
 ><P
 >&#13;				Jest to implementacja <A
-HREF="arch.iauth.html"
+HREF="arch.ilogger.html"
 >interfejsu 
-				iauth</A
+				ilogger</A
 >. Korzysta ona z bazy danych PostgreSQL.
 			</P
 ><P
@@ -125,7 +122,7 @@ HREF="arch.iauth.html"
 				bezpo¶rednio w systemie plików.
 			</P
 ><P
->&#13;				Obiekt ten reprezentowany jest przez program pgsqlauthd.
+>&#13;				Obiekt ten reprezentowany jest przez program pgsqllogd.
 			</P
 ></DIV
 ><DIV
@@ -133,14 +130,14 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="arch.iauth.JDBCAuth"
->2.3.2. JDBCAuth</A
+NAME="arch.ilogger.JDBCLog"
+>2.4.2. JDBCLog</A
 ></H2
 ><P
 >&#13;				Jest to implementacja <A
-HREF="arch.iauth.html"
+HREF="arch.ilogger.html"
 >interfejsu 
-				iauth</A
+				ilogger</A
 >. Korzysta ona z bazy danych za po¶rednictwem JDBC.
 				Oznacza to, ¿e teoretycznie mo¿na wykorzystaæ ka¿d± bazê danych,
 				która posiada sterownik JDBC.
@@ -151,7 +148,7 @@ HREF="arch.iauth.html"
 				bezpo¶rednio w systemie plików.
 			</P
 ><P
->&#13;				Obiekt ten reprezentowany jest przez program jdbcauthd.
+>&#13;				Obiekt ten reprezentowany jest przez program jdbclogd.
 			</P
 ><DIV
 CLASS="note"
@@ -161,7 +158,7 @@ CLASS="note"
 ><B
 >Notatka: </B
 >
-					Na dzieñ dzisiejszy klasa JDBCAuth przetestowana zosta³a
+					Na dzieñ dzisiejszy klasa JDBCLog przetestowana zosta³a
 					tylko z PostgreSQL. Mo¿esz u¿ywaæ j± z innymi bazami danych,
 					jednak istniej± pewne wymagania: baza danych musi
 					obs³ugiwaæ procedury sk³adowane w bazie danych oraz widoki.
@@ -188,7 +185,7 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="arch.ivq.html"
+HREF="arch.iauth.html"
 ACCESSKEY="P"
 >Poprzedni</A
 ></TD
@@ -206,7 +203,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="arch.ilogger.html"
+HREF="arch.clients.html"
 ACCESSKEY="N"
 >Nastêpny</A
 ></TD
@@ -216,7 +213,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Interfejs ivq</TD
+>Interfejs iauth</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -230,7 +227,7 @@ ACCESSKEY="U"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Interfejs ilogger</TD
+>Klienci: programy linii poleceñ, interfejs WWW, etc.</TD
 ></TR
 ></TABLE
 ></DIV

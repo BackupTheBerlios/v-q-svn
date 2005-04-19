@@ -1,7 +1,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Interface iauth</TITLE
+>Interface ilogger</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.72
@@ -13,11 +13,11 @@ REL="UP"
 TITLE="Architecture"
 HREF="arch.html"><LINK
 REL="PREVIOUS"
-TITLE="Interface ivq"
-HREF="arch.ivq.html"><LINK
+TITLE="Interface iauth"
+HREF="arch.iauth.html"><LINK
 REL="NEXT"
-TITLE="Interface ilogger"
-HREF="arch.ilogger.html"><LINK
+TITLE="Clients: command line programs, WWW interface, etc."
+HREF="arch.clients.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
@@ -52,7 +52,7 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="arch.ivq.html"
+HREF="arch.iauth.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -66,7 +66,7 @@ WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="arch.ilogger.html"
+HREF="arch.clients.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -80,13 +80,12 @@ CLASS="section"
 ><H1
 CLASS="section"
 ><A
-NAME="arch.iauth"
->2.3. Interface iauth</A
+NAME="arch.ilogger"
+>2.4. Interface ilogger</A
 ></H1
 ><P
->&#13;			This interface represents authorization back end which
-			is responsible for storing informations about existing
-			domains and users.
+>&#13;			This interface is used by programs which have to log information
+			about user activities such as logins, etc.
 		</P
 ><P
 >&#13;			Usually this interface implementations does not create
@@ -94,27 +93,25 @@ NAME="arch.iauth"
 			database.
 		</P
 ><P
->&#13;			This interface is used by <A
-HREF="arch.ivq.html"
->ivq
-			implementations</A
->. You should not use it directly.
-			If you think that some feature should be added
-			to ivq please contact developers or add them and send us
-			a patch.
+>&#13;			At this time interface is used by <SPAN
+CLASS="application"
+>user_auth</SPAN
+>. 
+			It is a separate interface, ivq does
+			not include functions from this module, you must use it directly.
 		</P
 ><DIV
 CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="arch.iauth.cpgsqlauth"
->2.3.1. cpgsqlauth</A
+NAME="arch.ilogger.cpgsqllog"
+>2.4.1. cpgsqllog</A
 ></H2
 ><P
 >&#13;				This is an implementation of <A
-HREF="arch.iauth.html"
->iauth
+HREF="arch.ilogger.html"
+>ilogger
 				interface</A
 >. It operates on a PostgreSQL database.
 			</P
@@ -123,7 +120,7 @@ HREF="arch.iauth.html"
 				or use any files other than configuration.
 			</P
 ><P
->&#13;				It is represented by pgsqlauthd daemon.
+>&#13;				It is represented by pgsqllogd daemon.
 			</P
 ></DIV
 ><DIV
@@ -131,13 +128,13 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="arch.iauth.JDBCAuth"
->2.3.2. JDBCAuth</A
+NAME="arch.ilogger.JDBCLog"
+>2.4.2. JDBCLog</A
 ></H2
 ><P
 >&#13;				This is an implementation of <A
-HREF="arch.iauth.html"
->iauth
+HREF="arch.ilogger.html"
+>ilogger
 				interface</A
 >. It operates on a database through JDBC
 				connection. This means that it should be possible to use
@@ -148,7 +145,7 @@ HREF="arch.iauth.html"
 				or use any files other than configuration.
 			</P
 ><P
->&#13;				It is represented by jdbcauthd daemon.
+>&#13;				It is represented by jdbclogd daemon.
 			</P
 ><DIV
 CLASS="note"
@@ -158,7 +155,7 @@ CLASS="note"
 ><B
 >Note: </B
 >
-					At this time JDBCAuth is only tested with PostgreSQL
+					At this time JDBCLog is only tested with PostgreSQL
 					database. You can use with other databases but
 					there are some requirements: database must support
 					stored procedures and views. Please, share with us
@@ -184,7 +181,7 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="arch.ivq.html"
+HREF="arch.iauth.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -202,7 +199,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="arch.ilogger.html"
+HREF="arch.clients.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -212,7 +209,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Interface ivq</TD
+>Interface iauth</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -226,7 +223,7 @@ ACCESSKEY="U"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Interface ilogger</TD
+>Clients: command line programs, WWW interface, etc.</TD
 ></TR
 ></TABLE
 ></DIV
