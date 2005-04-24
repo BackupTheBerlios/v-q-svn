@@ -4,13 +4,21 @@
 # translations directory, it compares last change revision. If translated 
 # file has it lower it means it's older than original.
 
+open(CD, "check_trans.def") or die;
+my $def = <CD>;
+close(CD) or die;
+
+chomp($def) if( $def =~ /\n/ );
+
+my $def_re = "^$def\$";
+$def_re =~ s/\./\\./g;
 opendir(CUR, ".") or die;
-my @trans = grep {/\.src$/ and !/^en\.src$/} readdir(CUR);
+my @trans = grep {/\.src$/ and !/$def_re/} readdir(CUR);
 closedir(CUR);
 
 die("no translation found") if(! @trans."");
 
-open(LS,"svn ls -Rv en.src/*|") or die;
+open(LS,"svn ls -Rv \"$def/*\"|") or die;
 my @lns = <LS> or die;
 close(LS) or die;
 
