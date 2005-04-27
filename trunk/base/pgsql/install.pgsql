@@ -1,15 +1,35 @@
 #!/usr/bin/perl
 
+package main;
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+sub VERSION_MESSAGE {
+	my $out = shift;
+	print $out "$0 version 6\n";
+}
+
+sub HELP_MESSAGE {
+	my $out = shift;
+	print $out "usage: $0 [-c con_info] [-u user] [-p pass] [-s schema]\n";
+	print $out "-c con_info\tPostgreSQL connection info\n";
+	print $out "-u user\tconnect as this user\n";
+	print $out "-p pass\tuse this password\n";
+	print $out "-s schema\tcreate objects is specified schema\n";
+}
+
 package vqpgsql;
 
 use DBI;
+use Getopt::Std;
 
 # Configuration
 
-my $con_conf = "dbname=mail host=/tmp";
-my $con_user = "mail";
-my $con_pass = "mail";
-my $schema = "mail";
+my %opts = ();
+getopts('c:u:p:s:', \%opts);
+
+my $con_conf = $opts{'c'} ? $opts{'c'} : "dbname=mail host=/tmp";
+my $con_user = $opts{'u'} ? $opts{'u'} : "mail";
+my $con_pass = $opts{'p'} ? $opts{'p'} : "mail";
+my $schema = $opts{'s'} ? $opts{'s'} : "mail";
 
 # Prototypes
 sub schema_crt;
