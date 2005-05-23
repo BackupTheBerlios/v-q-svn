@@ -145,7 +145,7 @@ public class JDBCAuth extends iauthPOA {
 
 		try {
 			st = con.createStatement();
-			res = st.executeQuery("SELECT id_domain,domain FROM vq_view_dom_ls");
+			res = st.executeQuery("SELECT id_domain,domain FROM vq_view_dom_ls ORDER BY domain");
 
 			for( int idx=1; res.next(); idx=1) {
 				domain_info di = new domain_info();
@@ -282,7 +282,7 @@ public class JDBCAuth extends iauthPOA {
 
 		try {
 			st = con.prepareStatement(
-				"SELECT "+field+" FROM "+view+" WHERE id_domain=?");
+				"SELECT "+field+" FROM "+view+" WHERE id_domain=? ORDER BY "+field);
 			st.setInt(1, dom_id);
 			res = st.executeQuery();
 
@@ -381,14 +381,14 @@ public class JDBCAuth extends iauthPOA {
 
 		try {
 			st = con.prepareStatement( 
-				"SELECT EXISTS (SELECT * FROM vq_view_USER_EX "
-				+ "WHERE id_domain=? AND login=?)" );
+				"SELECT COUNT(*) FROM vq_view_USER_EX "
+				+ "WHERE id_domain=? AND login=?" );
 			int idx=1;
 			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			res = st.executeQuery();
 			while(res.next()) {
-				return lr( res.getBoolean(1) 
+				return lr( res.getInt(1) != 0
 					? err_code.err_no : err_code.err_noent, "" );
 			}
 		} finally {
@@ -479,7 +479,7 @@ public class JDBCAuth extends iauthPOA {
 
 		try {
 			st = con.createStatement();
-			res = st.executeQuery( "SELECT re_domain,re_login FROM vq_view_eb_ls" );
+			res = st.executeQuery( "SELECT re_domain,re_login FROM vq_view_eb_ls ORDER BY re_domain,re_login" );
 			for( int idx=1; res.next(); idx=1 ) {
 				email_banned eb = new email_banned();
 				eb.re_domain = res.getString(idx++);
@@ -812,8 +812,8 @@ public class JDBCAuth extends iauthPOA {
 
 		try {
 			st = con.prepareStatement( 
-				"SELECT EXISTS (SELECT * FROM vq_view_user_conf_type_has WHERE "
-				+"id_domain=? AND login=? AND ext=? AND type=?)" );
+				"SELECT COUNT(*) FROM vq_view_user_conf_type_has WHERE "
+				+"id_domain=? AND login=? AND ext=? AND type=?" );
 			int idx=1;
 			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
@@ -821,7 +821,7 @@ public class JDBCAuth extends iauthPOA {
 			st.setShort(idx++, ut );
 			res = st.executeQuery();
 			while(res.next()) {
-				return lr( res.getBoolean(1) 
+				return lr( res.getInt(1) != 0
 					? err_code.err_no : err_code.err_noent, "" );
 			}
 		} finally {
