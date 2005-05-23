@@ -13,7 +13,7 @@ sub HELP_MESSAGE {
 	print $out "-c con_info\tPostgreSQL connection info\n";
 	print $out "-u user\tconnect as this user\n";
 	print $out "-p pass\tuse this password\n";
-	print $out "-s schema\tcreate objects is specified schema\n";
+	print $out "-s schema\tcreate objects in specified schema\n";
 }
 
 package vqpgsql;
@@ -597,8 +597,8 @@ DECLARE
 BEGIN
     IF is_banned = ''t''::boolean THEN
       FOR ban IN SELECT 1 FROM vq_emails_banned WHERE 
-	  		(SELECT domain FROM vq_domains WHERE id_domain=_id_domain) ~* re_domain
-			AND _login ~* re_login LOOP
+	  		(SELECT domain FROM vq_domains WHERE id_domain=_id_domain) ILIKE re_domain
+			AND _login ILIKE re_login LOOP
         RETURN -2;
       END LOOP;
     END IF;
