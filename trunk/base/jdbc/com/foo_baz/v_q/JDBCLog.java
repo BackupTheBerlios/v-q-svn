@@ -75,7 +75,7 @@ public class JDBCLog extends iloggerPOA {
 	/**
 	 *
 	 */
-	public error write( short res, String msg ) throws null_error, db_error, except { try {
+	public error write( short result, String msg ) throws null_error, db_error, except { try {
 		CallableStatement call = con.prepareCall( "{ ? = call log_write(?, ?, ?, ?, ?, ?) }" );
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
@@ -83,11 +83,14 @@ public class JDBCLog extends iloggerPOA {
 		call.setShort(idx++, ser);
 		call.setString(idx++, dom);
 		call.setString(idx++, log);
-		call.setShort(idx++, res);
+		call.setShort(idx++, result);
 		call.setString(idx++, msg);
 		call.execute();
 
-		if( call.getInt(1) != 0 )
+		int res = call.getInt(1);
+		try { call.close(); } catch( Exception e ) {}
+		
+		if( res != 0 )
 			return lr(err_code.err_func_res, "LOG_WRITE");
 		
 		return lr(err_code.err_no, "");
@@ -245,7 +248,12 @@ public class JDBCLog extends iloggerPOA {
 
 			res = st.executeQuery();
 
-			if( ! res.absolute(start+1) ) return lr(err_code.err_noent, "");
+			if( ! res.absolute(start+1) ) {
+				try { if( res != null ) res.close(); } catch(Exception e) {}
+				try { if( st != null ) st.close(); } catch(Exception e) {}
+				return lr(err_code.err_noent, "");
+			}
+
 			if( cnt == 0 ) --cnt; // if it's zero means that we want to read all entries
 			for( int idx=1; cnt-- != 0; idx = 1 ) {
 				log_entry le = new log_entry();
@@ -310,8 +318,10 @@ public class JDBCLog extends iloggerPOA {
 		CallableStatement call = con.prepareCall( "{ ? = call log_rm_all() }" );
 		call.registerOutParameter(1, Types.INTEGER);
 		call.execute();
-
-		if( call.getInt(1) != 0 )
+		int res = call.getInt(1);
+		try { call.close(); } catch( Exception e ) {}
+		
+		if ( res != 0 )
 			return lr(err_code.err_func_res, "LOG_RM_ALL");
 		
 		return lr(err_code.err_no, "");
@@ -332,8 +342,10 @@ public class JDBCLog extends iloggerPOA {
 		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setString(idx++, dom);
 		call.execute();
-	
-		if( call.getInt(1) != 0 )
+		int res = call.getInt(1);
+		try { call.close(); } catch( Exception e ) {}
+		
+		if( res != 0 )
 			return lr(err_code.err_func_res, "LOG_RM_BY_DOM");
 		
 		return lr(err_code.err_no, "");
@@ -355,8 +367,10 @@ public class JDBCLog extends iloggerPOA {
 		call.setString(idx++, dom);
 		call.setString(idx++, log);
 		call.execute();
-	
-		if( call.getInt(1) != 0 )
+		int res = call.getInt(1);
+		try { call.close(); } catch( Exception e ) {}
+		
+		if ( res != 0 )
 			return lr(err_code.err_func_res, "LOG_RM_BY_USER");
 	
 		return lr(err_code.err_no, "");
