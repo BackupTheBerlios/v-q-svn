@@ -1,4 +1,5 @@
 %define datadir %{_localstatedir}/vq
+%define project v-q
 
 %ifarch ia64
 # disable debuginfo on IA64
@@ -6,24 +7,24 @@
 %endif
 
 Summary: Virtual Qmail
-Name: v-q
+Name: v-q-%{_vendor}
 Version: @VERSION@
 Release: 1
 URL: http://v-q.foo-baz.com/
 Vendor: http://foo-baz.com/
 Packager: Pawel Niewiadomski <new@foo-baz.com>
-Source0: %{name}-%{version}.tar.gz
+Source0: %{project}-%{version}.tar.gz
 License: GPL
 Group: System Environment/Daemons
-BuildRoot: %{_tmppath}/%{name}-root
+BuildRoot: %{_tmppath}/%{project}-root
 BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
 BuildPrereq: postgresql-libs >= 7.4.5, libpqxx-devel >= 2.5.0
 BuildPrereq: postgresql-devel >= 7.4.5
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
 Prereq: sh-utils, textutils, /sbin/ldconfig
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0, daemontools >= 0.76
-Requires: %{name}-iauth = %{version}, %{name}-ilogger = %{version}
-Provides: %{name}-ivq = %{version}
+Requires: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
+Provides: %{project}-ivq = %{version}
 
 %description
 Virtual Qmail is a virtual domains manager that integrates with Qmail.
@@ -31,7 +32,7 @@ Virtual Qmail is a virtual domains manager that integrates with Qmail.
 %package devel
 Group: Development/Libraries
 Summary: Development environment for Virtual Qmail
-Requires: omniORB-devel >= 4.0.5-1, boost >= 1.31.0, %{name} = %{version}
+Requires: omniORB-devel >= 4.0.5-1, boost >= 1.31.0, %{project} = %{version}
 
 %description devel
 This package includes files that are needed to develop applications for
@@ -40,9 +41,9 @@ Virtual Qmail.
 %package pgsql
 Group: System Environment/Daemons
 Summary: Implementation of iauth and ilogger interfaces using PostgreSQL
-Requires: postgresql-libs >= 7.4.5, libpqxx >= 2.5.0, %{name} = %{version}
+Requires: postgresql-libs >= 7.4.5, libpqxx >= 2.5.0, %{project} = %{version}
 Requires: daemontools >= 0.76
-Provides: %{name}-iauth = %{version}, %{name}-ilogger = %{version}
+Provides: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
 
 %description pgsql
 This package includes implementation of Virtual Qmail interfaces: 
@@ -54,9 +55,9 @@ Implementation is based on PostgreSQL and libpqxx.
 %package jdbc
 Group: System Environment/Daemons
 Summary: Implementation of iauth and ilogger interfaces using Java and JDBC
-Requires: %{name} = %{version}
+Requires: %{project} = %{version}
 Requires: daemontools >= 0.76
-Provides: %{name}-iauth = %{version}, %{name}-ilogger = %{version}
+Provides: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
 
 %description jdbc
 This package includes implementation of Virtual Qmail interfaces: 
