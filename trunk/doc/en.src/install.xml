@@ -101,6 +101,37 @@
 				http://www.postgresql.org</ulink>.
 			</para>
 		</section>
+
+		<section id="install.otherdb">
+			<title>Other database systems</title>
+
+			<para>
+				Following is a list of database systems that are
+				not compatible with v-q:
+				<itemizedlist>
+					<listitem>
+						<para>MySQL - there's no support for views, stored procedures;</para>
+					</listitem>
+					<listitem>
+						<para>
+							Firebird - it's not possible to create
+							index with a key larger than 252 bytes.
+							It should be fixed in upcoming 2 version, but
+							at this time it is not (tested 2.0 Alpha 2),
+							other required functions are implemented;
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Cloudscape (AKA apache-derby) - it's not
+							possible to create a view with an
+							aggregate function, other required functions
+							are implemented;
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
 	</section>
 
 	<section id="install.prep">

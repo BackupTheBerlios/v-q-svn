@@ -91,6 +91,27 @@
 		</para>
 	</section>
 
+	<section id="intro.changes">
+		<title>Important changes</title>
+
+		<para>
+			Following list represents only important changes which
+			can influence compatibility with previous version, etc.
+		</para>
+
+		<formalpara>
+			<title>Version 7</title>
+
+			<para>
+				Lookups into vq_emails_banned are made now with LIKE.
+				Previous version used PostgreSQL's POSIX expressions.
+				If you have entries in vq_emails_banned you should
+				update them.
+			</para>
+		</formalpara>
+	</section>
+
+
 	<section id="intro.trans">
 		<title>Documentation translations</title>
 
