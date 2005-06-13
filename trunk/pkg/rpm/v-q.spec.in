@@ -19,7 +19,7 @@ Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{project}-root
 BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
 BuildPrereq: postgresql-libs >= 7.4.5, libpqxx-devel >= 2.5.0
-BuildPrereq: postgresql-devel >= 7.4.5
+BuildPrereq: postgresql-devel >= 7.4.5, openssl-devel >= 0.9.7
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
 Prereq: sh-utils, textutils, /sbin/ldconfig
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0, daemontools >= 0.76
@@ -69,7 +69,7 @@ can use any database which supports views, stored procedures and have
 JDBC driver.
 
 %prep
-%setup -q
+%setup -q -n %{project}-%{version}
 echo "-I/usr/include" > boost.inc
 echo "-L`pwd`" > boost.lib
 echo "-lboost_date_time" > boost_date_time.lib
@@ -78,7 +78,9 @@ echo "-lboost_thread" > boost_thread.lib
 echo "-lboost_unit_test_framework" > boost_unit_test.lib
 
 for p in boost_date_time boost_regex boost_thread boost_unit_test_framework ; do
-	ln -sf /usr/lib/lib$p.so.1 lib$p.so
+	if [ -f /usr/lib/lib$p.so.1 ] ; then
+		ln -sf /usr/lib/lib$p.so.1 lib$p.so ;
+	fi ;
 done
 
 echo "-DP_USE_OMNIORB -I/usr/include" > corba.inc

@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-2"?>
 <chapter id="devs">
-	<title>Developing applications for v-q</title>
-
-	<para>
-		Well, there's nothing here. This chapter will be
-		written in the next release.
-	</para>
+	<title>Developers' corner</title>
 
 	<para>
 		At this time only source of information is v-q's source.
@@ -315,6 +310,29 @@ java DomVal -ORBInitRef NameService=corbaloc::$host:12456/NameService
 				</para>
 			</note>
 		</para>
+	</section>
+
+	<section id="devs.pkgs">
+		<title>Creating packages</title>
+	
+		<formalpara>
+			<title>RedHat, SuSe, other RPM based systems</title>
+
+			<para>
+				You can use a RPM source package. You can <link href="install.download">download it here</link>. Run
+<screen><userinput><application>rpm</application> -ivh package.rpm</userinput></screen>
+				to install it. Files will be placed somewhere in <filename>/usr/src</filename>, search for file <filename>v-q.spec</filename>.
+				Run
+<screen><userinput><application>rpmbuild</applications> -bb v-q.spec</userinput></screen>
+				to build all binary packages.
+			</para>
+
+			<para>
+				Building from sources downloaded from repository or unpacked from tarball is also simple. Just go to the main
+				directory and run
+<screen><userinput><application>make</application> pkg-rpm</userinput></screen>
+			</para>
+		</formalpara>
 	</section>
 
 </chapter>

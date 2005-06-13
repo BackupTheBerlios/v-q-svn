@@ -24,12 +24,13 @@ use Getopt::Std;
 # Configuration
 
 my %opts = ();
-getopts('c:u:p:s:', \%opts);
+getopts('c:u:p:s:U', \%opts);
 
 my $con_conf = $opts{'c'} ? $opts{'c'} : "dbname=mail host=/tmp";
 my $con_user = $opts{'u'} ? $opts{'u'} : "mail";
 my $con_pass = $opts{'p'} ? $opts{'p'} : "mail";
 my $schema = $opts{'s'} ? $opts{'s'} : "mail";
+my $upg = $opts{'U'};
 
 # Prototypes
 sub schema_crt;
@@ -38,11 +39,14 @@ sub qdie($);
 sub version_get;
 sub plpgsql;
 
-# functions upgrading to version 6
-sub v6_vq_info;
-sub v6_domains;
-sub v6_funcs;
-sub v6_tables;
+# functions upgrading to version 7
+sub v7_vq_info;
+sub v7_domains;
+sub v7_funcs;
+sub v7_tables;
+
+# functions upgrading from 6 to 7
+sub v6_7_funcs;
 
 ############
 my $con = DBI->connect("dbi:Pg:$con_conf", $con_user, $con_pass);
@@ -63,11 +67,20 @@ plpgsql();
 my $ver = version_get();
 print "Database version is: $ver\n";
 
-if( $ver < 6 ) {
-	print "Upgrading to 6...\n";
-	v6_vq_info();
-	v6_tables();
-	v6_funcs();
+if( $ver == 0 ) {
+	print "Upgrading to 7...\n";
+	v7_vq_info();
+	v7_tables();
+	v7_funcs();
+} elsif($upg) {
+	if( $ver == 6 ) {
+		v6_7_funcs();
+		v6_7_info();
+	} else {
+		die( "Don't know how to upgrade!" );
+	}
+} else {
+	die("Database exists, upgrade must be forced with -U option!");
 }
 
 # Functions
@@ -135,7 +148,7 @@ sub version_get {
 
 ##
 # Create table with informations about database
-sub v6_vq_info {
+sub v7_vq_info {
 	my $qr = "CREATE TABLE vq_info "
 		."(key TEXT NOT NULL CHECK (length(key)>1), value TEXT NOT NULL,".
 		"PRIMARY KEY(key))";
@@ -168,7 +181,7 @@ sub plpgsql {
 
 ##
 #
-sub v6_tables {
+sub v7_tables {
 	my @funcs = (
 "CREATE TABLE vq_domains (id_domain serial,"
 ."domain text unique not null check(length(domain)>1),"
@@ -244,11 +257,11 @@ primary key(id_log)
 			qdie($funcs[$i]);
 		}
 	}
-} # v6_tables
+} # v7_tables
 
 ##
 #
-sub v6_funcs {
+sub v7_funcs {
 	my @funcs = (
 "CREATE FUNCTION dom_add(vq_domains.domain\%TYPE) RETURNS vq_domains.id_domain\%TYPE AS '
 DECLARE
@@ -729,5 +742,68 @@ END;' LANGUAGE 'plpgsql'",
 			qdie($funcs[$i]);
 		}
 	}
-} # v6_funcs
+} # v7_funcs
 
+##
+# v6_7_funcs 
+sub v6_7_funcs {
+	my @funcs = (
+"CREATE or replace FUNCTION user_add
+(vq_users.id_domain\%TYPE,
+vq_users.login\%TYPE,
+vq_users.pass\%TYPE,
+vq_users.flags\%TYPE,
+bool) RETURNS int4 AS '
+DECLARE
+    _id_domain alias for \$1;
+    _login alias for \$2;
+    _pass alias for \$3;
+    _flags alias for \$4;
+	is_banned alias for \$5;
+
+	domain RECORD;
+    ban RECORD;
+BEGIN
+    IF is_banned = ''t''::boolean THEN
+      FOR ban IN SELECT 1 FROM vq_emails_banned WHERE 
+	  		(SELECT domain FROM vq_domains WHERE id_domain=_id_domain) ILIKE re_domain
+			AND _login ILIKE re_login LOOP
+        RETURN -2;
+      END LOOP;
+    END IF;
+
+	IF NOT EXISTS (SELECT * FROM vq_domains WHERE id_domain=_id_domain) THEN
+		RETURN -3;
+	END IF;
+
+	IF EXISTS (SELECT * FROM vq_users 
+			WHERE id_domain=_id_domain AND login=_login) THEN
+		RETURN -1;
+	END IF;
+	
+    INSERT INTO vq_users (id_domain,login,pass,flags) 
+		VALUES(_id_domain,_login,_pass,_flags);
+
+	NOTIFY user_add;
+	RETURN 0;
+END;
+' LANGUAGE 'plpgsql';"
+);
+
+	for( my $i=0; $i < @funcs.""; ++$i ) {
+		my $res = $con->do($funcs[$i]);
+		if( $con->err != PGRES_COMMAND_OK ) {
+			qdie($funcs[$i]);
+		}
+	}
+} # v6_7_funcs
+
+##
+# Create table with informations about database
+sub v6_7_info {
+	$qr = "UPDATE vq_info SET value='7' WHERE key='version'";
+	$res = $con->do($qr);
+	if( $con->err != PGRES_COMMAND_OK || $res != 1 ) {
+		qdie($qr);
+	}
+}

@@ -132,6 +132,9 @@ struct da_dip_test {
 			for( string_array::value_type::size_type i=0, s=ips.size(); i<s; ++i ) {
 					err = obj->dip_add(dom_id, ips[i].c_str());
 					IVQ_ERROR_EQUAL(err, vq::ivq::err_no);
+					if( err->ec != vq::ivq::err_no ) {
+							BOOST_ERROR(ips[i]);
+					}
 			}
 			vq::iauth::string_list_var from_db, from_db1;
 			err = obj->dip_ls_by_dom(dom_id, from_db);

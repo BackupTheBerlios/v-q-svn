@@ -235,27 +235,43 @@ public class JDBCLog extends iloggerPOA {
 					+ "FROM vq_view_log_read ORDER BY time DESC";
 			if( rbf == rbf_by_dom )
 				qr = "SELECT id_log,time,ip,service,result,msg,login "
-					+ "FROM vq_view_log_read WHERE domain=? ORDER BY time DESC";
+					+ "FROM vq_view_log_read WHERE domain=? "
+					+ "OR (?=1 AND domain IS NULL) ORDER BY time DESC";
 			if( rbf == rbf_by_user )
 				qr = "SELECT id_log,time,ip,service,result,msg FROM vq_view_log_read WHERE "
-					+" domain=? AND login=? ORDER BY time DESC";
+					+" (domain=? OR (?=1 AND domain IS NULL)) "
+					+ "AND (login=? OR (?=1 AND login IS NULL)) ORDER BY time DESC";
 
 			st = con.prepareStatement(qr);
-			if( rbf == rbf_by_dom || rbf == rbf_by_user )
-				st.setString(1, dom);
-			if( rbf == rbf_by_user )
-				st.setString(2, log);
+
+			int idx = 1;
+			if( rbf == rbf_by_dom || rbf == rbf_by_user ) {
+				st.setString(idx++, dom);
+				st.setBoolean(idx++, dom.length() == 0 );
+			}
+			if( rbf == rbf_by_user ) {
+				st.setString(idx++, log);
+				st.setBoolean(idx++, log.length() == 0 );
+			}
 
 			res = st.executeQuery();
 
-			if( ! res.absolute(start+1) ) {
+			if( res.getType() == ResultSet.TYPE_FORWARD_ONLY ) {
+				for( int i = 0; i <= start; ++i ) {
+					if( ! res.next() ) {
+						try { if( res != null ) res.close(); } catch(Exception e) {}
+						try { if( st != null ) st.close(); } catch(Exception e) {}
+						return lr(start != 0 ? err_code.err_noent : err_code.err_no, "");
+					}
+				}
+			} else if( ! res.absolute(start+1) ) {
 				try { if( res != null ) res.close(); } catch(Exception e) {}
 				try { if( st != null ) st.close(); } catch(Exception e) {}
 				return lr(err_code.err_noent, "");
 			}
 
 			if( cnt == 0 ) --cnt; // if it's zero means that we want to read all entries
-			for( int idx=1; cnt-- != 0; idx = 1 ) {
+			for( idx=1; cnt-- != 0; idx = 1 ) {
 				log_entry le = new log_entry();
 				
 				le.id_log = res.getString(idx);

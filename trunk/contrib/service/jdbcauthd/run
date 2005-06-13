@@ -18,16 +18,29 @@ if [ ! -d $VQ_HOME ] ; then
 fi
 
 # JDBC drivers 
-# add "org.postgresql.Driver" for PostgreSQL
+# PostgreSQL
 drivers="org.postgresql.Driver"
 
+# Oracle
+#drivers="oracle.jdbc.driver.OracleDriver"
+
 # add options for your JDBC driver
-export CLASSPATH="pg74.215.jdbc3.jar"
+# PostgreSQL
+export CLASSPATH="$VQ_HOME/lib/vq/pg74.215.jdbc3.jar"
+
+# Oracle
+#export CLASSPATH="$VQ_HOME/lib/vq/ojdbc14.jar"
 
 # v-q jars
 export CLASSPATH="$CLASSPATH":"$VQ_HOME/bin/corbautil.jar":"$VQ_HOME/bin/jdbcd.jar"
 
+# PostgreSQL
 java -Djdbc.drivers="$drivers" \
 -Dcom.foo_baz.v_q."$prog".jdbc=jdbc:postgresql://localhost/mail \
 "$prog" -ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService
+
+# Oracle
+#java -Djdbc.drivers="$drivers" \
+#-Dcom.foo_baz.v_q."$prog".jdbc=jdbc:oracle:thin:@localhost:1521:orcl \
+#"$prog" -ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService
 

@@ -23,8 +23,8 @@ import com.foo_baz.v_q.iauthPackage.*;
 import java.sql.*;
 import javax.sql.*;
 import java.util.*;
+import java.net.*;
 import org.omg.CORBA.*;
-import sun.net.util.IPAddressUtil;
 
 public class JDBCAuth extends iauthPOA {
 
@@ -243,11 +243,16 @@ public class JDBCAuth extends iauthPOA {
 	public error dip_add( int dom_id, String ali ) 
 			throws null_error, db_error, except {
 
-		if( IPAddressUtil.textToNumericFormatV4(ali) == null
-			&& IPAddressUtil.textToNumericFormatV6(ali) == null )
+		InetAddress ia = null;
+		try {
+			ia = InetAddress.getByName(ali);
+		} catch( Exception e ) {
+			ia = null;
+		}
+		if( ia == null )
 			return lr(err_code.err_dom_inv, ali);
 
-		return da_dip_add(dom_id, ali, "DIP_ADD");
+		return da_dip_add(dom_id, ia.getHostAddress(), "DIP_ADD");
 	}
 
 	/**
