@@ -102,6 +102,20 @@
 			</para>
 		</section>
 
+		<section id="install.oracle">
+			<title>Using Oracle</title>
+
+			<para>
+				From version 7pre1 <application>Oracle</application> is a supported database.
+				At this time you can use it only throught JDBC daemons.
+				You will need JDBC drivers for your Oracle version, they
+				are not included. Sample SQL scripts are placed
+				in <filename>base/oracle</filename> directory.
+				Oracle 10g was tested using <filename>ojdbc14.jar</filename>,
+				but v-q should work without problems with older versions.
+			</para>
+		</section>
+
 		<section id="install.otherdb">
 			<title>Other database systems</title>
 
