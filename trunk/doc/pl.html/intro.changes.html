@@ -2,7 +2,7 @@
 <HTML
 ><HEAD
 ><TITLE
->G³ówne cechy aktualnego systemu</TITLE
+>Wa¿ne zmiany</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
@@ -13,11 +13,11 @@ REL="UP"
 TITLE="Wprowadzenie"
 HREF="intro.html"><LINK
 REL="PREVIOUS"
-TITLE="Wprowadzenie"
-HREF="intro.html"><LINK
+TITLE="Niedostêpne funkcje"
+HREF="intro.missing.html"><LINK
 REL="NEXT"
-TITLE="Planowane w³a¶ciwo¶ci"
-HREF="intro.todo.html"><LINK
+TITLE="T³umaczenia dokumentacji"
+HREF="intro.trans.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
@@ -52,7 +52,7 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="intro.html"
+HREF="intro.missing.html"
 ACCESSKEY="P"
 >Poprzedni</A
 ></TD
@@ -66,7 +66,7 @@ WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="intro.todo.html"
+HREF="intro.trans.html"
 ACCESSKEY="N"
 >Nast&#281;pny</A
 ></TD
@@ -80,61 +80,26 @@ CLASS="section"
 ><H1
 CLASS="section"
 ><A
-NAME="intro.features"
->1.2. G³ówne cechy aktualnego systemu</A
+NAME="intro.changes"
+>1.5. Wa¿ne zmiany</A
 ></H1
 ><P
->&#13;			Najwa¿niejsz± cech± systemu jest to, ¿e dziêki modularnej
-			budowie mo¿liwe jest zast±pienie ka¿dej czê¶ci systemu.
-			Mo¿na wymieniæ bazê danych lub MTA w ³atwy sposób.
-			Oprogramowanie mo¿na równie¿ konfigurowaæ bez potrzeby
-			kompilacji nowej wersji.
-		</P
+>&#13;				Poni¿ej znajduje siê lista istnotnych zmian, które
+				mog± wp³ywaæ na kompatybilno¶æ miêdzy wersjami, etc.
+			</P
+><DIV
+CLASS="formalpara"
 ><P
->&#13;			G³ówne w³a¶ciwo¶ci:
-			
-			<P
-></P
-></P><UL
-><LI
-><P
->logowanie i autoryzacja oparte o PostgreSQL</P
-></LI
-><LI
-><P
->logowanie i autoryzacja oparte o JDBC</P
-></LI
-><LI
-><P
->integracja z Qmail</P
-></LI
-><LI
-><P
->komunikacja oparta o CORBA, oznacza to mo¿liwo¶æ u¿ywania dowolnego jêzyka posiadaj±cego mapowanie IDL</P
-></LI
-><LI
-><P
->mo¿na ³atwo korzystaæ z poziomu: C, C++, PHP, Java, Smalltalk, python</P
-></LI
-><LI
-><P
->rozproszony hosting</P
-></LI
-><LI
-><P
->wszystkie programy mog± pracowaæ bez uprawnieñ root</P
-></LI
-><LI
-><P
->napisany przy wykorzystaniu C++, STL i boost, niektóre czê¶ci w Javie</P
-></LI
-><LI
-><P
->interfejs WWW dla u¿ytkowników</P
-></LI
-></UL
-><P>
-		</P
+><B
+>Wersja 7. </B
+>
+					Odwo³ania do vq_emails_banned wykorzystuj± teraz operator LIKE.
+					Poprzednie wersje korzysta³y z operatora wyra¿eñ regularnych POSIX, 
+					który jest dostêpny w PostgreSQL.
+					Je¿eli vq_emails_banned zawiera jakie¶ wpisy musisz
+					je rêcznie zaktualizowaæ.
+				</P
+></DIV
 ></DIV
 ><DIV
 CLASS="NAVFOOTER"
@@ -152,7 +117,7 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="intro.html"
+HREF="intro.missing.html"
 ACCESSKEY="P"
 >Poprzedni</A
 ></TD
@@ -170,7 +135,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="intro.todo.html"
+HREF="intro.trans.html"
 ACCESSKEY="N"
 >Nast&#281;pny</A
 ></TD
@@ -180,7 +145,7 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Wprowadzenie</TD
+>Niedostêpne funkcje</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
@@ -194,7 +159,7 @@ ACCESSKEY="U"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Planowane w³a¶ciwo¶ci</TD
+>T³umaczenia dokumentacji</TD
 ></TR
 ></TABLE
 ></DIV

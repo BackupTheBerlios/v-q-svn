@@ -1,11 +1,11 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML
 ><HEAD
 ><TITLE
 >Zale¿no¶ci</TITLE
 ><META
 NAME="GENERATOR"
-CONTENT="Modular DocBook HTML Stylesheet Version 1.72
-"><LINK
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
 REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
@@ -22,7 +22,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-04-19T22:04:44"><META
+CONTENT="2005-06-14T17:34:11"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -68,7 +68,7 @@ VALIGN="bottom"
 ><A
 HREF="install.prep.html"
 ACCESSKEY="N"
->Nastêpny</A
+>Nast&#281;pny</A
 ></TD
 ></TR
 ></TABLE
@@ -209,6 +209,75 @@ TARGET="_top"
 >.
 			</P
 ></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.oracle"
+>7.2.3. U¿ywanie Oracle</A
+></H2
+><P
+>&#13;				Od wersji 7pre1 <SPAN
+CLASS="application"
+>Oracle</SPAN
+> jest oficjalnie
+				obs³ugiwan± baz± danych. Na dzieñ dzisiejszy mo¿na
+				korzystaæ z tej bazy danych tylko za pomoc± demonów
+				JDBC. Nale¿y posiadaæ sterowniki JDBC dla posiadanej
+				wersji Oracle, nie s± one do³±czone do pakietu. 
+				Domy¶lne skrypty SQL znajduj± siê w katalogu
+				<TT
+CLASS="filename"
+>base/oracle</TT
+>.
+				Oracle 10g zosta³ przetestowany przy wykorzystaniu
+				<TT
+CLASS="filename"
+>ojdbc14.jar</TT
+>, jednak¿e v-q 
+				powinien dzia³aæ bez problemów ze starszymi wersjami.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.otherdb"
+>7.2.4. Inne systemy bazodanowe</A
+></H2
+><P
+>&#13;				Poni¿ej przedstawiona jest lista baz danych, które
+				nie s± kompatybilne z v-q:
+				<P
+></P
+></P><UL
+><LI
+><P
+>MySQL - brak obs³ugi widoków, procedur przechowywanych po stronie klienta;</P
+></LI
+><LI
+><P
+>&#13;							Firebird - nie mo¿na utworzyæ indeksu z kluczem
+							wiêkszym ni¿ 252 bajty. Powinno to zostaæ
+							naprawione w wersji 2, jednak¿e jak na razie
+							dalej to nie dzia³a (sprawdzona wersja 2.0 Alpha 2),
+							inne potrzebne funkcje s± dostêpne;
+						</P
+></LI
+><LI
+><P
+>&#13;							Cloudscape (AKA apache-derby) - nie mo¿na
+							utworzyæ perspektywy zawieraj±cej
+							funkcjê agreguj±c±, pozosta³e wymagane
+							funkcje s± dostêpne;
+						</P
+></LI
+></UL
+><P>
+			</P
+></DIV
 ></DIV
 ><DIV
 CLASS="NAVFOOTER"
@@ -246,7 +315,7 @@ VALIGN="top"
 ><A
 HREF="install.prep.html"
 ACCESSKEY="N"
->Nastêpny</A
+>Nast&#281;pny</A
 ></TD
 ></TR
 ><TR

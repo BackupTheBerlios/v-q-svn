@@ -3,11 +3,6 @@
 	<title>Tworzenie aplikacji korzystaj±cych z v-q</title>
 
 	<para>
-		Zbyt du¿o tutaj nie ma. Rozdzia³ ten bêdzie rozwiniêty w przysz³ej
-		wersji.
-	</para>
-
-	<para>
 		Na dzieñ dzisiejszy g³ównym ¼ród³em informacji s± ¼ród³a v-q.
 		Mo¿esz równie¿ sprawdziæ nastêpuj±ce katalogi:
 		<filename>interfaces/clue</filename>,
@@ -328,4 +323,31 @@ java DomVal -ORBInitRef NameService=corbaloc::$host:12456/NameService
 		</para>
 	</section>
 
+	<section id="devs.pkgs">
+		<title>Tworzenie pakietów</title>
+	
+		<section id="devs.pkgs.rpm">
+			<title>RedHat, SuSe, oraz inne systemy korzystaj±ce z RPM</title>
+
+			<para>
+				Mo¿esz skorzystaæ z pakietu ¼ród³owego RPM.
+				¦ci±gnij go <link linkend="install.download">korzystaj±c z tej strony</link>. 
+				Uruchom
+<screen><userinput><application>rpm</application> -ivh package.rpm</userinput></screen>
+				aby go zainstalowaæ. Pliki zostan± umieszczone gdzie¶ w
+				<filename>/usr/src</filename>, poszukaj pliku <filename>v-q.spec</filename>.
+				Uruchom
+<screen><userinput><application>rpmbuild</application> -bb v-q.spec</userinput></screen>
+				aby utworzyæ pakiety binarne.
+			</para>
+
+			<para>
+				Tworzenie pakietów rpm na podstawie ¼róde³ ¶ci±gniêtych
+				z repozytorium lub rozpakowanych z archiwum jest równie proste. 
+				Wejd¼ do g³ównego katalogu i uruchom
+<screen><userinput><application>make</application> pkg-rpm</userinput></screen>
+			</para>
+		</section>
+	</section>
 </chapter>
+

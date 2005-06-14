@@ -2,7 +2,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Compilation</TITLE
+>Creating packages</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
@@ -10,14 +10,14 @@ REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
 REL="UP"
-TITLE="Installation"
-HREF="install.html"><LINK
+TITLE="Developers' corner"
+HREF="devs.html"><LINK
 REL="PREVIOUS"
-TITLE="Preparation"
-HREF="install.prep.html"><LINK
+TITLE="Using v-q from Java"
+HREF="devs.java.html"><LINK
 REL="NEXT"
-TITLE="Installation"
-HREF="install.install.html"><LINK
+TITLE="Community"
+HREF="community.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
@@ -52,7 +52,7 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="install.prep.html"
+HREF="devs.java.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -60,13 +60,13 @@ ACCESSKEY="P"
 WIDTH="80%"
 ALIGN="center"
 VALIGN="bottom"
->Chapter 7. Installation</TD
+>Chapter 4. Developers' corner</TD
 ><TD
 WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="install.install.html"
+HREF="community.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -80,83 +80,67 @@ CLASS="section"
 ><H1
 CLASS="section"
 ><A
-NAME="install.comp"
->7.4. Compilation</A
+NAME="devs.pkgs"
+>4.3. Creating packages</A
 ></H1
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="devs.pkgs.rpm"
+>4.3.1. RedHat, SuSe, other RPM based systems</A
+></H2
 ><P
->Now it's time to compile sources. If you configured
-		everything properly you should be able to successfully
-		compile Virtual Qmail.</P
-><P
->&#13;			To compile program use <SPAN
-CLASS="application"
->make</SPAN
->.
-			You can use both flavors: BSD or GNU. Depending on the shell
-			you use you can, for <SPAN
-CLASS="application"
->sh</SPAN
->, write:
+>&#13;				You can use a RPM source package. You can <A
+HREF="install.html#install.download"
+>download it here</A
+>. Run
 </P><PRE
 CLASS="screen"
->&#13;<KBD
+><KBD
 CLASS="userinput"
->&#13;make 2&#62;&#38;1 &#62; out
-</KBD
->
-</PRE
+><SPAN
+CLASS="application"
+>rpm</SPAN
+> -ivh package.rpm</KBD
+></PRE
 ><P>
-			If you use tcsh you can use:
+				to install it. Files will be placed somewhere in <TT
+CLASS="filename"
+>/usr/src</TT
+>, search for file <TT
+CLASS="filename"
+>v-q.spec</TT
+>.
+				Run
 </P><PRE
 CLASS="screen"
->&#13;<KBD
+><KBD
 CLASS="userinput"
->&#13;make &#62;&#38; out
-</KBD
->
-</PRE
+><SPAN
+CLASS="application"
+>rpmbuild</SPAN
+> -bb v-q.spec</KBD
+></PRE
 ><P>
-			When <SPAN
+				to build all binary packages.
+			</P
+><P
+>&#13;				Building from sources downloaded from repository or unpacked from tarball is also simple. Just go to the main
+				directory and run
+</P><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+><SPAN
 CLASS="application"
 >make</SPAN
-> finishes check
-			<TT
-CLASS="filename"
->out</TT
-> to see output generated during
-			compilation.
-		</P
-><P
->&#13;			If you can't compile v-q please send <TT
-CLASS="filename"
->out</TT
->
-			to <A
-HREF="community.authors.html#pniewiadomski"
->Pawe³ Niewiadomski</A
->.
-		</P
-><P
->&#13;			Running <SPAN
-CLASS="application"
->make</SPAN
-> generates
-			only base system without any database based modules or WWW
-			interface. Makefile includes following useful targets:
-			<P
-></P
-></P><UL
-><LI
-><P
->pgsql - PostgreSQL based modules</P
-></LI
-><LI
-><P
->clean - removes all objects created during compilation</P
-></LI
-></UL
+> pkg-rpm</KBD
+></PRE
 ><P>
-		</P
+			</P
+></DIV
 ></DIV
 ><DIV
 CLASS="NAVFOOTER"
@@ -174,7 +158,7 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="install.prep.html"
+HREF="devs.java.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -192,7 +176,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="install.install.html"
+HREF="community.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -202,13 +186,13 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Preparation</TD
+>Using v-q from Java</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
 VALIGN="top"
 ><A
-HREF="install.html"
+HREF="devs.html"
 ACCESSKEY="U"
 >Up</A
 ></TD
@@ -216,7 +200,7 @@ ACCESSKEY="U"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Installation</TD
+>Community</TD
 ></TR
 ></TABLE
 ></DIV

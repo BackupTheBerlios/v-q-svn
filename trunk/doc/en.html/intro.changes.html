@@ -2,7 +2,7 @@
 <HTML
 ><HEAD
 ><TITLE
->Compilation</TITLE
+>Important changes</TITLE
 ><META
 NAME="GENERATOR"
 CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
@@ -10,14 +10,14 @@ REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
 REL="UP"
-TITLE="Installation"
-HREF="install.html"><LINK
+TITLE="Introduction"
+HREF="intro.html"><LINK
 REL="PREVIOUS"
-TITLE="Preparation"
-HREF="install.prep.html"><LINK
+TITLE="Missing features"
+HREF="intro.missing.html"><LINK
 REL="NEXT"
-TITLE="Installation"
-HREF="install.install.html"><LINK
+TITLE="Documentation translations"
+HREF="intro.trans.html"><LINK
 REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
@@ -52,7 +52,7 @@ WIDTH="10%"
 ALIGN="left"
 VALIGN="bottom"
 ><A
-HREF="install.prep.html"
+HREF="intro.missing.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -60,13 +60,13 @@ ACCESSKEY="P"
 WIDTH="80%"
 ALIGN="center"
 VALIGN="bottom"
->Chapter 7. Installation</TD
+>Chapter 1. Introduction</TD
 ><TD
 WIDTH="10%"
 ALIGN="right"
 VALIGN="bottom"
 ><A
-HREF="install.install.html"
+HREF="intro.trans.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -80,83 +80,25 @@ CLASS="section"
 ><H1
 CLASS="section"
 ><A
-NAME="install.comp"
->7.4. Compilation</A
+NAME="intro.changes"
+>1.5. Important changes</A
 ></H1
 ><P
->Now it's time to compile sources. If you configured
-		everything properly you should be able to successfully
-		compile Virtual Qmail.</P
-><P
->&#13;			To compile program use <SPAN
-CLASS="application"
->make</SPAN
->.
-			You can use both flavors: BSD or GNU. Depending on the shell
-			you use you can, for <SPAN
-CLASS="application"
->sh</SPAN
->, write:
-</P><PRE
-CLASS="screen"
->&#13;<KBD
-CLASS="userinput"
->&#13;make 2&#62;&#38;1 &#62; out
-</KBD
->
-</PRE
-><P>
-			If you use tcsh you can use:
-</P><PRE
-CLASS="screen"
->&#13;<KBD
-CLASS="userinput"
->&#13;make &#62;&#38; out
-</KBD
->
-</PRE
-><P>
-			When <SPAN
-CLASS="application"
->make</SPAN
-> finishes check
-			<TT
-CLASS="filename"
->out</TT
-> to see output generated during
-			compilation.
+>&#13;			Following list represents only important changes which
+			can influence compatibility with previous version, etc.
 		</P
+><DIV
+CLASS="formalpara"
 ><P
->&#13;			If you can't compile v-q please send <TT
-CLASS="filename"
->out</TT
+><B
+>Version 7. </B
 >
-			to <A
-HREF="community.authors.html#pniewiadomski"
->Pawe³ Niewiadomski</A
->.
-		</P
-><P
->&#13;			Running <SPAN
-CLASS="application"
->make</SPAN
-> generates
-			only base system without any database based modules or WWW
-			interface. Makefile includes following useful targets:
-			<P
-></P
-></P><UL
-><LI
-><P
->pgsql - PostgreSQL based modules</P
-></LI
-><LI
-><P
->clean - removes all objects created during compilation</P
-></LI
-></UL
-><P>
-		</P
+				Lookups into vq_emails_banned are made now with LIKE.
+				Previous version used PostgreSQL's POSIX expressions.
+				If you have entries in vq_emails_banned you should
+				update them.
+			</P
+></DIV
 ></DIV
 ><DIV
 CLASS="NAVFOOTER"
@@ -174,7 +116,7 @@ WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
 ><A
-HREF="install.prep.html"
+HREF="intro.missing.html"
 ACCESSKEY="P"
 >Prev</A
 ></TD
@@ -192,7 +134,7 @@ WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
 ><A
-HREF="install.install.html"
+HREF="intro.trans.html"
 ACCESSKEY="N"
 >Next</A
 ></TD
@@ -202,13 +144,13 @@ ACCESSKEY="N"
 WIDTH="33%"
 ALIGN="left"
 VALIGN="top"
->Preparation</TD
+>Missing features</TD
 ><TD
 WIDTH="34%"
 ALIGN="center"
 VALIGN="top"
 ><A
-HREF="install.html"
+HREF="intro.html"
 ACCESSKEY="U"
 >Up</A
 ></TD
@@ -216,7 +158,7 @@ ACCESSKEY="U"
 WIDTH="33%"
 ALIGN="right"
 VALIGN="top"
->Installation</TD
+>Documentation translations</TD
 ></TR
 ></TABLE
 ></DIV

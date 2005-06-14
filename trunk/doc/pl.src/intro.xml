@@ -95,6 +95,27 @@
 		</para>
 	</section>
 
+	<section id="intro.changes">
+		<title>Wa¿ne zmiany</title>
+
+			<para>
+				Poni¿ej znajduje siê lista istnotnych zmian, które
+				mog± wp³ywaæ na kompatybilno¶æ miêdzy wersjami, etc.
+			</para>
+
+			<formalpara>
+				<title>Wersja 7</title>
+
+				<para>
+					Odwo³ania do vq_emails_banned wykorzystuj± teraz operator LIKE.
+					Poprzednie wersje korzysta³y z operatora wyra¿eñ regularnych POSIX, 
+					który jest dostêpny w PostgreSQL.
+					Je¿eli vq_emails_banned zawiera jakie¶ wpisy musisz
+					je rêcznie zaktualizowaæ.
+				</para>
+			</formalpara>
+	</section>
+
 	<section id="intro.trans">
 		<title>T³umaczenia dokumentacji</title>
 

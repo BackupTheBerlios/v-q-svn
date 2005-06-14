@@ -1,11 +1,11 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML
 ><HEAD
 ><TITLE
 >Instalacja</TITLE
 ><META
 NAME="GENERATOR"
-CONTENT="Modular DocBook HTML Stylesheet Version 1.72
-"><LINK
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
 REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
@@ -22,7 +22,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-04-19T22:04:44"><META
+CONTENT="2005-06-14T17:34:11"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -68,7 +68,7 @@ VALIGN="bottom"
 ><A
 HREF="doc.gen.html"
 ACCESSKEY="N"
->Nastêpny</A
+>Nast&#281;pny</A
 ></TD
 ></TR
 ></TABLE
@@ -88,12 +88,10 @@ NAME="install.install"
 			Jest to tak proste jak napisanie:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make install
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -106,12 +104,10 @@ CLASS="filename"
 >:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make PREFIX=/var/v-q install
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -199,12 +195,10 @@ NAME="install.steps.pgsql"
 				Aby utworzyæ domy¶lnego u¿ytkownika uruchom polecenie:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;createuser -A -D -P mail
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -214,12 +208,10 @@ CLASS="userinput"
 				nazywa siê ona "mail", mo¿esz u¿yæ innej nazwy.
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;createdb -E utf-8 -O mail mail
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -229,24 +221,20 @@ CLASS="userinput"
 				uruchom polecenie w sh:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make pgsql 2&#62;&#38;1 &#62; out.pgsql
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
 				W tcsh u¿yj polecenia:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make pgsql &#62;&#38; out.pgsql
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -259,12 +247,10 @@ CLASS="userinput"
 >&#13;				Aby zainstalowaæ modu³y PostgreSQL:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make install-pgsql
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -277,12 +263,10 @@ CLASS="filename"
 >:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make PREFIX=/var/v-q install
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -425,7 +409,7 @@ VALIGN="top"
 ><A
 HREF="doc.gen.html"
 ACCESSKEY="N"
->Nastêpny</A
+>Nast&#281;pny</A
 ></TD
 ></TR
 ><TR

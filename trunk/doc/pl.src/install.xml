@@ -103,8 +103,56 @@
 				<ulink url="http://www.postgresql.org">http://www.postgresql.org</ulink>.
 			</para>
 		</section>
-	</section>
 
+		<section id="install.oracle">
+			<title>U¿ywanie Oracle</title>
+
+			<para>
+				Od wersji 7pre1 <application>Oracle</application> jest oficjalnie
+				obs³ugiwan± baz± danych. Na dzieñ dzisiejszy mo¿na
+				korzystaæ z tej bazy danych tylko za pomoc± demonów
+				JDBC. Nale¿y posiadaæ sterowniki JDBC dla posiadanej
+				wersji Oracle, nie s± one do³±czone do pakietu. 
+				Domy¶lne skrypty SQL znajduj± siê w katalogu
+				<filename>base/oracle</filename>.
+				Oracle 10g zosta³ przetestowany przy wykorzystaniu
+				<filename>ojdbc14.jar</filename>, jednak¿e v-q 
+				powinien dzia³aæ bez problemów ze starszymi wersjami.
+			</para>
+		</section>
+ 
+		<section id="install.otherdb">
+			<title>Inne systemy bazodanowe</title>
+
+			<para>
+				Poni¿ej przedstawiona jest lista baz danych, które
+				nie s± kompatybilne z v-q:
+				<itemizedlist>
+					<listitem>
+						<para>MySQL - brak obs³ugi widoków, procedur przechowywanych po stronie klienta;</para>
+					</listitem>
+					<listitem>
+						<para>
+							Firebird - nie mo¿na utworzyæ indeksu z kluczem
+							wiêkszym ni¿ 252 bajty. Powinno to zostaæ
+							naprawione w wersji 2, jednak¿e jak na razie
+							dalej to nie dzia³a (sprawdzona wersja 2.0 Alpha 2),
+							inne potrzebne funkcje s± dostêpne;
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Cloudscape (AKA apache-derby) - nie mo¿na
+							utworzyæ perspektywy zawieraj±cej
+							funkcjê agreguj±c±, pozosta³e wymagane
+							funkcje s± dostêpne;
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+ 	</section>
+ 
 	<section id="install.prep">
 		<title>Przygotowania</title>
 
@@ -550,3 +598,4 @@ make PREFIX=/var/v-q install
 		</section>
 	</section>
 </chapter>
+

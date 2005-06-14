@@ -1,11 +1,11 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML
 ><HEAD
 ><TITLE
 >Dependencies</TITLE
 ><META
 NAME="GENERATOR"
-CONTENT="Modular DocBook HTML Stylesheet Version 1.72
-"><LINK
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
 REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
@@ -22,7 +22,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-04-19T22:04:19"><META
+CONTENT="2005-06-14T17:33:53"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -201,6 +201,72 @@ HREF="http://www.postgresql.org"
 TARGET="_top"
 >&#13;				http://www.postgresql.org</A
 >.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.oracle"
+>7.2.3. Using Oracle</A
+></H2
+><P
+>&#13;				From version 7pre1 <SPAN
+CLASS="application"
+>Oracle</SPAN
+> is a supported database.
+				At this time you can use it only throught JDBC daemons.
+				You will need JDBC drivers for your Oracle version, they
+				are not included. Sample SQL scripts are placed
+				in <TT
+CLASS="filename"
+>base/oracle</TT
+> directory.
+				Oracle 10g was tested using <TT
+CLASS="filename"
+>ojdbc14.jar</TT
+>,
+				but v-q should work without problems with older versions.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.otherdb"
+>7.2.4. Other database systems</A
+></H2
+><P
+>&#13;				Following is a list of database systems that are
+				not compatible with v-q:
+				<P
+></P
+></P><UL
+><LI
+><P
+>MySQL - there's no support for views, stored procedures;</P
+></LI
+><LI
+><P
+>&#13;							Firebird - it's not possible to create
+							index with a key larger than 252 bytes.
+							It should be fixed in upcoming 2 version, but
+							at this time it is not (tested 2.0 Alpha 2),
+							other required functions are implemented;
+						</P
+></LI
+><LI
+><P
+>&#13;							Cloudscape (AKA apache-derby) - it's not
+							possible to create a view with an
+							aggregate function, other required functions
+							are implemented;
+						</P
+></LI
+></UL
+><P>
 			</P
 ></DIV
 ></DIV

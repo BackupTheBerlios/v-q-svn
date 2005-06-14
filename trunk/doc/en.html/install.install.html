@@ -1,11 +1,11 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML
 ><HEAD
 ><TITLE
 >Installation</TITLE
 ><META
 NAME="GENERATOR"
-CONTENT="Modular DocBook HTML Stylesheet Version 1.72
-"><LINK
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
 REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
@@ -22,7 +22,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-04-19T22:04:19"><META
+CONTENT="2005-06-14T17:33:53"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -88,12 +88,10 @@ NAME="install.install"
 			It's easy as writing:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make install
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -105,12 +103,10 @@ CLASS="filename"
 >:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make PREFIX=/var/v-q install
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -196,12 +192,10 @@ NAME="install.steps.pgsql"
 				To create user you can use following command:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;createuser -A -D -P mail
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -211,12 +205,10 @@ CLASS="userinput"
 				name is "mail". But you can use any name.
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;createdb -E utf-8 -O mail mail
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -225,24 +217,20 @@ CLASS="userinput"
 >&#13;				To compile PostgreSQL modules you should run in bash:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make pgsql 2&#62;&#38;1 &#62; out.pgsql
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
 				In tcsh run:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make pgsql &#62;&#38; out.pgsql
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -255,12 +243,10 @@ CLASS="userinput"
 >&#13;				To install PostgreSQL modules run:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make install-pgsql
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>
@@ -273,12 +259,10 @@ CLASS="filename"
 >:
 </P><PRE
 CLASS="screen"
->&#13;<TT
+>&#13;<KBD
 CLASS="userinput"
-><B
 >&#13;make PREFIX=/var/v-q install-pgsql
-</B
-></TT
+</KBD
 >
 </PRE
 ><P>

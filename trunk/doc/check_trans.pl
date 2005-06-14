@@ -18,7 +18,7 @@ closedir(CUR);
 
 die("no translation found") if(! @trans."");
 
-open(LS,"svn ls -Rv \"$def/*\"|") or die;
+open(LS,"svn ls -Rv \"$def\"/|") or die;
 my @lns = <LS> or die;
 close(LS) or die;
 
@@ -26,7 +26,7 @@ my %files = &lns2hash(@lns);
 
 foreach $tran (@trans) {
 	print ">>> $tran\n";
-	open(LS,"svn ls -Rv \"$tran\"/*|") or die;
+	open(LS,"svn ls -Rv \"$tran\"/|") or die;
 	my @lns = <LS> or die;
 	close(LS) or die;
 
