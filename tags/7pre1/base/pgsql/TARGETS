@@ -1,0 +1,5 @@
+auto/
+.depend
+cpgsqlauth.o pgsqlauthd.o
+pgsqlauthd
+pgsqllogd pgsqllogd.o cpgsqllog.o

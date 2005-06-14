@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+
+	[
+	<!ENTITY doc.gen SYSTEM "doc.gen.xml">
+	<!ENTITY intro SYSTEM "intro.xml">
+	<!ENTITY community SYSTEM "community.xml">
+	<!ENTITY install SYSTEM "install.xml">
+	<!ENTITY arch SYSTEM "arch.xml">
+	<!ENTITY license SYSTEM "license.xml">
+	<!ENTITY devs SYSTEM "devs.xml">
+	<!ENTITY com.support SYSTEM "com.support.xml">
+	<!ENTITY life SYSTEM "life.xml">
+	<!ENTITY life.conf SYSTEM "life.conf.xml">
+	<!ENTITY life.security SYSTEM "life.security.xml">
+	<!ENTITY life.os SYSTEM "life.os.xml">
+	]
+>
+<book lang="pl">
+	<bookinfo>
+		<title>Virtual Qmail</title>
+		<authorgroup>
+			<author>
+				<firstname>Paweł</firstname>
+				<surname>Niewiadomski</surname>
+			</author>
+		</authorgroup>
+		<copyright>
+			<year>2003</year>
+			<year>2004</year>
+			<year>2005</year>
+			<holder><ulink url="http://foo-baz.com">foo-baz.com</ulink></holder>
+		</copyright>
+	</bookinfo>
+
+	<preface id="foreword">
+		<title>Słowo wstępne</title>
+
+		<para>
+			Podręcznik opisuje system
+			<ulink url="http://v-q.foo-baz.com">Virtual Qmail</ulink>. 
+			Mam nadzieję, że czytanie go sprawi Ci przyjemność. Wszelkie
+			sugestie, raporty błędów, pytania kieruj do
+			Pawła Niewiadomskiego
+			&lt;<literal>new [__at__] foo-baz [__dot__] com</literal>&gt;.
+		</para>
+	</preface>
+	
+	&intro;
+	&arch;
+	&life;
+	&devs;
+	&community;
+	&com.support;
+	&install;
+	&doc.gen;
+</book>
+

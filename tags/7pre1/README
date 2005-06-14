@@ -1,0 +1,20 @@
+Welcome to Virtual Qmail.
+My name is Pawel Niewiadomski and I'm proud to present you my work.
+Program you've downloaded is supposed to be used as domains/users
+manager that integrates with qmail.
+
+I hope you will enjoy using it. If you encounter any problems with
+installation, administration please contact me. If you have
+any questions you can ask them on project's mailing list or
+forums at sourceforge.net/projects/v-q, you can also contact me directly - 
+- new@foo-baz.com.
+
+More documentation is in doc/en.html directory. There you will find
+informations about current (and future) features, installation
+procedure, and more.
+
+The most current version of documentation, forums, mailing lists and
+releases can be found at http://v-q.foo-baz.com (mirror at
+http://v-q.sourceforge.net).
+
+Help me build a better software!

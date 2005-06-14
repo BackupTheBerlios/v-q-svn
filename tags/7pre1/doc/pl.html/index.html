@@ -1,0 +1,620 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Virtual Qmail</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="NEXT"
+TITLE="S³owo wstêpne"
+HREF="foreword.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-06-14T17:34:11"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="book"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="AEN1"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN2"
+>Virtual Qmail</A
+></H1
+><H3
+CLASS="author"
+><A
+NAME="AEN5"
+></A
+>Pawe³ Niewiadomski</H3
+><P
+CLASS="copyright"
+>Copyright &copy; 2003, 2004, 2005 <A
+HREF="http://foo-baz.com"
+TARGET="_top"
+>foo-baz.com</A
+></P
+><HR></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Spis tre&#347;ci</B
+></DT
+><DT
+><A
+HREF="foreword.html"
+>S³owo wstêpne</A
+></DT
+><DT
+>1. <A
+HREF="intro.html"
+>Wprowadzenie</A
+></DT
+><DD
+><DL
+><DT
+>1.1. <A
+HREF="intro.html#intro.goal"
+>Cel projektu</A
+></DT
+><DT
+>1.2. <A
+HREF="intro.features.html"
+>G³ówne cechy aktualnego systemu</A
+></DT
+><DT
+>1.3. <A
+HREF="intro.todo.html"
+>Planowane w³a¶ciwo¶ci</A
+></DT
+><DT
+>1.4. <A
+HREF="intro.missing.html"
+>Niedostêpne funkcje</A
+></DT
+><DT
+>1.5. <A
+HREF="intro.changes.html"
+>Wa¿ne zmiany</A
+></DT
+><DT
+>1.6. <A
+HREF="intro.trans.html"
+>T³umaczenia dokumentacji</A
+></DT
+><DT
+>1.7. <A
+HREF="license.html"
+>Licencja</A
+></DT
+></DL
+></DD
+><DT
+>2. <A
+HREF="arch.html"
+>Architektura</A
+></DT
+><DD
+><DL
+><DT
+>2.1. <A
+HREF="arch.html#arch.parts"
+>G³ówne czê¶ci</A
+></DT
+><DT
+>2.2. <A
+HREF="arch.ivq.html"
+>Interfejs ivq</A
+></DT
+><DD
+><DL
+><DT
+>2.2.1. <A
+HREF="arch.ivq.html#arch.ivq.cqmailvq"
+>cqmailvq</A
+></DT
+></DL
+></DD
+><DT
+>2.3. <A
+HREF="arch.iauth.html"
+>Interfejs iauth</A
+></DT
+><DD
+><DL
+><DT
+>2.3.1. <A
+HREF="arch.iauth.html#arch.iauth.cpgsqlauth"
+>cpgsqlauth</A
+></DT
+><DT
+>2.3.2. <A
+HREF="arch.iauth.html#arch.iauth.JDBCAuth"
+>JDBCAuth</A
+></DT
+></DL
+></DD
+><DT
+>2.4. <A
+HREF="arch.ilogger.html"
+>Interfejs ilogger</A
+></DT
+><DD
+><DL
+><DT
+>2.4.1. <A
+HREF="arch.ilogger.html#arch.ilogger.cpgsqllog"
+>cpgsqllog</A
+></DT
+><DT
+>2.4.2. <A
+HREF="arch.ilogger.html#arch.ilogger.JDBCLog"
+>JDBCLog</A
+></DT
+></DL
+></DD
+><DT
+>2.5. <A
+HREF="arch.clients.html"
+>Klienci: programy linii poleceñ, interfejs WWW, etc.</A
+></DT
+><DT
+>2.6. <A
+HREF="arch.db.html"
+>Baza danych</A
+></DT
+></DL
+></DD
+><DT
+>3. <A
+HREF="life.html"
+>¯ycie z Virtual Qmail</A
+></DT
+><DD
+><DL
+><DT
+>3.1. <A
+HREF="life.html#life.conf"
+>Konfiguracja</A
+></DT
+><DD
+><DL
+><DT
+>3.1.1. <A
+HREF="life.html#life.env"
+>Zmienne ¶rodowiska</A
+></DT
+><DT
+>3.1.2. <A
+HREF="life.html#AEN219"
+>Konfiguracja modu³u Qmail</A
+></DT
+><DT
+>3.1.3. <A
+HREF="life.html#AEN314"
+>Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
+></DT
+><DT
+>3.1.4. <A
+HREF="life.html#AEN350"
+>Konfiguracja modu³u autoryzacyjnego JDBC</A
+></DT
+><DT
+>3.1.5. <A
+HREF="life.html#AEN392"
+>Konfiguracja modu³u loguj±cego PostgreSQL</A
+></DT
+><DT
+>3.1.6. <A
+HREF="life.html#AEN428"
+>Konfiguracja modu³u loguj±cego JDBC</A
+></DT
+></DL
+></DD
+><DT
+>3.2. <A
+HREF="life.security.html"
+>Bezpieczeñstwo bez ¶ciemniania</A
+></DT
+><DD
+><DL
+><DT
+>3.2.1. <A
+HREF="life.security.html#life.security.steps"
+>Kroki maj±ce na celu uczyniæ system bezpieczniejszym</A
+></DT
+><DT
+>3.2.2. <A
+HREF="life.security.html#life.security.sockets"
+>Ograniczanie dostêpu do gniazd sieciowych</A
+></DT
+></DL
+></DD
+><DT
+>3.3. <A
+HREF="life.integration.html"
+>Integracja z zewnêtrznym oprogramowaniem</A
+></DT
+><DD
+><DL
+><DT
+>3.3.1. <A
+HREF="life.integration.html#life.inte.omail"
+>Omail-webmail</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>4. <A
+HREF="devs.html"
+>Tworzenie aplikacji korzystaj±cych z v-q</A
+></DT
+><DD
+><DL
+><DT
+>4.1. <A
+HREF="devs.html#devs.python"
+>U¿ywanie v-q z poziomu pythona</A
+></DT
+><DT
+>4.2. <A
+HREF="devs.java.html"
+>U¿ywanie v-q z poziomu Java</A
+></DT
+><DT
+>4.3. <A
+HREF="devs.pkgs.html"
+>Tworzenie pakietów</A
+></DT
+><DD
+><DL
+><DT
+>4.3.1. <A
+HREF="devs.pkgs.html#devs.pkgs.rpm"
+>RedHat, SuSe, oraz inne systemy korzystaj±ce z RPM</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>5. <A
+HREF="community.html"
+>Wspólnota</A
+></DT
+><DD
+><DL
+><DT
+>5.1. <A
+HREF="community.html#community.list"
+>Lista dyskusyjna</A
+></DT
+><DT
+>5.2. <A
+HREF="community.forums.html"
+>Forum</A
+></DT
+><DT
+>5.3. <A
+HREF="community.requests.html"
+>¯±dania</A
+></DT
+><DT
+>5.4. <A
+HREF="community.success.html"
+>Udane wdro¿enia</A
+></DT
+><DT
+>5.5. <A
+HREF="community.bugs.html"
+>Zg³aszanie b³êdów</A
+></DT
+><DT
+>5.6. <A
+HREF="community.blog.html"
+>Virtual Qmail ma swój blog</A
+></DT
+><DT
+>5.7. <A
+HREF="community.authors.html"
+>Autorzy</A
+></DT
+><DD
+><DL
+><DT
+>5.7.1. <A
+HREF="community.authors.html#pniewiadomski"
+>Pawe³ Niewiadomski</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>6. <A
+HREF="com.support.html"
+>Komercyjne wsparcie</A
+></DT
+><DT
+>7. <A
+HREF="install.html"
+>Instalacja</A
+></DT
+><DD
+><DL
+><DT
+>7.1. <A
+HREF="install.html#install.download"
+>¦ci±ganie</A
+></DT
+><DT
+>7.2. <A
+HREF="install.deps.html"
+>Zale¿no¶ci</A
+></DT
+><DD
+><DL
+><DT
+>7.2.1. <A
+HREF="install.deps.html#install.mta"
+>Agent transferu poczty (MTA)</A
+></DT
+><DT
+>7.2.2. <A
+HREF="install.deps.html#install.pgsql"
+>U¿ywanie PostgreSQL</A
+></DT
+><DT
+>7.2.3. <A
+HREF="install.deps.html#install.oracle"
+>U¿ywanie Oracle</A
+></DT
+><DT
+>7.2.4. <A
+HREF="install.deps.html#install.otherdb"
+>Inne systemy bazodanowe</A
+></DT
+></DL
+></DD
+><DT
+>7.3. <A
+HREF="install.prep.html"
+>Przygotowania</A
+></DT
+><DD
+><DL
+><DT
+>7.3.1. <A
+HREF="install.prep.html#AEN692"
+>Tworzenie u¿ytkownika i grupy</A
+></DT
+><DT
+>7.3.2. <A
+HREF="install.prep.html#install.unpack"
+>Rozpakowywanie ¼róde³</A
+></DT
+><DT
+>7.3.3. <A
+HREF="install.prep.html#install.conf"
+>Konfiguracja przed instalacj±</A
+></DT
+></DL
+></DD
+><DT
+>7.4. <A
+HREF="install.comp.html"
+>Kompilacja</A
+></DT
+><DT
+>7.5. <A
+HREF="install.install.html"
+>Instalacja</A
+></DT
+><DD
+><DL
+><DT
+>7.5.1. <A
+HREF="install.install.html#install.steps.qmail"
+>Specjalne kroki dla Qmail</A
+></DT
+><DT
+>7.5.2. <A
+HREF="install.install.html#install.steps.pgsql"
+>Specjalne kroki dla PostgreSQL</A
+></DT
+><DT
+>7.5.3. <A
+HREF="install.install.html#install.problems"
+>Mam problem, co zrobiæ?</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>8. <A
+HREF="doc.gen.html"
+>Generowanie dokumentacji</A
+></DT
+><DD
+><DL
+><DT
+>8.1. <A
+HREF="doc.gen.html#doc.gen.openbsd"
+>OpenBSD</A
+></DT
+><DT
+>8.2. <A
+HREF="doc.gen.makefile.html"
+>Korzystanie z pliku makefile</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="LOT"
+><DL
+CLASS="LOT"
+><DT
+><B
+>Spis tabel</B
+></DT
+><DT
+>3-1. <A
+HREF="life.html#AEN224"
+>Konfiguracja modu³u Qmail</A
+></DT
+><DT
+>3-2. <A
+HREF="life.html#AEN319"
+>Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
+></DT
+><DT
+>3-3. <A
+HREF="life.html#AEN355"
+>Konfiguracja modu³u autoryzacyjnego JDBC</A
+></DT
+><DT
+>3-4. <A
+HREF="life.html#AEN397"
+>Konfiguracja modu³u loguj±cego PostgreSQL</A
+></DT
+><DT
+>3-5. <A
+HREF="life.html#AEN433"
+>Konfiguracja modu³u loguj±cego JDBC</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="LOT"
+><DL
+CLASS="LOT"
+><DT
+><B
+>Spis rysunków</B
+></DT
+><DT
+>2-1. <A
+HREF="arch.html#AEN104"
+>Architektura w obrazku</A
+></DT
+><DT
+>2-2. <A
+HREF="arch.db.html#AEN170"
+>Baza danych w obrazku</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="LOT"
+><DL
+CLASS="LOT"
+><DT
+><B
+>Spis przyk&#322;adów</B
+></DT
+><DT
+>7-1. <A
+HREF="install.prep.html#AEN783"
+>corba.inc dla MICO zainstalowanego w /usr/local/progs/mico</A
+></DT
+><DT
+>7-2. <A
+HREF="install.prep.html#AEN787"
+>corba.lib dla MICO zainstalowanego w /usr/local/progs/mico</A
+></DT
+><DT
+>7-3. <A
+HREF="install.prep.html#AEN791"
+>corba.inc dla omniORB zainstalowanego w /usr/local/progs/omniorb</A
+></DT
+><DT
+>7-4. <A
+HREF="install.prep.html#AEN795"
+>corba.lib dla omniORB zainstalowanego w /usr/local/progs/omniorb</A
+></DT
+><DT
+>8-1. <A
+HREF="doc.gen.html#AEN886"
+>Zawarto¶æ pliku <TT
+CLASS="filename"
+>catalog</TT
+></A
+></DT
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="foreword.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>S³owo wstêpne</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
