@@ -1,7 +1,10 @@
 PREFIX?=/var/vq
-INSTALL=install
-JAVAC=javac
-JAVA=java
+INSTALL?=install
+JAVAC?=javac
+JAVA?=java
+JADE?=openjade
+SGML_CATALOG_FILES?=/usr/share/sgml/CATALOG.openjade:/usr/share/sgml/CATALOG.db42xml:/usr/share/sgml/CATALOG.iso_ent:/usr/share/sgml/CATALOG.docbkdsl
+SGML_XML_DCL?=/usr/share/sgml/openjade/xml.dcl
 
 .PHONY: auto-mkdir
 

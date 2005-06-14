@@ -252,7 +252,8 @@ public class JDBCAuth extends iauthPOA {
 		if( ia == null )
 			return lr(err_code.err_dom_inv, ali);
 
-		return da_dip_add(dom_id, ia.getHostAddress(), "DIP_ADD");
+		//return da_dip_add(dom_id, ia.getHostAddress(), "DIP_ADD");
+		return da_dip_add(dom_id, ali, "DIP_ADD");
 	}
 
 	/**
