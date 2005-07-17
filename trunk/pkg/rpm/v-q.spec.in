@@ -105,16 +105,20 @@ cat > make-lib << EOF
 exec ar cr \${1+"\$@"}
 EOF
 
+%if "%{_vendor}" != "redhat"
+STRIP_FLAGS=-s
+%endif
+
 cat > make-so << EOF
 #!/bin/sh
 main="\$1"; shift
-exec g++ -L. -shared -o "\$main" \${1+"\$@"}
+exec g++ $STRIP_FLAGS -L. -shared -o "\$main" \${1+"\$@"}
 EOF
 
 cat > load << EOF
 #!/bin/sh
 main="\$1"; shift
-exec g++ -L. -o "\$main" "\$main".o \${1+"\$@"}
+exec g++ $STRIP_FLAGS -L. -o "\$main" "\$main".o \${1+"\$@"}
 EOF
 
 %build
