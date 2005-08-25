@@ -47,11 +47,11 @@ install-conf: install-dirs
 
 pkg-rpm: 
 	@if [ `id -u` != 0 ] ; then echo You must be root. ; exit 1; fi
-	rm -rf "`find /usr/src/ -name SOURCES`/v-q-$(VERSION)"
-	svn export . "`find /usr/src/ -name SOURCES`/v-q-$(VERSION)"
-	cd "`find /usr/src/ -name SOURCES`" && tar -czf v-q-$(VERSION).tar.gz v-q-$(VERSION)
-	rm -rf "`find /usr/src/ -name SOURCES`/v-q-$(VERSION)"
-	sed -e "s/@VERSION@/$(VERSION)/" < pkg/rpm/v-q.spec.in > "`find /usr/src/ -name SPECS`/v-q.spec"
-	rpmbuild -ba "`find /usr/src/ -name SPECS`/v-q.spec"
+	rm -rf tmp/*
+	svn export . tmp/v-q-$(VERSION)
+	sed -e "s/@VERSION@/$(VERSION)/" < tmp/v-q-$(VERSION)/pkg/rpm/v-q.spec.in > tmp/v-q-$(VERSION)/pkg/rpm/v-q.spec
+	cd tmp && tar -czf v-q-$(VERSION).tar.gz v-q-$(VERSION)
+	rm -rf tmp/v-q-$(VERSION)
+	rpmbuild -ta tmp/v-q-$(VERSION).tar.gz
 
 include Makefile.common
