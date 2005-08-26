@@ -24,7 +24,7 @@ Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
 Prereq: sh-utils, textutils, /sbin/ldconfig
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0, daemontools >= 0.76
 Requires: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
-Provides: %{project}-ivq = %{version}
+Provides: %{project}-ivq = %{version}, %{project} = %{version}
 
 %description
 Virtual Qmail is a virtual domains manager that integrates with Qmail.
