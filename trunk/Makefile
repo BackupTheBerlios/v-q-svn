@@ -45,13 +45,15 @@ install-dirs:
 install-conf: install-dirs
 	@echo "Installing default configuration..."
 
-pkg-rpm: 
-	@if [ `id -u` != 0 ] ; then echo You must be root. ; exit 1; fi
+pkg-tgz:
 	rm -rf tmp/*
 	svn export . tmp/v-q-$(VERSION)
 	sed -e "s/@VERSION@/$(VERSION)/" < tmp/v-q-$(VERSION)/pkg/rpm/v-q.spec.in > tmp/v-q-$(VERSION)/pkg/rpm/v-q.spec
 	cd tmp && tar -czf v-q-$(VERSION).tar.gz v-q-$(VERSION)
 	rm -rf tmp/v-q-$(VERSION)
+
+pkg-rpm: pkg-tgz
+	@if [ `id -u` != 0 ] ; then echo You must be root. ; exit 1; fi
 	rpmbuild -ta tmp/v-q-$(VERSION).tar.gz
 
 include Makefile.common
