@@ -1,2 +1,2 @@
 #!/bin/sh
-exec eg++ -D_REENTRANT -ftemplate-depth-40 -pipe -g -Wall -c ${1+"$@"}
+exec g++ -D_REENTRANT -ftemplate-depth-40 -pipe -g -Wall -c ${1+"$@"}

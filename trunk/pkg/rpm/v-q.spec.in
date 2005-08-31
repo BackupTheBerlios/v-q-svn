@@ -300,6 +300,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(700,-,-) %config(noreplace) /service/jdbclogd/log/run
 
 %changelog
+* Tue Aug 30 2005 Pawel Niewiadomski <new@foo-baz.com> 8
+- Added deleted directory to /var/vq
+
 * Mon Apr 18 2005 Pawel Niewiadomski <new@foo-baz.com> 6
 - Introducing JDBC implementation
 

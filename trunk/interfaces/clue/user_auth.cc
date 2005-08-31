@@ -181,7 +181,7 @@ char read_env() {
 					olog->service_set(::vq::ilogger::ser_emtp);
 					break;
 			default:
-					olog->service_set(::vq::ilogger::ser_unknown);
+					olog->service_set(::vq::ilogger::ser_smtp);
 			}
 			break;
 	default:

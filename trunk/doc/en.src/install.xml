@@ -455,12 +455,12 @@ make PREFIX=/var/v-q install
 				For example if qmail's configuration owner
 				is other than user running <application>qmailvqd</application>
 				you can change owner and set SETUID permission
-				for <filename>bin/qmail*</filename> programs (except 
+				for <filename>bin/qmail_*</filename> programs (except 
 				<application>qmailvqd</application>). This will
 				allow these programs to change qmail's configuration.
 				<note>
 					<para>
-						Programs starting with <filename>qmail_</filename>
+						Programs starting with <filename>qmail-</filename>
 						are simple shell scripts - setting SETUID/SETGID flag
 						for them will not work with decent shells. You will
 						have to modify them to use <application>sudo</application>

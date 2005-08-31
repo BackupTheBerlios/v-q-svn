@@ -470,12 +470,12 @@ make PREFIX=/var/v-q install
 				jest inny u¿ytkownik ni¿ ten, jako który
 				dzia³a <application>qmailvqd</application>
 				mo¿esz zmieniæ w³a¶ciciela i ustawiæ bit SETUID 
-				programom <filename>bin/qmail*</filename> (oprócz 
+				programom <filename>bin/qmail_*</filename> (oprócz 
 				<application>qmailvqd</application>). Dziêki temu bêd±
 				one w stanie modyfikowaæ konfiguracjê qmail.
 				<note>
 					<para>
-						Programy zaczynaj±ce siê od <filename>qmail_</filename>
+						Programy zaczynaj±ce siê od <filename>qmail-</filename>
 						s± zwyk³ymi skryptami pow³oki - w ich przypadku
 						nadanie prawa SETUID/SETGID nie zadzia³a. Musisz je zmieniæ tak
 						aby wykorzystywa³y <application>sudo</application>

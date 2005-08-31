@@ -605,7 +605,6 @@ DECLARE
     _flags alias for \$4;
 	is_banned alias for \$5;
 
-	domain RECORD;
     ban RECORD;
 BEGIN
     IF is_banned = ''t''::boolean THEN
