@@ -279,7 +279,7 @@ namespace POA_vq {
 	 */
 	string cqmailvq::dotfile(const string &dom, const string &u, const string &e) std_try {
 		string user(u), ext(e);
-		string dotfile(paths.user_root_path(dom, u));
+		string dotfile(this->conf.paths.user_root_path(dom, u));
 		dotfile.append("/.qmail-");
 		replace(user.begin(),user.end(), '.', ':');
 		dotfile.append(user);
@@ -308,7 +308,7 @@ namespace POA_vq {
 				string::size_type pos, pos1;
 				string tmp, tmp1;
 				ln = "|";
-				ln += this->home+"/bin/autoresp ";
+				ln += this->conf.home+"/bin/autoresp ";
 				tmp1 = text::hex_from(static_cast<const char *>(ui.val));
 	
 				pos = tmp1.find('\0');
@@ -368,9 +368,9 @@ namespace POA_vq {
 		out.open(fnout.c_str(), ios::trunc);
 		if(!out) return lr(::vq::ivq::err_open, fnout);
 	
-		if( fchown(out.rdbuf()->fd(), this->uid, this->gid) )
+		if( fchown(out.rdbuf()->fd(), this->conf.uid, this->conf.gid) )
 				return lr(::vq::ivq::err_chown, fnout);
-		if( fchmod(out.rdbuf()->fd(), this->fmode ) )
+		if( fchmod(out.rdbuf()->fd(), this->conf.fmode ) )
 				return lr(::vq::ivq::err_chmod, fnout);
 		return lr(::vq::ivq::err_no, "");
 	} std_catch

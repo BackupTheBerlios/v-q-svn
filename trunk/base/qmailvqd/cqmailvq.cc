@@ -42,14 +42,9 @@ namespace POA_vq {
 	
 	/**
 	 */
-	cqmailvq::cqmailvq( const std::string & h, const std::string &d,
-				::vq::iauth_var & auth,
-				unsigned s_dom, unsigned s_user,
-				mode_t fm, mode_t mm, mode_t dm,
-				const std::string & user, uid_t uid, gid_t gid ) 
-			: home(h), domains(d),
-			fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), 
-			gid(gid), paths(d, s_dom, s_user), auth(auth) std_try {
+	cqmailvq::cqmailvq( const service_conf & conf,
+				::vq::iauth_var & auth )
+			: conf(conf), auth(auth) std_try {
 	} std_catch
 	
 	/**
@@ -125,7 +120,7 @@ namespace POA_vq {
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else 
 						return lr(::vq::ivq::err_stat, fn);
-		} else if( chmod(fntmp.c_str(), this->fmode) )
+		} else if( chmod(fntmp.c_str(), this->conf.fmode) )
 				return lr(::vq::ivq::err_chmod, fntmp);
 		
 		return lr(::vq::ivq::err_no, "");
@@ -156,11 +151,11 @@ namespace POA_vq {
 	 * \param dom_id domain's id.
 	 */
 	std::string cqmailvq::virt_prefix( const std::string & dom_id ) const {
-		return paths.dom_path(dom_id);
+		return conf.paths.dom_path(dom_id);
 	}
 
 	/**
-	 * Create line that will be added to qmail_home/users/assign
+	 * Create line that will be added to qmail_conf.home/users/assign
 	 * \return line string
 	 * \param dom_id domain's id.
 	 */
@@ -168,8 +163,8 @@ namespace POA_vq {
 		ostringstream domln;
 		domln 
 			<< '+' << virt_prefix(dom_id) << "-:" 
-			<< this->user << ':' << this->uid << ':' << this->gid << ':'
-			<< paths.dom_path(dom_id) << ":-::";
+			<< this->conf.user << ':' << this->conf.uid << ':' << this->conf.gid << ':'
+			<< conf.paths.dom_path(dom_id) << ":-::";
 		return domln.str();
 	}
 
@@ -181,7 +176,7 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::assign_add( const std::string &dom_id ) std_try {   
 		string ln(assign_ln(dom_id));
-		string prog(home+"/bin/qmail_assign_add");
+		string prog(conf.home+"/bin/qmail_assign_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(ln.c_str()),
@@ -205,7 +200,7 @@ namespace POA_vq {
 	 * if it is returns ::vq::ivq::err_dom_ex, on errors returns something else
 	 */
 	cqmailvq::error * cqmailvq::assign_ex( const std::string &dom_id ) std_try {
-		string prog(home+"/bin/qmail_assign_ex");
+		string prog(conf.home+"/bin/qmail_assign_ex");
 		string prefix(virt_prefix(dom_id));
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
@@ -232,7 +227,7 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::assign_rm( const std::string &dom_id ) std_try {   
 		string ln(assign_ln(dom_id));
-		string prog(home+"/bin/qmail_assign_rm");
+		string prog(conf.home+"/bin/qmail_assign_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(ln.c_str()),
@@ -255,7 +250,7 @@ namespace POA_vq {
 	 * if morercpthosts is changed rcpthosts is set to "", tmpfs.morercpt_add is set
 	 */
 	cqmailvq::error * cqmailvq::rcpt_add(const string &dom) std_try {
-		string prog(home+"/bin/qmail_rcpthosts_add");
+		string prog(conf.home+"/bin/qmail_rcpthosts_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -288,7 +283,7 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::qmail_file_rm( qmail_file qf, 
 			const string & ln ) std_try {
 		char file[] = { qf, '\0' };
-		string prog(home+"/bin/qmail_file_rm");
+		string prog(conf.home+"/bin/qmail_file_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				file,
@@ -312,7 +307,7 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::qmail_file_add( qmail_file qf, 
 			const string & ln ) std_try {
 		char file[] = { qf, '\0' };
-		string prog(home+"/bin/qmail_file_add");
+		string prog(conf.home+"/bin/qmail_file_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				file,
@@ -338,7 +333,7 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::locals_rm(const string &dom) std_try {
 		char file[] = { qf_locals, '\0' };
-		string prog(home+"/bin/qmail_file_rm");
+		string prog(conf.home+"/bin/qmail_file_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				file,
@@ -414,7 +409,7 @@ namespace POA_vq {
 	 */
 	cqmailvq::error * cqmailvq::virt_add(const string &dom, const string &al) std_try {
 		string ln(dom+':'+virt_prefix(al));
-		string prog(home+"/bin/qmail_virtualdomains_add");
+		string prog(conf.home+"/bin/qmail_virtualdomains_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -441,7 +436,7 @@ namespace POA_vq {
 	 * alias).
 	 */
 	cqmailvq::error * cqmailvq::virt_rm(const string &ali) std_try {
-		string prog(home+"/bin/qmail_virtualdomains_rm");
+		string prog(conf.home+"/bin/qmail_virtualdomains_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(ali.c_str()),
@@ -462,7 +457,7 @@ namespace POA_vq {
 	 * Adds domain to morercpthosts
 	 */
 	cqmailvq::error * cqmailvq::morercpt_add(const string &dom) std_try {
-		string prog(home+"/bin/qmail_mrh_add");
+		string prog(conf.home+"/bin/qmail_mrh_add");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -550,7 +545,7 @@ namespace POA_vq {
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else
 						return lr(::vq::ivq::err_stat, fn);
-		} else if( chmod(fntmp.c_str(), this->fmode) )
+		} else if( chmod(fntmp.c_str(), this->conf.fmode) )
 				return lr(::vq::ivq::err_chmod, fntmp);
 		
 		return lr(::vq::ivq::err_no, "");
@@ -616,7 +611,7 @@ namespace POA_vq {
 								return lr(::vq::ivq::err_chmod, fntmp);
 				} else
 						return lr(::vq::ivq::err_stat, fn);
-		} else if( chmod(fntmp.c_str(), this->fmode) )
+		} else if( chmod(fntmp.c_str(), this->conf.fmode) )
 				return lr(::vq::ivq::err_chmod, fntmp);
 		
 		return lr(::vq::ivq::err_no, "");
@@ -627,7 +622,7 @@ namespace POA_vq {
 	 * be renamed to morercpthosts, you should also run morercpt_comp.
 	 */
 	cqmailvq::error * cqmailvq::morercpt_rm(const string &dom) std_try {
-		string prog(home+"/bin/qmail_mrh_rm");
+		string prog(conf.home+"/bin/qmail_mrh_rm");
 		char * const args[] = {
 				const_cast<char *>(prog.c_str()),
 				const_cast<char *>(dom.c_str()),
@@ -650,20 +645,20 @@ namespace POA_vq {
 	 * \return ::vq::ivq::err_no on success
 	 */
 	cqmailvq::error * cqmailvq::maildir_make(const string & d) std_try {
-		if( mkdir(d.c_str(), this->mmode )
-			|| chown(d.c_str(), this->uid, this->gid)) 
+		if( mkdir(d.c_str(), this->conf.mmode )
+			|| chown(d.c_str(), this->conf.uid, this->conf.gid)) 
 				return lr(::vq::ivq::err_temp, d.c_str());
 		string dir = d+"/new"; 
-		if( mkdir(dir.c_str(), this->mmode ) 
-			|| chown(dir.c_str(), this->uid, this->gid)) 
+		if( mkdir(dir.c_str(), this->conf.mmode ) 
+			|| chown(dir.c_str(), this->conf.uid, this->conf.gid)) 
 				return lr(::vq::ivq::err_temp, dir);
 		dir = d+"/cur";
-		if( mkdir(dir.c_str(), this->mmode ) 
-			|| chown(dir.c_str(), this->uid, this->gid)) 
+		if( mkdir(dir.c_str(), this->conf.mmode ) 
+			|| chown(dir.c_str(), this->conf.uid, this->conf.gid)) 
 				return lr(::vq::ivq::err_temp, dir);
 		dir = d+"/tmp";
-		if( mkdir(dir.c_str(), this->mmode ) 
-			|| chown(dir.c_str(), this->uid, this->gid)) 
+		if( mkdir(dir.c_str(), this->conf.mmode ) 
+			|| chown(dir.c_str(), this->conf.uid, this->conf.gid)) 
 				return lr(::vq::ivq::err_temp, dir);
 		return lr(::vq::ivq::err_no, dir);
 	} std_catch

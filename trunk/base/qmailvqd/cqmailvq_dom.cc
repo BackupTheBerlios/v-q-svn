@@ -80,7 +80,7 @@ namespace POA_vq {
 		if( ret->ec != ::vq::ivq::err_no )
 				return ret.release();
 	
-		string restart(home+"/bin/qmail-send-restart");
+		string restart(conf.home+"/bin/qmail-send-restart");
 		char *const args[] = {
 				const_cast<char *>(restart.c_str()),
 				NULL
@@ -90,7 +90,7 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_temp, "wrong exit value");
 		}
 
-		string dir(paths.dom_path(boost::lexical_cast<std::string>(dom_id)));
+		string dir(conf.paths.dom_path(boost::lexical_cast<std::string>(dom_id)));
 		if(!rmdirrec(dir) && errno != ENOENT) {
 				return lr(::vq::ivq::err_unlink, dir);
 		}
@@ -119,17 +119,17 @@ namespace POA_vq {
 				return ret.release();
 		}
 	
-		string dom_add_dir(paths.dom_path(boost::lexical_cast<std::string>(did)));
+		string dom_add_dir(conf.paths.dom_path(boost::lexical_cast<std::string>(did)));
 
 		if(!mkdirhier(dom_add_dir.c_str(), 
-			this->dmode, this->uid, this->gid)) {
+			this->conf.dmode, this->conf.uid, this->conf.gid)) {
 				delete auth->dom_rm(did);
 				return lr(::vq::ivq::err_mkdir, dom_add_dir);
 		}
 	
 		/* dot file with a call to deliver */
 		string dotfile(dom_add_dir+"/.qmail-default");
-		if(!dumpstring( dotfile, (string)"|"+this->home+"/bin/deliver\n") ) {
+		if(!dumpstring( dotfile, (string)"|"+this->conf.home+"/bin/deliver\n") ) {
 				rmdirrec(dom_add_dir); 
 				delete auth->dom_rm(did);
 				return lr(::vq::ivq::err_wr, dotfile);
@@ -191,7 +191,7 @@ namespace POA_vq {
 	 *
 	 */
 	cqmailvq::error * cqmailvq::send_restart() std_try {
-		string restart(this->home+"/bin/qmail-send-restart");
+		string restart(this->conf.home+"/bin/qmail-send-restart");
 		char *const args[] = {
 				const_cast<char *>(restart.c_str()),
 				NULL

@@ -61,11 +61,38 @@ namespace POA_vq {
 					typedef ::vq::ivq::domain_info_list_out domain_info_list_out;
 					typedef ::vq::ivq::id_type id_type;
 
-					cqmailvq( const std::string &, const std::string &,
-						::vq::iauth_var &,
-						unsigned, unsigned, 
-						mode_t, mode_t, mode_t, 
-						const std::string &, uid_t, gid_t );
+					/**
+					 *
+					 */
+					struct service_conf {
+						typedef mode_t mode_type;
+						typedef uid_t uid_type;
+						typedef gid_t gid_type;
+						typedef vq::cpaths::size_type size_type;
+						
+						std::string home; //!< home directory
+						std::string domains; //!< maildirs are placed here
+						std::string deleted; //!< removed maildirs are placed here
+						mode_t fmode; //!< permissions of created files
+						mode_t mmode; //!< permissions of created directories in Maildir
+						mode_t dmode; //!< permissions of directories created
+						std::string user; //!< user name we are working as
+						uid_t uid; //!< user's id.
+						gid_t gid; //!< group's id.
+						vq::cpaths paths; //!< path generator (some common code)
+				
+						service_conf( const std::string &h, const std::string &d, 
+							const std::string &del, 
+							size_type s_dom, size_type s_user,
+							mode_t fm, mode_t mm, mode_t dm,
+							const std::string & user, uid_t uid, gid_t gid ) 
+							: home(h), domains(d), deleted(del),
+							fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), 
+							gid(gid), paths(d, s_dom, s_user) {
+						}
+					};
+
+					cqmailvq( const service_conf &, ::vq::iauth_var & );
 					virtual ~cqmailvq() {}
 
 					virtual error* dom_add( const char* dom, id_type & dom_id );
@@ -130,17 +157,9 @@ namespace POA_vq {
 			
 			protected:
 					static const char tmp_end[]; //!< temporary file extension
-						
-					std::string home; //!< home directory
-					std::string domains; //!< maildirs are placed here
-					mode_t fmode; //!< permissions of created files
-					mode_t mmode; //!< permissions of created directories in Maildir
-					mode_t dmode; //!< permissions of directories created
-					std::string user; //!< user name we are working as
-					uid_t uid; //!< user's id.
-					gid_t gid; //!< group's id.
-					cpaths paths; //!< path generator (some common code)
-
+					
+					service_conf conf;
+					
 					::vq::iauth_var & auth; //!< authorization module
 
 					virtual error* dip_rm_by_dom( id_type dom_id );
@@ -234,7 +253,7 @@ namespace POA_vq {
 			const char *file, CORBA::ULong line) {
 		return lr_wrap( ec, what.c_str(), file, line);
 	}
-
+	
 } // namespace vq
 
 #endif

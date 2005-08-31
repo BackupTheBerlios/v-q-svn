@@ -109,6 +109,7 @@ int vqmain(int ac, char **av) {
 	conf::cintconf mmode(conf_dir+"mmode", "0750");
 	conf::cintconf dmode(conf_dir+"dmode", "0750");
 	conf::clnconf user(conf_dir+"user", "_vq");
+	conf::clnconf maildir(conf_dir+"maildir", "Maildir");
 	ostringstream os;
 	os<<geteuid();
 	conf::cuidconf uid(conf_dir+"uid", os.str());
@@ -141,12 +142,15 @@ int vqmain(int ac, char **av) {
 			return 111;
 	}
 
-	/*
-	 */
-	auto_ptr<cqmailvq> vqimp(new cqmailvq(VQ_HOME, data.val_str()+"/domains", auth,
+	cqmailvq::service_conf conf( VQ_HOME, data.val_str()+"/domains", 
+		data.val_str()+"/deleted",
 		split_dom.val_int(), split_user.val_int(),
 		fmode.val_int(), mmode.val_int(), dmode.val_int(),
-		user.val_str(), uid.val_int(), gid.val_int() ));
+		user.val_str(), uid.val_int(), gid.val_int() );
+
+	/*
+	 */
+	auto_ptr<cqmailvq> vqimp( new cqmailvq( conf, auth ) );
 	
 	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(vqimp.get());
 	CORBA::Object_var ref = poa->core_poa()->id_to_reference (oid.in());

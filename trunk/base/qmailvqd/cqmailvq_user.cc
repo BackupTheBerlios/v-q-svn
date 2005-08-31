@@ -77,9 +77,9 @@ namespace POA_vq {
 				throw ::vq::null_error(__FILE__, __LINE__);
 
 		string user(lower(static_cast<const char *>(ai.login)));
-		string spuser(paths.user_root_path(
+		string spuser(this->conf.paths.user_root_path(
 				boost::lexical_cast<std::string>(ai.id_domain), user));
-		string user_add_dir(paths.user_dir_path(
+		string user_add_dir(this->conf.paths.user_dir_path(
 				boost::lexical_cast<std::string>(ai.id_domain), user));
 	
 		/* check wheter domain has default quota for users */
@@ -94,14 +94,14 @@ namespace POA_vq {
 		}
 	#endif	
 	
-		if(!sys::mkdirhier(user_add_dir.c_str(), this->dmode, 
-					this->uid, this->gid)) 
+		if(!sys::mkdirhier(user_add_dir.c_str(), this->conf.dmode, 
+					this->conf.uid, this->conf.gid)) 
 				return lr( EEXIST == errno 
 					? ::vq::ivq::err_exists : ::vq::ivq::err_mkdir, user_add_dir);
 	
 		auto_ptr<error> ret;
 		ret.reset(maildir_make( 
-			paths.user_md_path(boost::lexical_cast<std::string>(ai.id_domain), user)));
+			this->conf.paths.user_md_path(boost::lexical_cast<std::string>(ai.id_domain), user)));
 		if( ::vq::ivq::err_no != ret->ec ) {
 				sys::rmdirrec(user_add_dir);
 				return ret.release();
@@ -119,7 +119,7 @@ namespace POA_vq {
 		}
 		string dotuser(dotfile(boost::lexical_cast<std::string>(ai.id_domain), 
 				user, ""));
-		if( ! sys::dumpstring(dotuser, paths.user_md_subpath(user)+"\n") ) {
+		if( ! sys::dumpstring(dotuser, this->conf.paths.user_md_subpath(user)+"\n") ) {
 				delete auth->user_rm(ai.id_domain, user.c_str());
 				sys::rmdirrec(user_add_dir);
 				return lr(::vq::ivq::err_wr, dotuser);
@@ -144,35 +144,35 @@ namespace POA_vq {
 		if( ::vq::ivq::err_no != ret->ec ) 
 				return ret.release();
 	
-		string dir(paths.user_root_path(
+		string dir(this->conf.paths.user_root_path(
 			boost::lexical_cast<std::string>(dom_id), login)+'/');
 		ostringstream dir_mv;
 		struct timeval time_mv;
 		gettimeofday(&time_mv, NULL);
-		dir_mv<<this->home<<"/deleted/@"<<time_mv.tv_sec
-				<<'.'<<time_mv.tv_usec<<'.'<<user<<'@'
+		dir_mv<<this->conf.deleted<<"/@"<<time_mv.tv_sec
+				<<'.'<<time_mv.tv_usec<<'.'<<login<<'@'
 				<<boost::lexical_cast<std::string>(dom_id);
 	
-		if(rename((dir+user).c_str(), dir_mv.str().c_str())) 
-				return lr(::vq::ivq::err_ren, dir+user);
+		if(rename((dir+login).c_str(), dir_mv.str().c_str())) 
+				return lr(::vq::ivq::err_ren, dir+login);
 		
-		replace(user.begin(),user.end(),'.',':');
+		replace(login.begin(),login.end(),'.',':');
 		sys::cdir_ptr dotdir(opendir(dir.c_str()));
 		if( dotdir.get() ) {
 				struct dirent *de;
 				char * name;
-				string::size_type userl = user.length(); // +6 = .qmail-
+				string::size_type loginl = login.length(); // +6 = .qmail-
 				while( (de=readdir(dotdir.get())) ) {
 						name = de->d_name;
 						if( _D_EXACT_NAMLEN(de) < 7
-						  || _D_EXACT_NAMLEN(de)-7 < userl 
+						  || _D_EXACT_NAMLEN(de)-7 < loginl 
 						  || *(name++) != '.' || *(name++) != 'q' 
 						  || *(name++) != 'm'
 						  || *(name++) != 'a' || *(name++) != 'i'
 						  || *(name++) != 'l' || *(name++) != '-' ) continue;
-						if( name == user 
-							|| ( name[userl] == '-'
-							   && strncmp(name+userl,user.c_str(),userl) ) )
+						if( name == login 
+							|| ( name[loginl] == '-'
+							   && strncmp(name+loginl,login.c_str(),loginl) ) )
 								unlink((dir+de->d_name).c_str());
 				}
 		} else return lr(::vq::ivq::err_rd, dir);
@@ -208,12 +208,12 @@ namespace POA_vq {
 		auto_ptr<error> ret(auth->user_get(ai));
 		if( ::vq::ivq::err_no == ret->ec ) {
 				if( '\0' == *ai.dir ) {
-						ai.dir = paths.user_dir_path(
+						ai.dir = this->conf.paths.user_dir_path(
 							boost::lexical_cast<std::string>(ai.id_domain),
 							lower(static_cast<const char *>(ai.login))).c_str();
 				}
-				ai.gid = this->gid;
-				ai.uid = this->uid;
+				ai.gid = this->conf.gid;
+				ai.uid = this->conf.uid;
 				return lr(::vq::ivq::err_no, "");
 		}
 		return ret.release();
