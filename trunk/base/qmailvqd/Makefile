@@ -86,12 +86,12 @@ cqmailvq_user.o: auto/d_namlen.h
 qmailvqd.o: qmailvqd.cc
 	$(BASE)/compile $(INCS) $< -DQMAIL_HOME=`head -n 1 conf/qmail_home` \
 	-DSPLIT_USER=`head -n 1 conf/split_user` -DSPLIT_DOM=`head -n 1 conf/split_dom` \
-	-DDATA=`head -n 1 conf/data`
+	-DDATA=`head -n 1 conf/data` -DMAILDIR=`head -n 1 conf/maildir`
 
 deliver.o: deliver.cc
 	$(BASE)/compile $(INCS) $< -DQMAIL_HOME=`head -n 1 conf/qmail_home` \
 	-DSPLIT_USER=`head -n 1 conf/split_user` -DSPLIT_DOM=`head -n 1 conf/split_dom` \
-	-DDATA=`head -n 1 conf/data`
+	-DDATA=`head -n 1 conf/data` -DMAILDIR=`head -n 1 conf/maildir`
 
 .cc.o:
 	$(BASE)/compile $(INCS) $< -DQMAIL_HOME=`head -n 1 conf/qmail_home`

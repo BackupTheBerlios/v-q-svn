@@ -109,7 +109,7 @@ int vqmain(int ac, char **av) {
 	conf::cintconf mmode(conf_dir+"mmode", "0750");
 	conf::cintconf dmode(conf_dir+"dmode", "0750");
 	conf::clnconf user(conf_dir+"user", "_vq");
-	conf::clnconf maildir(conf_dir+"maildir", "Maildir");
+	conf::clnconf maildir(conf_dir+"maildir", MAILDIR);
 	ostringstream os;
 	os<<geteuid();
 	conf::cuidconf uid(conf_dir+"uid", os.str());
@@ -120,19 +120,6 @@ int vqmain(int ac, char **av) {
 	conf::clnconf dep_mod(conf_dir+"dep_mod", "fixed_ports_no_imr");
 	conf::clnconf policy(conf_dir+"policy", "single_thread_model");
 	
-	CORBA::Object_var iaobj;
-	try {
-			iaobj = corbautil::importObjRef(orb, iauth_import.val_str().c_str());
-	} catch( corbautil::ImportExportException & e ) {
-			cerr<<e<<endl;
-			return 111;
-	}
-	vq::iauth_var auth(vq::iauth::_narrow(iaobj));
-	if( CORBA::is_nil(auth) ) {
-			cout<<"can't narrow iauth implementation"<<endl;
-			return 100;
-	}
-
 	auto_ptr<cpoa_hier> poa;
 	try {
 			poa.reset( new cpoa_hier(orb, dep_mod.val_str(), 
@@ -144,13 +131,14 @@ int vqmain(int ac, char **av) {
 
 	cqmailvq::service_conf conf( VQ_HOME, data.val_str()+"/domains", 
 		data.val_str()+"/deleted",
-		split_dom.val_int(), split_user.val_int(),
+		split_dom.val_int(), split_user.val_int(), maildir.val_str(),
 		fmode.val_int(), mmode.val_int(), dmode.val_int(),
-		user.val_str(), uid.val_int(), gid.val_int() );
+		user.val_str(), uid.val_int(), gid.val_int(),
+		iauth_import.val_str() );
 
 	/*
 	 */
-	auto_ptr<cqmailvq> vqimp( new cqmailvq( conf, auth ) );
+	auto_ptr<cqmailvq> vqimp( new cqmailvq( conf ) );
 	
 	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(vqimp.get());
 	CORBA::Object_var ref = poa->core_poa()->id_to_reference (oid.in());

@@ -44,7 +44,9 @@ int vqmain(int ac, char **av)
 	conf::cintconf split_user(conf_dir+"split_user", SPLIT_USER);
 	conf::cintconf split_dom(conf_dir+"split_dom", SPLIT_DOM);
 	conf::clnconf data(conf_dir+"data", DATA);
-	vq::cpaths paths(data.val_str()+"/domains", split_dom.val_int(), split_user.val_int());
+	conf::clnconf maildir(conf_dir+"maildir", MAILDIR);
+	vq::cpaths paths(data.val_str()+"/domains", 
+		split_dom.val_int(), split_user.val_int(), maildir.val_str());
 
 	string ql = qhome.val_str()+"/bin/qmail-local";
 	args[0] = (char*) ql.c_str();

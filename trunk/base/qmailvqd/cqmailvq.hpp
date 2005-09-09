@@ -80,19 +80,24 @@ namespace POA_vq {
 						uid_t uid; //!< user's id.
 						gid_t gid; //!< group's id.
 						vq::cpaths paths; //!< path generator (some common code)
+
+						std::string iauth_import; //!< import instructions for importing iauth
 				
 						service_conf( const std::string &h, const std::string &d, 
 							const std::string &del, 
-							size_type s_dom, size_type s_user,
+							size_type s_dom, size_type s_user, 
+							const std::string &md,
 							mode_t fm, mode_t mm, mode_t dm,
-							const std::string & user, uid_t uid, gid_t gid ) 
+							const std::string & user, uid_t uid, gid_t gid,
+							const std::string & ia_imp ) 
 							: home(h), domains(d), deleted(del),
 							fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), 
-							gid(gid), paths(d, s_dom, s_user) {
+							gid(gid), paths(d, s_dom, s_user, md),
+							iauth_import(ia_imp) {
 						}
 					};
 
-					cqmailvq( const service_conf &, ::vq::iauth_var & );
+					cqmailvq( const service_conf & );
 					virtual ~cqmailvq() {}
 
 					virtual error* dom_add( const char* dom, id_type & dom_id );
@@ -160,7 +165,9 @@ namespace POA_vq {
 					
 					service_conf conf;
 					
-					::vq::iauth_var & auth; //!< authorization module
+					::vq::iauth_var auth; //!< authorization module
+					CORBA::Object_var iaobj;
+					CORBA::ORB_var orb;
 
 					virtual error* dip_rm_by_dom( id_type dom_id );
 					virtual error* da_rm_by_dom( id_type dom_id );

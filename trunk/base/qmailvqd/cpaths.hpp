@@ -30,8 +30,10 @@ namespace vq {
 					typedef unsigned size_type;
 					
 					cpaths( const std::string & d, 
-						size_type s_dom, size_type s_user ) 
-						: domains(d), dom_split(s_dom), user_split(s_user) {}
+						size_type s_dom, size_type s_user,
+						const std::string & md ) 
+						: domains(d), dom_split(s_dom), user_split(s_user),
+						maildir(md) {}
 	
 					/**
 					 * \defgroup path Paths handling
@@ -52,12 +54,15 @@ namespace vq {
 
 						inline size_type dom_split_get() const;
 						inline size_type user_split_get() const;
+
+						inline std::string maildir_get() const;
 					//@}
 	
 			protected:
 					std::string domains;
 					size_type dom_split;
 					size_type user_split;
+					std::string maildir;
 	}; // cpath
 		
 	/**
@@ -97,14 +102,14 @@ namespace vq {
 	 */
 	std::string cpaths::user_md_path( const std::string &dom_id,
 			const std::string & login ) const {
-		return user_dir_path(dom_id, login) + "/Maildir/";
+		return user_dir_path(dom_id, login) + "/" + this->maildir + "/";
 	}
 	
 	/**
 	 *
 	 */
 	std::string cpaths::user_md_subpath( const std::string & login ) const {
-		return "./"+login+"/Maildir/";
+		return "./"+login+"/" + this->maildir + "/";
 	}
 	
 	cpaths::size_type cpaths::dom_split_get() const {
@@ -113,6 +118,10 @@ namespace vq {
 	
 	cpaths::size_type cpaths::user_split_get() const {
 		return this->user_split;
+	}
+
+	std::string cpaths::maildir_get() const {
+		return this->maildir;
 	}
 
 } // namespace vq

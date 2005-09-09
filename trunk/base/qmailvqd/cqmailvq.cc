@@ -22,6 +22,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <sys.hpp>
 
+// CORBA
+#include <import_export.h>
+
 #include <boost/lexical_cast.hpp>
 
 #include <sys/stat.h>
@@ -42,9 +45,22 @@ namespace POA_vq {
 	
 	/**
 	 */
-	cqmailvq::cqmailvq( const service_conf & conf,
-				::vq::iauth_var & auth )
-			: conf(conf), auth(auth) std_try {
+	cqmailvq::cqmailvq( const service_conf & conf )
+			: conf(conf) std_try {
+
+		int ac = 0;
+		char ** av = 0;
+		orb = CORBA::ORB_init(ac, av);
+		try {
+				iaobj = corbautil::importObjRef( orb, 
+					this->conf.iauth_import.c_str() );
+		} catch( corbautil::ImportExportException & e ) {
+				cerr<<e<<endl;
+		}
+		auth = vq::iauth::_narrow(iaobj);
+		if( CORBA::is_nil(auth) ) {
+				cout<<"can't narrow iauth implementation"<<endl;
+		}
 	} std_catch
 	
 	/**
@@ -141,7 +157,8 @@ namespace POA_vq {
 				execv( *args, args );
 				_exit(111);
 		}
-		while( wait(&pid) == -1 && errno == EINTR );
+		int status;
+		while( ::waitpid(pid, &status, 0) == -1 && errno == EINTR ) sleep(1);
 		return pid;
 	} std_catch
 
