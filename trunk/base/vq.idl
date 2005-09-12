@@ -93,7 +93,7 @@ module vq {
 					err_chown, // 14
 					/// overflow
 					err_over,
-					/// child crashed or returned something unexpected
+					/// child returned something unexpected
 					err_exec, // 16
 					/// can't create directory
 					err_mkdir,
@@ -108,7 +108,9 @@ module vq {
 					/// internal function returned unexpected value
 					err_func_res, // 22
 					/// function not implemented
-					err_func_ni
+					err_func_ni,
+					/// child crashed or was killed
+					err_exec_crash // 24
 			};
 
 			/// errors

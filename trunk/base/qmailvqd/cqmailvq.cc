@@ -150,16 +150,16 @@ namespace POA_vq {
 	int cqmailvq::run(char *const args[]) std_try {
 		pid_t pid;
 	
-		switch((pid=vfork())) {
+		switch((pid=fork())) {
 		case -1: 
 				return -1;
 		case 0: 
 				execv( *args, args );
 				_exit(111);
 		}
-		int status;
-		while( ::waitpid(pid, &status, 0) == -1 && errno == EINTR ) sleep(1);
-		return pid;
+		int status = 0;
+		while( ::waitpid(pid, &status, 0) == -1 && errno == EINTR );
+		return status;
 	} std_catch
 
 	/**
@@ -207,9 +207,11 @@ namespace POA_vq {
 						return lr(::vq::ivq::err_no, "");
 				case 1:
 						return lr(::vq::ivq::err_exists, ln);
+				default:
+						return lr(::vq::ivq::err_exec, prog );
 				}
 		}
-		return lr(::vq::ivq::err_exec,prog);
+		return lr(::vq::ivq::err_exec_crash,prog);
 	} std_catch
 	
 	/**
@@ -232,9 +234,11 @@ namespace POA_vq {
 						return lr(::vq::ivq::err_no,"");
 				case 0:
 						return lr(::vq::ivq::err_exists,prog);
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	/**
 	 * Adds domain to assign file, it creates temporary file 
@@ -256,9 +260,11 @@ namespace POA_vq {
 				switch(WEXITSTATUS(ret)) {
 				case 0: case 1: case 2:
 						return lr(::vq::ivq::err_no, "");
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
@@ -281,9 +287,11 @@ namespace POA_vq {
 						return lr(::vq::ivq::err_no, "");
 				case 2:
 						return lr(::vq::ivq::err_over, prog);
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
@@ -313,9 +321,11 @@ namespace POA_vq {
 				switch(WEXITSTATUS(ret)) {
 				case 0: case 1: case 2:
 						return lr(::vq::ivq::err_no, "");
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
@@ -339,9 +349,11 @@ namespace POA_vq {
 						return lr(::vq::ivq::err_no, "");
 				case 1:
 						return lr(::vq::ivq::err_exists, "");
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 
 	/**
@@ -363,9 +375,11 @@ namespace POA_vq {
 				switch(WEXITSTATUS(ret)) {
 				case 0: case 1: case 2:
 						return lr(::vq::ivq::err_no, "");
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
@@ -441,9 +455,11 @@ namespace POA_vq {
 						return lr(::vq::ivq::err_no, "");
 				case 1:
 						return lr(::vq::ivq::err_exists, prog);
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
@@ -465,9 +481,11 @@ namespace POA_vq {
 				switch(WEXITSTATUS(ret)) {
 				case 0: case 1: case 2:
 						return lr(::vq::ivq::err_no, "");
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
@@ -486,9 +504,11 @@ namespace POA_vq {
 				switch(WEXITSTATUS(ret)) {
 				case 0: case 1:
 						return lr(::vq::ivq::err_no, "");
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
@@ -651,9 +671,11 @@ namespace POA_vq {
 				switch(WEXITSTATUS(ret)) {
 				case 0: case 1: case 2:
 						return lr(::vq::ivq::err_no, "");
+				default:
+						return lr(::vq::ivq::err_exec, prog);
 				}
 		}
-		return lr(::vq::ivq::err_exec, prog);
+		return lr(::vq::ivq::err_exec_crash, prog);
 	} std_catch
 	
 	/**
