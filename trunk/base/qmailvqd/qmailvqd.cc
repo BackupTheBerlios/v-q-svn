@@ -138,9 +138,9 @@ int vqmain(int ac, char **av) {
 
 	/*
 	 */
-	auto_ptr<cqmailvq> vqimp( new cqmailvq( conf ) );
+	cqmailvq * vqimp = new cqmailvq( conf );
 	
-	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(vqimp.get());
+	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(vqimp);
 	CORBA::Object_var ref = poa->core_poa()->id_to_reference (oid.in());
 	vqimp->_remove_ref(); // ???
 
@@ -155,9 +155,12 @@ int vqmain(int ac, char **av) {
 	if( run ) {
 			cout << "Running." << endl;
 			poa->core_mgr()->activate();
-			orb->run();
+			while( ! vqimp->shutdown() ) {
+				orb->perform_work();
+			}
+			cout << "Shutdown requested." << endl;
 	}
-	
-	orb->destroy();
+	poa->core_poa()->destroy( true, true );
+	orb->shutdown( true );
 	return 0;
 }

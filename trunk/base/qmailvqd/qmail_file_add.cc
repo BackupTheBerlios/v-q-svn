@@ -111,11 +111,13 @@ int vqmain( int ac , char ** av ) {
 				string fn(qhome.val_str()+'/'
 					+qf2file(static_cast<qmail_file>(*av[1])));
 
-				opfstream lck((fn+".lock").c_str());
-				if( ! lck ) return 3;
-		
-				if( lock_exnb(lck.rdbuf()->fd()) ) return 4;
-	
+				std::auto_ptr<sys::file_mutex> lck;
+				try {
+						lck.reset( new sys::file_mutex(fn+".lock") );
+				} catch( std::runtime_error & e ) {
+						return 4;
+				}
+
 				return file_add(fn, av[2], qmode.val_int());
 		} catch(...) {
 				return 111;

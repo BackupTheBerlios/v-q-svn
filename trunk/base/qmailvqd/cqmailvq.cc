@@ -46,8 +46,14 @@ namespace POA_vq {
 	/**
 	 */
 	cqmailvq::cqmailvq( const service_conf & conf )
-			: conf(conf) std_try {
+			: conf(conf), shutting(false) std_try {
+		auth_init();
+	} std_catch
 
+	/**
+	 * 
+	 */
+	void cqmailvq::auth_init() {
 		int ac = 0;
 		char ** av = 0;
 		orb = CORBA::ORB_init(ac, av);
@@ -61,7 +67,7 @@ namespace POA_vq {
 		if( CORBA::is_nil(auth) ) {
 				cout<<"can't narrow iauth implementation"<<endl;
 		}
-	} std_catch
+	}
 	
 	/**
 	 * Write data to file in a safe maner. It opens file, creates temporary file,
@@ -85,11 +91,14 @@ namespace POA_vq {
 			const string &eof_mark, const string &item_mark, 
 			bool item_whole, const string &item_add, string &fntmp) std_try {
 	
-		string fnlck(fn+".lock");
-		opfstream l(fnlck.c_str());
-		if( ! l ) return lr(::vq::ivq::err_open, fnlck);
-	
-		if( sys::lock_exnb(l.rdbuf()->fd()) ) return lr(::vq::ivq::err_lckd, fnlck);
+		auto_ptr<sys::file_mutex> lck;
+		try {
+				lck.reset( new sys::file_mutex(fn+".lock") );
+		} catch( sys::file_mutex::open_error & e ) {
+				return lr(::vq::ivq::err_open, e.what());
+		} catch( sys::file_mutex::locked_error & e ) {
+				return lr(::vq::ivq::err_lckd, e.what());
+		}
 	
 		pfstream in(fn.c_str(),ios::in);
 		bool enoent = false;
@@ -394,13 +403,16 @@ namespace POA_vq {
 			std::string & fntmp ) std_try {
 	
 		fntmp = fn+sys::uniq();
-		string fnlck(fn+".lock");
 	
-		opfstream lock(fnlck.c_str());
-		if( ! lock ) return lr(::vq::ivq::err_open, fnlck);
-	
-		if( sys::lock_exnb(lock.rdbuf()->fd()) ) return lr(::vq::ivq::err_lckd, fnlck);
-	
+		auto_ptr<sys::file_mutex> lck;
+		try {
+				lck.reset( new sys::file_mutex(fn+".lock") );
+		} catch( sys::file_mutex::open_error & e ) {
+				return lr(::vq::ivq::err_open, e.what());
+		} catch( sys::file_mutex::locked_error & e ) {
+				return lr(::vq::ivq::err_lckd, e.what());
+		}
+
 		ipfstream in(fn.c_str(),ios::in);
 		if(!in) {
 				if( errno == ENOENT ) return lr(::vq::ivq::err_no, "");
@@ -538,11 +550,15 @@ namespace POA_vq {
 			string & fntmp, bool beg_at ) std_try {
 	
 		fntmp = fn+sys::uniq();
-		string fnlck(fn+".lock");
-		opfstream lock(fnlck.c_str());
-		if( ! lock ) return lr(::vq::ivq::err_open, fnlck);
-	
-		if( sys::lock_exnb(lock.rdbuf()->fd()) ) return lr(::vq::ivq::err_lckd, fnlck);
+
+		auto_ptr<sys::file_mutex> lck;
+		try {
+				lck.reset( new sys::file_mutex(fn+".lock") );
+		} catch( sys::file_mutex::open_error & e ) {
+				return lr(::vq::ivq::err_open, e.what());
+		} catch( sys::file_mutex::locked_error & e ) {
+				return lr(::vq::ivq::err_lckd, e.what());
+		}
 	
 		ipfstream in(fn.c_str());
 		bool enoent = false;
@@ -600,12 +616,16 @@ namespace POA_vq {
 			string & fntmp ) std_try {
 	
 		fntmp = fn+sys::uniq();
-		string fnlck(fn+".lock");
-		opfstream lock(fnlck.c_str());
-		if( ! lock ) return lr(::vq::ivq::err_open, fnlck);
 	
-		if( sys::lock_exnb(lock.rdbuf()->fd()) ) return lr(::vq::ivq::err_lckd, fnlck);
-	
+		auto_ptr<sys::file_mutex> lck;
+		try {
+				lck.reset( new sys::file_mutex(fn+".lock") );
+		} catch( sys::file_mutex::open_error & e ) {
+				return lr(::vq::ivq::err_open, e.what());
+		} catch( sys::file_mutex::locked_error & e ) {
+				return lr(::vq::ivq::err_lckd, e.what());
+		}
+
 		ipfstream in(fn.c_str());
 		bool enoent = false;
 		if(!in) {

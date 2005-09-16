@@ -58,11 +58,13 @@ int vqmain( int ac , char ** av ) {
 
 				string fn(qhome.val_str()+"/control/morercpthosts");
 
-				opfstream lck((fn+".lock").c_str());
-				if( ! lck ) return 3;
-		
-				if( lock_exnb(lck.rdbuf()->fd()) ) return 4;
-	
+				std::auto_ptr<sys::file_mutex> lck;
+				try {
+						lck.reset( new sys::file_mutex(fn+".lock") );
+				} catch( std::runtime_error & e ) {
+						return 4;
+				}
+
 				char ret=file_rm(fn, av[1]);
 				if(ret == 2) {
 						if( unlink((fn+".cdb").c_str()) ) {

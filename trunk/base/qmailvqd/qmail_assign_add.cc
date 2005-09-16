@@ -113,11 +113,13 @@ int vqmain( int ac , char ** av ) {
 
 				string in_fn(qhome.val_str()+"/users/assign");
 				
-				opfstream lck((in_fn+".lock").c_str());
-				if( ! lck ) return 111;
-		
-				if( lock_exnb(lck.rdbuf()->fd()) ) return 4;
-	
+				std::auto_ptr<sys::file_mutex> lck;
+				try {
+						lck.reset( new sys::file_mutex(in_fn+".lock") );
+				} catch( std::runtime_error & e ) {
+						return 4;
+				}
+
 				char ret=assign_add(in_fn, av[1], qmode.val_int());
 				switch (ret) {
 				case 1: return 1;

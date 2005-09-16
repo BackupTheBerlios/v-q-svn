@@ -6,7 +6,7 @@ OBJS=cqmailvq.o cqmailvq_dom.o cqmailvq_eb.o cqmailvq_user.o \
 	qmail_file_rm.o qmail_files.o qmail_mrh_add.o qmail_mrh_rm.o \
 	qmail_rcpthosts_add.o \
 	qmail_virtualdomains_add.o qmail_virtualdomains_rm.o qmailvqd.o \
-	cqautoresp.o autoresp.o deliver.o
+	cqautoresp.o autoresp.o deliver.o cqmailvq_common.o
 INCS=-I$(BASE)/base -I$(BASE) -I../libvqmain -I$(BASE)/libsys -I$(BASE)/libtext \
 	-I$(BASE)/libconf -I$(BASE)/corbautil/cxx/import_export -I$(BASE)/corbautil/cxx/portability \
 	-I$(BASE)/corbautil/cxx/PoaUtility \
@@ -29,9 +29,10 @@ deliver: $(BASE)/load deliver.o $(BASE)/corba.lib
 	$(BASE)/load deliver $(LIBS)
 
 qmailvqd: $(BASE)/load $(BASE)/corba.lib qmail_files.o qmailvqd.o \
-cqmailvq_dom.o cqmailvq.o cqmailvq_user.o cqmailvq_eb.o cqmailvq_user_conf.o
+cqmailvq_dom.o cqmailvq.o cqmailvq_user.o cqmailvq_eb.o cqmailvq_user_conf.o \
+cqmailvq_common.o
 	$(BASE)/load qmailvqd qmail_files.o cqmailvq_dom.o cqmailvq.o \
-	cqmailvq_user.o cqmailvq_eb.o cqmailvq_user_conf.o \
+	cqmailvq_user.o cqmailvq_eb.o cqmailvq_user_conf.o cqmailvq_common.o \
 	$(LIBS) 
 
 qmail_virtualdomains_add: $(BASE)/load $(BASE)/corba.lib qmail_virtualdomains_add.o

@@ -159,6 +159,8 @@ namespace POA_vq {
 				    virtual error* user_conf_type_cnt( id_type dom_id, 
 							const char* user, const char* pfix, 
 							user_conf_type ut, size_type_out cnt );
+
+					inline bool shutdown() const;
 			
 			protected:
 					static const char tmp_end[]; //!< temporary file extension
@@ -168,9 +170,12 @@ namespace POA_vq {
 					::vq::iauth_var auth; //!< authorization module
 					CORBA::Object_var iaobj;
 					CORBA::ORB_var orb;
+					bool shutting; //!< returned by shutdown
 
 					virtual error* dip_rm_by_dom( id_type dom_id );
 					virtual error* da_rm_by_dom( id_type dom_id );
+
+					void auth_init(); //!< used to init auth attribute
 
 					error * send_restart();
 					error * assign_ex(const std::string &);
@@ -259,6 +264,13 @@ namespace POA_vq {
 			const std::string & what, 
 			const char *file, CORBA::ULong line) {
 		return lr_wrap( ec, what.c_str(), file, line);
+	}
+
+	/**
+	 * @return true if this object should be shutdown
+	 */
+	inline bool cqmailvq::shutdown() const {
+		return this->shutting;
 	}
 	
 } // namespace vq

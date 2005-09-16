@@ -119,11 +119,13 @@ int vqmain( int ac , char ** av ) {
 
 				string fn(qhome.val_str()+"/control/virtualdomains");
 
-				opfstream lck((fn+".lock").c_str());
-				if( ! lck ) return 111;
-		
-				if( lock_exnb(lck.rdbuf()->fd()) ) return 111;
-	
+				std::auto_ptr<sys::file_mutex> lck;
+				try {
+						lck.reset( new sys::file_mutex(fn+".lock") );
+				} catch( std::runtime_error & e ) {
+						return 4;
+				}
+
 				return vd_rm(fn, av[1]);
 		} catch(...) {
 				return 111;
