@@ -52,4 +52,25 @@ namespace sys {
 #endif
 	}
 
+	file_mutex::file_mutex( const char * fn, bool wait ) : fd(-1) {
+		this->fd = open(fn, O_RDONLY | O_NONBLOCK | O_CREAT, 0444 );
+		if( this->fd == -1 ) throw open_error(fn);
+		if( (! wait && lock_exnb(this->fd)) || (wait && lock_ex(this->fd)) )
+				throw locked_error(fn);
+	}
+
+	file_mutex::file_mutex( const std::string & fn, bool wait ) : fd(-1) {
+		this->fd = open(fn.c_str(), O_RDONLY | O_NONBLOCK | O_CREAT, 0444 );
+		if( this->fd == -1 ) throw open_error(fn);
+		if( (! wait && lock_exnb(this->fd)) || (wait && lock_ex(this->fd)) )
+				throw locked_error(fn);
+	}
+
+	file_mutex::~file_mutex() {
+		if( this->fd != -1 ) {
+				unlock(this->fd);
+				close(this->fd);
+		}
+	}
+
 } // namespace sys

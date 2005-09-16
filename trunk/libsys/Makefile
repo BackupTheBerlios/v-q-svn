@@ -16,12 +16,12 @@ auto/hasflock.h: try/flock.cc $(BASE)/compile $(BASE)/load
     && echo \#define HASFLOCK 1 || exit 0 ) > auto/hasflock.h
 	rm -f try/flock.o try/flock
 
-libsys.so: libsys.so.6.0
-	ln -sf libsys.so.6.0 libsys.so
+libsys.so: libsys.so.7.0
+	ln -sf libsys.so.7.0 libsys.so
 
-libsys.so.6.0: $(BASE)/make-so sig.o cpoll.o uniq.o fd.o fdstr.o getline.o \
+libsys.so.7.0: $(BASE)/make-so sig.o cpoll.o uniq.o fd.o fdstr.o getline.o \
 util.o dirs.o lock.o
-	$(BASE)/make-so libsys.so.6.0 sig.o cpoll.o uniq.o fd.o fdstr.o getline.o \
+	$(BASE)/make-so libsys.so.7.0 sig.o cpoll.o uniq.o fd.o fdstr.o getline.o \
 	util.o dirs.o lock.o
 
 $(OBJS): $(BASE)/comp-so
@@ -50,5 +50,5 @@ install: all
 		$(INSTALL) -m 0644 $$p $(PREFIX)/include/vq/libsys/$$p ; \
 	done
 	$(INSTALL) -d -m 0755 $(PREFIX)/lib/vq
-	$(INSTALL) -m 0755 libsys.so.6.0 $(PREFIX)/lib/vq/libsys.so.6.0
+	$(INSTALL) -m 0755 libsys.so.7.0 $(PREFIX)/lib/vq/libsys.so.7.0
 	$(INSTALL) -m 0755 libsys.so $(PREFIX)/lib/vq/libsys.so
