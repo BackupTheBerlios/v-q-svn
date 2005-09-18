@@ -1,0 +1,12 @@
+BASE=..
+
+all:
+
+include Makefile.unix.inc
+
+all clean:
+	cd cxx && $(MAKE) -f Makefile.unix $@
+
+install:
+	cd cxx && $(MAKE) -f Makefile.unix $@
+	$(INSTALL) -m 0644 corbautil.jar $(PREFIX)/bin/

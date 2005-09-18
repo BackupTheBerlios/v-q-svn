@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<msgs>
+	<menu>
+		<mod>
+			<m n="autoresp">Automatyczna odpowiedź</m>
+			<desc>
+				<m n="autoresp">Tutaj możesz ustawić odpowiedź, która będzie 
+				automatycznie wysyłana do nadawców otrzymywanych wiadomości.</m>
+			</desc>
+		</mod>
+	</menu>
+	<mod>
+		<autoresp>
+			<m n="getcant">Nie można pobrać aktualnie ustawionej wiadomości.</m>
+			<m n="chgcant">Nie można zmienić wiadomości.</m>
+			<m n="label">Poniżej znajduje się treść odsyłanej wiadomości:</m>
+			<m n="desc">
+				Ustawienie wiadomości spowoduje, że dla każdego nachodzącego listu
+				generowana będzie automatyczna odpowiedź. Informacje o nadawcach
+				są przez pewien czas przechowywane co powoduje że tylko jeden list
+				zostanie wysłany dla wiadomości przychodzących w krótkim odstępie czasu.
+				Odpowiedzi nie są generowane dla listów nadchodzących z list dyskusyjnych.
+			</m>
+			<m n="submit">Zmień</m>
+		</autoresp>
+	</mod>
+</msgs>

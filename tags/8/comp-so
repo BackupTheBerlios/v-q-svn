@@ -1,0 +1,2 @@
+#!/bin/sh
+exec g++ -D_REENTRANT -g -ftemplate-depth-40 -fpic -DPIC -pipe -Wall -c ${1+"$@"}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="com.support">
+	<title>Komercyjne wsparcie</title>
+
+	<para>
+		Czy twój biznes potrzebuje dostępności 24/7? A może specjalnych
+		funkcji? Integracji z istniejącym oprogramowaniem?
+		Jeżeli na któreś z tych pytań odpowiedziałeś twierdząco
+		możesz liczyć na foo-baz.com.
+	</para>
+
+	<para>
+		Istnieje możliwość modyfikacji tego oprogramowania (jak również
+		innych, np. qmail, apache) specjalnie dla twoich potrzeb.
+		Istnieje również możliwość pomocy w czasie instalacji lub
+		aktualizacji systemu.
+	</para>
+
+	<para>
+		Jedyne co musisz zrobić to skontaktować się
+		z <link linkend="pniewiadomski">Pawłem Niewiadomskim</link>.
+	</para>
+</chapter>

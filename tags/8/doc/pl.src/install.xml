@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="install">
+	<title>Instalacja</title>
+
+	<para>
+		Krok po kroku, czyli przepis na instalację.
+	</para>
+	
+	<section id="install.download">
+		<title>Ściąganie</title>
+
+		<para>
+			Warto rozpocząć od sprawdzenia 
+			<ulink url="http://v-q.foo-baz.com">strony projektu</ulink>.
+		</para>
+
+		<para>
+			<ulink url="http://sf.net/project/showfiles.php?group_id=87916">Udostępnione pliki</ulink>
+			przechowywane są na serwerze SourceForge. Sprawdź czy nie ma
+			nowych wersji.
+		</para>
+	</section>
+
+	<section id="install.deps">
+		<title>Zależności</title>
+
+		<para>
+			To jest złożony system, który zależy od innych projektów.
+		</para>
+
+		<para>
+			Główne zależności:
+
+			<itemizedlist>
+				<listitem>
+					<para>
+						nowoczesny kompilator C++, jeżeli używasz gcc
+						to powinien on być w wersji >= 3.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						implementacja protokołu CORBA posiadająca obsługę C++, 
+						przykładowo: <ulink url="http://www.mico.org">MICO</ulink> 
+						lub <ulink url="http://www.omniorb.org">omniORB</ulink>
+					</para>
+				</listitem>
+				<listitem>
+					<para>kompatybilny agent transferu poczty</para>
+				</listitem>
+				<listitem>
+					<para>biblioteka <ulink url="http://www.boost.org">boost</ulink></para>
+				</listitem>
+				<listitem>
+					<para>DocBook i doxygen jeżeli chcesz generować nową wersję dokumentacji</para>
+				</listitem>
+				<listitem>
+					<para>obsługiwane biblioteki dostępu do bazy danych</para>
+				</listitem>
+				<listitem>
+					<para>bibliotek Cgicc jeżeli chcesz generować interfejs WWW</para>
+				</listitem>
+				<listitem>
+					<para>Iconv jeżeli chcesz generować interfejs WWW</para>
+				</listitem>
+				<listitem>
+					<para>Sablotron jeżeli chcesz generować interfejs WWW. 
+						Przynajmniej w wersji 1.0.</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+
+		<section id="install.mta">
+			<title>Agent transferu poczty (MTA)</title>
+
+			<para>
+				Na dzień dzisiejszy tylko <application>qmail</application> 
+				jest obsługiwany. Musisz go zainstalować przed kompilacją.
+			</para>
+
+			<para>
+				Sugerowane jest użycie <application>qmail</application>
+				wraz z zestawem łatek <ulink url="http://q-p.foo-baz.com">Qmail-patches</ulink>.
+				Jednakże nie jest to wymagane, możesz używać dowolną wersję
+				<application>qmail</application>.
+			</para>
+
+			<para>
+				Z czasem inne programy MTA powinny być obsługiwane.
+			</para>
+		</section>
+
+		<section id="install.pgsql">
+			<title>Używanie PostgreSQL</title>
+
+			<para>
+				Musisz ściągnąć i zainstalować <application>PostgreSQL</application>.
+				Zalecane jest korzystanie z najnowszej stabilnej wersji.
+				Potrzebujesz również bibliotekę 
+				libpqxx w wersji co najmniej 2.4.2 oraz PERL i moduł
+				zwany DBI::Pg (tylko jeżeli chcesz korzystać ze skryptu
+				instalacyjnego). Wszystkie programy możesz ściągnąć z
+				<ulink url="http://www.postgresql.org">http://www.postgresql.org</ulink>.
+			</para>
+		</section>
+
+		<section id="install.oracle">
+			<title>Używanie Oracle</title>
+
+			<para>
+				Od wersji 7pre1 <application>Oracle</application> jest oficjalnie
+				obsługiwaną bazą danych. Na dzień dzisiejszy można
+				korzystać z tej bazy danych tylko za pomocą demonów
+				JDBC. Należy posiadać sterowniki JDBC dla posiadanej
+				wersji Oracle, nie są one dołączone do pakietu. 
+				Domyślne skrypty SQL znajdują się w katalogu
+				<filename>base/oracle</filename>.
+				Oracle 10g został przetestowany przy wykorzystaniu
+				<filename>ojdbc14.jar</filename>, jednakże v-q 
+				powinien działać bez problemów ze starszymi wersjami.
+			</para>
+		</section>
+ 
+		<section id="install.otherdb">
+			<title>Inne systemy bazodanowe</title>
+
+			<para>
+				Poniżej przedstawiona jest lista baz danych, które
+				nie są kompatybilne z v-q:
+				<itemizedlist>
+					<listitem>
+						<para>MySQL - brak obsługi widoków, procedur przechowywanych po stronie klienta;</para>
+					</listitem>
+					<listitem>
+						<para>
+							Firebird - nie można utworzyć indeksu z kluczem
+							większym niż 252 bajty. Powinno to zostać
+							naprawione w wersji 2, jednakże jak na razie
+							dalej to nie działa (sprawdzona wersja 2.0 Alpha 2),
+							inne potrzebne funkcje są dostępne;
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Cloudscape (AKA apache-derby) - nie można
+							utworzyć perspektywy zawierającej
+							funkcję agregującą, pozostałe wymagane
+							funkcje są dostępne;
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+ 	</section>
+ 
+	<section id="install.prep">
+		<title>Przygotowania</title>
+
+		<para>
+			Zainstaluj oprogramowanie wymienione w
+			<xref linkend="install.download"/> i <xref linkend="install.deps"/>.
+		</para>
+
+		<section>
+			<title>Tworzenie użytkownika i grupy</title>
+
+			<para>
+			Demony v-q mogą pracować jako dowolny użytkownik, sugeruje się
+			aby pracowały jako użytkownik _vq w grupie _vq.
+				<warning>
+					<para>
+						Ze względów bezpieczeństwa nie powinny być
+						uruchamiane jako root. Lepiej zapobiegać niż leczyć.
+					</para>
+				</warning>
+			</para>
+
+			<para>
+			Możesz użyć poniższych poleceń aby utworzyć wspomniane konto
+			(działa na pewno pod Linux i OpenBSD):
+<synopsis>groupadd _vq
+useradd -g _vq -d /var/vq _vq</synopsis>
+			</para>
+		</section>
+
+		<section id="install.unpack">
+			<title>Rozpakowywanie źródeł</title>
+
+			<para>
+				Zależnie od wybranego formatu archiwum będziesz potrzebował
+				programy <application>tar</application>,
+				<application>bzip2</application> lub <application>gzip</application>.
+			</para>
+
+			<para>
+				Jeżeli nazwa archiwum kończy się na <filename>.tar.gz</filename>
+				możesz rozpakować je następującym poleceniem:
+<synopsis>
+tar -xzvf v-q.*.tar.gz
+</synopsis>
+				Ewentualnie (jeżeli tar nie posiada wbudowanej obsługi gzip):
+<synopsis>
+gzip -dc v-q.*.tar.gz | tar -xvf -
+</synopsis>
+			</para>
+
+			<para>
+				Jeżeli nazwa archiwum kończy się na <filename>.tar.bz2</filename>
+				możesz rozpakować je następującym poleceniem:
+<synopsis>
+bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
+</synopsis>
+			</para>
+
+			<para>
+				Na dzień dzisiejszy źródła rozprowadzane są tylko w wymienionych
+				formatach.
+		
+				<note>
+					<para>
+						<application>Bzip2</application> oferuje lepszy
+						stopień kompresji w porównaniu z <application>gzip</application>
+						jednakże nie jest tak popularny. Jeżeli
+						posiadasz w systemie <application>bzip2</application>
+						sugerowane jest użycie tego formatu.
+					</para>
+				</note>
+			</para>
+		</section>
+
+		<section id="install.conf">
+			<title>Konfiguracja przed instalacją</title>
+
+			<para>
+				Przed uruchomieniem <application>make</application>
+				musisz odpowiednio skonfigurować źródła. Nie ma
+				skryptu <application>configure</application>. V-q
+				nie korzysta z <application>autoconf</application> i 
+				jego rodziny.
+			</para>
+
+			<para>
+				Nie masz powodów do obaw. Konfiguracja jest stosunkowo
+				łatwa - wystarczy zaktualizować kilka plików.
+			</para>
+
+			<para>
+				Na początku musisz ustalić kompilator i jego opcje.
+				W głównym katalogu należy zaktualizować następujące pliki:
+				<itemizedlist>
+					<listitem><para>
+						<filename>compile</filename> używany jest do
+						normalnej kompilacji.
+						Domyślnie wywoływane jest <application>g++</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>comp-so</filename> używany jest do
+						kompilacji plików, które wejdą w skład archiwum
+						dzielonego (biblioteki).
+						Domyślnie wywoływane jest <application>g++</application>
+						z argumentami: -fpic -DPIC.
+					</para></listitem>
+					<listitem><para>
+						<filename>load</filename> używany jest do tworzenia
+						programów. Domyślnie wywoływane jest
+						<application>g++</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>make-lib</filename> używany jest do tworzenia
+						statycznie linkowany bibliotek. Wywołuje
+						<application>ar</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>make-so</filename> używany jest do
+						tworzenia bibliotek dzielonych dynamicznie.
+						Wywołuje <application>g++</application> z opcją -shared.
+					</para></listitem>
+					<listitem><para>
+						<filename>idl</filename> używany jest do
+						tłumaczenia plików IDL na pliki C++.
+						Pamiętaj, że skrypt ten powinien tworzyć
+						2 pliki z rozszerzeniami: .hpp i .cc.
+						Domyślnie wywoływany jest <application>idl</application>
+						(<ulink url="http://www.mico.org">MICO</ulink>)
+						lub omniidl (<ulink url="http://www.omniorb.org">omniORB</ulink>).
+					</para></listitem>
+				</itemizedlist>
+			</para>
+
+			<para>
+				Jeżeli używasz innych programów niż te wymienione
+				proszę wyślij opis wywołania do 
+				<link linkend="pniewiadomski">Pawła Niewiadomskiego</link>
+			</para>
+
+			<para>
+				Następny krokiem jest aktualizacja plików z
+				rozszerzeniami: <filename>.inc</filename> i <filename>.lib</filename>.
+				Pierwszy typ plików używany jest podczas kompilacji, zawierają
+				one opcje dla kompilatora. Drugi typ plików
+				używany jest podczas linkowania, zawierają one informacje
+				o bibliotekach, które mają zostać użyte.
+			</para>
+
+			<section id="install.corba.conf">
+				<title>Określanie używanej implementacji CORBA</title>
+
+				<para>
+					Przed kompilacją musisz określić, którą z dostępnych
+					i obsługiwanych implementacji CORBA chcesz użyć.
+					W tym celu musisz zaktualizować 3 pliki.
+				</para>
+
+				<para>
+					<filename>corba.lib</filename> powinien zawierać
+					wszystkie argumenty dla <application>make-so</application>,
+					które używane będą w czasie linkowania.
+					Powinieneś tam umieścić odwołania do wszystkich
+					bibliotek wymaganych przez wybraną implementację
+					CORBA.
+				</para>
+
+				<para>
+					<filename>corba.inc</filename> powinien zawierać
+					argumenty przekazywane do <application>comp-so</application>
+					i <application>compile</application>, które
+					wskażą katalogi z plikami nagłówkowymi wymaganymi
+					przez wybraną implementację CORBA. Niezbędny jest
+					również argument określający, która implementacja
+					CORBA powinna być użyta.
+					Przykładowo jeżeli chcesz używać MICO musisz podać -DP_USE_MICO.
+					Oznacza to, że w czasie kompilacja definicja P_USE_MICO 
+					będzie zdefiniowana.
+					Inne możliwości:
+					<itemizedlist>
+						<listitem><para>P_USE_MICO - dla MICO</para></listitem>
+						<listitem><para>P_USE_OMNIORB - dla omniORB</para></listitem>
+						<listitem><para>P_USE_ORBACUS - dla Orbacus</para></listitem>
+						<listitem><para>P_USE_TAO - dla TAO</para></listitem>
+						<listitem><para>P_USE_ORBIX - dla Orbix</para></listitem>
+					</itemizedlist>
+
+					<note>
+						<para>
+							Na razie oprogramowanie zostało przetestowane
+							z MICO (bez obsługi wątków) i omniORB.
+						</para>
+					</note>
+				</para>
+
+				<para>
+					Należy również określić program, który będzie
+					używany do translacji plików IDL - w tym
+					celu należy zmienić plik <filename>idl</filename>.
+					Plik zawiera przykłady dla obsługiwanych implementacji
+					CORBA.
+				</para>
+<example>
+	<title>corba.inc dla MICO zainstalowanego w /usr/local/progs/mico</title>
+<screen><userinput>
+-DP_USE_MICO -I/usr/local/progs/mico/include
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.lib dla MICO zainstalowanego w /usr/local/progs/mico</title>
+<screen><userinput>
+-L/usr/local/progs/mico/lib -lmicocoss2.3.11 -lmico2.3.11 -lssl -lcrypto
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.inc dla omniORB zainstalowanego w /usr/local/progs/omniorb</title>
+<screen><userinput>
+-DP_USE_OMNIORB -I/usr/local/progs/omniorb/include
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.lib dla omniORB zainstalowanego w /usr/local/progs/omniorb</title>
+<screen><userinput>
+-L/usr/local/progs/omniorb/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread 
+</userinput></screen>
+</example>
+			</section>
+		</section>
+	</section>
+
+	<section id="install.comp">
+		<title>Kompilacja</title>
+		
+		<para>Najwyższy czas aby skompilować źródła. Jeżeli skonfigurowałeś
+		wszystko poprawnie powinieneś bez problemów skompilować
+		Virtual Qmail.</para>
+
+		<para>
+			Aby rozpocząć kompilację skorzystaj z <application>make</application>.
+			Obie wersje programu są obsługiwane: BSD lub GNU. 
+			Zależnie od powłoki używanej przez Ciebie, dla 
+			<application>sh</application> napisz:
+<screen>
+<userinput>
+make 2>&amp;1 > out
+</userinput>
+</screen>
+			Dla tcsh napisz:
+<screen>
+<userinput>
+make >&amp; out
+</userinput>
+</screen>
+			Po tym jak <application>make</application> zakończy działanie
+			sprawdź plik <filename>out</filename> aby sprawdzić przebieg
+			kompilacji.
+		</para>
+
+		<para>
+			Jeżeli nie jesteś w stanie skompilować v-q wyślij
+			<filename>out</filename> do 
+			<link linkend="pniewiadomski">Pawła Niewiadomskiego</link>.
+		</para>
+
+		<para>
+			Wykonanie <application>make</application> bez argumentów
+			generuje tylko podstawową część systemu, bez obsługi
+			baz danych czy interfejsu WWW.
+			Makefile zawiera następujące cele:
+			<itemizedlist>
+				<listitem><para>pgsql - generacja modułów korzystających z PostgreSQL</para></listitem>
+				<listitem><para>clean - usuwanie obiektów utworzonych w czasie kompilacji</para></listitem>
+<!--				<listitem><para></para></listitem>
+				<listitem><para></para></listitem>-->
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="install.install">
+		<title>Instalacja</title>
+
+		<para>
+			Po prawidłowej kompilacji jesteś w stanie zainstalować oprogramowanie.
+			Jest to tak proste jak napisanie:
+<screen>
+<userinput>
+make install
+</userinput>
+</screen>
+			Możesz dodać również argument PREFIX=jakiś/katalog
+			aby zainstalować v-q w innym niż domyślny katalogu.
+			Poniższe polecenie zainstaluje wszystkie pliki w
+			<filename>/var/v-q</filename>:
+<screen>
+<userinput>
+make PREFIX=/var/v-q install
+</userinput>
+</screen>
+			<note>
+				<para>
+					Domyślnym katalogiem instalacji jest <!--ENV:PREFIX-->/var/vq<!--/ENV:PREFIX-->.
+				</para>
+			</note>
+		</para>
+
+		<section id="install.steps.qmail">
+			<title>Specjalne kroki dla Qmail</title>
+		
+			<para>
+				Po instalacji v-q możesz dopasować kilka ustawień.
+				Dla przykładu jeżeli właścicielem konfiguracji qmail
+				jest inny użytkownik niż ten, jako który
+				działa <application>qmailvqd</application>
+				możesz zmienić właściciela i ustawić bit SETUID 
+				programom <filename>bin/qmail_*</filename> (oprócz 
+				<application>qmailvqd</application>). Dzięki temu będą
+				one w stanie modyfikować konfigurację qmail.
+				<note>
+					<para>
+						Programy zaczynające się od <filename>qmail-</filename>
+						są zwykłymi skryptami powłoki - w ich przypadku
+						nadanie prawa SETUID/SETGID nie zadziała. Musisz je zmienić tak
+						aby wykorzystywały <application>sudo</application>
+						do uruchamiania poleceń. Zobacz zawartość pliku
+						<application>qmail-send-restart</application>
+						jeżeli chcesz wiedzieć więcej.
+					</para>
+				</note>
+			</para>
+		</section>
+
+		<section id="install.steps.pgsql">
+			<title>Specjalne kroki dla PostgreSQL</title>
+
+			<para>
+				Musisz utworzyć użytkownika w systemie PostgreSQL. Domyślnie
+				jest to użytkownik &quot;mail&quot;, możesz użyć innej nazwy. 
+				Aby utworzyć domyślnego użytkownika uruchom polecenie:
+<screen>
+<userinput>
+createuser -A -D -P mail
+</userinput>
+</screen>
+			</para>
+
+			<para>
+				Teraz musisz utworzyć bazę danych dla v-q. Domyślnie
+				nazywa się ona &quot;mail&quot;, możesz użyć innej nazwy.
+<screen>
+<userinput>
+createdb -E utf-8 -O mail mail
+</userinput>
+</screen>
+			</para>
+
+			<para>
+				Aby skompilować moduły korzystające z PostgreSQL
+				uruchom polecenie w sh:
+<screen>
+<userinput>
+make pgsql 2>&amp;1 > out.pgsql
+</userinput>
+</screen>
+				W tcsh użyj polecenia:
+<screen>
+<userinput>
+make pgsql >&amp; out.pgsql
+</userinput>
+</screen>
+				Pamiętaj, że program pqxx-config musi być 
+				w ścieżce poszukiwań (jeżeli nie masz takiego programu
+				oznacza to, że nie masz libpqxx lub jest to stara, 
+				nieobsługiwana wersja).
+			</para>
+
+			<para>
+				Aby zainstalować moduły PostgreSQL:
+<screen>
+<userinput>
+make install-pgsql
+</userinput>
+</screen>
+				Możesz dodać również argument PREFIX=jakiś/katalog
+				aby zainstalować v-q w innym niż domyślny katalogu.
+				Poniższe polecenie zainstaluje wszystkie pliki w
+				<filename>/var/v-q</filename>:
+<screen>
+<userinput>
+make PREFIX=/var/v-q install
+</userinput>
+</screen>
+				<note>
+					<para>
+						Domyślnym katalogiem instalacji jest <!--ENV:PREFIX-->/var/vq<!--/ENV:PREFIX-->.
+					</para>
+				</note>
+			</para>
+
+			<para>
+				Chcąc utworzyć obiekty w bazie danych możesz posłużyć
+				się skryptem PERL <application>install.pgsql</application>. 
+				Dokument nie opisuje w jaki sposób ręcznie utworzyć
+				odpowiednie obiekty. Niezbędne informacje można wyczytać
+				z wymienionego skryptu.
+
+				<note>
+					<para>
+						Przed uruchomieniem skryptu sprawdź czy odpowiada
+						Twoim potrzebom (np. czy zgadza się nazwa 
+						przestrzeni tabel).
+					</para>
+				</note>
+
+				<caution>
+					<para>
+						Pamiętaj aby ustawić hasło dla użytkownika 
+						bazy danych i skonfigurować PostgreSQL
+						aby wymagał autoryzacji.
+						Jeżeli nie zrobisz tego każdy użytkownik będzie
+						mógł modyfikować dane znajdujące się w bazie.
+					</para>
+				</caution>
+			</para>
+		</section>
+
+		<section id="install.problems">
+			<title>Mam problem, co zrobić?</title>
+
+			<para>
+				Jeżeli nie możesz zainstalować v-q sprawdź
+				<ulink url="http://v-q.foo-baz.com">stronę projektu</ulink>,
+				sprawdź również
+				<ulink url="http://sf.net/projects/v-q">stronę projektu na SourceForge</ulink>.
+				Znajdziesz tam listę dyskusyjną, forum, etc.
+			</para>
+
+			<para>
+				Przeczytaj również <xref linkend="community"/>
+			</para>
+		</section>
+	</section>
+</chapter>
+

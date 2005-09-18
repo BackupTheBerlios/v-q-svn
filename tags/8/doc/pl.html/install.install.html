@@ -1,0 +1,440 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Instalacja</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Instalacja"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Kompilacja"
+HREF="install.comp.html"><LINK
+REL="NEXT"
+TITLE="Generowanie dokumentacji"
+HREF="doc.gen.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-06-14T17:34:11"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.comp.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 7. Instalacja</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="doc.gen.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.install"
+>7.5. Instalacja</A
+></H1
+><P
+>&#13;			Po prawid³owej kompilacji jeste¶ w stanie zainstalowaæ oprogramowanie.
+			Jest to tak proste jak napisanie:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make install
+</KBD
+>
+</PRE
+><P>
+			Mo¿esz dodaæ równie¿ argument PREFIX=jaki¶/katalog
+			aby zainstalowaæ v-q w innym ni¿ domy¶lny katalogu.
+			Poni¿sze polecenie zainstaluje wszystkie pliki w
+			<TT
+CLASS="filename"
+>/var/v-q</TT
+>:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make PREFIX=/var/v-q install
+</KBD
+>
+</PRE
+><P>
+			</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+					Domy¶lnym katalogiem instalacji jest /var/vq.
+				</P
+></BLOCKQUOTE
+></DIV
+><P>
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.steps.qmail"
+>7.5.1. Specjalne kroki dla Qmail</A
+></H2
+><P
+>&#13;				Po instalacji v-q mo¿esz dopasowaæ kilka ustawieñ.
+				Dla przyk³adu je¿eli w³a¶cicielem konfiguracji qmail
+				jest inny u¿ytkownik ni¿ ten, jako który
+				dzia³a <SPAN
+CLASS="application"
+>qmailvqd</SPAN
+>
+				mo¿esz zmieniæ w³a¶ciciela i ustawiæ bit SETUID 
+				programom <TT
+CLASS="filename"
+>bin/qmail*</TT
+> (oprócz 
+				<SPAN
+CLASS="application"
+>qmailvqd</SPAN
+>). Dziêki temu bêd±
+				one w stanie modyfikowaæ konfiguracjê qmail.
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+						Programy zaczynaj±ce siê od <TT
+CLASS="filename"
+>qmail_</TT
+>
+						s± zwyk³ymi skryptami pow³oki - w ich przypadku
+						nadanie prawa SETUID/SETGID nie zadzia³a. Musisz je zmieniæ tak
+						aby wykorzystywa³y <SPAN
+CLASS="application"
+>sudo</SPAN
+>
+						do uruchamiania poleceñ. Zobacz zawarto¶æ pliku
+						<SPAN
+CLASS="application"
+>qmail-send-restart</SPAN
+>
+						je¿eli chcesz wiedzieæ wiêcej.
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.steps.pgsql"
+>7.5.2. Specjalne kroki dla PostgreSQL</A
+></H2
+><P
+>&#13;				Musisz utworzyæ u¿ytkownika w systemie PostgreSQL. Domy¶lnie
+				jest to u¿ytkownik "mail", mo¿esz u¿yæ innej nazwy. 
+				Aby utworzyæ domy¶lnego u¿ytkownika uruchom polecenie:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;createuser -A -D -P mail
+</KBD
+>
+</PRE
+><P>
+			</P
+><P
+>&#13;				Teraz musisz utworzyæ bazê danych dla v-q. Domy¶lnie
+				nazywa siê ona "mail", mo¿esz u¿yæ innej nazwy.
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;createdb -E utf-8 -O mail mail
+</KBD
+>
+</PRE
+><P>
+			</P
+><P
+>&#13;				Aby skompilowaæ modu³y korzystaj±ce z PostgreSQL
+				uruchom polecenie w sh:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make pgsql 2&#62;&#38;1 &#62; out.pgsql
+</KBD
+>
+</PRE
+><P>
+				W tcsh u¿yj polecenia:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make pgsql &#62;&#38; out.pgsql
+</KBD
+>
+</PRE
+><P>
+				Pamiêtaj, ¿e program pqxx-config musi byæ 
+				w ¶cie¿ce poszukiwañ (je¿eli nie masz takiego programu
+				oznacza to, ¿e nie masz libpqxx lub jest to stara, 
+				nieobs³ugiwana wersja).
+			</P
+><P
+>&#13;				Aby zainstalowaæ modu³y PostgreSQL:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make install-pgsql
+</KBD
+>
+</PRE
+><P>
+				Mo¿esz dodaæ równie¿ argument PREFIX=jaki¶/katalog
+				aby zainstalowaæ v-q w innym ni¿ domy¶lny katalogu.
+				Poni¿sze polecenie zainstaluje wszystkie pliki w
+				<TT
+CLASS="filename"
+>/var/v-q</TT
+>:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make PREFIX=/var/v-q install
+</KBD
+>
+</PRE
+><P>
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+						Domy¶lnym katalogiem instalacji jest /var/vq.
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
+			</P
+><P
+>&#13;				Chc±c utworzyæ obiekty w bazie danych mo¿esz pos³u¿yæ
+				siê skryptem PERL <SPAN
+CLASS="application"
+>install.pgsql</SPAN
+>. 
+				Dokument nie opisuje w jaki sposób rêcznie utworzyæ
+				odpowiednie obiekty. Niezbêdne informacje mo¿na wyczytaæ
+				z wymienionego skryptu.
+
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+						Przed uruchomieniem skryptu sprawd¼ czy odpowiada
+						Twoim potrzebom (np. czy zgadza siê nazwa 
+						przestrzeni tabel).
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
+
+				<DIV
+CLASS="caution"
+><P
+></P
+><TABLE
+CLASS="caution"
+BORDER="1"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Uwaga!</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>&#13;						Pamiêtaj aby ustawiæ has³o dla u¿ytkownika 
+						bazy danych i skonfigurowaæ PostgreSQL
+						aby wymaga³ autoryzacji.
+						Je¿eli nie zrobisz tego ka¿dy u¿ytkownik bêdzie
+						móg³ modyfikowaæ dane znajduj±ce siê w bazie.
+					</P
+></TD
+></TR
+></TABLE
+></DIV
+>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.problems"
+>7.5.3. Mam problem, co zrobiæ?</A
+></H2
+><P
+>&#13;				Je¿eli nie mo¿esz zainstalowaæ v-q sprawd¼
+				<A
+HREF="http://v-q.foo-baz.com"
+TARGET="_top"
+>stronê projektu</A
+>,
+				sprawd¼ równie¿
+				<A
+HREF="http://sf.net/projects/v-q"
+TARGET="_top"
+>stronê projektu na SourceForge</A
+>.
+				Znajdziesz tam listê dyskusyjn±, forum, etc.
+			</P
+><P
+>&#13;				Przeczytaj równie¿ <A
+HREF="community.html"
+>Rozdzia&#322; 5</A
+>
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.comp.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="doc.gen.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Kompilacja</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Generowanie dokumentacji</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,310 @@
+%define datadir %{_localstatedir}/vq
+%define project v-q
+
+%ifarch ia64
+# disable debuginfo on IA64
+%define debug_package %{nil}
+%endif
+
+Summary: Virtual Qmail
+Name: v-q-%{_vendor}
+Version: @VERSION@
+Release: 1
+URL: http://v-q.foo-baz.com/
+Vendor: http://foo-baz.com/
+Packager: Pawel Niewiadomski <new@foo-baz.com>
+Source0: %{project}-%{version}.tar.gz
+License: GPL
+Group: System Environment/Daemons
+BuildRoot: %{_tmppath}/%{project}-root
+BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
+BuildPrereq: postgresql-libs >= 7.4.5, libpqxx-devel >= 2.5.0
+BuildPrereq: postgresql-devel >= 7.4.5, openssl-devel >= 0.9.7
+Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
+Prereq: sh-utils, textutils, /sbin/ldconfig
+Requires: omniORB >= 4.0.5-1, boost >= 1.31.0, daemontools >= 0.76
+Requires: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
+Provides: %{project}-ivq = %{version}, %{project} = %{version}
+
+%description
+Virtual Qmail is a virtual domains manager that integrates with Qmail.
+
+%package devel
+Group: Development/Libraries
+Summary: Development environment for Virtual Qmail
+Requires: omniORB-devel >= 4.0.5-1, boost >= 1.31.0, %{project} = %{version}
+
+%description devel
+This package includes files that are needed to develop applications for
+Virtual Qmail.
+
+%package pgsql
+Group: System Environment/Daemons
+Summary: Implementation of iauth and ilogger interfaces using PostgreSQL
+Requires: postgresql-libs >= 7.4.5, libpqxx >= 2.5.0, %{project} = %{version}
+Requires: daemontools >= 0.76
+Provides: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
+
+%description pgsql
+This package includes implementation of Virtual Qmail interfaces: 
+ * iauth which is used to store informations in a database
+ * ilogger which is used to store logs in a database
+
+Implementation is based on PostgreSQL and libpqxx.
+
+%package jdbc
+Group: System Environment/Daemons
+Summary: Implementation of iauth and ilogger interfaces using Java and JDBC
+Requires: %{project} = %{version}
+Requires: daemontools >= 0.76
+Provides: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
+
+%description jdbc
+This package includes implementation of Virtual Qmail interfaces: 
+ * iauth which is used to store informations in a database
+ * ilogger which is used to store logs in a database
+
+Implementation is based on JDBC and Java this means that it's portable and
+can use any database which supports views, stored procedures and have
+JDBC driver.
+
+%prep
+%setup -q -n %{project}-%{version}
+echo "-I/usr/include" > boost.inc
+echo "-L`pwd`" > boost.lib
+echo "-lboost_date_time" > boost_date_time.lib
+echo "-lboost_regex" > boost_regex.lib
+echo "-lboost_thread" > boost_thread.lib
+echo "-lboost_unit_test_framework" > boost_unit_test.lib
+
+for p in boost_date_time boost_regex boost_thread boost_unit_test_framework ; do
+	if [ -f /usr/lib/lib$p.so.1 ] ; then
+		ln -sf /usr/lib/lib$p.so.1 lib$p.so ;
+	fi ;
+done
+
+echo "-DP_USE_OMNIORB -I/usr/include" > corba.inc
+echo "-L/usr/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread" > corba.lib
+
+echo '#!/bin/sh' > idl
+echo 'exec omniidl -bcxx -Wbh=.hpp -Wbs=.cc $@' >> idl
+chmod u+x idl
+
+cat > compile << EOF
+#!/bin/sh
+exec g++ $RPM_OPT_FLAGS -D_REENTRANT -ftemplate-depth-40 -pipe -g -Wall -c \${1+"\$@"}
+EOF
+
+cat > comp-so << EOF
+#!/bin/sh
+exec g++ $RPM_OPT_FLAGS -D_REENTRANT -g -ftemplate-depth-40 -fpic -DPIC -pipe -Wall -c \${1+"\$@"}
+EOF
+
+cat > make-lib << EOF
+#!/bin/sh
+exec ar cr \${1+"\$@"}
+EOF
+
+%if "%{_vendor}" != "redhat"
+STRIP_FLAGS=-s
+%endif
+
+cat > make-so << EOF
+#!/bin/sh
+main="\$1"; shift
+exec g++ $STRIP_FLAGS -L. -shared -o "\$main" \${1+"\$@"}
+EOF
+
+cat > load << EOF
+#!/bin/sh
+main="\$1"; shift
+exec g++ $STRIP_FLAGS -L. -o "\$main" "\$main".o \${1+"\$@"}
+EOF
+
+%build
+make
+make pgsql
+make jdbc
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make PREFIX=$RPM_BUILD_ROOT/usr install
+make PREFIX=$RPM_BUILD_ROOT/usr install-pgsql
+make PREFIX=$RPM_BUILD_ROOT/usr install-jdbc
+
+# copy contrib/service/
+mkdir -m 0700 $RPM_BUILD_ROOT/service
+cp -R contrib/service/{pgsql*,jdbc*,qmailvqd} $RPM_BUILD_ROOT/service
+
+# make /etc/sysconfig/vq
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/vq
+echo "VQ_HOME=\"%{_prefix}\"" >> $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/vq
+echo "VQ_ETC_DIR=\"%{_sysconfdir}/vq\"" >> $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/vq
+
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d
+
+# make /etc/profile.d/vq.sh
+cat > $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/vq.sh <<EOF
+sourced=0
+for p in /etc/sysconfig/vq \$HOME/.vq ; do
+    [ -f \$p ] && . \$p && sourced=1
+done
+
+if [ "\$sourced" = 1 ] ; then
+	[ -n "\$VQ_HOME" ] && export VQ_HOME || unset VQ_HOME
+	[ -n "\$VQ_ETC_DIR" ] && export VQ_ETC_DIR || unset VQ_ETC_DIR
+fi
+unset p
+unset sourced
+EOF
+
+# make /etc/profile.d/vq.csh
+cat > $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/vq.csh <<EOF
+set sourced=0
+foreach p (/etc/sysconfig/vq \$HOME/.vq)
+        if ( -f \$p ) then
+            eval \`grep -v '^[:blank:]*#' \$p | sed 's|\([^=]*\)=\([^=]*\)|setenv \1 \2|g' | sed 's|$|;|'\`
+        endif
+        set sourced=1
+end
+EOF
+
+# make /etc/ld.so.conf.d/vq.conf
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/
+echo %{_libdir}/vq > $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/vq.conf
+
+# make %{datadir} and %{datadir}/domains
+mkdir -p $RPM_BUILD_ROOT/%{datadir}
+mkdir -p $RPM_BUILD_ROOT/%{datadir}/domains
+mkdir -p $RPM_BUILD_ROOT/%{datadir}/sockets
+
+# make %{localstatedir}/log/{pgsqlauthd,qmailvqd,pgsqllogd}
+mkdir -p $RPM_BUILD_ROOT/%{_localstatedir}/log/{pgsqlauthd,qmailvqd,pgsqllogd,jdbcauthd,jdbclogd}
+
+# move usr/etc
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}
+mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
+
+%pre
+# Add the "_vq" user
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
+
+# Add the "_log" user
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
+	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
+
+%pre pgsql
+# Add the "_vq" user
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
+
+# Add the "_log" user
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
+	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
+
+%pre jdbc
+# Add the "_vq" user
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
+
+# Add the "_log" user
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
+	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
+
+%post
+/sbin/ldconfig
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+
+%doc INSTALL VERSION README README.pl_PL doc/en.html doc/pl.html corbautil/doc/corba_utils.pdf
+
+%dir %{_sysconfdir}/vq
+%dir %{_sysconfdir}/vq/ivq
+%dir %{_sysconfdir}/vq/iauth
+%dir %{_sysconfdir}/vq/ilogger
+
+%{_sysconfdir}/profile.d/*
+
+%config(noreplace) %{_sysconfdir}/sysconfig/vq
+
+%config %{_sysconfdir}/ld.so.conf.d/vq.conf
+
+%{_bindir}/*_*
+%{_bindir}/qmailvqd
+%{_bindir}/autoresp
+%{_bindir}/deliver
+%{_bindir}/qmail-send-restart
+
+#%attr(4510,root,%{suexec_caller}) %{_sbindir}/suexec
+
+%dir %{_libdir}/vq
+%{_libdir}/vq/*
+
+%attr(0750,_vq,_vq) %dir %{datadir}
+%attr(0750,_vq,_vq) %dir %{datadir}/domains
+%attr(0750,_vq,_vq) %dir %{datadir}/sockets
+
+%attr(750,_log,_log) %{_localstatedir}/log/qmailvqd
+
+%attr(1700,-,-) %dir /service/qmailvqd
+%attr(700,-,-) %dir /service/qmailvqd/log
+%attr(700,-,-) %config(noreplace) /service/qmailvqd/run
+%attr(700,-,-) %config(noreplace) /service/qmailvqd/log/run
+
+%files devel
+%defattr(-,root,root)
+
+%dir %{_includedir}/vq
+%{_includedir}/vq/*
+
+%files pgsql
+%defattr(-,root,root)
+
+%{_bindir}/pgsql*
+%{_bindir}/install.pgsql
+
+%attr(750,_log,_log) %{_localstatedir}/log/pgsql*
+
+%attr(1700,-,-) %dir /service/pgsqllogd
+%attr(700,-,-) %dir /service/pgsqllogd/log
+%attr(700,-,-) %config(noreplace) /service/pgsqllogd/run
+%attr(700,-,-) %config(noreplace) /service/pgsqllogd/log/run
+
+%attr(1700,-,-) %dir /service/pgsqlauthd
+%attr(700,-,-) %dir /service/pgsqlauthd/log
+%attr(700,-,-) %config(noreplace) /service/pgsqlauthd/run
+%attr(700,-,-) %config(noreplace) /service/pgsqlauthd/log/run
+
+
+%files jdbc
+%defattr(-,root,root)
+
+%attr(644,-,-) %{_bindir}/*.jar
+
+%attr(750,_log,_log) %{_localstatedir}/log/jdbc*
+
+%attr(1700,-,-) %dir /service/jdbcauthd
+%attr(700,-,-) %dir /service/jdbcauthd/log
+%attr(700,-,-) %config(noreplace) /service/jdbcauthd/run
+%attr(700,-,-) %config(noreplace) /service/jdbcauthd/log/run
+
+%attr(1700,-,-) %dir /service/jdbclogd
+%attr(700,-,-) %dir /service/jdbclogd/log
+%attr(700,-,-) %config(noreplace) /service/jdbclogd/run
+%attr(700,-,-) %config(noreplace) /service/jdbclogd/log/run
+
+%changelog
+* Tue Aug 30 2005 Pawel Niewiadomski <new@foo-baz.com> 8
+- Added deleted directory to /var/vq
+
+* Mon Apr 18 2005 Pawel Niewiadomski <new@foo-baz.com> 6
+- Introducing JDBC implementation
+
+* Fri Mar 25 2005 Pawel Niewiadomski <new@foo-baz.com> 6
+- First version.

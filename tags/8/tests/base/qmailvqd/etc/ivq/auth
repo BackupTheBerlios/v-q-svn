@@ -1,0 +1,1 @@
+-ORBInitRef NameService=corbaloc::localhost:12453/NameService

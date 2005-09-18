@@ -1,0 +1,612 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Preparation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Dependencies"
+HREF="install.deps.html"><LINK
+REL="NEXT"
+TITLE="Compilation"
+HREF="install.comp.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-06-14T17:33:53"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.deps.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 7. Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.comp.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.prep"
+>7.3. Preparation</A
+></H1
+><P
+>&#13;			First step is to download and install
+			all software pointed out in <A
+HREF="install.html#install.download"
+>Section 7.1</A
+> 
+			and <A
+HREF="install.deps.html"
+>Section 7.2</A
+>.
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="AEN686"
+>7.3.1. Creating user and group</A
+></H2
+><P
+>&#13;			V-q daemons can work as any user, but it is suggested
+			to run them under _vq group and _vq user.
+				<DIV
+CLASS="warning"
+><P
+></P
+><TABLE
+CLASS="warning"
+BORDER="1"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Warning</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>&#13;						For security reasons you should not run it
+						as root. It's better to prevent than cure.
+					</P
+></TD
+></TR
+></TABLE
+></DIV
+>
+			</P
+><P
+>&#13;			You can use following commands to create this account (works under
+			Linux and OpenBSD):
+</P><PRE
+CLASS="synopsis"
+>groupadd _vq
+useradd -g _vq -d /var/vq _vq</PRE
+><P>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.unpack"
+>7.3.2. Unpacking sources</A
+></H2
+><P
+>&#13;				Depending on package format you can use <SPAN
+CLASS="application"
+>tar</SPAN
+>,
+				<SPAN
+CLASS="application"
+>bzip2</SPAN
+>, <SPAN
+CLASS="application"
+>gzip</SPAN
+>
+				to decompress archive.
+			</P
+><P
+>&#13;				If archive's name ends with <TT
+CLASS="filename"
+>.tar.gz</TT
+> you
+				can unpack it with following commands:
+</P><PRE
+CLASS="synopsis"
+>&#13;tar -xzvf v-q.*.tar.gz
+</PRE
+><P>
+				If you tar doesn't supports gzip unpacking use:
+</P><PRE
+CLASS="synopsis"
+>&#13;gzip -dc v-q.*.tar.gz | tar -xvf -
+</PRE
+><P>
+			</P
+><P
+>&#13;				If archive's name ends with <TT
+CLASS="filename"
+>.tar.bz2</TT
+> you can
+				unpack it using:
+</P><PRE
+CLASS="synopsis"
+>&#13;bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
+</PRE
+><P>
+			</P
+><P
+>&#13;				At this time sources are released only with specified formats.
+		
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+						<SPAN
+CLASS="application"
+>Bzip2</SPAN
+> gives 
+						better compression rate than <SPAN
+CLASS="application"
+>gzip</SPAN
+>
+						but it's not as popular as <SPAN
+CLASS="application"
+>gzip</SPAN
+> so before
+						downloading archive in this format check 
+						if you have it installed on your system.
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.conf"
+>7.3.3. Configuration before compilation</A
+></H2
+><P
+>&#13;				Before running <SPAN
+CLASS="application"
+>make</SPAN
+>
+				you must configure sources. There's no 
+				<SPAN
+CLASS="application"
+>configure</SPAN
+> script. V-q
+				don't use <SPAN
+CLASS="application"
+>autoconf</SPAN
+> and
+				it's family.
+			</P
+><P
+>&#13;				But don't be scared. Configuration is quite easy - all you
+				need to do is edit few files.
+			</P
+><P
+>&#13;				First you need to set compiler and its options. In the
+				main directory there are following files:
+				<P
+></P
+></P><UL
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>compile</TT
+> is used in normal compilation.
+						Default version executes <SPAN
+CLASS="application"
+>g++</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>comp-so</TT
+> is used to compile
+						objects that will be included in shared libraries.
+						Default version executes <SPAN
+CLASS="application"
+>g++</SPAN
+>
+						with arguments: -fpic -DPIC.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>load</TT
+> is used to link
+						objects. Default version executes <SPAN
+CLASS="application"
+>g++</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>make-lib</TT
+> is used to create
+						statically linked library. It executes 
+						<SPAN
+CLASS="application"
+>ar</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>make-so</TT
+> is used to
+						create dynamically linked library. It executes
+						<SPAN
+CLASS="application"
+>g++</SPAN
+> with -shared option.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>idl</TT
+> is used to
+						process IDL definitions to C++ files. Remember that
+						it creates 2 files with extensions: .hpp and .cc.
+						Default version calls <SPAN
+CLASS="application"
+>idl</SPAN
+>
+						(<A
+HREF="http://www.mico.org"
+TARGET="_top"
+>MICO</A
+>)
+						or <SPAN
+CLASS="application"
+>omniidl</SPAN
+> 
+						(<A
+HREF="http://www.omniorb.org"
+TARGET="_top"
+>omniORB</A
+>).
+					</P
+></LI
+></UL
+><P>
+			</P
+><P
+>&#13;				If you use other options or programs to compile your
+				version of v-q please send information about them to
+				<A
+HREF="community.authors.html#pniewiadomski"
+>Pawe³ Niewiadomski</A
+>
+			</P
+><P
+>&#13;				Next step is to edit files with extensions:
+				<TT
+CLASS="filename"
+>.inc</TT
+> and <TT
+CLASS="filename"
+>.lib</TT
+>.
+				First are used during compilation, they include informations
+				about directories used in searching for included files.
+				Second are used while linking, they include references
+				to libraries.
+			</P
+><DIV
+CLASS="section"
+><H3
+CLASS="section"
+><A
+NAME="install.corba.conf"
+>7.3.3.1. Selecting CORBA implementation</A
+></H3
+><P
+>&#13;					Before compilation you're able to select CORBA
+					implementation v-q should use. If you want to use
+					other than default you need to modify 3 files.
+				</P
+><P
+>&#13;					<TT
+CLASS="filename"
+>corba.lib</TT
+> should include
+					all arguments for <SPAN
+CLASS="application"
+>make-so</SPAN
+>
+					that will configure
+					linker. This means that you should put there
+					arguments specifying all libraries used by CORBA
+					implementation.
+				</P
+><P
+>&#13;					<TT
+CLASS="filename"
+>corba.inc</TT
+> should include
+					arguments for <SPAN
+CLASS="application"
+>comp-so</SPAN
+>
+					and <SPAN
+CLASS="application"
+>compile</SPAN
+> that 
+					will tell compiler about include files needed
+					by CORBA implementation. It also need to include
+					argument telling which implementation should be used.
+					For example to use MICO you should add -DP_USE_MICO. This
+					means that P_USE_MICO will be defined during compilation.
+					Other available options:
+					<P
+></P
+></P><UL
+><LI
+><P
+>P_USE_MICO - for MICO</P
+></LI
+><LI
+><P
+>P_USE_OMNIORB - for omniORB</P
+></LI
+><LI
+><P
+>P_USE_ORBACUS - for Orbacus</P
+></LI
+><LI
+><P
+>P_USE_TAO - for TAO</P
+></LI
+><LI
+><P
+>P_USE_ORBIX - for Orbix</P
+></LI
+></UL
+><P>
+
+					</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+							This software was tested only with MICO 
+							(threads disabled) and omniORB.
+						</P
+></BLOCKQUOTE
+></DIV
+><P>
+				</P
+><P
+>&#13;					Last thing that must be changed is an IDL translator 
+					definition - file <TT
+CLASS="filename"
+>idl</TT
+> includes
+					command that is used to translate IDL files into C++.
+					This file includes examples for various CORBA
+					implementations.
+				</P
+><DIV
+CLASS="example"
+><A
+NAME="AEN778"
+></A
+><P
+><B
+>Example 7-1. corba.inc for MICO installed in /usr/local/progs/mico</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-DP_USE_MICO -I/usr/local/progs/mico/include
+</KBD
+></PRE
+></DIV
+><DIV
+CLASS="example"
+><A
+NAME="AEN782"
+></A
+><P
+><B
+>Example 7-2. corba.lib for MICO installed in /usr/local/progs/mico</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-L/usr/local/progs/mico/lib -lmicocoss2.3.11 -lmico2.3.11 -lssl -lcrypto
+</KBD
+></PRE
+></DIV
+><DIV
+CLASS="example"
+><A
+NAME="AEN786"
+></A
+><P
+><B
+>Example 7-3. corba.inc for omniORB installed in /usr/local/progs/omniorb</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-DP_USE_OMNIORB -I/usr/local/progs/omniorb/include
+</KBD
+></PRE
+></DIV
+><DIV
+CLASS="example"
+><A
+NAME="AEN790"
+></A
+><P
+><B
+>Example 7-4. corba.lib for omniORB installed in /usr/local/progs/omniorb</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-L/usr/local/progs/omniorb/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread 
+</KBD
+></PRE
+></DIV
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.deps.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.comp.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Dependencies</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Compilation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

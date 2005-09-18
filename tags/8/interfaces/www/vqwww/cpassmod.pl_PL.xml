@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<msgs>
+	<menu>
+		<mod>
+			<m n="pass">
+				Zmień hasło
+			</m>
+			<desc>
+				<m n="pass">
+					Pamiętaj aby zmieniać hasło co pewien czas. Zbyt długie korzystanie
+					z tego samego hasła może ułatwić przejęcie Twojego konta przez 
+					nieupoważnione osoby.
+				</m>
+			</desc>
+		</mod>
+	</menu>
+	<mod>
+		<pass>
+			<m n="inv/done">Hasło zostało zmienione.</m>
+			<m n="inv/cpass/@empty">Podaj aktualne hasło.</m>
+			<m n="inv/npass/@empty">Podaj nowe hasło.</m>
+			<m n="inv/npass/@dirty">Nowe hasło zawiera nieprawidłowe znaki.</m>
+			<m n="inv/npass/@tooshort">Nowe hasło jest za krótkie.</m>
+			<m n="inv/npass/@toolong">Nowe hasło jest za długie.</m>
+			<m n="inv/dontmatch">Nowe hasło i powtórka są różne.</m>
+			<m n="inv/chgcant">Nie można zmienić hasła.</m>
+			<m n="inv/getcant">Nie można odczytać aktualnego hasła.</m>
+			<m n="inv/oldbad">Nieprawidłowe aktualne hasło.</m>
+			<m n="submit">Zmień</m>
+			<m n="cpass">Aktualne hasło:</m>
+			<m n="npass">Nowe hasło:</m>
+			<m n="rpass">Nowe hasło ponownie:</m>
+		</pass>
+	</mod>
+</msgs>
