@@ -77,6 +77,14 @@
 						</entry>
 					</row>
 					<row>
+						<entry><filename>maildir</filename></entry>
+						<entry>Maildir</entry>
+						<entry>
+							Name of a directory that users's mail is stored in.
+							Directory is created when user is added.
+						</entry>
+					</row>
+					<row>
 						<entry><filename>split_dom</filename></entry>
 						<entry>1</entry>
 						<entry>

@@ -353,7 +353,7 @@ public class JDBCAuth extends iauthPOA {
 		if( res < 0 ) {
 			switch( res ) {
 			case -1:
-				return lr(err_code.err_exists, "");
+				return lr(err_code.err_noent, "");
 			default:
 				return lr(err_code.err_func_res, "USER_PASS");
 			} 

@@ -18,8 +18,7 @@ License: GPL
 Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{project}-root
 BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
-BuildPrereq: postgresql-libs >= 7.4.5, libpqxx-devel >= 2.5.0
-BuildPrereq: postgresql-devel >= 7.4.5, openssl-devel >= 0.9.7
+BuildPrereq: libpqxx-devel >= 2.5.0, openssl-devel >= 0.9.7
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
 Prereq: sh-utils, textutils, /sbin/ldconfig
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0, daemontools >= 0.76
@@ -41,7 +40,7 @@ Virtual Qmail.
 %package pgsql
 Group: System Environment/Daemons
 Summary: Implementation of iauth and ilogger interfaces using PostgreSQL
-Requires: postgresql-libs >= 7.4.5, libpqxx >= 2.5.0, %{project} = %{version}
+Requires: libpqxx >= 2.5.0, %{project} = %{version}
 Requires: daemontools >= 0.76
 Provides: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
 

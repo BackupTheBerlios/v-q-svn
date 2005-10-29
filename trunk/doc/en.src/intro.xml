@@ -100,6 +100,17 @@
 		</para>
 
 		<formalpara>
+			<title>Version 8</title>
+
+			<para>
+				<application>qmailvqd</application> exits when connection
+				to iauth implementation is lost. It writes information about
+				it to standard error output. File locking has been rewritten,
+				it's now more stable.
+			</para>
+		</formalpara>
+
+		<formalpara>
 			<title>Version 7</title>
 
 			<para>

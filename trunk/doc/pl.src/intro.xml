@@ -104,6 +104,17 @@
 			</para>
 
 			<formalpara>
+				<title>Wersja 8</title>
+
+				<para>
+					<application>qmailvqd</application> koñczy dzia³anie gdy straci
+					po³±czenie z interfejsem iauth. W logach zapisuje informacjê o tym.
+					Blokowanie plików u¿ywane do kontroli dostêpu zosta³o
+					ca³kowicie zmienione, dzia³a bardziej stabilnie.
+				</para>
+			</formalpara>
+
+			<formalpara>
 				<title>Wersja 7</title>
 
 				<para>

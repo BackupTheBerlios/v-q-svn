@@ -80,6 +80,15 @@
 						</entry>
 					</row>
 					<row>
+						<entry><filename>maildir</filename></entry>
+						<entry>Maildir</entry>
+						<entry>
+							Nazwa katalogu, w którym przechowywana
+							jest poczta u¿ytkownika. Katalog ten
+							tworzony jest w czasie dodawania u¿ytkownika.
+						</entry>
+					</row>
+					<row>
 						<entry><filename>split_dom</filename></entry>
 						<entry>1</entry>
 						<entry>
