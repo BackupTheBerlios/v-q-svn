@@ -13,7 +13,7 @@ if rootCtx is None:
 	print "Failed to narrow the root naming context"
 	sys.exit(1)
 
-name = [ CosNaming.NameComponent("vq::ivq", "") ]
+name = [ CosNaming.NameComponent("VQ.ivq", "") ]
 
 try:
 	obj = rootCtx.resolve(name)
