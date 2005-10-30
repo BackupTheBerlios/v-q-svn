@@ -21,7 +21,7 @@ public class DomVal {
 			System.exit(1);
 		}
 
-		NameComponent name = new NameComponent("vq::ivq", "");
+		NameComponent name = new NameComponent("VQ.ivq", "");
 		NameComponent [] path = { name };
 		ivq vqo = ivqHelper.narrow(rootCtx.resolve(path));
 		
