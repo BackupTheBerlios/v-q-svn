@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Using v-q from Python</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Developers' corner"
+HREF="devs.html"><LINK
+REL="PREVIOUS"
+TITLE="Developers' corner"
+HREF="devs.html"><LINK
+REL="NEXT"
+TITLE="Using v-q from Java"
+HREF="devs.java.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-12T08:39:50"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="devs.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 4. Developers' corner</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="devs.java.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="devs.python"
+>4.2. Using v-q from Python</A
+></H1
+><P
+>&#13;			<A
+HREF="http://www.python.org"
+TARGET="_top"
+>Python</A
+> language
+			is gaining much on popularity so I think it's worth to
+			publish some information about using v-q from it.
+		</P
+><P
+>&#13;			To start developing applications using v-q in python you need
+			an IDL mapper. I used 
+			<A
+HREF="http://www.omniorb.org"
+TARGET="_top"
+>omniORB 4.0.5</A
+>
+			and companion program omniORBpy 2.5. Installation is very simple.
+		</P
+><P
+>&#13;			After installation you're ready to create python stubs. To do it 
+			execute:
+</P><PRE
+CLASS="synopsis"
+>omniidl -b python vq.idl</PRE
+><P>
+			This will generate some files and directories:
+</P><PRE
+CLASS="screen"
+><SAMP
+CLASS="computeroutput"
+>&#13;./vq_idl.py
+./vq/__init__.py
+./vq__POA
+./vq__POA/__init__.py
+</SAMP
+></PRE
+><P>
+		</P
+><P
+>&#13;			While creating example I found that <TT
+CLASS="filename"
+>vq_idl.py</TT
+>
+			has errors - you need to replace "_d__except" to
+			"_d_except". If you don't do it you won't be able
+			to use it. If you have other errors please contact us.
+		</P
+><P
+>&#13;			Here's an example I created, it calls vq::ivq::dom_val function
+			to validate domain's name:
+
+</P><PRE
+CLASS="programlisting"
+>&#13;#!/usr/bin/env python
+import sys
+from omniORB import CORBA
+import CosNaming
+import vq
+
+orb = CORBA.ORB_init(sys.argv, CORBA.ORB_ID)
+
+obj = orb.resolve_initial_references("NameService")
+rootCtx = obj._narrow(CosNaming.NamingContext)
+
+if rootCtx is None:
+	print "Failed to narrow the root naming context"
+	sys.exit(1)
+
+name = [ CosNaming.NameComponent("VQ.ivq", "") ]
+
+try:
+	obj = rootCtx.resolve(name)
+
+except CosNaming.NamingContext.NotFound, ex:
+	print "Name not found"
+	sys.exit(1)
+
+vqo = obj._narrow(vq.ivq)
+
+if vqo is None:
+	print "Object reference is not an vq::ivq"
+	sys.exit(1)
+
+dom = "123123.asd.com.pl"
+err = vqo.dom_val(dom)
+
+if err.ec is vq.ivq.err_no:
+	print "It's a valid domain name"
+else:
+	print "It's an invalid domain name"
+
+</PRE
+><P>
+			Following script executes omniNames (name server),
+			iauth (pgsqlauthd) and ivq (qmailvqd), then dom_val.py (above
+			example). It is also located in <TT
+CLASS="filename"
+>examples/python</TT
+>.
+
+</P><PRE
+CLASS="programlisting"
+>&#13;#!/bin/sh
+export BASE=../..
+export VQ_HOME=.
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+rm -f /tmp/omninames-*
+omniNames -start 12456 -logdir /tmp &#38;
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &#38;
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService &#62; etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &#38;
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+./dom_val.py -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
+</PRE
+><P>
+			</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+					qmailvqd and pgsqlauthd were compiled not using omniORB
+					but MICO. So, it's also an example of interoperability :-)
+				</P
+></BLOCKQUOTE
+></DIV
+><P>
+		</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="devs.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="devs.java.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Developers' corner</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="devs.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Using v-q from Java</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

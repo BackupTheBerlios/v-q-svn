@@ -19,6 +19,14 @@
 			przechowywane s± na serwerze SourceForge. Sprawd¼ czy nie ma
 			nowych wersji.
 		</para>
+
+		<para>
+			Mo¿esz równie¿ ¶ci±gn±æ najnowsz± wersjê wprost z repozytorium
+			Subversion znajduj±cego siê pod adresem
+			<ulink url="http://svn.berlios.de/svnroot/repos/v-q/trunk">
+			http://svn.berlios.de/svnroot/repos/v-q/trunk
+			</ulink>
+		</para>
 	</section>
 
 	<section id="install.deps">

@@ -19,6 +19,13 @@
 			at SourceForge includes all files released by this project.
 			You can go there and get the newest version.
 		</para>
+
+		<para>
+			You can download newest version from Subversion repository at
+			<ulink url="http://svn.berlios.de/svnroot/repos/v-q/trunk">
+			http://svn.berlios.de/svnroot/repos/v-q/trunk
+			</ulink>
+		</para>
 	</section>
 
 	<section id="install.deps">

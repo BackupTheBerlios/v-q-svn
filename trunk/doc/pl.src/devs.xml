@@ -12,6 +12,20 @@
 		<filename>examples</filename>.
 	</para>
 
+	<section id="devs.repos">
+		<title>Repozytorium kodu ¼ród³owego</title>
+
+		<para>
+			Kod ¼ród³owy tej aplikacji trzymany jest w publicznie
+			dostêpnym repozytorium Subversion znajduj±cym siê pod adresem
+			<ulink url="http://svn.berlios.de/svnroot/repos/v-q">
+				http://svn.berlios.de/svnroot/repos/v-q
+			</ulink>. Je¿eli chcesz mieæ dostêp do zapisu musisz
+			byæ zarejestrowanym u¿ytkownikiem
+			<ulink url="http://developer.berlios.de">berlios.de</ulink>.
+		</para>
+	</section>
+
 	<section id="devs.python">
 		<title>U¿ywanie v-q z poziomu pythona</title>
 		<para>
@@ -71,7 +85,7 @@ if rootCtx is None:
 	print "Failed to narrow the root naming context"
 	sys.exit(1)
 
-name = [ CosNaming.NameComponent("vq::ivq", "") ]
+name = [ CosNaming.NameComponent("VQ.ivq", "") ]
 
 try:
 	obj = rootCtx.resolve(name)
@@ -251,7 +265,7 @@ public class DomVal {
 			System.exit(1);
 		}
 
-		NameComponent name = new NameComponent("vq::ivq", "");
+		NameComponent name = new NameComponent("VQ.ivq", "");
 		NameComponent [] path = { name };
 		ivq vqo = ivqHelper.narrow(rootCtx.resolve(path));
 		

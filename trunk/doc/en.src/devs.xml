@@ -10,6 +10,19 @@
 		are placed in <filename>examples</filename> directory.
 	</para>
 
+	<section id="devs.repos">
+		<title>Source code repository</title>
+
+		<para>
+			Source code of this application is kept in
+			public Subversion repository located at
+			<ulink url="http://svn.berlios.de/svnroot/repos/v-q">
+				http://svn.berlios.de/svnroot/repos/v-q
+			</ulink>. If you want to have R/W access you must be a registered
+			user of <ulink url="http://developer.berlios.de">berlios.de</ulink>.
+		</para>
+	</section>
+
 	<section id="devs.python">
 		<title>Using v-q from Python</title>
 		<para>
@@ -65,7 +78,7 @@ if rootCtx is None:
 	print "Failed to narrow the root naming context"
 	sys.exit(1)
 
-name = [ CosNaming.NameComponent("vq::ivq", "") ]
+name = [ CosNaming.NameComponent("VQ.ivq", "") ]
 
 try:
 	obj = rootCtx.resolve(name)
@@ -241,7 +254,7 @@ public class DomVal {
 			System.exit(1);
 		}
 
-		NameComponent name = new NameComponent("vq::ivq", "");
+		NameComponent name = new NameComponent("VQ.ivq", "");
 		NameComponent [] path = { name };
 		ivq vqo = ivqHelper.narrow(rootCtx.resolve(path));
 		
