@@ -1,9 +1,13 @@
 #!/bin/sh
 export BASE=../../..
+export VQ_HOME=.
+export VQ_ETC_DIR=etc
+
 export LD_LIBRARY_PATH="/tmp" 
 cp -f $BASE/lib*/*.so* /tmp
 
 host=localhost
+port=2809
 prog=iauth
 use_orb=mico
 
@@ -14,10 +18,10 @@ fi
 
 echo "starting Naming Service daemon ..."
 if [ $use_orb = mico ] ; then
-	nsd -ORBIIOPAddr inet:$host:2809 &
+	nsd -ORBIIOPAddr inet:$host:$port &
 else
 	rm -rf omninames-*
-	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:2809 &
+	omniNames -start -logdir `pwd` -ORBendPoint giop:tcp:$host:$port &
 fi
 nsd_pid=$!
 
@@ -26,14 +30,14 @@ sleep 2
 
 echo "starting iauth(pgsqlauthd) server ..."
 $BASE/base/pgsql/pgsqlauthd \
--ORBInitRef NameService=corbaloc::$host:2809/NameService . &
+-ORBInitRef NameService=corbaloc::$host:$port/NameService . &
 server_pid=$!
 
 trap "kill $nsd_pid $server_pid" 0
 sleep 2
 
 echo "running client ..."
-./iauth -ORBInitRef NameService=corbaloc::$host:2809/NameService name_service#Auth.iauth
+./iauth -ORBInitRef NameService=corbaloc::$host:$port/NameService name_service#Auth.iauth
 #gdb iauth
 
 rm -rf omninames-*

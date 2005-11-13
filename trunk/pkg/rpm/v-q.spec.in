@@ -19,7 +19,7 @@ Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{project}-root
 BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
 BuildPrereq: libpqxx-devel >= 2.5.0, openssl-devel >= 0.9.7
-Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd
+Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd, /usr/sbin/groupadd
 Prereq: sh-utils, textutils, /sbin/ldconfig
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0, daemontools >= 0.76
 Requires: %{project}-iauth = %{version}, %{project}-ilogger = %{version}
@@ -186,30 +186,39 @@ mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}
 mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 
 %pre
+# Add the "_vq" group
+/usr/sbin/groupadd -g 111 _vq || :
+
 # Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 -g 111 \
 	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
 
 # Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 -g 111 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
 %pre pgsql
+# Add the "_vq" group
+/usr/sbin/groupadd -g 111 _vq || :
+
 # Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 -g 111 \
 	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
 
 # Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 -g 111 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
 %pre jdbc
+# Add the "_vq" group
+/usr/sbin/groupadd -g 111 _vq || :
+
 # Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 -g 111 \
 	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
 
 # Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 -g 111 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
 %post

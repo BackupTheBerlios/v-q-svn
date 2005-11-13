@@ -235,9 +235,8 @@ vq/ivqOperations.java
  * Simple example of using v-q from Java
  * @author Pawe³ Niewiadomski
  */
-
-import vq.*;
-import vq.ivqPackage.*;
+import com.foo_baz.v_q.*;
+import com.foo_baz.v_q.ivqPackage.*;
 import org.omg.CORBA.*;
 import org.omg.CosNaming.*;
 

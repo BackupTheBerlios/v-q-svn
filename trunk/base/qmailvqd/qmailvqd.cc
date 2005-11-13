@@ -155,10 +155,16 @@ int vqmain(int ac, char **av) {
 	if( run ) {
 			cout << "Running." << endl;
 			poa->core_mgr()->activate();
-			while( ! vqimp->shutdown() ) {
-				orb->perform_work();
+			for( ;; ) {
+				omni_thread::sleep(1);
+				if( vqimp->shutdown() ) {
+						cout << "Shutdown requested." << endl;
+						break;
+				}
+				if( orb->work_pending() ) {
+						orb->perform_work();
+				}
 			}
-			cout << "Shutdown requested." << endl;
 	}
 	poa->core_poa()->destroy( true, true );
 	orb->shutdown( true );

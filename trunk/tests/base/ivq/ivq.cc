@@ -249,23 +249,23 @@ struct vq_test {
 						vq::ivq::err_no);
 			
 					IVQ_ERROR_EQUAL(vq->eb_add(
-						static_cast<const char *>(".*"),
-						static_cast<const char *>("root")), vq::ivq::err_no);
+						static_cast<const char *>("%"),
+						static_cast<const char *>("%root%")), vq::ivq::err_no);
 					IVQ_ERROR_EQUAL(vq->eb_add(
 						static_cast<const char *>("case5"),
-						static_cast<const char *>(".*")), vq::ivq::err_no);
+						static_cast<const char *>("%")), vq::ivq::err_no);
 
 					IVQ_ERROR_EQUAL(vq->eb_ls(ebs), vq::ivq::err_no);
 					BOOST_CHECK_EQUAL(ebs->length(), 2U);
 					if( !strcmp(ebs[0U].re_domain, ".*") ) {
-							BOOST_CHECK(!strcmp(ebs[1U].re_domain, "case5"));
-							BOOST_CHECK(!strcmp(ebs[1U].re_login, ".*"));
-							BOOST_CHECK(!strcmp(ebs[0U].re_login, "root"));
-					} else {
 							BOOST_CHECK(!strcmp(ebs[0U].re_domain, "case5"));
-							BOOST_CHECK(!strcmp(ebs[0U].re_login, ".*"));
-							BOOST_CHECK(!strcmp(ebs[1U].re_domain, ".*"));
-							BOOST_CHECK(!strcmp(ebs[1U].re_login, "root"));
+							BOOST_CHECK(!strcmp(ebs[0U].re_login, "%"));
+							BOOST_CHECK(!strcmp(ebs[1U].re_login, "%root%"));
+					} else {
+							BOOST_CHECK(!strcmp(ebs[1U].re_domain, "case5"));
+							BOOST_CHECK(!strcmp(ebs[1U].re_login, "%"));
+							BOOST_CHECK(!strcmp(ebs[0U].re_domain, "%"));
+							BOOST_CHECK(!strcmp(ebs[0U].re_login, "%root%"));
 					}
 
 					vq::ivq::user_info ai;

@@ -100,6 +100,15 @@
 		</para>
 
 		<formalpara>
+			<title>Version 9</title>
+
+			<para>
+				<application>qmailvqd</application> doesn't eat CPU
+				when idle. It plays nice now ;-)
+			</para>
+		</formalpara>
+
+		<formalpara>
 			<title>Version 8</title>
 
 			<para>
