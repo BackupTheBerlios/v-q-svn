@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Interfejs ilogger</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Architektura"
+HREF="arch.html"><LINK
+REL="PREVIOUS"
+TITLE="Interfejs iauth"
+HREF="arch.iauth.html"><LINK
+REL="NEXT"
+TITLE="Klienci: programy linii poleceñ, interfejs WWW, etc."
+HREF="arch.clients.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-13T21:40:02"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="arch.iauth.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 2. Architektura</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="arch.ilogger"
+>2.4. Interfejs ilogger</A
+></H1
+><P
+>&#13;			Interfejs u¿ywany jest do zapisywania informacji na temat
+			aktywno¶ci u¿ytkowników takich jak logowanie siê, itp.
+		</P
+><P
+>&#13;			Zazwyczaj implementacje tego interfejsu nie korzystaj±
+			z systemu plików bezpo¶rednio. Pracuj± na okre¶lonej bazie
+			danych.
+		</P
+><P
+>&#13;			Na dziên dzisiejszy interfejs u¿ywany jest przez
+			<SPAN
+CLASS="application"
+>user_auth</SPAN
+>. Jest to samodzielny
+			interfejs, ivq nie zawiera funkcji z tego modu³u, dlatego
+			nale¿y u¿ywaæ go bezpo¶rednio.
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="arch.ilogger.cpgsqllog"
+>2.4.1. cpgsqllog</A
+></H2
+><P
+>&#13;				Jest to implementacja <A
+HREF="arch.ilogger.html"
+>interfejsu 
+				ilogger</A
+>. Korzysta ona z bazy danych PostgreSQL.
+			</P
+><P
+>&#13;				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</P
+><P
+>&#13;				Obiekt ten reprezentowany jest przez program pgsqllogd.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="arch.ilogger.JDBCLog"
+>2.4.2. JDBCLog</A
+></H2
+><P
+>&#13;				Jest to implementacja <A
+HREF="arch.ilogger.html"
+>interfejsu 
+				ilogger</A
+>. Korzysta ona z bazy danych za po¶rednictwem JDBC.
+				Oznacza to, ¿e teoretycznie mo¿na wykorzystaæ ka¿d± bazê danych,
+				która posiada sterownik JDBC.
+			</P
+><P
+>&#13;				Wszelkie informacje zapisywane s± w bazie danych. 
+				Poza konfiguracj± obiekt nie czyta ani nie zapisuje
+				bezpo¶rednio w systemie plików.
+			</P
+><P
+>&#13;				Obiekt ten reprezentowany jest przez program jdbclogd.
+			</P
+><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+					Na dzieñ dzisiejszy klasa JDBCLog przetestowana zosta³a
+					tylko z PostgreSQL. Mo¿esz u¿ywaæ j± z innymi bazami danych,
+					jednak istniej± pewne wymagania: baza danych musi
+					obs³ugiwaæ procedury sk³adowane w bazie danych oraz widoki.
+					Proszê, je¿eli u¿ywasz innej bazy danych podziel siê 
+					swoim schematem.
+				</P
+></BLOCKQUOTE
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="arch.iauth.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="arch.clients.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Interfejs iauth</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="arch.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Klienci: programy linii poleceñ, interfejs WWW, etc.</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

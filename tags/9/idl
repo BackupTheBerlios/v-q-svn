@@ -1,0 +1,8 @@
+#!/bin/sh
+# For MICO:
+#export PATH="/usr/local/progs/mico/bin:$PATH"
+#exec idl --no-boa --hh-suffix=hpp $@
+
+# For OmniORB:
+export PATH="/usr/local/progs/omniorb/bin:$PATH"
+exec omniidl -bcxx -Wbh=.hpp -Wbs=.cc $@

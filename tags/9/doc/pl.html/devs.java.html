@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>U¿ywanie v-q z poziomu Java</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Tworzenie aplikacji korzystaj±cych z v-q"
+HREF="devs.html"><LINK
+REL="PREVIOUS"
+TITLE="U¿ywanie v-q z poziomu pythona"
+HREF="devs.python.html"><LINK
+REL="NEXT"
+TITLE="Tworzenie pakietów"
+HREF="devs.pkgs.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-13T21:40:02"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="devs.python.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 4. Tworzenie aplikacji korzystaj±cych z v-q</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="devs.pkgs.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="devs.java"
+>4.3. U¿ywanie v-q z poziomu Java</A
+></H1
+><P
+>&#13;			<A
+HREF="http://java.sun.com"
+TARGET="_top"
+>Java</A
+> jest jednym
+			z najpopularniejszych jêzyków u¿ywanych do tworzenia
+			systemów biznesowych.
+		</P
+><P
+>&#13;			Java zawiera wbudowane wsparcie dla protoko³u CORBA. 
+			Nie musisz instalowaæ dodatkowego oprogramowania, jedyne
+			co potrzebujesz to SDK.
+		</P
+><P
+>&#13;			Na pocz±tku nale¿y przet³umaczyæ pliki IDL na klasy
+			jêzyka Java. Mo¿na to wykonaæ za pomoc± nastêpuj±cego
+			polecenia:
+</P><PRE
+CLASS="synopsis"
+>idlj vq.idl</PRE
+><P>
+			To wygeneruje nastêpuj±ce pliki i katalogi:
+</P><PRE
+CLASS="screen"
+><SAMP
+CLASS="computeroutput"
+>&#13;vq
+vq/exceptHelper.java
+vq/exceptHolder.java
+vq/except.java
+vq/db_errorHelper.java
+vq/db_errorHolder.java
+vq/db_error.java
+vq/null_errorHelper.java
+vq/null_errorHolder.java
+vq/null_error.java
+vq/_ivqStub.java
+vq/ivqHolder.java
+vq/ivqHelper.java
+vq/ivq.java
+vq/ivqPackage
+vq/ivqPackage/quota_typeHelper.java
+vq/ivqPackage/size_typeHelper.java
+vq/ivqPackage/uif_typeHelper.java
+vq/ivqPackage/user_conf_typeHelper.java
+vq/ivqPackage/string_listHolder.java
+vq/ivqPackage/string_listHelper.java
+vq/ivqPackage/gid_typeHelper.java
+vq/ivqPackage/uid_typeHelper.java
+vq/ivqPackage/err_codeHolder.java
+vq/ivqPackage/err_codeHelper.java
+vq/ivqPackage/err_code.java
+vq/ivqPackage/errorHelper.java
+vq/ivqPackage/errorHolder.java
+vq/ivqPackage/error.java
+vq/ivqPackage/user_infoHelper.java
+vq/ivqPackage/user_infoHolder.java
+vq/ivqPackage/user_info.java
+vq/ivqPackage/user_conf_infoHelper.java
+vq/ivqPackage/user_conf_infoHolder.java
+vq/ivqPackage/user_conf_info.java
+vq/ivqPackage/user_conf_info_listHolder.java
+vq/ivqPackage/user_conf_info_listHelper.java
+vq/ivqPackage/email_bannedHelper.java
+vq/ivqPackage/email_bannedHolder.java
+vq/ivqPackage/email_banned.java
+vq/ivqPackage/email_banned_listHolder.java
+vq/ivqPackage/email_banned_listHelper.java
+vq/ivqPackage/domain_infoHelper.java
+vq/ivqPackage/domain_infoHolder.java
+vq/ivqPackage/domain_info.java
+vq/ivqPackage/domain_info_listHolder.java
+vq/ivqPackage/domain_info_listHelper.java
+vq/ivqOperations.java
+</SAMP
+></PRE
+><P>
+		</P
+><P
+>&#13;			Poni¿ej prosty przyk³ad, program wywo³uje funkcjê
+			vq::ivq::dom_val w celu weryfikacji poprawno¶ci nazwy
+			domeny:
+
+</P><PRE
+CLASS="programlisting"
+>&#13;/**
+ * Simple example of using v-q from Java
+ * @author Pawe³ Niewiadomski
+ */
+import com.foo_baz.v_q.*;
+import com.foo_baz.v_q.ivqPackage.*;
+import org.omg.CORBA.*;
+import org.omg.CosNaming.*;
+
+public class DomVal {
+
+	static public void main( String [] args ) throws Exception {
+		ORB orb = ORB.init(args, null);
+
+		org.omg.CORBA.Object obj = orb.resolve_initial_references("NameService");
+
+		NamingContext rootCtx = NamingContextHelper.narrow(obj);
+		if( rootCtx == null ) {
+			System.out.println("Failed to narrow the root naming context");
+			System.exit(1);
+		}
+
+		NameComponent name = new NameComponent("VQ.ivq", "");
+		NameComponent [] path = { name };
+		ivq vqo = ivqHelper.narrow(rootCtx.resolve(path));
+		
+		String dom = "123123.asd.com.pl";
+		error err = vqo.dom_val(dom);
+		if( err.ec == err_code.err_no ) {
+			System.out.println("It's a valid domain name");
+		} else {
+			System.out.println("It's an invalid domain name");
+		}
+		System.exit(0);
+	}
+}
+
+</PRE
+><P>
+			Poni¿szy skrypt uruchamia omniNames (serwer nazw),
+			iauth (pgsqlauthd) oraz ivq (qmailvqd), nastêpnie DomVal (powy¿szy
+			przyk³ad). Program znajduje siê w <TT
+CLASS="filename"
+>examples/java</TT
+>.
+
+</P><PRE
+CLASS="programlisting"
+>&#13;#!/bin/sh
+export BASE=../..
+export VQ_HOME=.
+
+export LD_LIBRARY_PATH="/tmp" 
+cp -f $BASE/lib*/*.so* /tmp
+
+host=localhost
+
+echo "starting Naming Service daemon ..."
+rm -f /tmp/omninames-*
+omniNames -start 12456 -logdir /tmp &#38;
+nsd_pid=$!
+
+trap "kill $nsd_pid" 0
+sleep 2
+
+echo "starting iauth(pgsqlauthd) server ..."
+$BASE/base/pgsql/pgsqlauthd \
+-ORBIIOPAddr inet:$host:44444 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &#38;
+iauth_pid=$!
+trap "kill $nsd_pid $iauth_pid" 0
+sleep 2
+
+echo -ORBInitRef NameService=corbaloc::$host:12453/NameService &#62; etc/ivq/auth
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBIIOPAddr inet:$host:33333 \
+-ORBInitRef NameService=corbaloc::$host:12456/NameService . &#38;
+ivq_pid=$!
+
+trap "kill $nsd_pid $iauth_pid $ivq_pid" 0
+sleep 2
+
+echo "running client ..."
+java DomVal -ORBInitRef NameService=corbaloc::$host:12456/NameService
+
+</PRE
+><P>
+			</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+					qmailvqd i pgsqlauthd skompilowane by³y przy wykorzystaniu
+					biblioteki MICO, serwer nazw reprezentowany by³ przez
+					<SPAN
+CLASS="application"
+>omniNames</SPAN
+> z pakietu omniORB.
+					Klient za¶ napisany by³ za pomoc± Java. Przyk³ad
+					kompatybilno¶ci implementacji CORBA.
+				</P
+></BLOCKQUOTE
+></DIV
+><P>
+		</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="devs.python.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="devs.pkgs.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>U¿ywanie v-q z poziomu pythona</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="devs.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Tworzenie pakietów</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

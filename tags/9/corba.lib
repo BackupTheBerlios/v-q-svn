@@ -1,0 +1,1 @@
+-L/usr/local/progs/omniorb/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread

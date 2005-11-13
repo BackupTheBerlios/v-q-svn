@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Instalacja</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Komercyjne wsparcie"
+HREF="com.support.html"><LINK
+REL="NEXT"
+TITLE="Zale¿no¶ci"
+HREF="install.deps.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-13T21:40:02"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="chapter"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="com.support.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.deps.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="chapter"
+><H1
+><A
+NAME="install"
+></A
+>Rozdzia&#322; 7. Instalacja</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Spis tre&#347;ci</B
+></DT
+><DT
+>7.1. <A
+HREF="install.html#install.download"
+>¦ci±ganie</A
+></DT
+><DT
+>7.2. <A
+HREF="install.deps.html"
+>Zale¿no¶ci</A
+></DT
+><DD
+><DL
+><DT
+>7.2.1. <A
+HREF="install.deps.html#install.mta"
+>Agent transferu poczty (MTA)</A
+></DT
+><DT
+>7.2.2. <A
+HREF="install.deps.html#install.pgsql"
+>U¿ywanie PostgreSQL</A
+></DT
+><DT
+>7.2.3. <A
+HREF="install.deps.html#install.oracle"
+>U¿ywanie Oracle</A
+></DT
+><DT
+>7.2.4. <A
+HREF="install.deps.html#install.otherdb"
+>Inne systemy bazodanowe</A
+></DT
+></DL
+></DD
+><DT
+>7.3. <A
+HREF="install.prep.html"
+>Przygotowania</A
+></DT
+><DD
+><DL
+><DT
+>7.3.1. <A
+HREF="install.prep.html#AEN712"
+>Tworzenie u¿ytkownika i grupy</A
+></DT
+><DT
+>7.3.2. <A
+HREF="install.prep.html#install.unpack"
+>Rozpakowywanie ¼róde³</A
+></DT
+><DT
+>7.3.3. <A
+HREF="install.prep.html#install.conf"
+>Konfiguracja przed instalacj±</A
+></DT
+></DL
+></DD
+><DT
+>7.4. <A
+HREF="install.comp.html"
+>Kompilacja</A
+></DT
+><DT
+>7.5. <A
+HREF="install.install.html"
+>Instalacja</A
+></DT
+><DD
+><DL
+><DT
+>7.5.1. <A
+HREF="install.install.html#install.steps.qmail"
+>Specjalne kroki dla Qmail</A
+></DT
+><DT
+>7.5.2. <A
+HREF="install.install.html#install.steps.pgsql"
+>Specjalne kroki dla PostgreSQL</A
+></DT
+><DT
+>7.5.3. <A
+HREF="install.install.html#install.problems"
+>Mam problem, co zrobiæ?</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><P
+>&#13;		Krok po kroku, czyli przepis na instalacjê.
+	</P
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.download"
+>7.1. ¦ci±ganie</A
+></H1
+><P
+>&#13;			Warto rozpocz±æ od sprawdzenia 
+			<A
+HREF="http://v-q.foo-baz.com"
+TARGET="_top"
+>strony projektu</A
+>.
+		</P
+><P
+>&#13;			<A
+HREF="http://sf.net/project/showfiles.php?group_id=87916"
+TARGET="_top"
+>Udostêpnione pliki</A
+>
+			przechowywane s± na serwerze SourceForge. Sprawd¼ czy nie ma
+			nowych wersji.
+		</P
+><P
+>&#13;			Mo¿esz równie¿ ¶ci±gn±æ najnowsz± wersjê wprost z repozytorium
+			Subversion znajduj±cego siê pod adresem
+			<A
+HREF="http://svn.berlios.de/svnroot/repos/v-q/trunk"
+TARGET="_top"
+>&#13;			http://svn.berlios.de/svnroot/repos/v-q/trunk
+			</A
+>
+		</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="com.support.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.deps.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Komercyjne wsparcie</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Zale¿no¶ci</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

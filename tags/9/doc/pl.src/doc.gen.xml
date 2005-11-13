@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="doc.gen">
+	<title>Generowanie dokumentacji</title>
+
+	<para>
+		Rozdział zawiera informacje dotyczące przetwarzania dokumentacji
+		zapisanej w formacie DocBook XML na inne formaty, takie jak: HTML, RTF.
+	</para>
+
+	<section id="doc.gen.openbsd">
+		<title>OpenBSD</title>
+
+		<para>
+			Musisz zainstalować pakiety openjade i dockbook-*.
+			Umożliwiają one translację plików SGML na inne formaty.
+			Niestety (dotyczy wersji 3.6 i wcześniejszych) nie ma
+			pakiety zawierającego szablony DocBook XML. Musisz samodzielnie
+			je ściągnąć.
+		</para>
+
+		<para>
+			Na dzień dzisiejszy dokumentacja tłumaczona jest za
+			pomocą plików z Fedora Core 2 (pakiety: 
+			docbook-style-dsssl-1.78-2.noarch.rpm i
+			docbook-dtds-1.0-22.1.noarch.rpm). Pakiety rozpakowane zostały
+			za pomocą <application>rpm2cpio</application>, pliki z 
+			<filename>usr/share/</filename> skopiowane zostały do
+			<filename>/usr/local/share/sgml/redhat</filename>. Następnie
+			poniższe linie:
+<example>
+	<title>Zawartość pliku <filename>catalog</filename></title>
+<screen>
+<userinput>
+CATALOG "redhat/sgml/docbook/xml-dtd-4.1.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog" 
+</userinput>
+</screen>
+</example>
+			zostały dodane do <filename>/usr/local/share/sgml/catalog</filename>.
+		</para>
+
+		<para>
+			Po tych czynnościach możliwe stało się generowanie wersji
+			RTF dokumentacji:
+<synopsis>
+env <envar>SGML_CATALOG_FILES</envar>=/usr/local/share/sgml/catalog 
+openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
+/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
+</synopsis>
+			Aby wygenerować dokumentację w formacie HTML należy
+			zmienić rtf na sgml.
+			<note>
+				<para>
+					<application>openjade</application> może wypisać ostrzeżenia
+					dotyczące DTDDECL, który nie jest obsługiwany, należy
+					je ignorować.
+				</para>
+			</note>
+		</para>
+	</section>
+
+	<section id="doc.gen.makefile">
+		<title>Korzystanie z pliku makefile</title>
+
+		<para>
+			Po zainstalowaniu openjade, docbook i pozostałych plików
+			możesz generować dokumentację używając make.
+		</para>
+
+		<para>
+			Zdefiniowanych zostało kilka celów:
+			<itemizedlist>
+				<listitem>
+					<para>doc-html tworzy pliki HTML w BASE/doc/html</para>
+				</listitem>
+				<listitem>
+					<para>doc-rtf tworzy pliki RTF w BASE/doc/rtf</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+</chapter>
+

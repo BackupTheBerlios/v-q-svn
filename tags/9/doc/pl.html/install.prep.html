@@ -1,0 +1,614 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Przygotowania</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Instalacja"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Zale¿no¶ci"
+HREF="install.deps.html"><LINK
+REL="NEXT"
+TITLE="Kompilacja"
+HREF="install.comp.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-13T21:40:02"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.deps.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 7. Instalacja</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.comp.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.prep"
+>7.3. Przygotowania</A
+></H1
+><P
+>&#13;			Zainstaluj oprogramowanie wymienione w
+			<A
+HREF="install.html#install.download"
+>Sekcja 7.1</A
+> i <A
+HREF="install.deps.html"
+>Sekcja 7.2</A
+>.
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="AEN712"
+>7.3.1. Tworzenie u¿ytkownika i grupy</A
+></H2
+><P
+>&#13;			Demony v-q mog± pracowaæ jako dowolny u¿ytkownik, sugeruje siê
+			aby pracowa³y jako u¿ytkownik _vq w grupie _vq.
+				<DIV
+CLASS="warning"
+><P
+></P
+><TABLE
+CLASS="warning"
+BORDER="1"
+WIDTH="100%"
+><TR
+><TD
+ALIGN="CENTER"
+><B
+>Ostrze&#380;enie</B
+></TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+><P
+>&#13;						Ze wzglêdów bezpieczeñstwa nie powinny byæ
+						uruchamiane jako root. Lepiej zapobiegaæ ni¿ leczyæ.
+					</P
+></TD
+></TR
+></TABLE
+></DIV
+>
+			</P
+><P
+>&#13;			Mo¿esz u¿yæ poni¿szych poleceñ aby utworzyæ wspomniane konto
+			(dzia³a na pewno pod Linux i OpenBSD):
+</P><PRE
+CLASS="synopsis"
+>groupadd _vq
+useradd -g _vq -d /var/vq _vq</PRE
+><P>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.unpack"
+>7.3.2. Rozpakowywanie ¼róde³</A
+></H2
+><P
+>&#13;				Zale¿nie od wybranego formatu archiwum bêdziesz potrzebowa³
+				programy <SPAN
+CLASS="application"
+>tar</SPAN
+>,
+				<SPAN
+CLASS="application"
+>bzip2</SPAN
+> lub <SPAN
+CLASS="application"
+>gzip</SPAN
+>.
+			</P
+><P
+>&#13;				Je¿eli nazwa archiwum koñczy siê na <TT
+CLASS="filename"
+>.tar.gz</TT
+>
+				mo¿esz rozpakowaæ je nastêpuj±cym poleceniem:
+</P><PRE
+CLASS="synopsis"
+>&#13;tar -xzvf v-q.*.tar.gz
+</PRE
+><P>
+				Ewentualnie (je¿eli tar nie posiada wbudowanej obs³ugi gzip):
+</P><PRE
+CLASS="synopsis"
+>&#13;gzip -dc v-q.*.tar.gz | tar -xvf -
+</PRE
+><P>
+			</P
+><P
+>&#13;				Je¿eli nazwa archiwum koñczy siê na <TT
+CLASS="filename"
+>.tar.bz2</TT
+>
+				mo¿esz rozpakowaæ je nastêpuj±cym poleceniem:
+</P><PRE
+CLASS="synopsis"
+>&#13;bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
+</PRE
+><P>
+			</P
+><P
+>&#13;				Na dzieñ dzisiejszy ¼ród³a rozprowadzane s± tylko w wymienionych
+				formatach.
+		
+				</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+						<SPAN
+CLASS="application"
+>Bzip2</SPAN
+> oferuje lepszy
+						stopieñ kompresji w porównaniu z <SPAN
+CLASS="application"
+>gzip</SPAN
+>
+						jednak¿e nie jest tak popularny. Je¿eli
+						posiadasz w systemie <SPAN
+CLASS="application"
+>bzip2</SPAN
+>
+						sugerowane jest u¿ycie tego formatu.
+					</P
+></BLOCKQUOTE
+></DIV
+><P>
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.conf"
+>7.3.3. Konfiguracja przed instalacj±</A
+></H2
+><P
+>&#13;				Przed uruchomieniem <SPAN
+CLASS="application"
+>make</SPAN
+>
+				musisz odpowiednio skonfigurowaæ ¼ród³a. Nie ma
+				skryptu <SPAN
+CLASS="application"
+>configure</SPAN
+>. V-q
+				nie korzysta z <SPAN
+CLASS="application"
+>autoconf</SPAN
+> i 
+				jego rodziny.
+			</P
+><P
+>&#13;				Nie masz powodów do obaw. Konfiguracja jest stosunkowo
+				³atwa - wystarczy zaktualizowaæ kilka plików.
+			</P
+><P
+>&#13;				Na pocz±tku musisz ustaliæ kompilator i jego opcje.
+				W g³ównym katalogu nale¿y zaktualizowaæ nastêpuj±ce pliki:
+				<P
+></P
+></P><UL
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>compile</TT
+> u¿ywany jest do
+						normalnej kompilacji.
+						Domy¶lnie wywo³ywane jest <SPAN
+CLASS="application"
+>g++</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>comp-so</TT
+> u¿ywany jest do
+						kompilacji plików, które wejd± w sk³ad archiwum
+						dzielonego (biblioteki).
+						Domy¶lnie wywo³ywane jest <SPAN
+CLASS="application"
+>g++</SPAN
+>
+						z argumentami: -fpic -DPIC.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>load</TT
+> u¿ywany jest do tworzenia
+						programów. Domy¶lnie wywo³ywane jest
+						<SPAN
+CLASS="application"
+>g++</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>make-lib</TT
+> u¿ywany jest do tworzenia
+						statycznie linkowany bibliotek. Wywo³uje
+						<SPAN
+CLASS="application"
+>ar</SPAN
+>.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>make-so</TT
+> u¿ywany jest do
+						tworzenia bibliotek dzielonych dynamicznie.
+						Wywo³uje <SPAN
+CLASS="application"
+>g++</SPAN
+> z opcj± -shared.
+					</P
+></LI
+><LI
+><P
+>&#13;						<TT
+CLASS="filename"
+>idl</TT
+> u¿ywany jest do
+						t³umaczenia plików IDL na pliki C++.
+						Pamiêtaj, ¿e skrypt ten powinien tworzyæ
+						2 pliki z rozszerzeniami: .hpp i .cc.
+						Domy¶lnie wywo³ywany jest <SPAN
+CLASS="application"
+>idl</SPAN
+>
+						(<A
+HREF="http://www.mico.org"
+TARGET="_top"
+>MICO</A
+>)
+						lub omniidl (<A
+HREF="http://www.omniorb.org"
+TARGET="_top"
+>omniORB</A
+>).
+					</P
+></LI
+></UL
+><P>
+			</P
+><P
+>&#13;				Je¿eli u¿ywasz innych programów ni¿ te wymienione
+				proszê wy¶lij opis wywo³ania do 
+				<A
+HREF="community.authors.html#pniewiadomski"
+>Paw³a Niewiadomskiego</A
+>
+			</P
+><P
+>&#13;				Nastêpny krokiem jest aktualizacja plików z
+				rozszerzeniami: <TT
+CLASS="filename"
+>.inc</TT
+> i <TT
+CLASS="filename"
+>.lib</TT
+>.
+				Pierwszy typ plików u¿ywany jest podczas kompilacji, zawieraj±
+				one opcje dla kompilatora. Drugi typ plików
+				u¿ywany jest podczas linkowania, zawieraj± one informacje
+				o bibliotekach, które maj± zostaæ u¿yte.
+			</P
+><DIV
+CLASS="section"
+><H3
+CLASS="section"
+><A
+NAME="install.corba.conf"
+>7.3.3.1. Okre¶lanie u¿ywanej implementacji CORBA</A
+></H3
+><P
+>&#13;					Przed kompilacj± musisz okre¶liæ, któr± z dostêpnych
+					i obs³ugiwanych implementacji CORBA chcesz u¿yæ.
+					W tym celu musisz zaktualizowaæ 3 pliki.
+				</P
+><P
+>&#13;					<TT
+CLASS="filename"
+>corba.lib</TT
+> powinien zawieraæ
+					wszystkie argumenty dla <SPAN
+CLASS="application"
+>make-so</SPAN
+>,
+					które u¿ywane bêd± w czasie linkowania.
+					Powiniene¶ tam umie¶ciæ odwo³ania do wszystkich
+					bibliotek wymaganych przez wybran± implementacjê
+					CORBA.
+				</P
+><P
+>&#13;					<TT
+CLASS="filename"
+>corba.inc</TT
+> powinien zawieraæ
+					argumenty przekazywane do <SPAN
+CLASS="application"
+>comp-so</SPAN
+>
+					i <SPAN
+CLASS="application"
+>compile</SPAN
+>, które
+					wska¿± katalogi z plikami nag³ówkowymi wymaganymi
+					przez wybran± implementacjê CORBA. Niezbêdny jest
+					równie¿ argument okre¶laj±cy, która implementacja
+					CORBA powinna byæ u¿yta.
+					Przyk³adowo je¿eli chcesz u¿ywaæ MICO musisz podaæ -DP_USE_MICO.
+					Oznacza to, ¿e w czasie kompilacja definicja P_USE_MICO 
+					bêdzie zdefiniowana.
+					Inne mo¿liwo¶ci:
+					<P
+></P
+></P><UL
+><LI
+><P
+>P_USE_MICO - dla MICO</P
+></LI
+><LI
+><P
+>P_USE_OMNIORB - dla omniORB</P
+></LI
+><LI
+><P
+>P_USE_ORBACUS - dla Orbacus</P
+></LI
+><LI
+><P
+>P_USE_TAO - dla TAO</P
+></LI
+><LI
+><P
+>P_USE_ORBIX - dla Orbix</P
+></LI
+></UL
+><P>
+
+					</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Notatka: </B
+>
+							Na razie oprogramowanie zosta³o przetestowane
+							z MICO (bez obs³ugi w±tków) i omniORB.
+						</P
+></BLOCKQUOTE
+></DIV
+><P>
+				</P
+><P
+>&#13;					Nale¿y równie¿ okre¶liæ program, który bêdzie
+					u¿ywany do translacji plików IDL - w tym
+					celu nale¿y zmieniæ plik <TT
+CLASS="filename"
+>idl</TT
+>.
+					Plik zawiera przyk³ady dla obs³ugiwanych implementacji
+					CORBA.
+				</P
+><DIV
+CLASS="example"
+><A
+NAME="AEN803"
+></A
+><P
+><B
+>Przyk&#322;ad 7-1. corba.inc dla MICO zainstalowanego w /usr/local/progs/mico</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-DP_USE_MICO -I/usr/local/progs/mico/include
+</KBD
+></PRE
+></DIV
+><DIV
+CLASS="example"
+><A
+NAME="AEN807"
+></A
+><P
+><B
+>Przyk&#322;ad 7-2. corba.lib dla MICO zainstalowanego w /usr/local/progs/mico</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-L/usr/local/progs/mico/lib -lmicocoss2.3.11 -lmico2.3.11 -lssl -lcrypto
+</KBD
+></PRE
+></DIV
+><DIV
+CLASS="example"
+><A
+NAME="AEN811"
+></A
+><P
+><B
+>Przyk&#322;ad 7-3. corba.inc dla omniORB zainstalowanego w /usr/local/progs/omniorb</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-DP_USE_OMNIORB -I/usr/local/progs/omniorb/include
+</KBD
+></PRE
+></DIV
+><DIV
+CLASS="example"
+><A
+NAME="AEN815"
+></A
+><P
+><B
+>Przyk&#322;ad 7-4. corba.lib dla omniORB zainstalowanego w /usr/local/progs/omniorb</B
+></P
+><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>&#13;-L/usr/local/progs/omniorb/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread 
+</KBD
+></PRE
+></DIV
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.deps.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.comp.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Zale¿no¶ci</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Kompilacja</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,22 @@
+PREFIX?=/var/vq
+INSTALL?=install
+JAVAC?=javac
+JAVA?=java
+JADE?=openjade
+SGML_CATALOG_FILES?=/usr/share/sgml/CATALOG.openjade:/usr/share/sgml/CATALOG.db42xml:/usr/share/sgml/CATALOG.iso_ent:/usr/share/sgml/CATALOG.docbkdsl
+SGML_XML_DCL?=/usr/share/sgml/openjade/xml.dcl
+
+.PHONY: auto-mkdir
+
+auto-mkdir:
+	mkdir -p auto
+
+#################
+$(BASE)/tools/mkdep:
+	(cd $(BASE)/tools/ && $(MAKE) mkdep)
+	
+.depend: $(BASE)/compile $(BASE)/tools/mkdepend *.cc
+	CC=$(BASE)/compile $(BASE)/tools/mkdepend $(INCS) *.cc > .depend
+	if [ -e .depend -a ! -s .depend ]; then \
+		rm -f .depend ; \
+	fi

@@ -1,0 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Bezpieczeñstwo bez ¶ciemniania</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="¯ycie z Virtual Qmail"
+HREF="life.html"><LINK
+REL="PREVIOUS"
+TITLE="¯ycie z Virtual Qmail"
+HREF="life.html"><LINK
+REL="NEXT"
+TITLE="Integracja z zewnêtrznym oprogramowaniem"
+HREF="life.integration.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-13T21:40:02"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="life.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 3. ¯ycie z Virtual Qmail</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="life.integration.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="life.security"
+>3.2. Bezpieczeñstwo bez ¶ciemniania</A
+></H1
+><P
+>&#13;	Bezpieczeñstwo jest jednym z wa¿niejszych wymagañ stawianych systemom
+	obecnie. Jest równie¿ bardzo wa¿ne dla mnie. Dlatego poczyni³em
+	pewne kroki aby uczyniæ ten system bezpiecznym.
+	</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="life.security.steps"
+>3.2.1. Kroki maj±ce na celu uczyniæ system bezpieczniejszym</A
+></H2
+><P
+>&#13;		Od pocz±tku v-q tworzone jest przy wykorzystaniu C++ i 
+		Standardowej Biblioteki Wzorców (ang. STL). Staram siê
+		nie wymy¶laæ ko³a od pocz±tku, kiedy jest to mo¿liwe korzystam
+		ze znanego i sprawdzonego oprogramowania. STL i C++ zawieraj±
+		znane i sprawdzone algorytmy i struktury danych.
+		</P
+><P
+>&#13;		Staram siê aby kod by³ jak najprostszy, nie zaciemniam
+		kodu w ¿aden sposób :-) Prostota projektu, prostota kodu.
+		Staram siê równie¿ utrzymywaæ aktualn± dokumentacjê w kodzie,
+		jednak¿e uwa¿am, ¿e prostszy kod jest lepszy ni¿ obszerniejsza
+		dokumentacja.
+		</P
+><P
+>&#13;		U¿ywam automatów do generowania kodu. Dla przyk³adu dlatego
+		zdecydowa³em siê u¿ywaæ CORBA - automatyzuje proces
+		tworzenia protoko³u komunikacji pomiêdzy demonami.
+		</P
+><P
+>&#13;		Od wersji 5 tworzone s± i wykonywane testy jednostkowe tak
+		czêsto jak to jest mo¿liwe. Dla ka¿dego wykrytego b³êdu
+		tworzony jest test przed prób± naprawiania go. Ma to
+		zapewniæ, ¿e raz wykryty b³±d nie pojawi siê ponownie.
+		</P
+><P
+>&#13;		Najwa¿niejsz± rzecz±, któr± robiê aby uczyniæ ten system
+		bezpiecznym i stabilnym jest wykorzystywanie go na w³asnych
+		serwerach.
+		</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="life.security.sockets"
+>3.2.2. Ograniczanie dostêpu do gniazd sieciowych</A
+></H2
+><P
+>&#13;		Jednym z kroków, które mo¿na wykonaæ aby zabezpieczyæ system
+		jest ograniczenie dostêpu do gniazd sieciowych tworzonych
+		przez demony w celu komunikacji.
+		</P
+><P
+>&#13;		Katalog <TT
+CLASS="filename"
+>contrib/service</TT
+> zawiera przyk³adowe
+		skrypty pozwalaj±ce uruchamiaæ demony pod nadzorem
+		<SPAN
+CLASS="application"
+>daemontools</SPAN
+> 
+		(zobacz <A
+HREF="http://cr.yp.to"
+TARGET="_top"
+>http://cr.yp.to</A
+> aby
+		dowiedzieæ siê czego¶ wiêcej na temat tego pakietu).
+		Jak mo¿esz zauwa¿yæ wszystkie demony uruchamiane s± z argumentem:
+</P><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>-ORBIIOPAddr "unix:/var/vq/sockets/$PROG.sock"</KBD
+></PRE
+><P>
+		Argument ten mówi implementacji CORBA, ¿e do komunikacji maj±
+		byæ u¿ywane gniazda Uniksa, które reprezentowane s± w systemie
+		jako pliki. Mo¿na za pomoc±
+		<SPAN
+CLASS="application"
+>chmod</SPAN
+> ograniczyæ do nich dostêp. Uruchom
+</P><PRE
+CLASS="screen"
+><KBD
+CLASS="userinput"
+>chmod 700 /var/vq/sockets</KBD
+></PRE
+><P>
+		aby ograniczyæ dostêp do wszystkich procesów tylko do procesów
+		uruchomionych przez w³a¶ciciela
+		katalogu <TT
+CLASS="filename"
+>/var/vq/sockets</TT
+>.
+		</P
+><P
+>&#13;		Je¿eli chcesz umo¿liwiæ procesom, uruchamianym przez ró¿nych
+		u¿ytkowników, dostêp do demonów zalecane jest aby¶ utworzy³
+		specjaln± grupê, która bêdzie mia³a dostêp do plików reprezentuj±cych
+		gniazda Uniksa. Do tej grupy dodaj wszystkich u¿ytkowników, którzy
+		maj± mieæ dostêp.
+		</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="life.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="life.integration.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>¯ycie z Virtual Qmail</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="life.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Integracja z zewnêtrznym oprogramowaniem</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

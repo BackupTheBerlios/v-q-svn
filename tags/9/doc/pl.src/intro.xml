@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="intro">
+	<title>Wprowadzenie</title>
+
+	<para>
+		Czyli ku czemu ma służyć ten projekt.
+	</para>
+	
+	<section id="intro.goal">
+		<title>Cel projektu</title>
+
+		<para>
+			Głównym celem jest stworzenie systemu zarządzania wirtualnymi
+			domenami, który będzie łatwy w konfiguracji, zarządzaniu. 
+			Powinien również łatwo integrować się z systemami klasy
+			enterprise. System powinien pracować pewnie, szybko
+			i bezpiecznie - jest zaprojektowany pod kątem dużych
+			systemów.
+		</para>
+	</section>
+
+	<section id="intro.features">
+		<title>Główne cechy aktualnego systemu</title>
+	
+		<para>
+			Najważniejszą cechą systemu jest to, że dzięki modularnej
+			budowie możliwe jest zastąpienie każdej części systemu.
+			Można wymienić bazę danych lub MTA w łatwy sposób.
+			Oprogramowanie można również konfigurować bez potrzeby
+			kompilacji nowej wersji.
+		</para>
+
+		<para>
+			Główne właściwości:
+			
+			<itemizedlist>
+				<listitem><para>logowanie i autoryzacja oparte o PostgreSQL</para></listitem>
+				<listitem><para>logowanie i autoryzacja oparte o JDBC</para></listitem>
+				<listitem><para>integracja z Qmail</para></listitem>
+				<listitem><para>komunikacja oparta o CORBA, oznacza to możliwość używania dowolnego języka posiadającego mapowanie IDL</para></listitem>
+				<listitem><para>można łatwo korzystać z poziomu: C, C++, PHP, Java, Smalltalk, python</para></listitem>
+				<listitem><para>rozproszony hosting</para></listitem>
+				<listitem><para>wszystkie programy mogą pracować bez uprawnień root</para></listitem>
+				<listitem><para>napisany przy wykorzystaniu C++, STL i boost, niektóre części w Javie</para></listitem>
+				<listitem><para>interfejs WWW dla użytkowników</para></listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="intro.todo">
+		<title>Planowane właściwości</title>
+		
+		<para>
+			To jest otwarta lista. Jeżeli masz jakieś sugestie
+			skontaktuj się z <link linkend="pniewiadomski">Pawłem Niewiadomskim</link>.
+		</para>
+
+		<para>
+			Zaplanowane funkcje:
+
+			<itemizedlist>
+				<listitem><para>obsługa quota</para></listitem>
+				<listitem><para>wsparcie dla i18n</para></listitem>
+				<listitem><para>zarządzanie rozszerzonymi adresami dostępnymi Qmail</para></listitem>
+				<listitem><para>interfejs WWW dla administratorów</para></listitem>
+				<listitem><para>obsługa Postfix i Sendmail.</para></listitem>
+				<listitem><para>zdalna konfiguracja - dodatkowy interfejs 
+					CORBA umożliwiający konfigurację systemu</para></listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="intro.missing">
+		<title>Niedostępne funkcje</title>
+	
+		<para>
+			Lista przedstawia funkcje popularne, które celowo nie zostały
+			wprowadzone do v-q:
+		
+			<itemizedlist>
+				<listitem>
+					<para>
+						relaying oparty na autoryzacji POP3 przed SMTP
+						(vpopmail posiada taką opcję) - ludzie, używajcie SMTP-AUTH!
+					</para>
+				</listitem>
+				<listitem>
+					<para>obsługa rzeczywistych użytkowników, 
+						autoryzacja oparta o <filename>/etc/passwd</filename></para>
+				</listitem>
+				<listitem>
+					<para>obsługa innego formatu skrzynek niż Maildir</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="intro.changes">
+		<title>Ważne zmiany</title>
+
+			<para>
+				Poniżej znajduje się lista istnotnych zmian, które
+				mogą wpływać na kompatybilność między wersjami, etc.
+			</para>
+
+			<formalpara>
+				<title>Wersja 9</title>
+
+				<para>
+					<application>qmailvqd</application> używa teraz znacznie
+					mniej czasu procesora w stanie bezczynności.
+				</para>
+			</formalpara>
+
+			<formalpara>
+				<title>Wersja 8</title>
+
+				<para>
+					<application>qmailvqd</application> kończy działanie gdy straci
+					połączenie z interfejsem iauth. W logach zapisuje informację o tym.
+					Blokowanie plików używane do kontroli dostępu zostało
+					całkowicie zmienione, działa bardziej stabilnie.
+				</para>
+			</formalpara>
+
+			<formalpara>
+				<title>Wersja 7</title>
+
+				<para>
+					Odwołania do vq_emails_banned wykorzystują teraz operator LIKE.
+					Poprzednie wersje korzystały z operatora wyrażeń regularnych POSIX, 
+					który jest dostępny w PostgreSQL.
+					Jeżeli vq_emails_banned zawiera jakieś wpisy musisz
+					je ręcznie zaktualizować.
+				</para>
+			</formalpara>
+	</section>
+
+	<section id="intro.trans">
+		<title>Tłumaczenia dokumentacji</title>
+
+		<para>
+		Oryginalna dokumentacja pisana jest po angielsku, aktualna
+		wersja dostępna jest pod adresem
+		<ulink url="http://v-q.foo-baz.com">http://v-q.foo-baz.com</ulink>.
+		</para>
+
+		<para>
+		Na dzień dzisiejszy dokumentacja przetłumaczona została na:
+		<itemizedlist>
+			<listitem><para><ulink url="../pl.html/index.html">Polski</ulink></para></listitem>
+		</itemizedlist>
+		</para>
+	</section>
+
+	&license;
+
+<!--
+	<para>
+		If you think that some future is missing you're welcome to add it or
+		if you can't but think it should be implemented you can contact author.
+	</para>
+
+	<para>
+		Following is a list of programs in contrib directory:
+	</para>
+
+	<sec tit="freemail">
+		This module will support options associated with free e-mail accounts.
+		At this time it include only option to change informations about
+		user (sex, country, city, education level, etc.).
+	</sec>
+
+	<sec tit="hosting">
+		This module will support options associated with hosting servers.
+		At this time it supports: adding new e-mail accounts to domain,
+		setting FTP access, removing users, access to WWW usage logs.
+		Setting aliases for WWW.
+	</sec>
+
+	<sec tit="vqsignup">
+		Simple program that allows users to create new e-mail accounts.
+	</sec>
+
+	<sec tit="vquserrm">
+		Removes user.
+	</sec>
+
+	<sec tit="host_add">
+		Adds domain.
+	</sec>
+
+	<sec tit="pg2fs">
+		Used with hosting module. It's used to configure tinydns, dnscache.
+		Hosting module after changing data calls stored in SQL server 
+		functions from <a href="http://iidea.pl/~paweln/proj/pgutil">pgutil 
+		package</a>. They create simple files which are processed by pg2fs
+		to create tinydns and dnscache configuration.
+	</sec>
+
+	<sec tit="valid">
+		Small library. Includes functions used to validate informations as
+		data, polish tax number, polish post code, etc.
+	</sec>
+
+	<sec tit="vqsignup1">
+		Special version of vqsignup which collects information about user
+		(sex, education level, city, country). It's used to create free
+		e-mail service.
+	</sec>
+
+	<sec tit="vqwww">
+		Account manager. Includes modules that allows to: change password,
+		set e-mail redirection, set automatic response, see history of login.
+		It support dynamic loading of shared libraries, so it may be easily
+		extended.
+	</sec>
+-->
+</chapter>

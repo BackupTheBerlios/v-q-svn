@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="life">
+	<title>Życie z Virtual Qmail</title>
+
+	<para>
+		Rozdział opisuje konfiguracje oraz użytkowanie v-q. 
+		Zawiera również część poświęconą zabezpieczaniu systemu.
+	</para>
+
+	&life.conf;
+	&life.security;
+
+	<section id="life.integration">
+		<title>Integracja z zewnętrznym oprogramowaniem</title>
+
+		<para>
+			Rozdział opisuje sposoby integracji v-q z innymi programami.
+		</para>
+
+		<section id="life.inte.omail">
+			<title>Omail-webmail</title>
+
+			<para>
+				Wszystko co musisz zrobić to skonfigurować
+				omail-webmail aby korzystał z vpopmail.
+				Wszelkie odwołania do <filename>vchkpw</filename> 
+				zmień na <filename>user_auth</filename>.
+			</para>
+		</section>
+	</section>
+</chapter>

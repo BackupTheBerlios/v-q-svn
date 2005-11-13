@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<section id="life.security">
+	<title>Bezpieczeństwo bez ściemniania</title>
+
+	<para>
+	Bezpieczeństwo jest jednym z ważniejszych wymagań stawianych systemom
+	obecnie. Jest również bardzo ważne dla mnie. Dlatego poczyniłem
+	pewne kroki aby uczynić ten system bezpiecznym.
+	</para>
+
+	<section id="life.security.steps">
+		<title>Kroki mające na celu uczynić system bezpieczniejszym</title>
+
+		<para>
+		Od początku v-q tworzone jest przy wykorzystaniu C++ i 
+		Standardowej Biblioteki Wzorców (ang. STL). Staram się
+		nie wymyślać koła od początku, kiedy jest to możliwe korzystam
+		ze znanego i sprawdzonego oprogramowania. STL i C++ zawierają
+		znane i sprawdzone algorytmy i struktury danych.
+		</para>
+
+		<para>
+		Staram się aby kod był jak najprostszy, nie zaciemniam
+		kodu w żaden sposób :-) Prostota projektu, prostota kodu.
+		Staram się również utrzymywać aktualną dokumentację w kodzie,
+		jednakże uważam, że prostszy kod jest lepszy niż obszerniejsza
+		dokumentacja.
+		</para>
+
+		<para>
+		Używam automatów do generowania kodu. Dla przykładu dlatego
+		zdecydowałem się używać CORBA - automatyzuje proces
+		tworzenia protokołu komunikacji pomiędzy demonami.
+		</para>
+
+		<para>
+		Od wersji 5 tworzone są i wykonywane testy jednostkowe tak
+		często jak to jest możliwe. Dla każdego wykrytego błędu
+		tworzony jest test przed próbą naprawiania go. Ma to
+		zapewnić, że raz wykryty błąd nie pojawi się ponownie.
+		</para>
+
+		<para>
+		Najważniejszą rzeczą, którą robię aby uczynić ten system
+		bezpiecznym i stabilnym jest wykorzystywanie go na własnych
+		serwerach.
+		</para>
+	</section>
+
+	<section id="life.security.sockets">
+		<title>Ograniczanie dostępu do gniazd sieciowych</title>
+
+		<para>
+		Jednym z kroków, które można wykonać aby zabezpieczyć system
+		jest ograniczenie dostępu do gniazd sieciowych tworzonych
+		przez demony w celu komunikacji.
+		</para>
+
+		<para>
+		Katalog <filename>contrib/service</filename> zawiera przykładowe
+		skrypty pozwalające uruchamiać demony pod nadzorem
+		<application>daemontools</application> 
+		(zobacz <ulink url="http://cr.yp.to">http://cr.yp.to</ulink> aby
+		dowiedzieć się czegoś więcej na temat tego pakietu).
+		Jak możesz zauważyć wszystkie demony uruchamiane są z argumentem:
+<screen><userinput>-ORBIIOPAddr "unix:/var/vq/sockets/$PROG.sock"</userinput></screen>
+		Argument ten mówi implementacji CORBA, że do komunikacji mają
+		być używane gniazda Uniksa, które reprezentowane są w systemie
+		jako pliki. Można za pomocą
+		<application>chmod</application> ograniczyć do nich dostęp. Uruchom
+<screen><userinput>chmod 700 /var/vq/sockets</userinput></screen>
+		aby ograniczyć dostęp do wszystkich procesów tylko do procesów
+		uruchomionych przez właściciela
+		katalogu <filename>/var/vq/sockets</filename>.
+		</para>
+
+		<para>
+		Jeżeli chcesz umożliwić procesom, uruchamianym przez różnych
+		użytkowników, dostęp do demonów zalecane jest abyś utworzył
+		specjalną grupę, która będzie miała dostęp do plików reprezentujących
+		gniazda Uniksa. Do tej grupy dodaj wszystkich użytkowników, którzy
+		mają mieć dostęp.
+		</para>
+	</section>
+
+</section>

@@ -1,0 +1,371 @@
+/*
+Virtual Qmail (http://v-q.foo-baz.com)
+Copyright (C) 2002-2005 Pawel Niewiadomski (new@foo-baz.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+module vq {
+	 
+	/**
+	 * Wrapper for std::exception
+	 */
+	exception except {
+			string what;
+			string file;
+			unsigned long line;
+	};
+
+	/**
+	 * Database error
+	 */
+	exception db_error {
+			string what;
+			string file;
+			unsigned long line;
+	};
+	 
+	/**
+	 * Argument was NULL but it's not allowed
+	 */
+	 exception null_error {
+	 		string file;
+			unsigned long line;
+	 };
+	/*@}*/
+
+
+	interface ivq {
+			typedef unsigned long quota_type; //!< Type for holding quota values
+			typedef unsigned long size_type; //!< Type for holding sizes
+			typedef unsigned short uif_type;
+			typedef unsigned short user_conf_type;
+			typedef sequence<string> string_list;
+			typedef short gid_type;
+			typedef short uid_type;
+			typedef long id_type;
+
+		/**
+		 * \ingroup err
+		 */
+		/*@{*/
+			enum err_code {
+					/// no error
+					err_no,  // 0
+					/// temporary error
+					err_temp, // 1
+					/// invalid domain name
+					err_dom_inv,
+					/// invalid user name
+					err_user_inv, // 3
+					/// error in authorization module
+					err_auth, 
+					/// dot file - type is not supported
+					err_user_conf_tns,
+					/// can't open sth
+					err_open, // 6
+					/// can't write
+					err_wr,
+					/// can't read
+					err_rd, // 8
+					/// can't stat
+					err_stat,
+					/// not a directory
+					err_notdir, // 10
+					/// chmod failed
+					err_chmod,
+					/// file's locked
+					err_lckd, // 12
+					/// can't rename
+					err_ren,
+					/// can't change owner
+					err_chown, // 14
+					/// overflow
+					err_over,
+					/// child returned something unexpected
+					err_exec, // 16
+					/// can't create directory
+					err_mkdir,
+					/// entry exists
+					err_exists, // 18
+					/// no such element/entry
+					err_noent,
+					/// can't remove
+					err_unlink, // 20
+					/// invalid password
+					err_pass_inv, 
+					/// internal function returned unexpected value
+					err_func_res, // 22
+					/// function not implemented
+					err_func_ni,
+					/// child crashed or was killed
+					err_exec_crash // 24
+			};
+
+			/// errors
+			struct error {
+					err_code ec; //!< code
+					string what; //!< description
+					string file; //!< source file
+					unsigned long line; //!< line number
+					boolean auth; //!< is this from authorization db?
+			};
+		/*@}*/
+				
+			/// possible user account flags
+			/// was:
+			/// enum user_info_flags {
+			/// blocked pop3 access
+			const uif_type uif_pop3_blk = 1;
+			/// blocked smtp access
+			const uif_type uif_smtp_blk = 2;
+			/// admin (it was first added user)
+			const uif_type uif_admin = 4;
+			/// ftp access blocked
+			const uif_type uif_ftp_blk = 8;
+			/// ignore me (entry MUST be ignored)
+			const uif_type uif_ignore = 16;
+			/// super (server) admin
+			const uif_type uif_supadm = 32;
+			/// };
+
+			/**
+			 * structure used in some routines. it includes basic
+			 * user's information.
+			 */
+			struct user_info {
+					id_type id_domain; //!< domain
+					string login;
+					string pass; //!< password
+					string dir; //!< mailbox directory
+					uif_type flags; //!< additional flags
+					gid_type gid;
+					uid_type uid;
+			};
+
+			/// Mailbox options
+			const user_conf_type uc_redir = 1; //!< redirection
+			const user_conf_type uc_maildir = 2; //!< maildir
+			const user_conf_type uc_autoresp = 3; //!< autorespond
+			const user_conf_type uc_external = 127; //!< all external options should be > than this
+
+			/// user's dot file info
+			struct user_conf_info {
+					id_type id_conf; //!< identificator
+					string val; //!< value
+					user_conf_type type; //!< type of entry
+			};
+			typedef sequence<user_conf_info> user_conf_info_list;
+
+			/// banned emails
+			struct email_banned {
+					string re_domain; //!< POSIX regular exp.
+					string re_login; //!< POSIX regulat exp.
+			};
+			typedef sequence<email_banned> email_banned_list;
+
+			/// domains
+			struct domain_info {
+					id_type id_domain;
+					string domain;
+			};
+			typedef sequence<domain_info> domain_info_list;
+
+		/**
+		 * \defgroup dom Playing with domains
+		 */
+		 //@{
+			/// Add domain
+			error dom_add(in string dom, out id_type dom_id) 
+					raises (null_error, except, db_error); 
+			/// Removes domain
+			error dom_rm(in id_type dom_id)
+					raises (null_error, except, db_error);
+			/// Validates domain name
+			error dom_val(in string dom)
+					raises (null_error, except, db_error);
+			/// Gets ID of domain
+			error dom_id(in string dom, out id_type dom_id)
+					raises (null_error, except, db_error);
+			/// Gets name of a domain
+			error dom_name(in id_type dom_id, out string dom_name )
+					raises (null_error, except, db_error);
+			/// List all domains
+			error dom_ls( out domain_info_list dis )
+					raises (null_error, except, db_error);
+		//@}
+
+		/**
+		 * \defgroup dra Domain aliases
+		 */
+		//@{
+			/// add alias for a domain
+			error da_add(in id_type dom_id, in string ali)
+					raises (null_error, except, db_error);
+			/// Removes alias
+			error da_rm(in string ali)
+					raises (null_error, except, db_error);
+			/// Lists all aliases for a domain
+			error da_ls_by_dom(in id_type dom_id, out string_list alis )
+					raises (null_error, except, db_error);
+		//@}
+
+		/**
+		 * \defgroup dra Domain's IP addresses
+		 */
+		//@{
+			/// add IP address for a domain
+			error dip_add(in id_type dom_id, in string ip)
+					raises (null_error, except, db_error);
+			/// Removes IP address
+			error dip_rm(in string ip)
+					raises (null_error, except, db_error);
+			/// Lists all IP addresses for a domain
+			error dip_ls_by_dom(in id_type dom_id, out string_list ips )
+					raises (null_error, except, db_error);
+		//@}
+
+		/**
+		 * \defgroup user User handling
+		 * @{
+		 */
+			/// Adds user
+			error user_add(in user_info ai, in boolean is_banned )
+					raises (null_error, except, db_error);
+			/// Removes user
+			error user_rm(in id_type dom_id, in string login)
+					raises (null_error, except, db_error);
+			/// Changes password
+			error user_pass(in id_type dom_id, in string login, in string pass)
+					raises (null_error, except, db_error);
+			/// Checks if user name is valid (not if user exists)
+			error user_val(in string user)
+					raises (null_error, except, db_error);
+			/// Gets informations about user
+			error user_get(inout user_info ai)
+					raises (null_error, except, db_error);
+			/// Checks whether user exists
+			error user_ex(in id_type dom_id, in string login)
+					raises (null_error, except, db_error);
+		//@}
+
+		/**
+		 * \defgroup eb Emails banned
+		 */
+		//@{
+			error eb_add(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_rm(in string re_domain, in string re_login)
+					raises (null_error, db_error, except );
+			error eb_ls(out email_banned_list ebs)
+					raises (db_error, except);
+		//@}
+
+	/**
+	 * \defgroup qt Quota support
+	 * @{
+	 */
+		/**
+		 * \defgroup qt_user Quota support for users
+		 * \ingroup qt
+		 */
+		//@{
+#if 0
+			/// Parses string into quota_types
+			error qt_parse( in string qts, 
+				out quota_type bytes_max, out quota_type files_max )
+					raises (null_error, except);
+			/// Adds value to current usage
+			error qt_cur_set(const string&, 
+					in string, int32_t)
+					raises (null_error, except);
+			/// Checks if over quota
+			error qt_over(in string, 
+					in string)
+					raises (null_error, except);
+			/// Sets limits
+			error qt_set(in string dom, in string user, 
+					out quota_type bytes_max, out quota_type files_max )
+					raises (null_error, except);
+			/// Gets limits
+			error qt_get(in string dom, in string user, 
+					out quota_type bytes_max, out quota_type files_max )
+					raises (null_error, except);
+
+			/// Sets default value for a domain
+			error qt_def_set(in string dom, 
+					in quota_type bytes_max, in quota_type files_max )
+					raises (null_error, except);
+			/// Gets default value
+			error qt_def_get(in string dom, 
+					out quota_type bytes_max, out quota_type files_max )
+					raises (null_error, except);
+
+			/// Sets global defaults for new domains
+			error qt_global_def_set( 
+					in quota_type bytes_max, in quota_type files_max )
+					raises (null_error, except);
+			/// Gets global defaults for new domains
+			error qt_global_def_get(
+					out quota_type bytes_max, out quota_type files_max )
+					raises (null_error, except);
+#endif // if 0
+		//@}
+	/*@}*/
+
+		/**
+		 * \defgroup user_conf Playing with user mailbox's options
+		 */
+		 //@{
+			/// Adds mailbox configuration
+			error user_conf_add(in id_type dom_id, in string user,
+					in string pfix, inout user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Removes all mailbox configuration entries
+			error user_conf_rm_by_type(in id_type dom_id, in string user,
+					in string pfix, in user_conf_type ut )
+					raises (null_error, db_error, except);
+			/// Removes mailbox configuration entry
+			error user_conf_rm( in id_type dom_id, in string user,
+					in string pfix, in id_type id )
+					raises (null_error, db_error, except);
+			/// Lists mailbox configuration
+			error user_conf_ls(in id_type dom_id, in string user,
+					in string pfix, out user_conf_info_list uis )
+					raises (null_error, db_error, except);
+			/// Lists mailbox configuation of specified type
+			error user_conf_ls_by_type(in id_type dom_id, in string user,
+					in string pfix, in user_conf_type ut,
+					out user_conf_info_list uis )
+					raises (null_error, db_error, except);
+			/// Changes existing entry
+			error user_conf_rep( in id_type dom_id, in string user, 
+					in string pfix, in user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Gets existing entry
+			error user_conf_get( inout user_conf_info ui )
+					raises (null_error, db_error, except);
+			/// Checks whether mailbox has entry of specified type
+			error user_conf_type_has(in id_type dom_id, in string user,
+					in string pfix, in user_conf_type ut )
+					raises (null_error, db_error, except);
+			/// Counts entries of specified type
+			error user_conf_type_cnt(in id_type dom_id, in string user,
+					in string pfix, in user_conf_type ut, 
+					out size_type cnt )
+					raises (null_error, db_error, except);
+		//@}
+	}; // interface ivq
+
+}; // module vq

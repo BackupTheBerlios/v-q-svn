@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<chapter id="intro">
+	<title>Introduction</title>
+
+	<para>
+		What this project is all about.
+	</para>
+	
+	<section id="intro.goal">
+		<title>Project goal</title>
+
+		<para>
+			Main goal is to create virtual domains managing system, which
+			will be easy to setup, maintain and integrate with
+			other enterprise software. 
+			It should also work very reliable, fast and secure - it's designed 
+			for big sites.
+		</para>
+	</section>
+
+	<section id="intro.features">
+		<title>Current main features</title>
+	
+		<para>
+			The most important thing is that thanks to modularized
+			architecture it's easy to replace any part of a system.
+			You can change database, or MTA part easily. Software
+			can be configured without the need of compilation.
+		</para>
+
+		<para>
+			Main features are:
+			
+			<itemizedlist>
+				<listitem><para>PostgreSQL support for authorization and logging</para></listitem>
+				<listitem><para>JDBC support for authorization and logging</para></listitem>
+				<listitem><para>Qmail integration</para></listitem>
+				<listitem><para>CORBA based communication, which means you can use daemons from any language having IDL mapping</para></listitem>
+				<listitem><para>can be used easily from: C, C++, PHP, Java, Smalltalk, python</para></listitem>
+				<listitem><para>distributed hosting</para></listitem>
+				<listitem><para>all processes can run without root</para></listitem>
+				<listitem><para>written using C++, STL and boost, some parts in Java</para></listitem>
+				<listitem><para>WWW interface for users</para></listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="intro.todo">
+		<title>Planned features</title>
+		
+		<para>
+			This is not a closed list. If you have any suggestions
+			please contact <link linkend="pniewiadomski">Pawe³ Niewiadomski</link>.
+		</para>
+
+		<para>
+			Planned features are:
+
+			<itemizedlist>
+				<listitem><para>quota support</para></listitem>
+				<listitem><para>i18n support</para></listitem>
+				<listitem><para>manager of extended addresses known from Qmail</para></listitem>
+				<listitem><para>WWW interface for administrators</para></listitem>
+				<listitem><para>Postfix and Sendmail support.</para></listitem>
+				<listitem><para>remote configuration - another CORBA interface allowing to configure system</para></listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="intro.missing">
+		<title>Missing features</title>
+	
+		<para>
+			Things that are popular but missing in v-q:
+		
+			<itemizedlist>
+				<listitem>
+					<para>
+						support POP3 before SMTP relaying 
+						(vpopmail does have such thing) - people use SMTP-AUTH!
+					</para>
+				</listitem>
+				<listitem>
+					<para>support real users, authorization based on 
+						<filename>/etc/passwd</filename></para>
+				</listitem>
+				<listitem>
+					<para>support for any other mailboxes type than Maildir</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="intro.changes">
+		<title>Important changes</title>
+
+		<para>
+			Following list represents only important changes which
+			can influence compatibility with previous version, etc.
+		</para>
+
+		<formalpara>
+			<title>Version 9</title>
+
+			<para>
+				<application>qmailvqd</application> doesn't eat CPU
+				when idle. It plays nice now ;-)
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>Version 8</title>
+
+			<para>
+				<application>qmailvqd</application> exits when connection
+				to iauth implementation is lost. It writes information about
+				it to standard error output. File locking has been rewritten,
+				it's now more stable.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>Version 7</title>
+
+			<para>
+				Lookups into vq_emails_banned are made now with LIKE.
+				Previous version used PostgreSQL's POSIX expressions.
+				If you have entries in vq_emails_banned you should
+				update them.
+			</para>
+		</formalpara>
+	</section>
+
+
+	<section id="intro.trans">
+		<title>Documentation translations</title>
+
+		<para>
+		Original documentation is written in English, current version
+		can be downloaded from <ulink url="http://v-q.foo-baz.com">http://v-q.foo-baz.com</ulink>.
+		</para>
+
+		<para>
+		At this time following translations exist:
+		<itemizedlist>
+			<listitem><para><ulink url="../pl.html/index.html">Polish</ulink></para></listitem>
+		</itemizedlist>
+		</para>
+	</section>
+
+	&license;
+
+<!--
+	<para>
+		If you think that some future is missing you're welcome to add it or
+		if you can't but think it should be implemented you can contact author.
+	</para>
+
+	<para>
+		Following is a list of programs in contrib directory:
+	</para>
+
+	<sec tit="freemail">
+		This module will support options associated with free e-mail accounts.
+		At this time it include only option to change informations about
+		user (sex, country, city, education level, etc.).
+	</sec>
+
+	<sec tit="hosting">
+		This module will support options associated with hosting servers.
+		At this time it supports: adding new e-mail accounts to domain,
+		setting FTP access, removing users, access to WWW usage logs.
+		Setting aliases for WWW.
+	</sec>
+
+	<sec tit="vqsignup">
+		Simple program that allows users to create new e-mail accounts.
+	</sec>
+
+	<sec tit="vquserrm">
+		Removes user.
+	</sec>
+
+	<sec tit="host_add">
+		Adds domain.
+	</sec>
+
+	<sec tit="pg2fs">
+		Used with hosting module. It's used to configure tinydns, dnscache.
+		Hosting module after changing data calls stored in SQL server 
+		functions from <a href="http://iidea.pl/~paweln/proj/pgutil">pgutil 
+		package</a>. They create simple files which are processed by pg2fs
+		to create tinydns and dnscache configuration.
+	</sec>
+
+	<sec tit="valid">
+		Small library. Includes functions used to validate informations as
+		data, polish tax number, polish post code, etc.
+	</sec>
+
+	<sec tit="vqsignup1">
+		Special version of vqsignup which collects information about user
+		(sex, education level, city, country). It's used to create free
+		e-mail service.
+	</sec>
+
+	<sec tit="vqwww">
+		Account manager. Includes modules that allows to: change password,
+		set e-mail redirection, set automatic response, see history of login.
+		It support dynamic loading of shared libraries, so it may be easily
+		extended.
+	</sec>
+-->
+</chapter>

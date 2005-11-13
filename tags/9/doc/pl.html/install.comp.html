@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Kompilacja</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Instalacja"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Przygotowania"
+HREF="install.prep.html"><LINK
+REL="NEXT"
+TITLE="Instalacja"
+HREF="install.install.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-13T21:40:02"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.prep.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 7. Instalacja</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.install.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.comp"
+>7.4. Kompilacja</A
+></H1
+><P
+>Najwy¿szy czas aby skompilowaæ ¼ród³a. Je¿eli skonfigurowa³e¶
+		wszystko poprawnie powiniene¶ bez problemów skompilowaæ
+		Virtual Qmail.</P
+><P
+>&#13;			Aby rozpocz±æ kompilacjê skorzystaj z <SPAN
+CLASS="application"
+>make</SPAN
+>.
+			Obie wersje programu s± obs³ugiwane: BSD lub GNU. 
+			Zale¿nie od pow³oki u¿ywanej przez Ciebie, dla 
+			<SPAN
+CLASS="application"
+>sh</SPAN
+> napisz:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make 2&#62;&#38;1 &#62; out
+</KBD
+>
+</PRE
+><P>
+			Dla tcsh napisz:
+</P><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;make &#62;&#38; out
+</KBD
+>
+</PRE
+><P>
+			Po tym jak <SPAN
+CLASS="application"
+>make</SPAN
+> zakoñczy dzia³anie
+			sprawd¼ plik <TT
+CLASS="filename"
+>out</TT
+> aby sprawdziæ przebieg
+			kompilacji.
+		</P
+><P
+>&#13;			Je¿eli nie jeste¶ w stanie skompilowaæ v-q wy¶lij
+			<TT
+CLASS="filename"
+>out</TT
+> do 
+			<A
+HREF="community.authors.html#pniewiadomski"
+>Paw³a Niewiadomskiego</A
+>.
+		</P
+><P
+>&#13;			Wykonanie <SPAN
+CLASS="application"
+>make</SPAN
+> bez argumentów
+			generuje tylko podstawow± czê¶æ systemu, bez obs³ugi
+			baz danych czy interfejsu WWW.
+			Makefile zawiera nastêpuj±ce cele:
+			<P
+></P
+></P><UL
+><LI
+><P
+>pgsql - generacja modu³ów korzystaj±cych z PostgreSQL</P
+></LI
+><LI
+><P
+>clean - usuwanie obiektów utworzonych w czasie kompilacji</P
+></LI
+></UL
+><P>
+		</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.prep.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.install.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Przygotowania</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Instalacja</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
