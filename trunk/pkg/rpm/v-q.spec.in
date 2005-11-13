@@ -188,37 +188,40 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 %pre
 # Add the "_vq" group
 /usr/sbin/groupadd -g 111 _vq || :
+/usr/sbin/groupadd -g 112 _log || :
 
 # Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 -g 111 \
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
 	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
 
 # Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 -g 111 \
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
 %pre pgsql
 # Add the "_vq" group
 /usr/sbin/groupadd -g 111 _vq || :
+/usr/sbin/groupadd -g 112 _log || :
 
 # Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 -g 111 \
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
 	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
 
 # Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 -g 111 \
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
 %pre jdbc
 # Add the "_vq" group
 /usr/sbin/groupadd -g 111 _vq || :
+/usr/sbin/groupadd -g 112 _log || :
 
 # Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 -g 111 \
+/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
 	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
 
 # Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 -g 111 \
+/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
 %post
