@@ -23,6 +23,7 @@ doc-html:
 		cp -f common/* $$l.html ; \
 		(cd $$l.html && ../mime-type.sh) || exit 1; \
 	done
+	./logo-add.pl `find *.html/ -type f -name "*.html"`
 
 doc-rtf:
 	cp -f src/arch.en.png rtf
@@ -40,9 +41,12 @@ clean:
 		rm -rf $$l.html/* ; \
 	done
 
-mirrors-put:
+mirrors-put: mirrors-put-berlios.de
 	find *.html/ -type f -exec chmod a+r {} \; -o -type d -exec chmod a+rx {} \;
 	rsync -vCr --delete --rsh "ssh -l rsync" *.html foo-baz.com::foo-baz.com/www/foo-baz.com/v-q/
 	for l in $(LANGS) ; do \
 		rsync -vCr --delete --rsh "ssh -l paweln" $$l.html/ shell.sourceforge.net:/home/groups/v/v-/v-q/htdocs/$$l.html ; \
 	done
+
+mirrors-put-berlios.de:
+	rsync -vCr --delete --rsh "ssh -l paweln" *.html shell.berlios.de:/home/groups/v-q/htdocs/
