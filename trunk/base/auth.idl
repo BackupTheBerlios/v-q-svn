@@ -29,6 +29,7 @@ module vq {
 			typedef ivq::quota_type quota_type;
 			typedef ivq::string_list string_list;
 			typedef ivq::user_info user_info;
+			typedef ivq::user_info_list user_info_list;
 			typedef ivq::user_conf_info user_conf_info;
 			typedef ivq::user_conf_info_list user_conf_info_list;
 			typedef ivq::user_conf_type user_conf_type;
@@ -108,6 +109,12 @@ module vq {
 					raises (null_error, db_error, except);
 			/// check if user exists (err_noent if not, err_no if exists)
 			error user_ex( in id_type dom_id, in string login )
+					raises (null_error, db_error, except);
+			/// get all users in specified domain
+			error user_ls_by_dom( in id_type dom_id, out user_info_list uis )
+					raises (null_error, db_error, except);
+			/// get number of users in specified domain
+			error user_cnt_by_dom( in id_type dom_id, out size_type cnt )
 					raises (null_error, db_error, except);
 		//@}
 		/**

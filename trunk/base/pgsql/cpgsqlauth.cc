@@ -348,16 +348,47 @@ namespace POA_vq {
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 	
- 	cpgsqlauth::error * cpgsqlauth::user_eb_rm( const std::string & dom_id,
-				const std::string & login, const std::string & func ) std_try {
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::user_cnt_by_dom(
+			id_type dom_id, CORBA::ULong &cnt ) std_try {
+
 		cpgsqlpool::value_ptr pg(pool.get());
 		result res(nontransaction(*pg.get()).exec(
-				"SELECT "+func+"('"+sqlesc(dom_id)+"','"+sqlesc(login)+"')"));
+			"SELECT count FROM vq_view_USER_CNT_BY_DOM"
+			" WHERE id_domain="+ to_string(dom_id) ));
+	
+		if(res.empty()) {
+				cnt = 0;
+		} else {
+				cnt = res[0][0].as< CORBA::ULong > (0);
+		}
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
 
-		if( res.empty() || res[0][0].is_null() 
-			|| strcmp(res[0][0].c_str(), "0") )
-				return lr(::vq::ivq::err_func_res, func);
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::user_ls_by_dom( id_type dom_id, user_info_list_out uis ) std_try {
+		cpgsqlpool::value_ptr pg(pool.get());
+		result res(nontransaction(*pg.get()).exec(
+			"SELECT pass,dir,flags,login FROM vq_view_user_get"
+			" WHERE id_domain="+to_string(dom_id)+" ORDER BY login" ));
 
+		uis = new user_info_list;
+
+		if(res.empty()) return lr(::vq::ivq::err_no, "");
+
+		result::size_type s = res.size();
+		uis->length(static_cast<CORBA::ULong>(s));
+		for( result::size_type i=0; i<s; ++i ) {
+			uis[i].pass = res[i][0].c_str();
+			uis[i].dir = res[i][1].c_str();
+			uis[i].flags = res[i][2].as< ::vq::iauth::uif_type >(0);
+			uis[i].login = res[i][3].c_str();
+			uis[i].id_domain = dom_id;
+		}
 		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
@@ -391,6 +422,23 @@ namespace POA_vq {
 		return lr(ex && 't' == *ex 
 			? ::vq::ivq::err_no : ::vq::ivq::err_noent, "" );
 	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqlauth::error * cpgsqlauth::user_eb_rm( const std::string & dom_id,
+				const std::string & login, const std::string & func ) std_try {
+		cpgsqlpool::value_ptr pg(pool.get());
+		result res(nontransaction(*pg.get()).exec(
+				"SELECT "+func+"('"+sqlesc(dom_id)+"','"+sqlesc(login)+"')"));
+
+		if( res.empty() || res[0][0].is_null() 
+			|| strcmp(res[0][0].c_str(), "0") )
+				return lr(::vq::ivq::err_func_res, func);
+
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
 
 	/**
 	 *

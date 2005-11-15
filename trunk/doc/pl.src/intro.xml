@@ -104,6 +104,14 @@
 			</para>
 
 			<formalpara>
+				<title>Wersja 10</title>
+
+				<para>
+					Aktualizacja bazy danych - dodano nowy widok vq_view_user_cnt_by_dom; podczas migracji ze starej bazy modyfikowana jest funkcja user_add (poprawka dla PostgreSQL 8).
+				</para>
+			</formalpara>
+
+			<formalpara>
 				<title>Wersja 9</title>
 
 				<para>

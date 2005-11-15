@@ -229,4 +229,19 @@ namespace POA_vq {
 		return auth->user_ex(dom_id, login);
 	} std_catch
 
+	/**
+	 *
+	 */
+	cqmailvq::error * cqmailvq::user_ls_by_dom( id_type dom_id, user_info_list_out uis ) std_try {
+		uis = new ::vq::ivq::user_info_list;
+		return auth->user_ls_by_dom( dom_id, uis );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cqmailvq::error * cqmailvq::user_cnt_by_dom( id_type dom_id, size_type &cnt) std_try {
+		return auth->user_cnt_by_dom( dom_id, cnt );
+	} std_catch
+
 } // namespace POA_vq

@@ -439,6 +439,85 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
+	public error user_cnt_by_dom( int dom_id, IntHolder cnt )
+			throws null_error, db_error, except { try {
+		cnt.value = 0;
+
+		PreparedStatement st = null;
+		ResultSet res = null;
+
+		try {
+			st = con.prepareStatement( 
+				"SELECT count FROM vq_view_user_cnt_by_dom WHERE id_domain=?" );
+			int idx=1;
+			st.setInt(idx++, dom_id);
+			res = st.executeQuery();
+			cnt.value = res.next() ? res.getInt(1) : 0;
+		} finally {
+			try { if(res != null) res.close(); } catch(Exception e) {}
+			try { if(st != null) st.close(); } catch(Exception e) {}
+		}
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
+	 *
+	 */
+	public error user_ls_by_dom( int dom_id, user_info_listHolder uis )
+			throws null_error, db_error, except { try {
+		uis.value = new user_info[0];
+		PreparedStatement st = null;
+		ResultSet res = null;
+		ArrayList auis = new ArrayList();
+
+		try {
+			st = con.prepareStatement( "SELECT pass,dir,flags,login FROM vq_view_user_ls "
+				+ "WHERE id_domain=? ORDER BY login" );
+			int idx=1;
+			st.setInt(idx++, dom_id);
+			res = st.executeQuery();
+
+			for( idx=1; res.next(); idx=1) {
+				user_info ui = new user_info();
+				
+				ui.pass = res.getString(idx++);
+				if( res.wasNull() ) ui.pass = "";
+				ui.dir = res.getString(idx++);
+				if( res.wasNull() ) ui.dir = "";
+				ui.flags = res.getShort(idx++);
+				if( res.wasNull() ) ui.flags = 0;
+				ui.login = res.getString(idx++);
+				if( res.wasNull() ) ui.login = "";
+				ui.id_domain = dom_id;
+				auis.add(ui);
+			}
+
+			uis.value = new user_info [auis.size()];
+			for(int i=0, s=auis.size(); i<s; ++i) 
+				uis.value[i] = (user_info) auis.get(i);
+		} finally {
+			try { if(res != null) res.close(); } catch(Exception e) {}
+			try { if(st != null) st.close(); } catch(Exception e) {}
+		}
+
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
+	 *
+	 */
 	public error eb_add( String re_domain, String re_login ) 
 			throws null_error, db_error, except { try {
 		String func = "EB_ADD";

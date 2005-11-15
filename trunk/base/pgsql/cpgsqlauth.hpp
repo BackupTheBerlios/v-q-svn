@@ -43,6 +43,8 @@ namespace POA_vq {
 					typedef ::vq::iauth::user_conf_type_out user_conf_type_out;
 					typedef ::vq::iauth::user_conf_type user_conf_type;
 					typedef ::vq::iauth::user_info user_info;
+					typedef ::vq::iauth::user_info_list user_info_list;
+					typedef ::vq::iauth::user_info_list_out user_info_list_out;
 					typedef ::vq::iauth::quota_type quota_type;
 					typedef ::vq::iauth::quota_type_out quota_type_out;
 					typedef ::vq::iauth::size_type size_type;
@@ -83,6 +85,8 @@ namespace POA_vq {
 							const char* pass );
 					virtual error * user_get( user_info& ai );
 					virtual error * user_ex( id_type dom_id, const char *user);
+					virtual error * user_ls_by_dom( id_type dom_id, user_info_list_out uis);
+    				virtual error * user_cnt_by_dom( id_type dom_id, size_type& cnt);
 					
 				    virtual error * eb_add( const char * re_domain, 
 							const char * re_login );

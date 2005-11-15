@@ -100,6 +100,14 @@
 		</para>
 
 		<formalpara>
+			<title>Version 10</title>
+
+			<para>
+				Database changes - added new view vq_view_user_cnt_by_dom; update also modifies user_add function (fix for PostgreSQL 8). 
+			</para>
+		</formalpara>
+
+		<formalpara>
 			<title>Version 9</title>
 
 			<para>
