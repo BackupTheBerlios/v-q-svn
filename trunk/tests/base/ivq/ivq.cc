@@ -21,6 +21,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "../iauth/iauth_user_conf.hpp"
 #include "../iauth/iauth_dom_alias.hpp"
 #include "../iauth/iauth_dom_ls.hpp"
+#include "../iauth/iauth_user.hpp"
 
 #include <vq.hpp>
 #include <text.hpp>
@@ -668,18 +669,21 @@ struct vq_test_suite : test_suite {
 		typedef user_conf_test<vq::ivq_var, obj_wrap> obj_user_conf_test;
 		typedef da_dip_test<vq::ivq_var> obj_dom_alias_test;
 		typedef dom_ls_test<vq::ivq_var> obj_dom_ls_test;
+		typedef user_test<vq::ivq_var> obj_user_test;
 
 		boost::shared_ptr<vq_test> test;
 		boost::shared_ptr< obj_user_conf_test > uc_test;
 		boost::shared_ptr< obj_dom_alias_test > da_test;
 		boost::shared_ptr< obj_dom_ls_test > dom_ls_test;
+		boost::shared_ptr< obj_user_test > user_test;
 
 		vq_test_suite(int ac, char *av[]) 
 				: test_suite("qmailvqd tests"),
 				test(new vq_test(ac, av)),
 				uc_test(new obj_user_conf_test(test->vq)),
 				da_test(new obj_dom_alias_test(test->vq)),
-				dom_ls_test(new obj_dom_ls_test(test->vq)) {
+				dom_ls_test(new obj_dom_ls_test(test->vq)),
+				user_test(new obj_user_test(test->vq)) {
 
 			test_case * ts_init = BOOST_CLASS_TEST_CASE( 
 				&vq_test::init, test );
@@ -818,6 +822,20 @@ struct vq_test_suite : test_suite {
 					ts_case1->depends_on(ts_init);
 					add(ts_case1);
 			}
+
+			// user_test
+			{
+					test_case * ts_case9 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_test::case9, user_test );
+					ts_case9->depends_on(ts_init);
+					add(ts_case9);
+
+					test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_test::case11, user_test );
+					ts_case11->depends_on(ts_init);
+					add(ts_case11);
+			}
+
 		}
 };
 

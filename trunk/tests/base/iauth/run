@@ -1,4 +1,5 @@
 #!/bin/sh
+
 export BASE=../../..
 export VQ_HOME=.
 export VQ_ETC_DIR=etc
@@ -6,9 +7,10 @@ export VQ_ETC_DIR=etc
 export LD_LIBRARY_PATH="/tmp" 
 cp -f $BASE/lib*/*.so* /tmp
 
-host=localhost
-port=2809
-prog=iauth
+export host=localhost
+export port=2809
+export prog=./iauth
+
 use_orb=mico
 
 ldd $prog | grep omni > /dev/null
@@ -28,16 +30,9 @@ nsd_pid=$!
 trap "kill $nsd_pid" 0
 sleep 2
 
-echo "starting iauth(pgsqlauthd) server ..."
-$BASE/base/pgsql/pgsqlauthd \
--ORBInitRef NameService=corbaloc::$host:$port/NameService . &
-server_pid=$!
-
-trap "kill $nsd_pid $server_pid" 0
-sleep 2
-
-echo "running client ..."
-./iauth -ORBInitRef NameService=corbaloc::$host:$port/NameService name_service#Auth.iauth
-#gdb iauth
+for iauth in ../iauth.* ; do
+	iauth_name=`basename $iauth`
+	./run.test "$iauth_name" "$iauth" "$prog"
+done
 
 rm -rf omninames-*

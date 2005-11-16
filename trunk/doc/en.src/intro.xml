@@ -104,6 +104,9 @@
 
 			<para>
 				Database changes - added new view vq_view_user_cnt_by_dom; update also modifies user_add function (fix for PostgreSQL 8). 
+				Jar files were moved to PREFIX/lib/vq.
+				RPM package v-q-jdbc is now created only when rpmbuild
+				gets "--with jdbc" on command line.
 			</para>
 		</formalpara>
 

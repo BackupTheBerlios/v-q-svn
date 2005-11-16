@@ -57,8 +57,8 @@ struct user_test {
 		 * Add domain. Add user. Check count of elements. Add second domain. Check count of elements for both domains.
 		 */
 		void case9() {
-			const char * dom = "user_test_case9.pl";
-			const char * dom1 = "1user_test_case9.pl";
+			const char * dom = "user-test-case9.pl";
+			const char * dom1 = "1user-test-case9.pl";
 			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
 			::vq::ivq::id_type dom_id1 = ::vq::ivq::id_type();
 			std_try {

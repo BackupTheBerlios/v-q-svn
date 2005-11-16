@@ -20,7 +20,6 @@ jdbc:
 install:
 
 install-jdbc: jdbcd.jar
-	$(INSTALL) -d -m 0755 $(PREFIX)/bin
 	for p in jdbcd.jar ; do \
-		$(INSTALL) -m 0644 $$p $(PREFIX)/bin/$$p ; \
+		$(INSTALL) -m 0644 $$p $(PREFIX)/lib/vq/$$p ; \
 	done

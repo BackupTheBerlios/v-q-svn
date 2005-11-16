@@ -32,7 +32,7 @@ export CLASSPATH="$VQ_HOME/lib/vq/pg74.215.jdbc3.jar"
 #export CLASSPATH="$VQ_HOME/lib/vq/ojdbc14.jar"
 
 # v-q jars
-export CLASSPATH="$CLASSPATH":"$VQ_HOME/bin/corbautil.jar":"$VQ_HOME/bin/jdbcd.jar"
+export CLASSPATH="$CLASSPATH":"$VQ_HOME/lib/vq/corbautil.jar":"$VQ_HOME/lib/vq/jdbcd.jar"
 
 # PostgreSQL
 java -Djdbc.drivers="$drivers" \

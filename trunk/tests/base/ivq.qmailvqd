@@ -1,0 +1,17 @@
+#!/bin/sh
+rm -rf domains qmail/users/assign qmail/control/locals.lock \
+qmail/control/rcpthosts qmail/control/rcpthosts.lock \
+qmail/control/virtualdomains qmail/control/virtualdomains.lock
+
+for p in qmail_virtualdomains_add qmail_rcpthosts_add qmail_assign_add \
+qmail_locals_rm qmail_file_add qmail_file_rm qmail_mrh_rm \
+qmail_virtualdomains_rm qmail_assign_rm qmail_run qmail_assign_ex; do
+	ln -sf $BASE/../base/qmailvqd/$p bin
+done
+
+echo "name_service#$1" > etc/ivq/qmail/iauth_import
+echo "starting ivq(qmailvqd) server ..."
+$BASE/base/qmailvqd/qmailvqd \
+-ORBInitRef NameService=corbaloc::$host:$port/NameService -x "name_service#`basename $0`" . &
+echo $! > run.ivq.pid
+

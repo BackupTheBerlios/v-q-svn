@@ -108,6 +108,9 @@
 
 				<para>
 					Aktualizacja bazy danych - dodano nowy widok vq_view_user_cnt_by_dom; podczas migracji ze starej bazy modyfikowana jest funkcja user_add (poprawka dla PostgreSQL 8).
+					Pliki jar zosta³y przeniesione do katalogu PREFIX/lib/vq/. 
+					Pakiet RPM v-q-jdbc tworzony jest tylko gdy rpmbuild otrzyma
+					"--with jdbc" w linii poleceñ.
 				</para>
 			</formalpara>
 

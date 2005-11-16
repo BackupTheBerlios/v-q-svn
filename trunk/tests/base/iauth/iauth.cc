@@ -568,7 +568,7 @@ struct auth_test_suite : test_suite {
  *
  */
 test_suite* init_unit_test_suite( int ac, char* av[] ) {
-	std::auto_ptr<test_suite> test(BOOST_TEST_SUITE("pgsqlauthd tests"));
+	std::auto_ptr<test_suite> test(BOOST_TEST_SUITE("iauth tests"));
 
 	register_exception_translator<vq::null_error>( &et_vq_null_error );
 	register_exception_translator<vq::db_error>( &et_vq_db_error );

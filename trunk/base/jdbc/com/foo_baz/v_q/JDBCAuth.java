@@ -107,8 +107,8 @@ public class JDBCAuth extends iauthPOA {
 
 		PreparedStatement st = null;
 		ResultSet res = null;
-		err_code ec = err_code.err_no;
-		String ec_msg = "";
+		err_code ec = err_code.err_noent;
+		String ec_msg = Integer.toString(dom_id);
 
 		try {
 			st = con.prepareStatement( 
@@ -117,9 +117,9 @@ public class JDBCAuth extends iauthPOA {
 			res = st.executeQuery();
 			while(res.next()) {
 				domain.value = res.getString(1);
-				if( res.wasNull() ) {
-					ec = err_code.err_noent;
-					ec_msg = Integer.toString(dom_id);
+				if( ! res.wasNull() ) {
+					ec = err_code.err_no;
+					ec_msg = "";
 					break;
 				}
 			}
@@ -477,7 +477,7 @@ public class JDBCAuth extends iauthPOA {
 		ArrayList auis = new ArrayList();
 
 		try {
-			st = con.prepareStatement( "SELECT pass,dir,flags,login FROM vq_view_user_ls "
+			st = con.prepareStatement( "SELECT pass,dir,flags,login FROM vq_view_user_get "
 				+ "WHERE id_domain=? ORDER BY login" );
 			int idx=1;
 			st.setInt(idx++, dom_id);
@@ -729,7 +729,7 @@ public class JDBCAuth extends iauthPOA {
 			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			st.setString(idx++, pfix.toLowerCase());
-			st.setBoolean(idx++, pfix.length() == 0 );
+			st.setInt(idx++, pfix.length() == 0 ? 1 : 0 );
 			res = st.executeQuery();
 
 			for( idx=1; res.next(); idx=1 ) {
@@ -781,7 +781,7 @@ public class JDBCAuth extends iauthPOA {
 			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			st.setString(idx++, pfix.toLowerCase());
-			st.setBoolean(idx++, pfix.length() == 0 );
+			st.setInt(idx++, pfix.length() == 0 ? 1 : 0 );
 			st.setShort(idx++, ut );
 			res = st.executeQuery();
 
@@ -958,7 +958,7 @@ public class JDBCAuth extends iauthPOA {
 			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			st.setString(idx++, pfix.toLowerCase());
-			st.setBoolean(idx++, pfix.length() == 0 );
+			st.setInt(idx++, pfix.length() == 0 ? 1 : 0 );
 			st.setShort(idx++, ut );
 			res = st.executeQuery();
 			while(res.next()) {
@@ -999,7 +999,7 @@ public class JDBCAuth extends iauthPOA {
 			st.setInt(idx++, dom_id);
 			st.setString(idx++, login.toLowerCase());
 			st.setString(idx++, pfix.toLowerCase());
-			st.setBoolean(idx++, pfix.length() == 0 );
+			st.setInt(idx++, pfix.length() == 0 ? 1 : 0 );
 			st.setShort(idx++, ut );
 			res = st.executeQuery();
 			cnt.value = res.next() ? res.getInt(1) : 0;

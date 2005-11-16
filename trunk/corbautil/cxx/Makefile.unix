@@ -39,7 +39,6 @@ clean:
 	-rm -f ../*.a
 
 install: all
-	$(INSTALL) -d -m 0755 $(PREFIX)/lib/vq
 	$(INSTALL) -d -m 0755 $(PREFIX)/include/vq/corbautil
 	$(INSTALL) -m 0755 ../libcorbautil.a $(PREFIX)/lib/vq/libcorbautil.a
 	@for p in $(SUBDIR) ; do \

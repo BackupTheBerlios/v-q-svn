@@ -51,6 +51,8 @@ This package includes implementation of Virtual Qmail interfaces:
 
 Implementation is based on PostgreSQL and libpqxx.
 
+%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
+
 %package jdbc
 Group: System Environment/Daemons
 Summary: Implementation of iauth and ilogger interfaces using Java and JDBC
@@ -66,6 +68,8 @@ This package includes implementation of Virtual Qmail interfaces:
 Implementation is based on JDBC and Java this means that it's portable and
 can use any database which supports views, stored procedures and have
 JDBC driver.
+
+%endif # %{?_with_jdbc:1}%{!?_with_jdbc:0}
 
 %prep
 %setup -q -n %{project}-%{version}
@@ -123,17 +127,24 @@ EOF
 %build
 make
 make pgsql
+%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
 make jdbc
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make PREFIX=$RPM_BUILD_ROOT/usr install
 make PREFIX=$RPM_BUILD_ROOT/usr install-pgsql
+%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
 make PREFIX=$RPM_BUILD_ROOT/usr install-jdbc
+%endif
 
 # copy contrib/service/
 mkdir -m 0700 $RPM_BUILD_ROOT/service
-cp -R contrib/service/{pgsql*,jdbc*,qmailvqd} $RPM_BUILD_ROOT/service
+cp -R contrib/service/{pgsql*,qmailvqd} $RPM_BUILD_ROOT/service
+%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
+cp -R contrib/service/jdbc* $RPM_BUILD_ROOT/service
+%endif
 
 # make /etc/sysconfig/vq
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
@@ -179,7 +190,12 @@ mkdir -p $RPM_BUILD_ROOT/%{datadir}/domains
 mkdir -p $RPM_BUILD_ROOT/%{datadir}/sockets
 
 # make %{localstatedir}/log/{pgsqlauthd,qmailvqd,pgsqllogd}
-mkdir -p $RPM_BUILD_ROOT/%{_localstatedir}/log/{pgsqlauthd,qmailvqd,pgsqllogd,jdbcauthd,jdbclogd}
+mkdir -p $RPM_BUILD_ROOT/%{_localstatedir}/log/{pgsqlauthd,qmailvqd,pgsqllogd}
+%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
+mkdir -p $RPM_BUILD_ROOT/%{_localstatedir}/log/{jdbcauthd,jdbclogd}
+%else
+rm $RPM_BUILD_ROOT/%{_libdir}/vq/corbautil.jar
+%endif
 
 # move usr/etc
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}
@@ -211,6 +227,8 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 /usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
 
+%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
+
 %pre jdbc
 # Add the "_vq" group
 /usr/sbin/groupadd -g 111 _vq || :
@@ -223,6 +241,8 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 # Add the "_log" user
 /usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
 	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
+
+%endif # %{?_with_jdbc:1}%{!?_with_jdbc:0}
 
 %post
 /sbin/ldconfig
@@ -292,11 +312,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(700,-,-) %config(noreplace) /service/pgsqlauthd/run
 %attr(700,-,-) %config(noreplace) /service/pgsqlauthd/log/run
 
+%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
 
 %files jdbc
 %defattr(-,root,root)
 
-%attr(644,-,-) %{_bindir}/*.jar
+%attr(644,-,-) %{_libdir}/vq/*.jar
 
 %attr(750,_log,_log) %{_localstatedir}/log/jdbc*
 
@@ -310,7 +331,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(700,-,-) %config(noreplace) /service/jdbclogd/run
 %attr(700,-,-) %config(noreplace) /service/jdbclogd/log/run
 
+%endif # %{?_with_jdbc:1}%{!?_with_jdbc:0}
+
 %changelog
+* Wed Nov 16 2005 Pawel Niewiadosmki <new@foo-baz.com> 10
+- moved *.jar files to /usr/lib/vq (previous location /usr/bin)
+- JDBC module is build only when rpmbuild is called with "--with jdbc"
+
 * Tue Aug 30 2005 Pawel Niewiadomski <new@foo-baz.com> 8
 - Added deleted directory to /var/vq
 
