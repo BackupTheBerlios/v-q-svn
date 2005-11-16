@@ -53,6 +53,9 @@ CREATE VIEW vq_view_dom_name AS
 CREATE VIEW vq_view_dom_ls AS
     SELECT vq_domains.id_domain, vq_domains.domain FROM vq_domains;
 
+CREATE VIEW vq_view_user_cnt_by_dom AS
+	SELECT id_domain,COUNT(*) count FROM vq_users GROUP BY id_domain;
+
 CREATE VIEW vq_view_da_ls AS
     SELECT vq_domains_aliases.alias, vq_domains_aliases.id_domain FROM vq_domains_aliases;
 
