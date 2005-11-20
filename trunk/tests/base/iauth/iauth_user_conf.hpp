@@ -47,7 +47,6 @@ struct user_conf_test {
 			vq::iauth::user_info ai;
 			ai.id_domain = dom_id;
 			ai.pass = CORBA::string_dup("pass");
-			ai.dir = CORBA::string_dup("dir");
 			ai.login = CORBA::string_dup(dom);
 			ai.flags = 0;
 		

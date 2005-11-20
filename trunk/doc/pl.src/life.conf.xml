@@ -70,6 +70,24 @@
 						</entry>
 					</row>
 					<row>
+						<entry><filename>backup_deleted</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Je¿eli warto¶æ jest wiêksza od 0 katalog
+							u¿ytkownika w czasie usuwania konta zostanie
+							zachowany.
+							<note>
+								<para>
+									Katalog u¿ytkownika i katalog
+									<filename>VQ_HOME/deleted</filename>
+									musz± byæ na tym samym systemie
+									plików poniewa¿ u¿ywane jest wywo³anie
+									systemowe rename.
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
 						<entry><filename>iauth_import</filename></entry>
 						<entry>name_service#Auth.iauth</entry>
 						<entry>

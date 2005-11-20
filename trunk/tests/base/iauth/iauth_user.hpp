@@ -45,7 +45,6 @@ struct user_test {
 			vq::iauth::user_info ai;
 			ai.id_domain = dom_id;
 			ai.pass = CORBA::string_dup("pass");
-			ai.dir = CORBA::string_dup("dir");
 			ai.login = CORBA::string_dup(dom);
 			ai.flags = 0;
 		
@@ -72,6 +71,21 @@ struct user_test {
 					BOOST_CHECK_EQUAL( cnt, 1U );
 					IVQ_ERROR_EQUAL(auth->user_cnt_by_dom(dom_id1, cnt1), ::vq::ivq::err_no);
 					BOOST_CHECK_EQUAL( cnt1, 0U );
+
+					::vq::ivq::user_info_list_var uis;
+
+					IVQ_ERROR_EQUAL(auth->user_ls_by_dom(
+						dom_id1, uis), ::vq::ivq::err_no);
+					BOOST_CHECK_EQUAL( uis->length(), 0U );
+
+					IVQ_ERROR_EQUAL(auth->user_ls_by_dom(dom_id, uis), ::vq::ivq::err_no);
+					BOOST_CHECK_EQUAL( uis->length(), 1U );
+					if( uis->length() > 0 ) {
+						BOOST_CHECK_EQUAL( uis[0].id_domain, dom_id );
+						BOOST_CHECK( ! strcmp(uis[0].pass, "pass") );
+						BOOST_CHECK( ! strcmp(uis[0].login, dom) );
+						BOOST_CHECK_EQUAL( uis[0].flags, 0 );
+					}
 			} std_catch
 			test_dom_rm(dom);
 			test_dom_rm(dom1);

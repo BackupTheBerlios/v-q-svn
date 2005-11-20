@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "../etrans.hpp"
+#include "../kill_myself.hpp"
 #include "iauth_common.hpp"
 #include "iauth_user_conf.hpp"
 #include "iauth_dom_alias.hpp"
@@ -319,7 +320,7 @@ struct auth_test {
 			err = auth->user_get(aicur);
 			BOOST_CHECK_EQUAL(err->ec, vq::ivq::err_no );
 			BOOST_CHECK_EQUAL(now, static_cast<const char *>(aicur.pass));
-			BOOST_CHECK(!strcmp(aicur.dir, ""));
+			BOOST_CHECK(!strcmp(aicur.dir, "dir"));
 			BOOST_CHECK_EQUAL(aicur.flags, 0U);
 		}
 
@@ -577,6 +578,7 @@ test_suite* init_unit_test_suite( int ac, char* av[] ) {
 	register_exception_translator<CORBA::SystemException>( &et_CORBA_SystemException );
 
 	test->add(new auth_test_suite(ac, av));
+	test->add(new kill_myself_suite());
 
     return test.release();
 }

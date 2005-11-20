@@ -75,6 +75,7 @@ namespace POA_vq {
 						std::string home; //!< home directory
 						std::string domains; //!< maildirs are placed here
 						std::string deleted; //!< removed maildirs are placed here
+						size_type backup_deleted; //!< backup deleted maildirs? yes if > 0
 						mode_t fmode; //!< permissions of created files
 						mode_t mmode; //!< permissions of created directories in Maildir
 						mode_t dmode; //!< permissions of directories created
@@ -86,13 +87,13 @@ namespace POA_vq {
 						std::string iauth_import; //!< import instructions for importing iauth
 				
 						service_conf( const std::string &h, const std::string &d, 
-							const std::string &del, 
+							const std::string &del, size_type bdel,
 							size_type s_dom, size_type s_user, 
 							const std::string &md,
 							mode_t fm, mode_t mm, mode_t dm,
 							const std::string & user, uid_t uid, gid_t gid,
 							const std::string & ia_imp ) 
-							: home(h), domains(d), deleted(del),
+							: home(h), domains(d), deleted(del), backup_deleted(bdel),
 							fmode(fm), mmode(mm), dmode(dm), user(user), uid(uid), 
 							gid(gid), paths(d, s_dom, s_user, md),
 							iauth_import(ia_imp) {

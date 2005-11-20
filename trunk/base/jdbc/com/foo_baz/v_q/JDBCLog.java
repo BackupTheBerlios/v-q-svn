@@ -247,11 +247,11 @@ public class JDBCLog extends iloggerPOA {
 			int idx = 1;
 			if( rbf == rbf_by_dom || rbf == rbf_by_user ) {
 				st.setString(idx++, dom);
-				st.setBoolean(idx++, dom.length() == 0 );
+				st.setInt(idx++, dom.length() == 0 ? 1 : 0 );
 			}
 			if( rbf == rbf_by_user ) {
 				st.setString(idx++, log);
-				st.setBoolean(idx++, log.length() == 0 );
+				st.setInt(idx++, log.length() == 0 ? 1 : 0 );
 			}
 
 			res = st.executeQuery();

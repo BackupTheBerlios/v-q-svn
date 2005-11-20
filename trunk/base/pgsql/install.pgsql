@@ -786,14 +786,16 @@ sub v7_8_funcs {
 (vq_users.id_domain\%TYPE,
 vq_users.login\%TYPE,
 vq_users.pass\%TYPE,
+vq_users.dir\%TYPE,
 vq_users.flags\%TYPE,
 bool) RETURNS int4 AS '
 DECLARE
     _id_domain alias for \$1;
     _login alias for \$2;
     _pass alias for \$3;
-    _flags alias for \$4;
-	is_banned alias for \$5;
+    _dir alias for \$4;
+    _flags alias for \$5;
+	is_banned alias for \$6;
 
     ban RECORD;
 BEGIN
@@ -814,8 +816,8 @@ BEGIN
 		RETURN -1;
 	END IF;
 	
-    INSERT INTO vq_users (id_domain,login,pass,flags) 
-		VALUES(_id_domain,_login,_pass,_flags);
+    INSERT INTO vq_users (id_domain,login,pass,dir,flags) 
+		VALUES(_id_domain,_login,_pass,_dir,_flags);
 
 	NOTIFY user_add;
 	RETURN 0;

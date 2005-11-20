@@ -186,12 +186,13 @@ public class JDBCAuth extends iauthPOA {
 	*/
 	public error user_add( user_info ai, boolean is_banned ) 
 			throws null_error, db_error, except { try {
-		CallableStatement call = con.prepareCall("{ ? = call user_add(?, ?, ?, ?, ?)}");
+		CallableStatement call = con.prepareCall("{ ? = call user_add(?, ?, ?, ?, ?, ?)}");
 		int idx=1;
 		call.registerOutParameter(idx++, Types.INTEGER);
 		call.setInt(idx++, ai.id_domain);
 		call.setString(idx++, ai.login.toLowerCase());
 		call.setString(idx++, ai.pass);
+		call.setString(idx++, ai.dir);
 		call.setInt(idx++, ai.flags);
 		call.setBoolean(idx++, is_banned);
 		call.execute();

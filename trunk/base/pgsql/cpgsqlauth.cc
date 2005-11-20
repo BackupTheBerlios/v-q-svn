@@ -170,6 +170,7 @@ namespace POA_vq {
 				+to_string(ai.id_domain)+",'"
 				+sqlesc(lower(static_cast<const char *>(ai.login)))+"','"
 				+sqlesc(static_cast<const char *>(ai.pass))+"','"
+				+sqlesc(static_cast<const char *>(ai.dir))+"','"
 				+to_string(ai.flags)+"',"
 				+(is_banned ? "'t'" : "'f'")+"::boolean)"));
 	

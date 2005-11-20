@@ -68,6 +68,21 @@
 						</entry>
 					</row>
 					<row>
+						<entry><filename>backup_deleted</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Backup user's maildir while removing an account if
+							value larger than 0.
+							<note>
+								<para>
+									Directory <filename>VQ_HOME/deleted</filename>
+									must be on the same file system as user's 
+									maildir because rename system call is used.
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
 						<entry><filename>iauth_import</filename></entry>
 						<entry>name_service#Auth.iauth</entry>
 						<entry>

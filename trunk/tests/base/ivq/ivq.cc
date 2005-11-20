@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "../etrans.hpp"
+#include "../kill_myself.hpp"
 #include "../iauth/iauth_common.hpp"
 #include "../iauth/iauth_user_conf.hpp"
 #include "../iauth/iauth_dom_alias.hpp"
@@ -216,7 +217,6 @@ struct vq_test {
 					vq::ivq::user_info ai;
 					ai.id_domain = dom_id;
 					ai.pass = CORBA::string_dup("pass");
-					ai.dir = CORBA::string_dup("dir");
 					ai.flags = ::vq::ivq::uif_pop3_blk;
 
 					for( unsigned i=0; i<users_cnt; ++i ) {
@@ -272,7 +272,6 @@ struct vq_test {
 					vq::ivq::user_info ai;
 					ai.id_domain = dom_id;
 					ai.pass = CORBA::string_dup("pass");
-					ai.dir = CORBA::string_dup("dir");
 					ai.login = CORBA::string_dup("aroote");
 					ai.flags = 0;
 			
@@ -306,7 +305,6 @@ struct vq_test {
 			vq::ivq::user_info ai;
 			ai.id_domain = dom_id;
 			ai.pass = CORBA::string_dup("pass");
-			ai.dir = CORBA::string_dup("dir");
 			ai.login = CORBA::string_dup(dom);
 			ai.flags = 0;
 
@@ -852,6 +850,7 @@ test_suite* init_unit_test_suite( int ac, char* av[] ) {
 	register_exception_translator<CORBA::SystemException>( &et_CORBA_SystemException );
 
 	test->add(new vq_test_suite(ac, av));
+	test->add(new kill_myself_suite());
 
     return test.release();
 }

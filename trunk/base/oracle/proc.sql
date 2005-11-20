@@ -274,6 +274,7 @@ CREATE OR REPLACE FUNCTION user_add
 (a_id_domain IN vq_users.id_domain%TYPE,
 a_login IN vq_users.login%TYPE,
 a_pass IN vq_users.pass%TYPE,
+a_dir IN vq_users.dir%TYPE,
 a_flags IN vq_users.flags%TYPE,
 a_is_banned IN NUMBER) RETURN INTEGER IS
     CURSOR cur_is_banned IS SELECT 1 FROM vq_emails_banned WHERE 
@@ -303,8 +304,8 @@ BEGIN
 	    OPEN cur_login;
 		FETCH cur_login INTO ret;
 	    IF cur_login%NOTFOUND = TRUE THEN
-		    INSERT INTO vq_users (id_domain,login,pass,flags) 
-		        VALUES(a_id_domain,a_login,a_pass,a_flags);
+		    INSERT INTO vq_users (id_domain,login,pass,dir,flags) 
+		        VALUES(a_id_domain,a_login,a_pass,a_dir,a_flags);
 			ret := 0;
 		ELSE
 	        ret := -1;

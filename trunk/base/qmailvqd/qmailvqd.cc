@@ -108,6 +108,7 @@ int vqmain(int ac, char **av) {
 	conf::cintconf fmode(conf_dir+"fmode", "0640");
 	conf::cintconf mmode(conf_dir+"mmode", "0750");
 	conf::cintconf dmode(conf_dir+"dmode", "0750");
+	conf::cintconf bdel(conf_dir+"backup_deleted", "1");
 	conf::clnconf user(conf_dir+"user", "_vq");
 	conf::clnconf maildir(conf_dir+"maildir", MAILDIR);
 	ostringstream os;
@@ -130,7 +131,7 @@ int vqmain(int ac, char **av) {
 	}
 
 	cqmailvq::service_conf conf( VQ_HOME, data.val_str()+"/domains", 
-		data.val_str()+"/deleted",
+		data.val_str()+"/deleted", bdel.val_int(), 
 		split_dom.val_int(), split_user.val_int(), maildir.val_str(),
 		fmode.val_int(), mmode.val_int(), dmode.val_int(),
 		user.val_str(), uid.val_int(), gid.val_int(),

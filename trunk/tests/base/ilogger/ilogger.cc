@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "../kill_myself.hpp"
 #include "../etrans.hpp"
 #include "../iauth/iauth_common.hpp"
 
@@ -398,6 +399,7 @@ test_suite* init_unit_test_suite( int ac, char* av[] ) {
 	register_exception_translator<CORBA::SystemException>( &et_CORBA_SystemException );
 
 	test->add(new logger_test_suite(ac, av));
+	test->add(new kill_myself_suite());
 
     return test.release();
 }

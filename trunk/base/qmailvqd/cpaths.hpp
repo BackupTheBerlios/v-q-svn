@@ -48,9 +48,8 @@ namespace vq {
 						inline std::string user_dir_path(const std::string &, 
 								const std::string &) const;
 	
-						inline std::string user_md_path(const std::string &, 
-								const std::string &) const;
-						inline std::string user_md_subpath(const std::string &) const;
+						inline std::string user_md_path(const std::string &) const;
+						inline std::string user_md_subpath( const std::string & login ) const;
 
 						inline size_type dom_split_get() const;
 						inline size_type user_split_get() const;
@@ -100,16 +99,8 @@ namespace vq {
 	/**
 	 * \return Path to user's maildir
 	 */
-	std::string cpaths::user_md_path( const std::string &dom_id,
-			const std::string & login ) const {
-		return user_dir_path(dom_id, login) + "/" + this->maildir + "/";
-	}
-	
-	/**
-	 *
-	 */
-	std::string cpaths::user_md_subpath( const std::string & login ) const {
-		return "./"+login+"/" + this->maildir + "/";
+	std::string cpaths::user_md_path( const std::string &user_dir_path ) const {
+		return user_dir_path + "/" + this->maildir + "/";
 	}
 	
 	cpaths::size_type cpaths::dom_split_get() const {
@@ -122,6 +113,13 @@ namespace vq {
 
 	std::string cpaths::maildir_get() const {
 		return this->maildir;
+	}
+
+	/**
+	 *
+	 */
+	std::string cpaths::user_md_subpath( const std::string & login ) const {
+		return "./"+login+"/" + this->maildir + "/";
 	}
 
 } // namespace vq
