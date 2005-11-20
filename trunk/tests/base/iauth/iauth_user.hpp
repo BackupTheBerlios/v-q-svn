@@ -75,10 +75,10 @@ struct user_test {
 					::vq::ivq::user_info_list_var uis;
 
 					IVQ_ERROR_EQUAL(auth->user_ls_by_dom(
-						dom_id1, uis), ::vq::ivq::err_no);
+						dom_id1, 0U, 0U, uis), ::vq::ivq::err_no);
 					BOOST_CHECK_EQUAL( uis->length(), 0U );
 
-					IVQ_ERROR_EQUAL(auth->user_ls_by_dom(dom_id, uis), ::vq::ivq::err_no);
+					IVQ_ERROR_EQUAL(auth->user_ls_by_dom(dom_id, 0U, 0U, uis), ::vq::ivq::err_no);
 					BOOST_CHECK_EQUAL( uis->length(), 1U );
 					if( uis->length() > 0 ) {
 						BOOST_CHECK_EQUAL( uis[0].id_domain, dom_id );
@@ -101,7 +101,7 @@ struct user_test {
 				static_cast< ::vq::ivq::id_type >(12342342), cnt), ::vq::ivq::err_no);
 			BOOST_CHECK_EQUAL( cnt, 0U );
 			IVQ_ERROR_EQUAL(auth->user_ls_by_dom(
-				static_cast< ::vq::ivq::id_type >(12342342), uis), ::vq::ivq::err_no);
+				static_cast< ::vq::ivq::id_type >(12342342), 0U, 0U, uis), ::vq::ivq::err_no);
 			BOOST_CHECK_EQUAL( uis->length(), 0U );
 		}
 }; // struct user_test

@@ -470,7 +470,8 @@ public class JDBCAuth extends iauthPOA {
 	/**
 	 *
 	 */
-	public error user_ls_by_dom( int dom_id, user_info_listHolder uis )
+	public error user_ls_by_dom( int dom_id, int start, int cnt,
+			user_info_listHolder uis )
 			throws null_error, db_error, except { try {
 		uis.value = new user_info[0];
 		PreparedStatement st = null;
@@ -484,7 +485,23 @@ public class JDBCAuth extends iauthPOA {
 			st.setInt(idx++, dom_id);
 			res = st.executeQuery();
 
-			for( idx=1; res.next(); idx=1) {
+			if( res.getType() == ResultSet.TYPE_FORWARD_ONLY ) {
+				for( int i=0; i <= start; ++i ) {
+					if( ! res.next() ) {
+						try { if( res != null ) res.close(); } catch(Exception e) {}
+						try { if( st != null ) st.close(); } catch(Exception e) {}
+						return lr(start != 0 ? err_code.err_noent : err_code.err_no, "");
+					}
+				}			
+			} else if ( ! res.absolute(start+1) ) {
+				try { if( res != null ) res.close(); } catch(Exception e) {}
+				try { if( st != null ) st.close(); } catch(Exception e) {}
+				return lr(err_code.err_noent, "");
+			}
+			
+			if( cnt == 0 ) --cnt; // if it's zero means that we want to read all entries
+
+			for( idx=1; cnt-- != 0; idx=1) {
 				user_info ui = new user_info();
 				
 				ui.pass = res.getString(idx++);
@@ -497,6 +514,8 @@ public class JDBCAuth extends iauthPOA {
 				if( res.wasNull() ) ui.login = "";
 				ui.id_domain = dom_id;
 				auis.add(ui);
+
+				if(!res.next()) break;
 			}
 
 			uis.value = new user_info [auis.size()];

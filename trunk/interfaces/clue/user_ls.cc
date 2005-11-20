@@ -30,8 +30,9 @@ void usage( const char * me )
 {
 	cerr<<"usage: "<<me<< " [-q] [domain ...]"<<endl
 		<<"-q\tquiet mode"<<endl
+		<<"-p\tshow passwords"<<endl
 		<<endl
-		<<"List IP addresses for all domains or only those specified"<<endl;
+		<<"List users for all domains or only those specified"<<endl;
 }
 
 /*
@@ -40,11 +41,14 @@ void usage( const char * me )
 int cluemain( int ac, char **av, cluemain_env & ce ) {
 	const char *me = *av;
 	int opt;
-	bool quiet=false;
+	bool quiet=false, pass = false;
 	while( (opt=getopt(ac,av,"qh")) != -1 ) {
 			switch(opt) {
 			case 'q':
 					quiet=true;
+					break;
+			case 'p':
+					pass = true;
 					break;
 			default:		
 			case '?':
@@ -86,9 +90,9 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 	}
 
 	for( CORBA::ULong i=0, s=dis->length(); i<s; ++i ) {
-			::vq::ivq::string_list_var alis;
+			::vq::ivq::user_info_list_var uis;
 
-			ret = ce.vq->dip_ls_by_dom( dis[i].id_domain, alis );
+			ret = ce.vq->user_ls_by_dom( dis[i].id_domain, 0U, 0U, uis );
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
 							cout<<av[i]<<": "<<error2str(ret)<<endl;
@@ -96,10 +100,13 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 							return 1;
 			}
 
-			for( CORBA::ULong j=0, k=alis->length(); j<k; ++j ) {
+			for( CORBA::ULong j=0, k=uis->length(); j<k; ++j ) {
 					if(!quiet) 
 							cout<<av[i]<<": ";
-					cout<< alis[j] <<endl;
+					cout<< uis[j].login
+						<<": "<< (pass ? uis[j].pass : "")
+						<<": "<<uis[j].flags
+						<<": "<<uis[j].dir<<endl;
 			}
 	}
 	return 0;

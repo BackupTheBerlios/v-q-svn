@@ -55,10 +55,6 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 	}
 	ac -= optind;
 	av += optind;
-	if( ! ac ) {
-			usage( me );
-			return(1);
-	}
 
 	::vq::ivq::error_var ret;
 	if(quiet && ac > 0) ac = 1;

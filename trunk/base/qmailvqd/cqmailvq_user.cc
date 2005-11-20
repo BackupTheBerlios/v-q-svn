@@ -255,9 +255,10 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cqmailvq::error * cqmailvq::user_ls_by_dom( id_type dom_id, user_info_list_out uis ) std_try {
+	cqmailvq::error * cqmailvq::user_ls_by_dom( id_type dom_id, 
+			size_type start, size_type cnt, user_info_list_out uis ) std_try {
 		uis = new ::vq::ivq::user_info_list;
-		return auth->user_ls_by_dom( dom_id, uis );
+		return auth->user_ls_by_dom( dom_id, start, cnt, uis );
 	} std_catch
 
 	/**

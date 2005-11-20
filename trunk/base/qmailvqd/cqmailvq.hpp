@@ -120,7 +120,7 @@ namespace POA_vq {
 				    virtual error* user_get( user_info& ai );
 				    virtual error* user_ex( id_type dom_id, 
 							const char* login );
-				    virtual error* user_ls_by_dom( id_type dom_id, user_info_list_out uis);
+				    virtual error* user_ls_by_dom( id_type dom_id, size_type start, size_type cnt, user_info_list_out uis);
 					virtual error* user_cnt_by_dom( id_type dom_id, size_type& cnt);
 
 					virtual error* da_add( id_type dom_id, const char* ali );

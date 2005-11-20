@@ -371,11 +371,19 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqlauth::error * cpgsqlauth::user_ls_by_dom( id_type dom_id, user_info_list_out uis ) std_try {
+	cpgsqlauth::error * cpgsqlauth::user_ls_by_dom( id_type dom_id, 
+			size_type start, size_type cnt, user_info_list_out uis ) std_try {
+		string qr("SELECT pass,dir,flags,login FROM vq_view_user_get"
+			" WHERE id_domain="+to_string(dom_id)+" ORDER BY login");
+		if( cnt ) {
+				qr += " LIMIT "+to_string(cnt);
+		}
+		if( start ) {
+				qr +=  " OFFSET "+to_string(start);
+		}
+			
 		cpgsqlpool::value_ptr pg(pool.get());
-		result res(nontransaction(*pg.get()).exec(
-			"SELECT pass,dir,flags,login FROM vq_view_user_get"
-			" WHERE id_domain="+to_string(dom_id)+" ORDER BY login" ));
+		result res(nontransaction(*pg.get()).exec(qr));
 
 		uis = new user_info_list;
 

@@ -111,7 +111,9 @@ module vq {
 			error user_ex( in id_type dom_id, in string login )
 					raises (null_error, db_error, except);
 			/// get all users in specified domain
-			error user_ls_by_dom( in id_type dom_id, out user_info_list uis )
+			error user_ls_by_dom( in id_type dom_id, 
+					in size_type start, in size_type cnt,
+					out user_info_list uis )
 					raises (null_error, db_error, except);
 			/// get number of users in specified domain
 			error user_cnt_by_dom( in id_type dom_id, out size_type cnt )
