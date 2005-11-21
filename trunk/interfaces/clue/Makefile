@@ -80,7 +80,7 @@ install: all
 	for p in dom_add dom_rm user_add user_rm user_pass \
 			user_conf_add user_conf_ls \
 			user_conf_rm user_auth dom_id dom_alias_add dom_alias_rm dom_ls dom_alias_ls \
-			dom_ip_ls dom_ip_rm dom_ip_add ; do \
+			dom_ip_ls dom_ip_rm dom_ip_add user_ls ; do \
 		$(INSTALL) -m 0755 $$p $(PREFIX)/bin/$$p ; \
 	done
 	$(INSTALL) -d -m 0755 $(PREFIX)/include/vq/interfaces/clue
