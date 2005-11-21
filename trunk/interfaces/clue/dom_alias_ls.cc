@@ -91,14 +91,14 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 			ret = ce.vq->da_ls_by_dom( dis[i].id_domain, alis );
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
-							cout<<av[i]<<": "<<error2str(ret)<<endl;
+							cout<<dis[i].domain<<": "<<error2str(ret)<<endl;
 					else 
 							return 1;
 			}
 
 			for( CORBA::ULong j=0, k=alis->length(); j<k; ++j ) {
 					if(!quiet) 
-							cout<<av[i]<<": ";
+							cout<<dis[i].domain<<": ";
 					cout<< alis[j] <<endl;
 			}
 	}

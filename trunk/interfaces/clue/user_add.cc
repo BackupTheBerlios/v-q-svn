@@ -34,9 +34,10 @@ static const char *me = NULL;
  */
 void usage()
 {
-	cerr<<"usage: "<<me<< " [-q] [-s] [e-mail password ...]"<<endl
+	cerr<<"usage: "<<me<< " [-q] [-s] [-d home] [e-mail password ...]"<<endl
 		<<"-s\tstdin mode - read e-mail addresses and passwords from stdin"<<endl
 		<<"-l\tdon't check whether login is disallowed"<<endl
+		<<"-d\tset home directory for user"<<endl
 		<<"-q\tquiet mode"<<endl
 		<<endl
 		<<"Program adds users. Default action is to read users and passwords"<<endl
@@ -48,7 +49,7 @@ void usage()
  *
  */
 bool user_add(const string &e, const string &p, ::vq::ivq::uif_type flags, 
-		::vq::ivq_var & vq, bool quiet, bool eb_chk )
+		::vq::ivq_var & vq, bool quiet, bool eb_chk, const string &home )
 {
 	static cdom_name2id dom_name2id;
 
@@ -64,6 +65,8 @@ bool user_add(const string &e, const string &p, ::vq::ivq::uif_type flags,
 	ai.flags = flags;
 	ai.login = esplit.front().c_str();
 	ai.pass = p.c_str();
+	if( ! home.empty() )
+			ai.dir = home.c_str();
 	
 	::vq::ivq::error_var ret = dom_name2id(vq, esplit.back(), ai.id_domain);
 	if( ::vq::ivq::err_no != ret->ec ) {
@@ -92,8 +95,9 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 	bool quiet = false, eb_chk = true;
 	int opt;
 	bool sin = false;
+	std::string home;
 	::vq::ivq::uif_type flags=0;
-	while( (opt=getopt(ac,av,"sqhl")) != -1 ) {
+	while( (opt=getopt(ac,av,"sqhld:")) != -1 ) {
 			switch(opt) {
 			case 's':
 					sin = true;
@@ -103,6 +107,9 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 					break;
 			case 'l':
 					eb_chk = false;
+					break;
+			case 'd':
+					home = optarg;
 					break;
 			default:		
 			case '?':
@@ -135,12 +142,12 @@ int cluemain(int ac, char **av, cluemain_env & ce ) {
 							cout.flush();
 					}
 					if( ! getline(cin,p) ) break;
-					if( user_add(e, p, flags, ce.vq, quiet, eb_chk) ) return 1;
+					if( user_add(e, p, flags, ce.vq, quiet, eb_chk, home) ) return 1;
 			} while(cin);
 	} else {
 			if(quiet && ac > 0) ac=1;
 			for(int i=0; i < ac; i+=2 ) {
-					if( user_add(av[i], av[i+1], flags, ce.vq, quiet, eb_chk) )
+					if( user_add(av[i], av[i+1], flags, ce.vq, quiet, eb_chk, home) )
 							return 1;
 			}
 	}

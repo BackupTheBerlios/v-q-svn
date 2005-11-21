@@ -42,7 +42,7 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 	const char *me = *av;
 	int opt;
 	bool quiet=false, pass = false;
-	while( (opt=getopt(ac,av,"qh")) != -1 ) {
+	while( (opt=getopt(ac,av,"qph")) != -1 ) {
 			switch(opt) {
 			case 'q':
 					quiet=true;
@@ -95,14 +95,14 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 			ret = ce.vq->user_ls_by_dom( dis[i].id_domain, 0U, 0U, uis );
 			if( ::vq::ivq::err_no != ret->ec ) {
 					if( ! quiet )
-							cout<<av[i]<<": "<<error2str(ret)<<endl;
+							cout<<dis[i].domain<<": "<<error2str(ret)<<endl;
 					else 
 							return 1;
 			}
 
 			for( CORBA::ULong j=0, k=uis->length(); j<k; ++j ) {
 					if(!quiet) 
-							cout<<av[i]<<": ";
+							cout<<dis[i].domain<<": ";
 					cout<< uis[j].login
 						<<": "<< (pass ? uis[j].pass : "")
 						<<": "<<uis[j].flags
