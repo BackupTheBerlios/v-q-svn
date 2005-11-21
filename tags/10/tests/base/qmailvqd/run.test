@@ -1,0 +1,17 @@
+#!/bin/sh
+
+$2
+iauth_pid=`cat run.pid`
+trap "kill $iauth_pid" 0
+sleep 3
+
+$5 "$1"
+ivq_pid=`cat run.ivq.pid`
+trap "kill $iauth_pid $ivq_pid" 0
+sleep 3
+
+echo "running client ..."
+./ivq -ORBInitRef NameService=corbaloc::$host:$port/NameService "name_service#$4" ${@+5}
+#gdb ./ivq
+
+rm -f run.pid run.ivq.pid

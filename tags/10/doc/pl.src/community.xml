@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="community">
+	<title>Wspólnota</title>
+
+	<para>
+		Poniższy rozdział opisuje sposoby uzyskiwania pomocy, dzielenia
+		się pomysłami.
+	</para>
+
+	<section id="community.list">
+		<title>Lista dyskusyjna</title>
+
+		<para>
+			Aktualnie istnieje tylko jedna lista. Utrzymywana jest na serwerze
+			<ulink url="http://sf.net">SourceForge</ulink>.
+		</para>
+		
+		<para>
+			Aby się na nią zapisać wejdź na stronę 
+			<ulink url="http://sourceforge.net/mail/?group_id=87916">http://sourceforge.net/mail/?group_id=87916</ulink>.
+		</para>
+
+		<para>
+			Archiwum znajduje się pod adresem
+			<ulink url="http://sourceforge.net/mailarchive/forum.php?forum=v-q-misc">http://sourceforge.net/mailarchive/forum.php?forum=v-q-misc</ulink>.
+		</para>
+	</section>
+
+	<section id="community.forums">
+		<title>Forum</title>
+
+		<para>
+			Jeżeli nie chcesz używać <link linkend="community.list">listy 
+			dyskusyjnej</link> możesz zawsze skorzystać z 
+			<ulink url="http://sourceforge.net/forum/?group_id=87916">forum</ulink>
+			dostępnego na
+			<ulink url="http://sourceforge.net/projects/v-q">stronie projektu</ulink>
+			na serwerze SourceForge.
+		</para>
+
+		<para>
+			Możesz tam podyskutować na temat tego programu, projektów
+			związanych z nim, podzielić się doświadczeniami, etc.
+		</para>
+	</section>
+
+	<section id="community.requests">
+		<title>Żądania</title>
+
+		<para>
+			<ulink url="http://sf.net">SourceForge</ulink> udostępnia
+			zestaw stron, które umożliwiają zarządzanie żądaniami
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584856">modyfikacji</ulink>,
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584854">wsparcia</ulink> 
+			gdy jesteś w potrzebie. Można również zgłosić
+			<link linkend="community.bugs">raport błędu</link>.
+		</para>
+
+		<para>
+			Możesz również kontaktować się z 
+			<link linkend="pniewiadomski">Pawłem Niewiadomskim</link> bezpośrednio.
+		</para>
+	</section>
+
+	<section id="community.success">
+		<title>Udane wdrożenia</title>
+
+		<para>
+			Byłoby wspaniale gdybyś podzielił się z nami twoją
+			historią. Pomoże to rozwijać wspólnotę v-q.
+			Wszyscy wiemy, że nie ma to jak dobra wspólnota związana z
+			projektem :-)
+		</para>
+	</section>
+
+	<section id="community.bugs">
+		<title>Zgłaszanie błędów</title>
+
+		<para>
+			Tak jak każde oprogramowane na tym świece to jedno również
+			ma błędy. Staram się minimalizować ich ilość. Ale tak jak
+			z wszystkimi pluskwami trudno wybić je wszystkie.
+			Dlatego jeżeli znajdziesz jakąś daj znać.
+		</para>
+
+		<para>
+			Jeżeli znalazłeś coś co wydaje się pluskwą staraj się
+			to powtórzyć. Możliwość ponownego wywołania pluskwy
+			oznacza bardzo wiele i pomaga programistą w usunięciu jej
+			najszybciej jak to możliwe. Jeżeli nie jesteś w stanie
+			ponownie wywołać błędy również daj nam znać.
+		</para>
+
+		<para>
+			Projekt zarządza publiczną listą błędów, która dostępna jest
+			na serwerze SourceForge pod następującym adresem URL 
+			<ulink url="http://sourceforge.net/tracker/?group_id=87916&amp;atid=584853">http://sourceforge.net/tracker/?group_id=87916&amp;atid=584853</ulink>.
+			Każdy może wstawić raport błędu. Jeżeli znajdziesz błąd
+			wejdź na tą stronę od razu i zapisz swoje spostrzeżenia. Wszystko
+			co wydaje się pomocne w ustaleniu przyczyny błędu.
+		</para>
+
+		<para>
+			Informacje, które powinieneś zawrzeć w raporcie:
+			wersja v-q, architektura maszyny, system operacyjny, 
+			opis błędu, komunikaty wypisane przez program, 
+			zawartość konfiguracji (oczywiście oprócz haseł :-), 
+			opis wykonywanych czynności. Jeżeli jesteś w stanie
+			powtórzyć błąd opisz wszelkie niezbędne w tym celu czynności.
+		</para>
+
+		<para>
+			Jeżeli jesteś w stanie cudownie byłoby otrzymać
+			odpowiedni przypadek testowy i łatkę. Wiele to dla nas
+			znaczy.
+		</para>
+	</section>
+
+	<section id="community.blog">
+		<title>Virtual Qmail ma swój blog</title>
+
+		<para>
+			No cóż, nie dokładnie - <link linkend="pniewiadomski">jego
+			główny programista</link> ma  
+			<ulink url="http://new.foo-baz.com">blog</ulink>, który zawiera
+			<ulink url="http://new.foo-baz.com/pl/index.php/archives/category/virtual-qmail/">oddzielną sekcję</ulink>
+			Virtual Qmail. Jeżeli jesteś ciekaw co się dzieje w projekcie
+			powinieneś tam zajrzeć.
+		</para>
+	</section>
+
+	<section id="community.authors">
+		<title>Autorzy</title>
+
+		<para>
+			Na dzień dzisiejszy system rozwijany jest przez
+			jednoosobową firmę zwaną <ulink url="http://foo-baz.com">foo-baz.com</ulink>,
+			jej właścicielem jest <link linkend="pniewiadomski">Paweł Niewiadomski</link>.
+		</para>
+
+		<section id="pniewiadomski">
+			<title>Paweł Niewiadomski</title>
+
+			<para>
+				Nie wiem co by tu napisać. Posiadam 
+				<ulink url="http://new.foo-baz.com/me/cv.html">CV on-line</ulink>,
+				z którego możesz dowiedzieć się czegoś na temat mojego
+				doświadczenia. Prowadzę również 
+				<ulink url="http://new.foo-baz.com">blog</ulink>,
+				w którym piszę m.in. na temat Virtual Qmail,
+				Unix oraz innych rzeczy.
+			</para>
+
+			<para> 
+				W skrócie, jestem programistą Unix, który uwielbia
+				tworzyć dobre oprogramowanie. Pracuję jako programista
+				i kierownik działu programistycznego. Mieszkam w małym
+				mieście zwanym Koszalin, w Polsce. Staram się prowadzić
+				małą firmę nazwaną <ulink url="http://foo-baz.com">foo-baz.com</ulink>.
+				Na dzień dzisiejszy jedynym produktem jest moja wiedza
+				na temat v-q, qmail, apache, Linux, OpenBSD oraz baz danych. 
+				Mam nadzieję, że któregoś dnia foo-baz.com stanie się
+				zyskowną firmą, której będę się mógł poświęcić bez reszty :-)
+			</para>
+		</section>
+	</section>
+</chapter>

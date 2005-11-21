@@ -1,0 +1,14 @@
+#!/bin/sh
+prog="jdbclogd"
+
+drivers="org.postgresql.Driver"
+export CLASSPATH=/export/progs/db/pgsql/jdbc/8.0/postgresql-8.0-310.jdbc3.jar
+
+# v-q jars
+export CLASSPATH="$CLASSPATH":"$BASE/corbautil/corbautil.jar":"$BASE/base/jdbc/jdbcd.jar"
+
+java -Djdbc.drivers="$drivers" \
+-Dcom.foo_baz.v_q."$prog".jdbc=jdbc:postgresql://localhost/mail \
+"$prog" -ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService \
+-e "name_service#`basename $0`" &
+echo $! > run.pid

@@ -1,0 +1,89 @@
+BODY {
+	background: #ffffff;
+	font-family: sans-serif;
+}
+
+a:link {
+    color: #004DEA;
+	text-decoration: underline
+}   
+
+a:visited {
+	color: #003399;
+	text-decoration: underline
+}   
+				    
+a:hover {
+	color: #FF6600;
+	text-decoration: none
+}
+
+/* center titles */
+
+BODY.BOOK H1.TITLE, BODY.SET H1.TITLE {
+	background: #C8E097;
+	font: italic normal 230% sans-serif;
+	letter-spacing: 0.2em;
+	margin: 0;
+	padding: 15px 10px 15px 60px;
+}
+
+BODY.BOOK H1.TITLE A, BODY.SET H1.TITLE A {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+BODY.BOOK H3.CORPAUTHOR, BODY.SET H3.CORPAUTHOR,
+BODY.BOOK H3.AUTHOR, BODY.SET H3.AUTHOR {
+	text-align: center;
+	font-style: italic;
+	font-weight: normal;
+}
+
+BODY.BOOK .COPYRIGHT, BODY.SET .COPYRIGHT {
+	text-align: center;
+}
+
+/* decoration for formal examples */
+
+DIV.EXAMPLE {
+	padding-left: 15px;
+	border-style: solid;
+	border-width: 0px;
+	border-left-width: 2px;
+	border-color: #C8E097;
+	margin: 0.5ex;
+}
+
+/* less dense spacing of TOC */
+
+.SET .TOC DL DT, .BOOK .TOC DL DT {
+	padding-top: 1.5ex;
+	padding-bottom: 1.5ex;
+}
+
+.SET .TOC DL DL DT, .BOOK .TOC DL DL DT {
+	padding-top: 0ex;
+	padding-bottom: 0ex;
+}
+
+.SCREEN, .SYNOPSIS, .PROGRAMLISTING {
+	margin-left: 4ex;
+}
+
+/* miscellaneous */
+
+.NAVHEADER TH	{ 
+	background: #C8E097;
+	color: #FFFFFF;
+	font: italic normal sans-serif;
+	letter-spacing: 0.2em;
+	margin: 0;
+}
+
+.COMMENT	{ color: red; }
+
+#hosted {
+	margin-top: 15px;
+	text-align: center;
+}

@@ -1,0 +1,14 @@
+#!/bin/sh
+prog="jdbcauthd"
+
+drivers="oracle.jdbc.driver.OracleDriver"
+export CLASSPATH=/export/progs2/oracle/oracle/ojdbc14.jar
+
+# v-q jars
+export CLASSPATH="$CLASSPATH":"$BASE/corbautil/corbautil.jar":"$BASE/base/jdbc/jdbcd.jar"
+
+java -Djdbc.drivers="$drivers" \
+-Dcom.foo_baz.v_q."$prog".jdbc=jdbc:oracle:thin:@localhost:1521:orcl \
+"$prog" -ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService \
+-e "name_service#`basename $0`" &
+echo $! > run.pid

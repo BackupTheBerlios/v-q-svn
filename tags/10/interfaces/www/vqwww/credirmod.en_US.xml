@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<msgs>
+	<menu>
+		<mod>
+			<m n="redir">Redirection</m>
+			<desc>
+				<m n="redir">
+					Allows you to setup redirections - messages are sent
+					to other addresses. Useful i.e. when you go to a
+					vacations and want someone to process your mail.
+				</m>
+			</desc>
+		</mod>
+	</menu>
+	<mod>
+		<redir>
+			<m n="getcant">Can't read current list of redirections.</m>
+			<m n="desc">
+				Note: e-mail addresses are not verified in any way. If you
+				specify incorrect e-mail address you may lost your
+				messages. Before setting redirection check whether address
+				is valid.
+			</m>
+			<m n="inv/rm">Can't remove: </m>
+			<m n="inv/add">Can't add: </m>
+			<m n="inv/rep">Can't update: </m>
+			<m n="email">E-mail address: </m>
+			<m n="submit">Change</m>
+		</redir>
+	</mod>
+</msgs>

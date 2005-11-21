@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Generating documentation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Installation"
+HREF="install.install.html"><LINK
+REL="NEXT"
+TITLE="Using makefile"
+HREF="doc.gen.makefile.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-21T20:39:59"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="chapter"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.install.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="doc.gen.makefile.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="chapter"
+><H1
+><A
+NAME="doc.gen"
+></A
+>Chapter 8. Generating documentation</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+>8.1. <A
+HREF="doc.gen.html#doc.gen.openbsd"
+>OpenBSD</A
+></DT
+><DT
+>8.2. <A
+HREF="doc.gen.makefile.html"
+>Using makefile</A
+></DT
+></DL
+></DIV
+><P
+>&#13;		This chapter describes how to process DocBook XML documentation
+		into other formats such as: HTML, RTF.
+	</P
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="doc.gen.openbsd"
+>8.1. OpenBSD</A
+></H1
+><P
+>&#13;			First you need install openjade and dockbook-* packages.
+			This packages allows you to process SGML documents into
+			some formats. Sadly (as in 3.6 release) there is no
+			package with DocBook XML style-sheets so you need to
+			download appropriate.
+		</P
+><P
+>&#13;			I used files from Fedora Core 2 release (packages: 
+			docbook-style-dsssl-1.78-2.noarch.rpm
+			and docbook-dtds-1.0-22.1.noarch.rpm). I unpacked them
+			with <SPAN
+CLASS="application"
+>rpm2cpio</SPAN
+>, copied everything from 
+			<TT
+CLASS="filename"
+>usr/share/</TT
+> to 
+			<TT
+CLASS="filename"
+>/usr/local/share/sgml/redhat</TT
+>. Then
+			added following lines:
+<DIV
+CLASS="example"
+><A
+NAME="AEN912"
+></A
+><P
+><B
+>Example 8-1. Content of <TT
+CLASS="filename"
+>catalog</TT
+> file</B
+></P
+><PRE
+CLASS="screen"
+>&#13;<KBD
+CLASS="userinput"
+>&#13;CATALOG "redhat/sgml/docbook/xml-dtd-4.1.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/xml-dtd-4.2-1.0-22.1/catalog"
+CATALOG "redhat/sgml/docbook/dsssl-stylesheets/catalog" 
+</KBD
+>
+</PRE
+></DIV
+>
+			to <TT
+CLASS="filename"
+>/usr/local/share/sgml/catalog</TT
+>.
+		</P
+><P
+>&#13;			Then using following application I was able to create RTF version of
+			documentation:
+</P><PRE
+CLASS="synopsis"
+>&#13;env <TT
+CLASS="envar"
+>SGML_CATALOG_FILES</TT
+>=/usr/local/share/sgml/catalog 
+openjade -t rtf -d /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl 
+/usr/local/share/sgml/docbook/dsssl/modular/dtds/decls/xml.dcl ../index.xml
+</PRE
+><P>
+			Changing rtf to sgml produces HTML files.
+			</P><DIV
+CLASS="note"
+><BLOCKQUOTE
+CLASS="note"
+><P
+><B
+>Note: </B
+>
+					<SPAN
+CLASS="application"
+>openjade</SPAN
+> may print warnings
+					about DTDDECL which is not supported but you
+					should ignore them.
+				</P
+></BLOCKQUOTE
+></DIV
+><P>
+		</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.install.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="doc.gen.makefile.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Installation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Using makefile</TD
+></TR
+></TABLE
+></DIV
+><DIV id="hosted">Hosted by: <a href="http://developer.berlios.de"><img src="http://developer.berlios.de/bslogo.php?group_id=5270" width="124" height="32" border="0" alt="BerliOS Logo" /></a> <a href="http://www.sourceforge.net"><img src="http://www.sourceforge.net/sflogo.php?group_id=87916&type=1" border="0" alt="SourceForge.net Logo" /></a></DIV>
+</BODY
+></HTML
+>

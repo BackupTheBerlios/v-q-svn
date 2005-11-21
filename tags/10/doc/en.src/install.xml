@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<chapter id="install">
+	<title>Installation</title>
+
+	<para>
+		Step-by-step installation guide.
+	</para>
+	
+	<section id="install.download">
+		<title>Downloading</title>
+
+		<para>
+			First it is good to check project's 
+			<ulink url="http://v-q.foo-baz.com">home page</ulink>.
+		</para>
+
+		<para>
+			<ulink url="http://sf.net/project/showfiles.php?group_id=87916">Download page</ulink>
+			at SourceForge includes all files released by this project.
+			You can go there and get the newest version.
+		</para>
+
+		<para>
+			You can download newest version from Subversion repository at
+			<ulink url="http://svn.berlios.de/svnroot/repos/v-q/trunk">
+			http://svn.berlios.de/svnroot/repos/v-q/trunk
+			</ulink>
+		</para>
+	</section>
+
+	<section id="install.deps">
+		<title>Dependencies</title>
+
+		<para>
+			This is a sophisticated software that depends on few other
+			projects.
+		</para>
+
+		<para>
+			Common dependencies are:
+
+			<itemizedlist>
+				<listitem>
+					<para>
+						modern C++ compiler, if you use gcc it must be at 
+						least version >= 3.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						CORBA implementation with IDL to C++ mapping, 
+						for example <ulink url="http://www.mico.org">MICO</ulink> 
+						or <ulink url="http://www.omniorb.org">omniORB</ulink>
+					</para>
+				</listitem>
+				<listitem>
+					<para>compatible mail transfer agent</para>
+				</listitem>
+				<listitem>
+					<para><ulink url="http://www.boost.org">boost</ulink> library</para>
+				</listitem>
+				<listitem>
+					<para>DocBook and doxygen if you want to generate new version of documentation</para>
+				</listitem>
+				<listitem>
+					<para>compatible database client libraries</para>
+				</listitem>
+				<listitem>
+					<para>Cgicc library if you want to generate WWW interface</para>
+				</listitem>
+				<listitem>
+					<para>Iconv if you want to generate WWW interface</para>
+				</listitem>
+				<listitem>
+					<para>Sablotron if you want to compile WWW interface. It must be at least version 1.0.</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+
+		<section id="install.mta">
+			<title>Mail transfer agent</title>
+
+			<para>
+				At this time only <application>qmail</application> is supported.
+				So before you begin you must install it.
+			</para>
+
+			<para>
+				We suggest you installing <application>qmail</application>
+				patched using <ulink url="http://q-p.foo-baz.com">Qmail-patches</ulink>.
+				But v-q doesn't require that, you can use any version you want.
+			</para>
+
+			<para>
+				We hope that as time comes other MTAs will be supported.
+			</para>
+		</section>
+
+		<section id="install.pgsql">
+			<title>Using PostgreSQL</title>
+
+			<para>
+				First you need to download <application>PostgreSQL</application>.
+				Using newest stable version is suggested. You also
+				need libpqxx at least in version 2.4.2 and PERL module called DBI::Pg (if you want to
+				use automatic installation script). All programs
+				you can download from <ulink url="http://www.postgresql.org">
+				http://www.postgresql.org</ulink>.
+			</para>
+		</section>
+
+		<section id="install.oracle">
+			<title>Using Oracle</title>
+
+			<para>
+				From version 7pre1 <application>Oracle</application> is a supported database.
+				At this time you can use it only throught JDBC daemons.
+				You will need JDBC drivers for your Oracle version, they
+				are not included. Sample SQL scripts are placed
+				in <filename>base/oracle</filename> directory.
+				Oracle 10g was tested using <filename>ojdbc14.jar</filename>,
+				but v-q should work without problems with older versions.
+			</para>
+		</section>
+
+		<section id="install.otherdb">
+			<title>Other database systems</title>
+
+			<para>
+				Following is a list of database systems that are
+				not compatible with v-q:
+				<itemizedlist>
+					<listitem>
+						<para>MySQL - there's no support for views, stored procedures;</para>
+					</listitem>
+					<listitem>
+						<para>
+							Firebird - it's not possible to create
+							index with a key larger than 252 bytes.
+							It should be fixed in upcoming 2 version, but
+							at this time it is not (tested 2.0 Alpha 2),
+							other required functions are implemented;
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Cloudscape (AKA apache-derby) - it's not
+							possible to create a view with an
+							aggregate function, other required functions
+							are implemented;
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+	</section>
+
+	<section id="install.prep">
+		<title>Preparation</title>
+
+		<para>
+			First step is to download and install
+			all software pointed out in <xref linkend="install.download"/> 
+			and <xref linkend="install.deps"/>.
+		</para>
+
+		<section>
+			<title>Creating user and group</title>
+
+			<para>
+			V-q daemons can work as any user, but it is suggested
+			to run them under _vq group and _vq user.
+				<warning>
+					<para>
+						For security reasons you should not run it
+						as root. It's better to prevent than cure.
+					</para>
+				</warning>
+			</para>
+
+			<para>
+			You can use following commands to create this account (works under
+			Linux and OpenBSD):
+<synopsis>groupadd _vq
+useradd -g _vq -d /var/vq _vq</synopsis>
+			</para>
+		</section>
+
+		<section id="install.unpack">
+			<title>Unpacking sources</title>
+
+			<para>
+				Depending on package format you can use <application>tar</application>,
+				<application>bzip2</application>, <application>gzip</application>
+				to decompress archive.
+			</para>
+
+			<para>
+				If archive's name ends with <filename>.tar.gz</filename> you
+				can unpack it with following commands:
+<synopsis>
+tar -xzvf v-q.*.tar.gz
+</synopsis>
+				If you tar doesn't supports gzip unpacking use:
+<synopsis>
+gzip -dc v-q.*.tar.gz | tar -xvf -
+</synopsis>
+			</para>
+
+			<para>
+				If archive's name ends with <filename>.tar.bz2</filename> you can
+				unpack it using:
+<synopsis>
+bzip2 -cd v-q.*.tar.bz2 | tar -xvf -
+</synopsis>
+			</para>
+
+			<para>
+				At this time sources are released only with specified formats.
+		
+				<note>
+					<para>
+						<application>Bzip2</application> gives 
+						better compression rate than <application>gzip</application>
+						but it's not as popular as <application>gzip</application> so before
+						downloading archive in this format check 
+						if you have it installed on your system.
+					</para>
+				</note>
+			</para>
+		</section>
+
+		<section id="install.conf">
+			<title>Configuration before compilation</title>
+
+			<para>
+				Before running <application>make</application>
+				you must configure sources. There's no 
+				<application>configure</application> script. V-q
+				don't use <application>autoconf</application> and
+				it's family.
+			</para>
+
+			<para>
+				But don't be scared. Configuration is quite easy - all you
+				need to do is edit few files.
+			</para>
+
+			<para>
+				First you need to set compiler and its options. In the
+				main directory there are following files:
+				<itemizedlist>
+					<listitem><para>
+						<filename>compile</filename> is used in normal compilation.
+						Default version executes <application>g++</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>comp-so</filename> is used to compile
+						objects that will be included in shared libraries.
+						Default version executes <application>g++</application>
+						with arguments: -fpic -DPIC.
+					</para></listitem>
+					<listitem><para>
+						<filename>load</filename> is used to link
+						objects. Default version executes <application>g++</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>make-lib</filename> is used to create
+						statically linked library. It executes 
+						<application>ar</application>.
+					</para></listitem>
+					<listitem><para>
+						<filename>make-so</filename> is used to
+						create dynamically linked library. It executes
+						<application>g++</application> with -shared option.
+					</para></listitem>
+					<listitem><para>
+						<filename>idl</filename> is used to
+						process IDL definitions to C++ files. Remember that
+						it creates 2 files with extensions: .hpp and .cc.
+						Default version calls <application>idl</application>
+						(<ulink url="http://www.mico.org">MICO</ulink>)
+						or <application>omniidl</application> 
+						(<ulink url="http://www.omniorb.org">omniORB</ulink>).
+					</para></listitem>
+				</itemizedlist>
+			</para>
+
+			<para>
+				If you use other options or programs to compile your
+				version of v-q please send information about them to
+				<link linkend="pniewiadomski">Paweł Niewiadomski</link>
+			</para>
+
+			<para>
+				Next step is to edit files with extensions:
+				<filename>.inc</filename> and <filename>.lib</filename>.
+				First are used during compilation, they include informations
+				about directories used in searching for included files.
+				Second are used while linking, they include references
+				to libraries.
+			</para>
+
+			<section id="install.corba.conf">
+				<title>Selecting CORBA implementation</title>
+
+				<para>
+					Before compilation you're able to select CORBA
+					implementation v-q should use. If you want to use
+					other than default you need to modify 3 files.
+				</para>
+
+				<para>
+					<filename>corba.lib</filename> should include
+					all arguments for <application>make-so</application>
+					that will configure
+					linker. This means that you should put there
+					arguments specifying all libraries used by CORBA
+					implementation.
+				</para>
+
+				<para>
+					<filename>corba.inc</filename> should include
+					arguments for <application>comp-so</application>
+					and <application>compile</application> that 
+					will tell compiler about include files needed
+					by CORBA implementation. It also need to include
+					argument telling which implementation should be used.
+					For example to use MICO you should add -DP_USE_MICO. This
+					means that P_USE_MICO will be defined during compilation.
+					Other available options:
+					<itemizedlist>
+						<listitem><para>P_USE_MICO - for MICO</para></listitem>
+						<listitem><para>P_USE_OMNIORB - for omniORB</para></listitem>
+						<listitem><para>P_USE_ORBACUS - for Orbacus</para></listitem>
+						<listitem><para>P_USE_TAO - for TAO</para></listitem>
+						<listitem><para>P_USE_ORBIX - for Orbix</para></listitem>
+					</itemizedlist>
+
+					<note>
+						<para>
+							This software was tested only with MICO 
+							(threads disabled) and omniORB.
+						</para>
+					</note>
+				</para>
+
+				<para>
+					Last thing that must be changed is an IDL translator 
+					definition - file <filename>idl</filename> includes
+					command that is used to translate IDL files into C++.
+					This file includes examples for various CORBA
+					implementations.
+				</para>
+<example>
+	<title>corba.inc for MICO installed in /usr/local/progs/mico</title>
+<screen><userinput>
+-DP_USE_MICO -I/usr/local/progs/mico/include
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.lib for MICO installed in /usr/local/progs/mico</title>
+<screen><userinput>
+-L/usr/local/progs/mico/lib -lmicocoss2.3.11 -lmico2.3.11 -lssl -lcrypto
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.inc for omniORB installed in /usr/local/progs/omniorb</title>
+<screen><userinput>
+-DP_USE_OMNIORB -I/usr/local/progs/omniorb/include
+</userinput></screen>
+</example>
+
+<example>
+	<title>corba.lib for omniORB installed in /usr/local/progs/omniorb</title>
+<screen><userinput>
+-L/usr/local/progs/omniorb/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread 
+</userinput></screen>
+</example>
+			</section>
+		</section>
+	</section>
+
+	<section id="install.comp">
+		<title>Compilation</title>
+		
+		<para>Now it's time to compile sources. If you configured
+		everything properly you should be able to successfully
+		compile Virtual Qmail.</para>
+
+		<para>
+			To compile program use <application>make</application>.
+			You can use both flavors: BSD or GNU. Depending on the shell
+			you use you can, for <application>sh</application>, write:
+<screen>
+<userinput>
+make 2>&amp;1 > out
+</userinput>
+</screen>
+			If you use tcsh you can use:
+<screen>
+<userinput>
+make >&amp; out
+</userinput>
+</screen>
+			When <application>make</application> finishes check
+			<filename>out</filename> to see output generated during
+			compilation.
+		</para>
+
+		<para>
+			If you can't compile v-q please send <filename>out</filename>
+			to <link linkend="pniewiadomski">Paweł Niewiadomski</link>.
+		</para>
+
+		<para>
+			Running <application>make</application> generates
+			only base system without any database based modules or WWW
+			interface. Makefile includes following useful targets:
+			<itemizedlist>
+				<listitem><para>pgsql - PostgreSQL based modules</para></listitem>
+				<listitem><para>clean - removes all objects created during compilation</para></listitem>
+<!--				<listitem><para></para></listitem>
+				<listitem><para></para></listitem>-->
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="install.install">
+		<title>Installation</title>
+
+		<para>
+			After successful compilation you're ready to install software.
+			It's easy as writing:
+<screen>
+<userinput>
+make install
+</userinput>
+</screen>
+			You can also add PREFIX=some/directory to install it in
+			other that default one. For example following command
+			will install all files in <filename>/var/v-q</filename>:
+<screen>
+<userinput>
+make PREFIX=/var/v-q install
+</userinput>
+</screen>
+			<note>
+				<para>
+					Default destination directory is <!--ENV:PREFIX-->/var/vq<!--/ENV:PREFIX-->.
+				</para>
+			</note>
+		</para>
+
+		<section id="install.steps.qmail">
+			<title>Special steps for Qmail</title>
+		
+			<para>
+				After installing v-q you can tweak some settings.
+				For example if qmail's configuration owner
+				is other than user running <application>qmailvqd</application>
+				you can change owner and set SETUID permission
+				for <filename>bin/qmail_*</filename> programs (except 
+				<application>qmailvqd</application>). This will
+				allow these programs to change qmail's configuration.
+				<note>
+					<para>
+						Programs starting with <filename>qmail-</filename>
+						are simple shell scripts - setting SETUID/SETGID flag
+						for them will not work with decent shells. You will
+						have to modify them to use <application>sudo</application>
+						to run some commands. See <application>qmail-send-restart</application>
+						for some clues about it.
+					</para>
+				</note>
+			</para>
+		</section>
+
+		<section id="install.steps.pgsql">
+			<title>Special steps for PostgreSQL</title>
+
+			<para>
+				First you need to create user for v-q in PostgreSQL. Default
+				user is &quot;mail&quot;, but you can use any name. 
+				To create user you can use following command:
+<screen>
+<userinput>
+createuser -A -D -P mail
+</userinput>
+</screen>
+			</para>
+
+			<para>
+				Then you need to create a database for v-q. Default
+				name is &quot;mail&quot;. But you can use any name.
+<screen>
+<userinput>
+createdb -E utf-8 -O mail mail
+</userinput>
+</screen>
+			</para>
+
+			<para>
+				To compile PostgreSQL modules you should run in bash:
+<screen>
+<userinput>
+make pgsql 2>&amp;1 > out.pgsql
+</userinput>
+</screen>
+				In tcsh run:
+<screen>
+<userinput>
+make pgsql >&amp; out.pgsql
+</userinput>
+</screen>
+
+				Remember that pqxx-config must be in the path (if you don't have
+				this program it means either libpqxx is not installed or it's too old
+				version).
+			</para>
+
+			<para>
+				To install PostgreSQL modules run:
+<screen>
+<userinput>
+make install-pgsql
+</userinput>
+</screen>
+				You can also add PREFIX=some/directory if you want to install
+				it in other directory than the default one. 
+				For example following command will install it in
+				<filename>/var/v-q</filename>:
+<screen>
+<userinput>
+make PREFIX=/var/v-q install-pgsql
+</userinput>
+</screen>
+				<note>
+					<para>
+						Default destination directory is <!--ENV:PREFIX-->/var/vq<!--/ENV:PREFIX-->.
+					</para>
+				</note>
+			</para>
+
+			<para>
+				To create objects in a database you can use PERL script
+				<application>install.pgsql</application>. This
+				document doesn't describe how to manually create them.
+				If you don't want to use this script check it's
+				source to see what needs to be created.
+
+				<note>
+					<para>
+						Before running this script check whether
+						it suits you needs (for example schema name).
+					</para>
+				</note>
+
+				<caution>
+					<para>
+						Remember to set password for database user
+						and configure PostgreSQL to authorize users.
+						If you don't do it everyone will be able to
+						modify entries in a database.
+					</para>
+				</caution>
+			</para>
+		</section>
+
+		<section id="install.problems">
+			<title>What if I have problems?</title>
+
+			<para>
+				If you have problems installing v-q check
+				<ulink url="http://v-q.foo-baz.com">home page</ulink>,
+				check also 
+				<ulink url="http://sf.net/projects/v-q">v-q's page on SourceForge</ulink>.
+				There you will find a mailing list, forums, etc.
+			</para>
+
+			<para>
+				Read also <xref linkend="community"/>
+			</para>
+		</section>
+	</section>
+</chapter>

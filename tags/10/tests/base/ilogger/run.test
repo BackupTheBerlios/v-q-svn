@@ -1,0 +1,12 @@
+#!/bin/sh
+
+$2
+server_pid=`cat run.pid`
+trap "kill $server_pid" 0
+sleep 3
+
+echo "running client ..."
+"$3" -ORBInitRef NameService=corbaloc::$host:$port/NameService "name_service#$1"
+#gdb iauth
+
+rm -rf ./run.pid

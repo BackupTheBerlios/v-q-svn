@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Wa¿ne zmiany</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Wprowadzenie"
+HREF="intro.html"><LINK
+REL="PREVIOUS"
+TITLE="Niedostêpne funkcje"
+HREF="intro.missing.html"><LINK
+REL="NEXT"
+TITLE="T³umaczenia dokumentacji"
+HREF="intro.trans.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-21T20:40:52"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="intro.missing.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Rozdzia&#322; 1. Wprowadzenie</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="intro.trans.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="intro.changes"
+>1.5. Wa¿ne zmiany</A
+></H1
+><P
+>&#13;				Poni¿ej znajduje siê lista istnotnych zmian, które
+				mog± wp³ywaæ na kompatybilno¶æ miêdzy wersjami, etc.
+			</P
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Wersja 10. </B
+>
+					Aktualizacja bazy danych - dodano nowy widok vq_view_user_cnt_by_dom; podczas migracji ze starej bazy modyfikowana jest funkcja user_add (poprawka dla PostgreSQL 8).
+					Pliki jar zosta³y przeniesione do katalogu PREFIX/lib/vq/. 
+					Pakiet RPM v-q-jdbc tworzony jest tylko gdy rpmbuild otrzyma
+					"--with jdbc" w linii poleceñ. Funkcja w user_add w bazie danych
+					zosta³a rozszerzona o argument. Nowy plik configuracyjny dla qmailvqd 
+					"backup_deleted", który s³u¿y do okre¶lania czy katalog
+					u¿ytkownika powinien byæ zachowywany podczas usuwania konta.
+				</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Wersja 9. </B
+>
+					<SPAN
+CLASS="application"
+>qmailvqd</SPAN
+> u¿ywa teraz znacznie
+					mniej czasu procesora w stanie bezczynno¶ci.
+				</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Wersja 8. </B
+>
+					<SPAN
+CLASS="application"
+>qmailvqd</SPAN
+> koñczy dzia³anie gdy straci
+					po³±czenie z interfejsem iauth. W logach zapisuje informacjê o tym.
+					Blokowanie plików u¿ywane do kontroli dostêpu zosta³o
+					ca³kowicie zmienione, dzia³a bardziej stabilnie.
+				</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Wersja 7. </B
+>
+					Odwo³ania do vq_emails_banned wykorzystuj± teraz operator LIKE.
+					Poprzednie wersje korzysta³y z operatora wyra¿eñ regularnych POSIX, 
+					który jest dostêpny w PostgreSQL.
+					Je¿eli vq_emails_banned zawiera jakie¶ wpisy musisz
+					je rêcznie zaktualizowaæ.
+				</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="intro.missing.html"
+ACCESSKEY="P"
+>Poprzedni</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Spis tre&#347;ci</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="intro.trans.html"
+ACCESSKEY="N"
+>Nast&#281;pny</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Niedostêpne funkcje</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="intro.html"
+ACCESSKEY="U"
+>Pocz&#261;tek rozdzia&#322;u</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>T³umaczenia dokumentacji</TD
+></TR
+></TABLE
+></DIV
+><DIV id="hosted">Hosted by: <a href="http://developer.berlios.de"><img src="http://developer.berlios.de/bslogo.php?group_id=5270" width="124" height="32" border="0" alt="BerliOS Logo" /></a> <a href="http://www.sourceforge.net"><img src="http://www.sourceforge.net/sflogo.php?group_id=87916&type=1" border="0" alt="SourceForge.net Logo" /></a></DIV>
+</BODY
+></HTML
+>

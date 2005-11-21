@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Dependencies</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="PREVIOUS"
+TITLE="Installation"
+HREF="install.html"><LINK
+REL="NEXT"
+TITLE="Preparation"
+HREF="install.prep.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-21T20:39:59"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="install.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 7. Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="install.prep.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="install.deps"
+>7.2. Dependencies</A
+></H1
+><P
+>&#13;			This is a sophisticated software that depends on few other
+			projects.
+		</P
+><P
+>&#13;			Common dependencies are:
+
+			<P
+></P
+></P><UL
+><LI
+><P
+>&#13;						modern C++ compiler, if you use gcc it must be at 
+						least version &#62;= 3.
+					</P
+></LI
+><LI
+><P
+>&#13;						CORBA implementation with IDL to C++ mapping, 
+						for example <A
+HREF="http://www.mico.org"
+TARGET="_top"
+>MICO</A
+> 
+						or <A
+HREF="http://www.omniorb.org"
+TARGET="_top"
+>omniORB</A
+>
+					</P
+></LI
+><LI
+><P
+>compatible mail transfer agent</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.boost.org"
+TARGET="_top"
+>boost</A
+> library</P
+></LI
+><LI
+><P
+>DocBook and doxygen if you want to generate new version of documentation</P
+></LI
+><LI
+><P
+>compatible database client libraries</P
+></LI
+><LI
+><P
+>Cgicc library if you want to generate WWW interface</P
+></LI
+><LI
+><P
+>Iconv if you want to generate WWW interface</P
+></LI
+><LI
+><P
+>Sablotron if you want to compile WWW interface. It must be at least version 1.0.</P
+></LI
+></UL
+><P>
+		</P
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.mta"
+>7.2.1. Mail transfer agent</A
+></H2
+><P
+>&#13;				At this time only <SPAN
+CLASS="application"
+>qmail</SPAN
+> is supported.
+				So before you begin you must install it.
+			</P
+><P
+>&#13;				We suggest you installing <SPAN
+CLASS="application"
+>qmail</SPAN
+>
+				patched using <A
+HREF="http://q-p.foo-baz.com"
+TARGET="_top"
+>Qmail-patches</A
+>.
+				But v-q doesn't require that, you can use any version you want.
+			</P
+><P
+>&#13;				We hope that as time comes other MTAs will be supported.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.pgsql"
+>7.2.2. Using PostgreSQL</A
+></H2
+><P
+>&#13;				First you need to download <SPAN
+CLASS="application"
+>PostgreSQL</SPAN
+>.
+				Using newest stable version is suggested. You also
+				need libpqxx at least in version 2.4.2 and PERL module called DBI::Pg (if you want to
+				use automatic installation script). All programs
+				you can download from <A
+HREF="http://www.postgresql.org"
+TARGET="_top"
+>&#13;				http://www.postgresql.org</A
+>.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.oracle"
+>7.2.3. Using Oracle</A
+></H2
+><P
+>&#13;				From version 7pre1 <SPAN
+CLASS="application"
+>Oracle</SPAN
+> is a supported database.
+				At this time you can use it only throught JDBC daemons.
+				You will need JDBC drivers for your Oracle version, they
+				are not included. Sample SQL scripts are placed
+				in <TT
+CLASS="filename"
+>base/oracle</TT
+> directory.
+				Oracle 10g was tested using <TT
+CLASS="filename"
+>ojdbc14.jar</TT
+>,
+				but v-q should work without problems with older versions.
+			</P
+></DIV
+><DIV
+CLASS="section"
+><H2
+CLASS="section"
+><A
+NAME="install.otherdb"
+>7.2.4. Other database systems</A
+></H2
+><P
+>&#13;				Following is a list of database systems that are
+				not compatible with v-q:
+				<P
+></P
+></P><UL
+><LI
+><P
+>MySQL - there's no support for views, stored procedures;</P
+></LI
+><LI
+><P
+>&#13;							Firebird - it's not possible to create
+							index with a key larger than 252 bytes.
+							It should be fixed in upcoming 2 version, but
+							at this time it is not (tested 2.0 Alpha 2),
+							other required functions are implemented;
+						</P
+></LI
+><LI
+><P
+>&#13;							Cloudscape (AKA apache-derby) - it's not
+							possible to create a view with an
+							aggregate function, other required functions
+							are implemented;
+						</P
+></LI
+></UL
+><P>
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="install.prep.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Installation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="install.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Preparation</TD
+></TR
+></TABLE
+></DIV
+><DIV id="hosted">Hosted by: <a href="http://developer.berlios.de"><img src="http://developer.berlios.de/bslogo.php?group_id=5270" width="124" height="32" border="0" alt="BerliOS Logo" /></a> <a href="http://www.sourceforge.net"><img src="http://www.sourceforge.net/sflogo.php?group_id=87916&type=1" border="0" alt="SourceForge.net Logo" /></a></DIV>
+</BODY
+></HTML
+>

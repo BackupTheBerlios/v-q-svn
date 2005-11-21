@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML
+><HEAD
+><TITLE
+>Important changes</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Virtual Qmail"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Introduction"
+HREF="intro.html"><LINK
+REL="PREVIOUS"
+TITLE="Missing features"
+HREF="intro.missing.html"><LINK
+REL="NEXT"
+TITLE="Documentation translations"
+HREF="intro.trans.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+NAME="creation"
+CONTENT="2005-11-21T20:39:59"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-2"></HEAD
+><BODY
+CLASS="section"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Virtual Qmail</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="intro.missing.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 1. Introduction</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="intro.trans.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="section"
+><H1
+CLASS="section"
+><A
+NAME="intro.changes"
+>1.5. Important changes</A
+></H1
+><P
+>&#13;			Following list represents only important changes which
+			can influence compatibility with previous version, etc.
+		</P
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Version 10. </B
+>
+				Database changes - added new view vq_view_user_cnt_by_dom; update also modifies user_add function (fix for PostgreSQL 8). 
+				Jar files were moved to PREFIX/lib/vq.
+				RPM package v-q-jdbc is now created only when rpmbuild
+				gets "--with jdbc" on command line. Database function user_add
+				was extended by one argument. New configuration file for
+				qmailvqd "backup_deleted" which is used to configure whether
+				user's maildir should be saved during account removing.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Version 9. </B
+>
+				<SPAN
+CLASS="application"
+>qmailvqd</SPAN
+> doesn't eat CPU
+				when idle. It plays nice now ;-)
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Version 8. </B
+>
+				<SPAN
+CLASS="application"
+>qmailvqd</SPAN
+> exits when connection
+				to iauth implementation is lost. It writes information about
+				it to standard error output. File locking has been rewritten,
+				it's now more stable.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Version 7. </B
+>
+				Lookups into vq_emails_banned are made now with LIKE.
+				Previous version used PostgreSQL's POSIX expressions.
+				If you have entries in vq_emails_banned you should
+				update them.
+			</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="intro.missing.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="intro.trans.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Missing features</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="intro.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Documentation translations</TD
+></TR
+></TABLE
+></DIV
+><DIV id="hosted">Hosted by: <a href="http://developer.berlios.de"><img src="http://developer.berlios.de/bslogo.php?group_id=5270" width="124" height="32" border="0" alt="BerliOS Logo" /></a> <a href="http://www.sourceforge.net"><img src="http://www.sourceforge.net/sflogo.php?group_id=87916&type=1" border="0" alt="SourceForge.net Logo" /></a></DIV>
+</BODY
+></HTML
+>

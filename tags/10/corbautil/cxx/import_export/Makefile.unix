@@ -1,0 +1,27 @@
+#-----------------------------------------------------------------------
+# Copyright IONA Technologies 2002-2004. All rights reserved.
+# This software is provided "as is".
+#-----------------------------------------------------------------------
+BASE=../../..
+
+include ../../Makefile.unix.inc
+
+#--------
+# Lists of files used by make rules.
+#--------
+OBJ =		import_export.o
+
+#--------
+# Rules
+#--------
+
+default:	all
+
+all:		$(OBJ)
+
+clean:
+	-rm -f *.o
+
+install: all
+	$(INSTALL) -d -m 0755 $(PREFIX)/include/vq/corbautil/import_export
+	$(INSTALL) -m 0644 import_export.h $(PREFIX)/include/vq/corbautil/import_export/import_export.h

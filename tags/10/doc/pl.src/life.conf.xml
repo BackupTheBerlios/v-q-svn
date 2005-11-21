@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<section id="life.conf">
+	<title>Konfiguracja</title>
+
+	<para>
+		V-q jest wysoce konfigurowalnym systemem. Prawie wszystkie opcje
+		można zmienić w czasie działania.
+	</para>
+
+	<section id="life.env">
+		<title>Zmienne środowiska</title>
+
+		<para>
+			Niektóre programy korzystają ze zmiennych środowiska,
+			poniżej znajduje się lista zmiennych obsługiwanych przez
+			prawie wszystkie programy.
+			
+			<itemizedlist>
+				<listitem id="life.vq_home">
+					<para>
+						<envar>VQ_HOME</envar> jest jedną z najważniejszych
+						zmiennych. Wskazuje na katalog, w którym
+						zainstalowany został v-q. Domyślna wartość
+						ustalana jest podczas kompilacji, zazwyczaj jest
+						to <filename>/var/vq</filename>.
+					</para>
+				</listitem>
+				<listitem id="life.vq_etc_dir">
+					<para>
+						<envar>VQ_ETC_DIR</envar> wskazuje katalog, w którym
+						zapisana jest konfiguracja systemu.
+						Domyślna wartość
+						ustalana jest podczas kompilacji, zazwyczaj jest
+						to <filename>/var/vq/etc</filename>.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section>
+		<title>Konfiguracja modułu Qmail</title>
+
+		<para>
+			Pliki konfiguracyjne przechowywane są w katalogu
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ivq/qmail/</filename>.
+		</para>
+
+		<table frame="all">
+			<title>Konfiguracja modułu Qmail</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Plik</entry>
+						<entry>Domyślna wartość</entry>
+						<entry>Opis</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry><filename>autoresp_ttl</filename></entry>
+						<entry>60</entry>
+						<entry>
+							Czas liczony w minutach przez ile autoresp
+							będzie pamiętał, że wysłał na dany adres
+							wiadomość. Zazwyczaj nie chcesz odpowiadać
+							na każdą wiadomość przychodzącą spod tego
+							samego adresu. Jeżeli chcesz aby program
+							odpowiadał na każdą wiadomość podaj 0.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>backup_deleted</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Jeżeli wartość jest większa od 0 katalog
+							użytkownika w czasie usuwania konta zostanie
+							zachowany.
+							<note>
+								<para>
+									Katalog użytkownika i katalog
+									<filename>VQ_HOME/deleted</filename>
+									muszą być na tym samym systemie
+									plików ponieważ używane jest wywołanie
+									systemowe rename.
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry><filename>iauth_import</filename></entry>
+						<entry>name_service#Auth.iauth</entry>
+						<entry>
+							Instrukcja określająca w jakiś sposób można
+							się dostać do obiektu implementującego
+							interfejs vq::iauth. Zobacz również
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>maildir</filename></entry>
+						<entry>Maildir</entry>
+						<entry>
+							Nazwa katalogu, w którym przechowywana
+							jest poczta użytkownika. Katalog ten
+							tworzony jest w czasie dodawania użytkownika.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>split_dom</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Ilość podziałów, którym podlega ścieżka do
+							domeny (wartość różna większa od 1 powoduje
+							zmniejszenie liczby katalogów na tym samym poziomie).
+							Możesz zmieniać tą wartość tylko jeżeli nie
+							ma w systemie żadnych zarejestrowanych domen.
+							Jeżeli zmienisz tą wartość w innej sytuacji
+							domeny i użytkownicy nie będą widoczni w programach.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>split_user</filename></entry>
+						<entry>3</entry>
+						<entry>
+							Ilość podziałów, którym podlega ścieżka do skrzynki
+							użytkownika. Tak jak w przypadku split_dom
+							możesz zmieniać tą wartość tylko w przypadku
+							braku użytkowników.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>fmode</filename></entry>
+						<entry>0640</entry>
+						<entry>
+							Prawa dostępu ustawiane tworzonym plikom.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>mmode</filename></entry>
+						<entry>0750</entry>
+						<entry>
+							Prawa dostępu ustawiane podkatalogom
+							katalogu Maildir.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dmode</filename></entry>
+						<entry>0750</entry>
+						<entry>
+							Prawa dostępu ustawiane tworzonym katalogom.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>user</filename></entry>
+						<entry>_vq</entry>
+						<entry>
+							Nazwa użytkownika, który uruchamia
+							usługi. Jest ona wstawiana do
+							<filename>qmail/users/assign</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>uid</filename></entry>
+						<entry>UID aktualnego procesu</entry>
+						<entry>
+							Wartość wstawiana do
+							<filename>qmail/users/assign</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>gid</filename></entry>
+						<entry>GID aktualnego procesu</entry>
+						<entry>
+							Wartość wstawiana do
+							<filename>qmail/users/assign</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>data</filename></entry>
+						<entry>/var/vq</entry>
+						<entry>
+							Katalog, w którym Virtual Qmail przechowuje
+							domeny i skrzynki użytkowników.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>qmail_home</filename></entry>
+						<entry>/var/qmail</entry>
+						<entry>
+							Katalog, w którym zainstalowany jest Qmail.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>qmode</filename></entry>
+						<entry>0644</entry>
+						<entry>
+							Prawa dostępu ustawiane plikom tworzonym
+							w katalogu qmail.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model opisany w <filename>corba_utils.pdf</filename>.
+							Określa kontekst działania usługi CORBA.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Określa politykę działania servanta CORBA -
+							wykorzystanie wątków, trwałość obiektu, etc.
+							Zobacz <filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Konfiguracja modułu autoryzacyjnego PostgreSQL</title>
+
+		<para>
+			Pliki konfiguracyjne zapisywane są w 
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/iauth/pgsql/</filename>.
+		</para>
+
+		<table frame="all">
+			<title>Konfiguracja modułu autoryzacyjnego PostgreSQL</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Plik</entry>
+						<entry>Domyślna wartość</entry>
+						<entry>Opis</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry><filename>pgsql</filename></entry>
+						<entry>dbname=mail password=mail user=mail</entry>
+						<entry>
+							Łańcuch określający informacje niezbędne
+							do połączenia. Pamiętaj aby zmienić hasło.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>pgsql_pool</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Ilość połączeń do serwera bazy danych, które
+							są tworzone podczas startu. Możesz spróbować
+							użyć kilku połączeń jeżeli wybrana implementacja
+							CORBA posiada obsługę wątków i wybrana polityka
+							zezwala na wykorzystanie jej.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model opisany w <filename>corba_utils.pdf</filename>.
+							Określa kontekst działania usługi CORBA.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Określa politykę działania servanta CORBA -
+							wykorzystanie wątków, trwałość obiektu, etc.
+							Zobacz <filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Konfiguracja modułu autoryzacyjnego JDBC</title>
+
+		<para>
+			Wszystkie opcje przekazywane są do programu za pomocą
+			linii poleceń, nie ma żadnych plików konfiguracyjnych.
+			Poniżej znajduje się lista obsługiwanych opcji. Oby przekazać
+			je do programu podaj coś podobnego:
+<screen><userinput>-Dcom.foo_baz.v_q.jdbcauthd.jdbc=jdbc:postgresql://localhost/mail</userinput></screen>
+		</para>
+
+		<table frame="all">
+			<title>Konfiguracja modułu autoryzacyjnego JDBC</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Właściwość</entry>
+						<entry>Domyślna wartość</entry>
+						<entry>Opis</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc</entry>
+						<entry>brak</entry>
+						<entry>
+							Łańcuch używany do inicjalizacji sterownika
+							JDBC.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc.user</entry>
+						<entry>mail</entry>
+						<entry>
+							Użytkownik używany do łączenia się z bazą danych.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc.pass</entry>
+						<entry>mail</entry>
+						<entry>
+							Hasło używane do autoryzacji.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.ds</entry>
+						<entry>brak</entry>
+						<entry>
+							Źródło danych, które zostanie wykorzystane
+							jako baza danych. Jeżeli posiadasz skonfigurowany
+							serwer JNDI możesz go użyć bezpośrednio. Opcja
+							ta wyklucza się z opcją com.foo_baz.v_q.jdbcauthd.jdbc.
+							<note>
+								<para>
+									Ta opcja nie została przetestowana.
+									Na dzień dzisiejszy nie wiem jak
+									bezpośrednio korzystać z JNDI.
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.dep_mod</entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model opisany w <filename>corba_utils.pdf</filename>.
+							Określa kontekst działania usługi CORBA.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.policy</entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Określa politykę działania servanta CORBA -
+							wykorzystanie wątków, trwałość obiektu, etc.
+							Zobacz <filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Konfiguracja modułu logującego PostgreSQL</title>
+
+		<para>
+			Pliki konfiguracyjne znajdują się w
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ilogger/pgsql/</filename>.
+		</para>
+
+		<table frame="all">
+			<title>Konfiguracja modułu logującego PostgreSQL</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Plik</entry>
+						<entry>Domyślna wartość</entry>
+						<entry>Opis</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry><filename>pgsql</filename></entry>
+						<entry>dbname=mail password=mail user=mail</entry>
+						<entry>
+							Łańcuch określający informacje niezbędne
+							do połączenia. Pamiętaj aby zmienić hasło.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>pgsql_pool</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Ilość połączeń do serwera bazy danych, które
+							są tworzone podczas startu. Możesz spróbować
+							użyć kilku połączeń jeżeli wybrana implementacja
+							CORBA posiada obsługę wątków i wybrana polityka
+							zezwala na wykorzystanie jej.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model opisany w <filename>corba_utils.pdf</filename>.
+							Określa kontekst działania usługi CORBA.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Określa politykę działania servanta CORBA -
+							wykorzystanie wątków, trwałość obiektu, etc.
+							Zobacz <filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Konfiguracja modułu logującego JDBC</title>
+
+		<para>
+			Wszystkie opcje przekazywane są do programu za pomocą
+			linii poleceń, nie ma żadnych plików konfiguracyjnych.
+			Poniżej znajduje się lista obsługiwanych opcji. Oby przekazać
+			je do programu podaj coś podobnego:
+<screen><userinput>-Dcom.foo_baz.v_q.jdbclogd.jdbc=jdbc:postgresql://localhost/mail</userinput></screen>
+		</para>
+
+		<table frame="all">
+			<title>Konfiguracja modułu logującego JDBC</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Właściwość</entry>
+						<entry>Domyślna wartość</entry>
+						<entry>Opis</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc</entry>
+						<entry>brak</entry>
+						<entry>
+							Łańcuch używany do inicjalizacji sterownika
+							JDBC.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc.user</entry>
+						<entry>mail</entry>
+						<entry>
+							Użytkownik używany do łączenia się z bazą danych.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc.pass</entry>
+						<entry>mail</entry>
+						<entry>
+							Hasło używane do autoryzacji.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.ds</entry>
+						<entry>brak</entry>
+						<entry>
+							Źródło danych, które zostanie wykorzystane
+							jako baza danych. Jeżeli posiadasz skonfigurowany
+							serwer JNDI możesz go użyć bezpośrednio. Opcja
+							ta wyklucza się z opcją com.foo_baz.v_q.jdbclogd.jdbc.
+							<note>
+								<para>
+									Ta opcja nie została przetestowana.
+									Na dzień dzisiejszy nie wiem jak
+									bezpośrednio korzystać z JNDI.
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.dep_mod</entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model opisany w <filename>corba_utils.pdf</filename>.
+							Określa kontekst działania usługi CORBA.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.policy</entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Określa politykę działania servanta CORBA -
+							wykorzystanie wątków, trwałość obiektu, etc.
+							Zobacz <filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+</section>

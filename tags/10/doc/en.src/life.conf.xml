@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<section id="life.conf">
+	<title>Configuration</title>
+
+	<para>
+		V-q is a highly configurable system. Almost all options
+		can be set at the runtime.
+	</para>
+
+	<section id="life.env">
+		<title>Environment variables</title>
+
+		<para>
+			Some programs can be customized using environment variables,
+			below is a list of globally used variables.
+			
+			<itemizedlist>
+				<listitem id="life.vq_home">
+					<para>
+						<envar>VQ_HOME</envar> this is the most important
+						variable. It points to a base directory
+						when v-q files are stored. Default value is set
+						during compilation, usually it is
+						<filename>/var/vq</filename>.
+					</para>
+				</listitem>
+				<listitem id="life.vq_etc_dir">
+					<para>
+						<envar>VQ_ETC_DIR</envar> points to a directory
+						where configuration files are stored.
+						Default value is set
+						during compilation, usually it is
+						<filename>/var/vq/etc</filename>.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section>
+		<title>Configuration for Qmail part</title>
+
+		<para>
+			Configuration files are stored in
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ivq/qmail/</filename>.
+		</para>
+
+		<table frame="all">
+			<title>Configuration files for Qmail part</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>File</entry>
+						<entry>Default value</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry><filename>autoresp_ttl</filename></entry>
+						<entry>60</entry>
+						<entry>
+							How many minutes autoresp will remeber that
+							it sent a message to specified address. Usually
+							you don't want to automatically answer to every 
+							incoming mail from the same address. If you want
+							to answer on every incoming mail set it to 0.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>backup_deleted</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Backup user's maildir while removing an account if
+							value larger than 0.
+							<note>
+								<para>
+									Directory <filename>VQ_HOME/deleted</filename>
+									must be on the same file system as user's 
+									maildir because rename system call is used.
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry><filename>iauth_import</filename></entry>
+						<entry>name_service#Auth.iauth</entry>
+						<entry>
+							Instruction how to find object program
+							should use as a vq::iauth implementation.
+							See <filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>maildir</filename></entry>
+						<entry>Maildir</entry>
+						<entry>
+							Name of a directory that users's mail is stored in.
+							Directory is created when user is added.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>split_dom</filename></entry>
+						<entry>1</entry>
+						<entry>
+							How many times split a path for a domain.
+							You can change this value only if you don't
+							have any domains registered. If you change it
+							in other situation programs won't be able to
+							find domains and users.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>split_user</filename></entry>
+						<entry>3</entry>
+						<entry>
+							How many times split a path for user's directory.
+							Like split_dom you can change it only when
+							you don't have any users.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>fmode</filename></entry>
+						<entry>0640</entry>
+						<entry>
+							Mode of created files.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>mmode</filename></entry>
+						<entry>0750</entry>
+						<entry>
+							Mode of subdirectories in Maildir.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dmode</filename></entry>
+						<entry>0750</entry>
+						<entry>
+							Mode of other created directories.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>user</filename></entry>
+						<entry>_vq</entry>
+						<entry>
+							Name of a v-q's user. It is put in
+							<filename>qmail/users/assign</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>uid</filename></entry>
+						<entry>UID of this process</entry>
+						<entry>
+							It is put into
+							<filename>qmail/users/assign</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>gid</filename></entry>
+						<entry>GID of this process</entry>
+						<entry>
+							It is put into
+							<filename>qmail/users/assign</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>data</filename></entry>
+						<entry>/var/vq</entry>
+						<entry>
+							Directory where Virtual Qmail stores
+							domains and users' mailboxes.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>qmail_home</filename></entry>
+						<entry>/var/qmail</entry>
+						<entry>
+							Qmail's home directory.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>qmode</filename></entry>
+						<entry>0644</entry>
+						<entry>
+							Mode of files created in a qmail's directory.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Configuration for PostgreSQL authorization part</title>
+
+		<para>
+			Configuration files are stored in
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/iauth/pgsql/</filename>.
+		</para>
+
+		<table frame="all">
+			<title>Configuration files for PostgreSQL authorization part</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>File</entry>
+						<entry>Default value</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry><filename>pgsql</filename></entry>
+						<entry>dbname=mail password=mail user=mail</entry>
+						<entry>
+							String used to connect to a database.
+							Remember to use different password.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>pgsql_pool</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Number of connections to a database server
+							that are created during statup.
+							You can try to use few connections if your
+							CORBA implementation implements threading
+							and policy allows using it.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Configuration for JDBC authorization part</title>
+
+		<para>
+			All options are passed to application through command line
+			arguments, there are no configuration files. Bellow there
+			is a list of supported options. To pass them to program use
+			something like:
+<screen><userinput>-Dcom.foo_baz.v_q.jdbcauthd.jdbc=jdbc:postgresql://localhost/mail</userinput></screen>
+		</para>
+
+		<table frame="all">
+			<title>Configuration files for JDBC authorization part</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Property</entry>
+						<entry>Default value</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc</entry>
+						<entry>no defaults</entry>
+						<entry>
+							String used to initialize JDBC driver.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc.user</entry>
+						<entry>mail</entry>
+						<entry>
+							User used to connect to a database.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.jdbc.pass</entry>
+						<entry>mail</entry>
+						<entry>
+							Password user for authorization.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.ds</entry>
+						<entry>no defaults</entry>
+						<entry>
+							Data source used as a database. If you have
+							configured JNDI server which includes database
+							references you can use them directly. This options
+							is mutually exclusive with com.foo_baz.v_q.jdbcauthd.jdbc.
+							<note>
+								<para>
+									This options has not been tested.
+									At this time I don't know how to use
+									JNDI directly. 
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.dep_mod</entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbcauthd.policy</entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Configuration for PostgreSQL logging part</title>
+
+		<para>
+			Configuration files are stored in
+			<filename><link linkend="life.vq_etc_dir">VQ_ETC_DIR</link>/ilogger/pgsql/</filename>.
+		</para>
+
+		<table frame="all">
+			<title>Configuration files for PostgreSQL logging part</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>File</entry>
+						<entry>Default value</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry><filename>pgsql</filename></entry>
+						<entry>dbname=mail password=mail user=mail</entry>
+						<entry>
+							String used to connect to a database.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>policy</filename></entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section>
+		<title>Configuration for JDBC logging part</title>
+
+		<para>
+			All options are passed to application through command line
+			arguments, there are no configuration files. Bellow there
+			is a list of supported options. To pass them to program use
+			something like:
+<screen><userinput>-Dcom.foo_baz.v_q.jdbclogd.jdbc=jdbc:postgresql://localhost/mail</userinput></screen>
+		</para>
+
+		<table frame="all">
+			<title>Configuration files for JDBC logging part</title>
+			<tgroup cols="3">
+				<thead>
+					<row>	
+						<entry>Property</entry>
+						<entry>Default value</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc</entry>
+						<entry>no defaults</entry>
+						<entry>
+							String used to initialize JDBC driver.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc.user</entry>
+						<entry>mail</entry>
+						<entry>
+							User used to connect to a database.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.jdbc.pass</entry>
+						<entry>mail</entry>
+						<entry>
+							Password user for authorization.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.ds</entry>
+						<entry>no defaults</entry>
+						<entry>
+							Data source used as a database. If you have
+							configured JNDI server which includes database
+							references you can use them directly. This options
+							is mutually exclusive with com.foo_baz.v_q.jdbclogd.jdbc.
+							<note>
+								<para>
+									This options has not been tested.
+									At this time I don't know how to use
+									JNDI directly. 
+								</para>
+							</note>
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.dep_mod</entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.policy</entry>
+						<entry>single_thread_model</entry>
+						<entry>
+							Sets CORBA servant policy - using threads,
+							persistency, etc. See
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+</section>
