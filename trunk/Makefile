@@ -60,6 +60,6 @@ pkg-tbz2: pkg-tar
 
 pkg-rpm: pkg-tgz
 	@if [ `id -u` != 0 ] ; then echo You must be root. ; exit 1; fi
-	rpmbuild -ta tmp/v-q-$(VERSION).tar.gz
+	rpmbuild -ta --with jdbc tmp/v-q-$(VERSION).tar.gz
 
 include Makefile.common
