@@ -31,6 +31,7 @@ void usage( const char * me )
 	cerr<<"usage: "<<me<< " [-q] [domain ...]"<<endl
 		<<"-q\tquiet mode"<<endl
 		<<"-p\tshow passwords"<<endl
+		<<"-d\tdata only, no headers, footers, etc."<<endl
 		<<endl
 		<<"List users for all domains or only those specified"<<endl;
 }
@@ -41,14 +42,17 @@ void usage( const char * me )
 int cluemain( int ac, char **av, cluemain_env & ce ) {
 	const char *me = *av;
 	int opt;
-	bool quiet=false, pass = false;
-	while( (opt=getopt(ac,av,"qph")) != -1 ) {
+	bool quiet=false, pass = false, data = false;
+	while( (opt=getopt(ac,av,"qpdh")) != -1 ) {
 			switch(opt) {
 			case 'q':
 					quiet=true;
 					break;
 			case 'p':
 					pass = true;
+					break;
+			case 'd':
+					data = true;
 					break;
 			default:		
 			case '?':
@@ -100,13 +104,25 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 							return 1;
 			}
 
+			if( ! quiet && ! data )
+					cout<< "login"
+						<< (pass ? ": password" : "")
+						<<": flags"
+						<<": directory"
+						<<": uid"
+						<<": gid"
+						<<endl;
+
 			for( CORBA::ULong j=0, k=uis->length(); j<k; ++j ) {
 					if(!quiet) 
 							cout<<dis[i].domain<<": ";
 					cout<< uis[j].login
 						<<": "<< (pass ? uis[j].pass : "")
 						<<": "<<uis[j].flags
-						<<": "<<uis[j].dir<<endl;
+						<<": "<<uis[j].dir
+						<<": "<<uis[j].uid
+						<<": "<<uis[j].gid
+						<<endl;
 			}
 	}
 	return 0;

@@ -230,13 +230,7 @@ namespace POA_vq {
 
 		auto_ptr<error> ret(auth->user_get(ai));
 		if( ::vq::ivq::err_no == ret->ec ) {
-				if( '\0' == *ai.dir ) {
-						ai.dir = this->conf.paths.user_dir_path(
-							boost::lexical_cast<std::string>(ai.id_domain),
-							lower(static_cast<const char *>(ai.login))).c_str();
-				}
-				ai.gid = this->conf.gid;
-				ai.uid = this->conf.uid;
+				user_info_fill_empty(ai);
 				return lr(::vq::ivq::err_no, "");
 		}
 		return ret.release();
@@ -258,8 +252,27 @@ namespace POA_vq {
 	cqmailvq::error * cqmailvq::user_ls_by_dom( id_type dom_id, 
 			size_type start, size_type cnt, user_info_list_out uis ) std_try {
 		uis = new ::vq::ivq::user_info_list;
-		return auth->user_ls_by_dom( dom_id, start, cnt, uis );
+		auto_ptr<error> ret(auth->user_ls_by_dom( dom_id, start, cnt, uis ));
+		if( ::vq::ivq::err_no == ret->ec ) {
+				for( CORBA::ULong j=0, k=uis->length(); j<k; ++j ) {
+						user_info_fill_empty(uis[j]);
+				}
+		}
+		return ret.release();
 	} std_catch
+
+	/**
+	 *
+	 */
+	void cqmailvq::user_info_fill_empty( user_info & ui ) {
+		if( '\0' == *ui.dir ) {
+				ui.dir = this->conf.paths.user_dir_path(
+					boost::lexical_cast<std::string>(ui.id_domain),
+					lower(static_cast<const char *>(ui.login))).c_str();
+		}
+		ui.gid = this->conf.gid;
+		ui.uid = this->conf.uid;
+	}
 
 	/**
 	 *

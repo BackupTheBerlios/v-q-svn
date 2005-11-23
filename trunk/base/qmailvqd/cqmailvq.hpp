@@ -251,6 +251,13 @@ namespace POA_vq {
 				//@}
 
 				/**
+				 *
+				 */
+				//@{
+					void user_info_fill_empty( user_info & ui );
+				//@}
+
+				/**
 				 * \defgroup err Errors handling
 				 */
 				/*@{*/
