@@ -112,6 +112,8 @@ namespace POA_vq {
 
 				    virtual error* user_add( const user_info& ai, 
 							CORBA::Boolean is_banned );
+				    virtual error* user_rep( const user_info& ai, 
+							CORBA::Boolean password, CORBA::Boolean home );
 				    virtual error* user_rm( id_type dom_id, 
 							const char* login );
 				    virtual error* user_pass( id_type dom_id, 

@@ -199,6 +199,47 @@ namespace POA_vq {
 	} std_catch;
 
 	/**
+	*/
+	cpgsqlauth::error * cpgsqlauth::user_rep( const user_info & ai, 
+			CORBA::Boolean password, CORBA::Boolean dir ) std_try {
+		if( !ai.id_domain || !ai.login || !ai.pass /*|| !ai.dir*/ )
+				throw ::vq::null_error(__FILE__, __LINE__);
+		
+		cpgsqlpool::value_ptr pg(pool.get());
+		result res(nontransaction(*pg.get()).exec(
+				"SELECT USER_REP("
+				+to_string(ai.id_domain)+",'"
+				+sqlesc(lower(static_cast<const char *>(ai.login)))+"','"
+				+sqlesc(static_cast<const char *>(ai.pass))+"','"
+				+sqlesc(static_cast<const char *>(ai.dir))+"','"
+				+to_string(ai.flags)+"',"
+				+(password ? "'t'" : "'f'")+"::boolean,"
+				+(dir ? "'t'" : "'f'")+"::boolean)"));
+	
+		if(res.empty() || res[0][0].is_null() ) {
+				return lr(::vq::ivq::err_func_res, "USER_REP");
+		}
+
+		const char *val = res[0][0].c_str();
+		if( '-' == *val ) {
+				switch( *(val+1) ) {
+				case '1':
+						return lr(::vq::ivq::err_noent, 
+							boost::lexical_cast<std::string>(ai.id_domain));
+				case '2':
+						return lr(::vq::ivq::err_noent,
+							boost::lexical_cast<std::string>(ai.login));
+				default:
+						return lr(::vq::ivq::err_func_res, "USER_REP");
+				} 
+		}
+		if( *val == '0' && *(val+1) == '\0' ) {
+				return lr(::vq::ivq::err_no, "");
+		}
+		return lr(::vq::ivq::err_func_res, "USER_REP");
+	} std_catch;
+
+	/**
 	 *
 	 */
 	cpgsqlauth::error * cpgsqlauth::da_add( id_type dom_id,

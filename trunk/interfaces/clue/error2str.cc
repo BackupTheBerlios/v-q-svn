@@ -50,6 +50,7 @@ namespace clue {
 		case ::vq::ivq::err_pass_inv: os<<"invalid password"; break;
 		case ::vq::ivq::err_func_res: os<<"unsupported return value"; break;
 		case ::vq::ivq::err_func_ni: os<<"function not implemented"; break;
+		case ::vq::ivq::err_exec_crash: os<<"executed application crashed"; break;
 		}
 	
 		os<<" in "<<err->file<<" at "<<err->line;

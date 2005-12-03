@@ -22,7 +22,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2005-11-21T20:39:59"><META
+CONTENT="2005-12-02T23:09:11"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -100,6 +100,34 @@ CLASS="formalpara"
 				was extended by one argument. New configuration file for
 				qmailvqd "backup_deleted" which is used to configure whether
 				user's maildir should be saved during account removing.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Version 11. </B
+>
+				It's now possible to modify user's account - change 
+				flags, password at the same time.
+			</P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+>Version 10. </B
+>
+				Database modified - new view added vq_view_user_cnt_by_dom; 
+				during database upgrade user_add function is modified 
+				(fix for PostgreSQL 8). Jar files were moved to
+				PREFIX/lib/vq/. 
+				RPM package v-q-jdbc is created only when rpmbuild gets
+				"--with jdbc" on the command line. Database function user_add 
+				has been extended by one argument. New configurationfile
+				for qmailvqd "backup_deleted", it's used to tell
+				if you want to have user's files backed up during
+				removing.
 			</P
 ></DIV
 ><DIV

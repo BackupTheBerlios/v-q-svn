@@ -39,14 +39,13 @@ sub qdie($);
 sub version_get;
 sub plpgsql;
 
-# functions upgrading to version 8
-sub v8_funcs;
-sub v8_tables;
+# functions upgrading to version 9
+sub vcur_funcs;
+sub vcur_tables;
 
-# functions upgrading from 7 to 8
+# functions upgrading
+sub v8_9_funcs;
 sub v7_8_funcs;
-
-# functions upgrading from 6 to 7
 sub v6_7_funcs;
 
 # generic vq_info update
@@ -70,14 +69,14 @@ if($schema ne "") {
 plpgsql();
 
 my $ver = version_get();
-my $cur_ver = 8;
+my $cur_ver = 9;
 print "Database version is: $ver\n";
 
 if( $ver == 0 ) {
 	print "Upgrading to $cur_ver...\n";
 	ins_vq_info($cur_ver);
-	v8_tables();
-	v8_funcs();
+	vcur_tables();
+	vcur_funcs();
 } elsif($upg) {
 	if( $ver >=  6 ) {
 		if ($ver == 6) {
@@ -89,6 +88,11 @@ if( $ver == 0 ) {
 			v7_8_funcs();
 			upd_vq_info(8);
 			$ver = 8;
+		}
+		if ($ver == 8) {
+			v8_9_funcs();
+			upd_vq_info(9);
+			$ver = 9;
 		}
 	} else {
 		die( "Don't know how to upgrade!" );
@@ -196,7 +200,7 @@ sub plpgsql {
 
 ##
 #
-sub v8_tables {
+sub vcur_tables {
 	my @funcs = (
 "CREATE TABLE vq_domains (id_domain serial,"
 ."domain text unique not null check(length(domain)>1),"
@@ -272,11 +276,11 @@ primary key(id_log)
 			qdie($funcs[$i]);
 		}
 	}
-} # v8_tables
+} # vcur_tables
 
 ##
 #
-sub v8_funcs {
+sub vcur_funcs {
 	my @funcs = (
 "CREATE FUNCTION dom_add(vq_domains.domain\%TYPE) RETURNS vq_domains.id_domain\%TYPE AS '
 DECLARE
@@ -719,7 +723,8 @@ END;' LANGUAGE 'plpgsql'",
 	}
 
 	v7_8_funcs;
-} # v8_funcs
+	v8_9_funcs;
+} # vcur_funcs
 
 ##
 # v6_7_funcs 
@@ -833,6 +838,64 @@ END;
 		}
 	}
 } # v7_8_funcs
+
+##
+# v8_9_funcs 
+sub v8_9_funcs {
+	my @funcs = (
+"CREATE or replace FUNCTION user_rep
+(vq_users.id_domain\%TYPE,
+vq_users.login\%TYPE,
+vq_users.pass\%TYPE,
+vq_users.dir\%TYPE,
+vq_users.flags\%TYPE,
+bool, bool) RETURNS int4 AS '
+DECLARE
+    _id_domain alias for \$1;
+    _login alias for \$2;
+    _pass alias for \$3;
+    _dir alias for \$4;
+    _flags alias for \$5;
+	pass_chg alias for \$6;
+	dir_chg alias for \$7;
+
+    ban RECORD;
+BEGIN
+	IF NOT EXISTS (SELECT * FROM vq_domains WHERE id_domain=_id_domain) THEN
+		RETURN -1;
+	END IF;
+
+	IF NOT EXISTS (SELECT * FROM vq_users 
+			WHERE id_domain=_id_domain AND login=_login) THEN
+		RETURN -2;
+	END IF;
+
+    UPDATE vq_users SET flags=_flags
+		WHERE id_domain=_id_domain AND login=_login;
+	IF( pass_chg != false ) THEN
+		 UPDATE vq_users SET pass=_pass
+			WHERE id_domain=_id_domain AND login=_login;
+	END IF;
+	IF( dir_chg != false ) THEN
+		 UPDATE vq_users SET dir=_dir
+			WHERE id_domain=_id_domain AND login=_login;
+	END IF;
+
+	NOTIFY user_rep;
+	RETURN 0;
+END;
+' LANGUAGE 'plpgsql';",
+
+);
+
+	for( my $i=0; $i < @funcs.""; ++$i ) {
+		my $res = $con->do($funcs[$i]);
+		if( $con->err != PGRES_COMMAND_OK ) {
+			qdie($funcs[$i]);
+		}
+	}
+} # v8_9_funcs
+
 
 ##
 # Create table with informations about database

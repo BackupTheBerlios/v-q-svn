@@ -140,6 +140,41 @@ namespace POA_vq {
 	} std_catch
 	
 	/**
+	 * Modify user. Login and domain are never changed. Password is changed
+	 * only if password == true. Directory changes are not
+	 * implemented at this time.
+	 * \param ui includes information about user
+	 * \param password change also password
+	 * \param home change also home
+	 */
+	cqmailvq::error * cqmailvq::user_rep( const user_info & ai, 
+			CORBA::Boolean password, CORBA::Boolean home ) std_try {
+
+		if(!ai.login || !ai.dir)
+				throw ::vq::null_error(__FILE__, __LINE__);
+
+		string login(lower(static_cast<const char *>(ai.login)));
+
+		user_info ui;
+		ui.id_domain = ai.id_domain;
+		ui.login = login.c_str();
+		auto_ptr<error> ret;
+		if( home ) {
+			ret.reset(this->user_get(ui)); 
+			if( ::vq::ivq::err_no != ret->ec )
+				return ret.release();
+			if( ! strcmp(ai.dir, ui.dir) )
+				return lr(::vq::ivq::err_func_ni, "");
+		}
+	
+		ret.reset(auth->user_rep(ai, password, home));
+		if( ::vq::ivq::err_no != ret->ec ) {
+				return ret.release();
+		}
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
 	 * Remove user
 	 * \param dom_id domain's id
 	 * \param login

@@ -14,6 +14,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <memory>
 
 template <class OBJ_TYPE>
 struct user_test {
@@ -89,6 +90,71 @@ struct user_test {
 			} std_catch
 			test_dom_rm(dom);
 			test_dom_rm(dom1);
+		}
+
+		/**
+		 * Add domain. Add user. Change flags, check if they were changed.
+		 * Change directory, check. Change password, check.
+		 * Change directory and password. Check. Clean up.
+		 */
+		void case10() {
+			const char * dom = "user-test-case10.pl";
+			::vq::ivq::id_type dom_id = ::vq::ivq::id_type();
+			std_try {
+					test_dom_user_add(dom, dom_id);
+		
+					vq::iauth::user_info ai;
+					ai.id_domain = dom_id;
+					ai.pass = CORBA::string_dup("XXXX");
+					ai.dir = CORBA::string_dup("/tmp/XXXX");
+					ai.login = CORBA::string_dup(dom);
+					ai.flags = 120;
+
+					IVQ_ERROR_EQUAL(auth->user_rep(ai, 0U, 0U), ::vq::ivq::err_no);
+					vq::iauth::user_info ai1;
+					ai1.id_domain = dom_id;
+					ai1.login = CORBA::string_dup(dom);
+					IVQ_ERROR_EQUAL(auth->user_get(ai1), ::vq::ivq::err_no);
+					BOOST_CHECK( strcmp(ai.dir, ai1.dir) );
+					BOOST_CHECK( strcmp(ai.pass, ai1.pass) );
+					BOOST_CHECK_EQUAL( ai.flags, ai1.flags );
+
+					IVQ_ERROR_EQUAL(auth->user_rep(ai, 1U, 0U), ::vq::ivq::err_no);
+					ai1.id_domain = dom_id;
+					ai1.login = CORBA::string_dup(dom);
+					IVQ_ERROR_EQUAL(auth->user_get(ai1), ::vq::ivq::err_no);
+					BOOST_CHECK( strcmp(ai.dir, ai1.dir) );
+					BOOST_CHECK( ! strcmp(ai.pass, ai1.pass) );
+					BOOST_CHECK_EQUAL( ai.flags, ai1.flags );
+
+					std::auto_ptr< ::vq::ivq::error > ret;
+
+					ai.pass = CORBA::string_dup("VVVB");
+					ret.reset(auth->user_rep(ai, 0U, 1U));
+					BOOST_CHECK(::vq::ivq::err_no == ret->ec || ::vq::ivq::err_func_ni == ret->ec );
+					if( ::vq::ivq::err_no == ret->ec ) {
+						ai1.id_domain = dom_id;
+						ai1.login = CORBA::string_dup(dom);
+						IVQ_ERROR_EQUAL(auth->user_get(ai1), ::vq::ivq::err_no);
+						BOOST_CHECK( ! strcmp(ai.dir, ai1.dir) );
+						BOOST_CHECK( strcmp(ai.pass, ai1.pass) );
+						BOOST_CHECK_EQUAL( ai.flags, ai1.flags );
+					}
+
+					ai.pass = CORBA::string_dup("VVVV");
+					ai.dir = CORBA::string_dup("/tmp/VVVV");
+					ret.reset(auth->user_rep(ai, 1U, 1U));
+					BOOST_CHECK(::vq::ivq::err_no == ret->ec || ::vq::ivq::err_func_ni == ret->ec );
+					if( ::vq::ivq::err_no == ret->ec ) {
+						ai1.id_domain = dom_id;
+						ai1.login = CORBA::string_dup(dom);
+						IVQ_ERROR_EQUAL(auth->user_get(ai1), ::vq::ivq::err_no);
+						BOOST_CHECK( ! strcmp(ai.dir, ai1.dir) );
+						BOOST_CHECK( ! strcmp(ai.pass, ai1.pass) );
+						BOOST_CHECK_EQUAL( ai.flags, ai1.flags );
+					}
+			} std_catch
+			test_dom_rm(dom);
 		}
 
 		/**

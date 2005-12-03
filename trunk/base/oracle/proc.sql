@@ -393,4 +393,44 @@ END;
 /
 show errors;
 
+CREATE OR REPLACE FUNCTION user_rep
+(a_id_domain IN vq_users.id_domain%TYPE,
+a_login IN vq_users.login%TYPE,
+a_pass IN vq_users.pass%TYPE,
+a_dir IN vq_users.dir%TYPE,
+a_flags IN vq_users.flags%TYPE,
+a_pass_chg IN NUMBER,
+a_dir_chg IN NUMBER) RETURN INTEGER IS
+    CURSOR cur_domain IS SELECT 1 FROM vq_domains WHERE id_domain=a_id_domain;
+    CURSOR cur_login IS SELECT 1 FROM vq_users WHERE id_domain=a_id_domain AND login=a_login;
+	ret INTEGER;
+BEGIN
+	ret := 0;
+    OPEN cur_domain;
+	FETCH cur_domain INTO ret;
+    IF cur_domain%FOUND = TRUE THEN
+	    OPEN cur_login;
+		FETCH cur_login INTO ret;
+	    IF cur_login%NOTFOUND = TRUE THEN
+			ret := -2;
+		ELSE
+    		UPDATE vq_users SET flags=a_flags WHERE id_domain=a_id_domain AND login=a_login;
+			IF a_pass_chg != 0 THEN
+    			UPDATE vq_users SET pass=a_pass WHERE id_domain=a_id_domain AND login=a_login;
+			END IF;
+			IF a_dir_chg != 0 THEN
+	    		UPDATE vq_users SET dir=a_dir WHERE id_domain=a_id_domain AND login=a_login;
+			END IF;
+			ret := 0;
+	    END IF;
+	    CLOSE cur_login;
+	ELSE
+	    ret := -1;
+    END IF;
+    CLOSE cur_domain;
+
+    RETURN ret;
+END;
+/
+show errors;
 

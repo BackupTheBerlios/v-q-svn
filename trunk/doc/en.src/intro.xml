@@ -114,6 +114,32 @@
 		</formalpara>
 
 		<formalpara>
+			<title>Version 11</title>
+
+			<para>
+				It's now possible to modify user's account - change 
+				flags, password at the same time.
+			</para>
+		</formalpara>
+
+		<formalpara>
+			<title>Version 10</title>
+
+			<para>
+				Database modified - new view added vq_view_user_cnt_by_dom; 
+				during database upgrade user_add function is modified 
+				(fix for PostgreSQL 8). Jar files were moved to
+				PREFIX/lib/vq/. 
+				RPM package v-q-jdbc is created only when rpmbuild gets
+				"--with jdbc" on the command line. Database function user_add 
+				has been extended by one argument. New configurationfile
+				for qmailvqd "backup_deleted", it's used to tell
+				if you want to have user's files backed up during
+				removing.
+			</para>
+		</formalpara>
+
+		<formalpara>
 			<title>Version 9</title>
 
 			<para>

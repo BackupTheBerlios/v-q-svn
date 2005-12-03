@@ -557,6 +557,11 @@ struct auth_test_suite : test_suite {
 					ts_case9->depends_on(ts_init);
 					add(ts_case9);
 
+					test_case * ts_case10 = BOOST_CLASS_TEST_CASE( 
+						&obj_user_test::case10, user_test );
+					ts_case10->depends_on(ts_init);
+					add(ts_case10);
+
 					test_case * ts_case11 = BOOST_CLASS_TEST_CASE( 
 						&obj_user_test::case11, user_test );
 					ts_case11->depends_on(ts_init);

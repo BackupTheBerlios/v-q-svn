@@ -244,6 +244,9 @@ module vq {
 			/// Adds user
 			error user_add(in user_info ai, in boolean is_banned )
 					raises (null_error, except, db_error);
+			/// Modify user
+			error user_rep(in user_info ui, in boolean password, in boolean dir )
+					raises (null_error, except, db_error);
 			/// Removes user
 			error user_rm(in id_type dom_id, in string login)
 					raises (null_error, except, db_error);

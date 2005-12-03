@@ -231,6 +231,51 @@ public class JDBCAuth extends iauthPOA {
 	} }
 
 	/**
+	*/
+	public error user_rep( user_info ai, boolean password, boolean dir ) 
+			throws null_error, db_error, except { try {
+		CallableStatement call = con.prepareCall("{ ? = call user_rep(?, ?, ?, ?, ?, ?, ?)}");
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
+		call.setInt(idx++, ai.id_domain);
+		call.setString(idx++, ai.login.toLowerCase());
+		call.setString(idx++, ai.pass);
+		call.setString(idx++, ai.dir);
+		call.setInt(idx++, ai.flags);
+		call.setBoolean(idx++, password);
+		call.setBoolean(idx++, dir);
+		call.execute();
+		
+		int res = call.getInt(1);
+		boolean wasNull = call.wasNull();
+		try { call.close(); } catch( Exception e ) {};
+		
+		if( wasNull ) {
+			return lr(err_code.err_func_res, "USER_REP");
+		} else {
+			if( res < 0 ) {
+				switch( res ) {
+				case -1:
+					return lr(err_code.err_noent, Integer.toString(ai.id_domain));
+				case -2:
+					return lr(err_code.err_noent, ai.login);
+				default:
+					return lr(err_code.err_func_res, "USER_REP");
+				} 
+			}
+			if( 0 == res )
+				return lr(err_code.err_no, "");
+		}
+		return lr(err_code.err_func_res, "USER_REP");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
 	 *
 	 */
 	public error da_add( int dom_id, String ali ) 
