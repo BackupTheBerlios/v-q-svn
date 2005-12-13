@@ -2,9 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="libtext"
-	ProjectGUID="{14911125-B248-4363-91D0-E3B58131C5F6}"
-	RootNamespace="libtext"
+	Name="libvq"
+	ProjectGUID="{E3F26F64-47D7-41BF-ABD1-0A4A449EC066}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -15,40 +14,31 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBTEXT_EXPORTS"
+				AdditionalIncludeDirectories="C:\Documents and Settings\pniewiad\Desktop\personal\projects\omniORB-4.0.6\include;."
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;__WIN32__;__x86__;_WIN32_WINNT=0x0400;__NT__;__OSVERSION__=4"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				RuntimeLibrary="5"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libtext.dll"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/libtext.pdb"
-				SubSystem="2"
-				ImportLibrary="$(OutDir)/libtext.lib"
-				TargetMachine="1"/>
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libvq.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="mkdir auto
-exit 0
-"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -57,8 +47,6 @@ exit 0
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
@@ -68,42 +56,28 @@ exit 0
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBTEXT_EXPORTS"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
+				AdditionalIncludeDirectories="C:\Documents and Settings\pniewiad\Desktop\personal\projects\omniORB-4.0.6\include;."				
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;__WIN32__;__x86__;_WIN32_WINNT=0x0400;__NT__;__OSVERSION__=4"
+				RuntimeLibrary="4"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
 			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine="mkdir auto
-cp /f md5.c2 auto/lmd5.c
-cp /f md5.h2 auto/lmd5.h
-"/>
+				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libtext.dll"
-				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/libtext.lib"
-				TargetMachine="1"/>
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libvq.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="mkdir auto
-exit 0
-"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -112,8 +86,6 @@ exit 0
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
@@ -128,41 +100,13 @@ exit 0
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\hex.cc">
+				RelativePath=".\auth.cc">
 			</File>
 			<File
-				RelativePath=".\hmac_md5.cc">
+				RelativePath=".\logger.cc">
 			</File>
 			<File
-				RelativePath=".\libtext.cpp">
-			</File>
-			<File
-				RelativePath=".\auto\lmd5.c">
-			</File>
-			<File
-				RelativePath=".\lower.cc">
-			</File>
-			<File
-				RelativePath=".\md5.c2">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /Y md5.c2 auto\lmd5.c
-"
-						Outputs="auto\lmd5.c"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /Y md5.c2 auto\lmd5.c
-"
-						Outputs="auto\lmd5.c"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\split.cc">
+				RelativePath=".\vq.cc">
 			</File>
 		</Filter>
 		<Filter
@@ -170,47 +114,75 @@ exit 0
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\common.hpp">
+				RelativePath=".\auth.hpp">
 			</File>
 			<File
-				RelativePath=".\hex.hpp">
+				RelativePath=".\logger.hpp">
 			</File>
 			<File
-				RelativePath=".\hmac_md5.hpp">
+				RelativePath=".\vq.hpp">
 			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
-				RelativePath=".\libtext.h">
-			</File>
-			<File
-				RelativePath=".\auto\lmd5.h">
-			</File>
-			<File
-				RelativePath=".\lower.hpp">
-			</File>
-			<File
-				RelativePath=".\md5.h2">
+				RelativePath=".\auth.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /Y md5.h2 auto\lmd5.h
+						CommandLine="omniidl.exe  -bcxx -Wbh=.hpp -Wbs=.cc $(InputFileName)
 "
-						Outputs="auto\lmd5.h"/>
+						Outputs="auth.hpp;auth.cc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /Y md5.h2 auto\lmd5.h
+						CommandLine="omniidl.exe  -bcxx -Wbh=.hpp -Wbs=.cc $(InputFileName)
 "
-						Outputs="auto\lmd5.h"/>
+						Outputs="auth.hpp;auth.cc"/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\split.hpp">
+				RelativePath=".\logger.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="omniidl.exe  -bcxx -Wbh=.hpp -Wbs=.cc $(InputFileName)
+"
+						Outputs="logger.hpp;logger.cc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="omniidl.exe  -bcxx -Wbh=.hpp -Wbs=.cc $(InputFileName)
+"
+						Outputs="logger.hpp;logger.cc"/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\text.hpp">
+				RelativePath=".\vq.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="omniidl.exe  -bcxx -Wbh=.hpp -Wbs=.cc $(InputFileName)
+"
+						Outputs="vq.hpp;vq.cc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="omniidl.exe  -bcxx -Wbh=.hpp -Wbs=.cc $(InputFileName)
+"
+						Outputs="vq.hpp;vq.cc"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>
