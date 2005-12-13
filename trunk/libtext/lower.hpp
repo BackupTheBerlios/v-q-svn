@@ -20,12 +20,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef __LOWER_HPP
 #define __LOWER_HPP
 
+#include "common.hpp"
+
 #include <string>
 
 namespace text {
 		
-	std::string lower(const std::string &);
-	std::string upper(const std::string &);
+	LIBTEXT_API std::string lower(const std::string &);
+	LIBTEXT_API std::string upper(const std::string &);
 
 } // namespace text
 

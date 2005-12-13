@@ -20,13 +20,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef __HEX_HPP
 #define __HEX_HPP
 
+#include "common.hpp"
+
 #include <string>
 
 namespace text {
 
-	std::string hex_from( const std::string & hex );
-	std::string to_hex(const unsigned char *buf, unsigned bufl);
-	inline std::string to_hex(const char *buf, unsigned bufl) {
+	LIBTEXT_API std::string hex_from( const std::string & hex );
+	LIBTEXT_API std::string to_hex(const unsigned char *buf, unsigned bufl);
+	LIBTEXT_API inline std::string to_hex(const char *buf, unsigned bufl) {
 		return to_hex(reinterpret_cast<const unsigned char *>(buf), bufl);
 	}
 

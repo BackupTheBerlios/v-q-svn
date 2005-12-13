@@ -16,10 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-
 #ifndef __TEXT_HPP
 #define __TEXT_HPP
 
+#include "win32.hpp"
 #include "lower.hpp"
 #include "hex.hpp"
 #include "hmac_md5.hpp"
