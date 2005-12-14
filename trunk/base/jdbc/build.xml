@@ -1,0 +1,69 @@
+<project name="jdbcd" basedir="." default="build">
+	<taskdef name="idlcheck" classname="idldepend.IDLCheckerTask" classpath="idldepend-0-8-1.jar"/>
+
+    <!-- Project settings -->
+    <property name="project.distname" value="jdbcd"/>
+
+    <!-- Local system paths -->
+    <property file="${basedir}/build.properties"/>
+    <property name="build.dir" value="build"/>
+	<property name="source.dir" value="src"/>
+    <property file="${basedir}/build.properties"/>
+
+    <!-- classpath for JSF 1.0 -->
+    <path id="compile.classpath">
+        <pathelement path ="${webinf.dir}/classes"/>
+        <pathelement path ="${classpath.external}"/>
+        <pathelement path ="${classpath}"/>
+    </path>
+
+    <!-- Check timestamp on files -->
+    <target name="prepare">
+        <tstamp/>
+    </target>
+
+	<!-- Generate Java source from IDL -->
+	<target name="idl">
+		<idlcheck compiler="jdk" force="false" checkAll="true" verbose="basic"
+			targetDir="src">
+			<fileset dir="..">
+				<include name="*.idl"/>
+			</fileset>
+			<include>
+				<pathelement path=".."/>
+			</include>
+			<translate module="vq" package="com.foo_baz.v_q"/>
+		</idlcheck>
+	</target>
+
+    <!-- Normal build of application -->
+    <target name="compile" depends="prepare,idl">
+        <javac srcdir="src" destdir="${build.dir}/">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <!-- Remove classes directory for clean build -->
+    <target name="clean"
+      description="Prepare for clean build">
+      <delete dir="${build.dir}"/>
+      <mkdir  dir="${build.dir}"/>
+    </target>
+
+    <!-- Build entire project -->
+    <target name="build" depends="prepare,compile"/>
+    <target name="rebuild" depends="clean,prepare,compile"/>
+
+    <!-- Create binary distribution -->
+    <target name="jar" depends="build">
+      <mkdir dir="${build.dir}"/>
+      <jar
+        basedir="${build.dir}"
+        jarfile="${project.distname}.jar">
+        <exclude name="WEB-INF/${build.dir}/**"/>
+        <exclude name="WEB-INF/src/**"/>
+        <exclude name="WEB-INF/web.xml"/>
+       </jar>
+    </target>
+
+</project>
