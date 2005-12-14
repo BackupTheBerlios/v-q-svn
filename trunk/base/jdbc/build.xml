@@ -12,8 +12,7 @@
 
     <!-- classpath for JSF 1.0 -->
     <path id="compile.classpath">
-        <pathelement path ="${webinf.dir}/classes"/>
-        <pathelement path ="${classpath.external}"/>
+        <pathelement path ="${basedir}/../../corbautil/corbautil.jar"/>
         <pathelement path ="${classpath}"/>
     </path>
 
@@ -56,14 +55,12 @@
 
     <!-- Create binary distribution -->
     <target name="jar" depends="build">
-      <mkdir dir="${build.dir}"/>
       <jar
         basedir="${build.dir}"
         jarfile="${project.distname}.jar">
-        <exclude name="WEB-INF/${build.dir}/**"/>
-        <exclude name="WEB-INF/src/**"/>
-        <exclude name="WEB-INF/web.xml"/>
-       </jar>
+		<manifest>
+      	</manifest>
+      </jar>
     </target>
 
 </project>
