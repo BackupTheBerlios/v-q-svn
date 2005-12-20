@@ -93,6 +93,16 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 			}
 	}
 
+	if( ! quiet && ! data )
+			cout<<"domain"
+				<< ": login"
+				<< (pass ? ": password" : "")
+				<<": flags"
+				<<": directory"
+				<<": uid"
+				<<": gid"
+				<<endl;
+
 	for( CORBA::ULong i=0, s=dis->length(); i<s; ++i ) {
 			::vq::ivq::user_info_list_var uis;
 
@@ -103,15 +113,6 @@ int cluemain( int ac, char **av, cluemain_env & ce ) {
 					else 
 							return 1;
 			}
-
-			if( ! quiet && ! data )
-					cout<< "login"
-						<< (pass ? ": password" : "")
-						<<": flags"
-						<<": directory"
-						<<": uid"
-						<<": gid"
-						<<endl;
 
 			for( CORBA::ULong j=0, k=uis->length(); j<k; ++j ) {
 					if(!quiet) 

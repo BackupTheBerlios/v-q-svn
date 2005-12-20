@@ -208,11 +208,11 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 
 # Add the "_vq" user
 /usr/sbin/useradd -c "Virtual Qmail" -u 111 \
-	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
+	-s /bin/sh -r -d %{datadir} -g _vq _vq 2> /dev/null || :
 
 # Add the "_log" user
 /usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
-	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
+	-s /bin/sh -r -d %{_localstatedir}/log -g _log _log 2> /dev/null || :
 
 %pre pgsql
 # Add the "_vq" group
@@ -221,11 +221,11 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 
 # Add the "_vq" user
 /usr/sbin/useradd -c "Virtual Qmail" -u 111 \
-	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
+	-s /bin/sh -r -d %{datadir} -g _vq _vq 2> /dev/null || :
 
 # Add the "_log" user
 /usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
-	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
+	-s /bin/sh -r -d %{_localstatedir}/log -g _log _log 2> /dev/null || :
 
 %if %{?_with_jdbc:1}%{!?_with_jdbc:0}
 
@@ -236,11 +236,11 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 
 # Add the "_vq" user
 /usr/sbin/useradd -c "Virtual Qmail" -u 111 \
-	-s /bin/sh -r -d %{datadir} _vq 2> /dev/null || :
+	-s /bin/sh -r -d %{datadir} -g _vq _vq 2> /dev/null || :
 
 # Add the "_log" user
 /usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
-	-s /bin/sh -r -d %{_localstatedir}/log _log 2> /dev/null || :
+	-s /bin/sh -r -d %{_localstatedir}/log -g _log _log 2> /dev/null || :
 
 %endif # %{?_with_jdbc:1}%{!?_with_jdbc:0}
 
@@ -266,13 +266,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %config %{_sysconfdir}/ld.so.conf.d/vq.conf
 
+%attr(04550,_vq,_vq) %{_bindir}/qmail_*
 %{_bindir}/*_*
 %{_bindir}/qmailvqd
 %{_bindir}/autoresp
 %{_bindir}/deliver
 %{_bindir}/qmail-send-restart
-
-#%attr(4510,root,%{suexec_caller}) %{_sbindir}/suexec
 
 %dir %{_libdir}/vq
 %{_libdir}/vq/*

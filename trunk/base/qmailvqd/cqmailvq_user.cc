@@ -163,7 +163,7 @@ namespace POA_vq {
 			ret.reset(this->user_get(ui)); 
 			if( ::vq::ivq::err_no != ret->ec )
 				return ret.release();
-			if( ! strcmp(ai.dir, ui.dir) )
+			if( strcmp(ai.dir, ui.dir) )
 				return lr(::vq::ivq::err_func_ni, "");
 		}
 	
