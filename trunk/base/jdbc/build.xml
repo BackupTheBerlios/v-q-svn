@@ -1,4 +1,4 @@
-<project name="jdbcd" basedir="." default="build">
+<project name="jdbcd" basedir="." default="jar">
 	<taskdef name="idlcheck" classname="idldepend.IDLCheckerTask" classpath="idldepend-0-8-1.jar"/>
 
     <!-- Project settings -->
@@ -19,6 +19,8 @@
     <!-- Check timestamp on files -->
     <target name="prepare">
         <tstamp/>
+		<delete dir="build"/>
+		<mkdir dir="build"/>
     </target>
 
 	<!-- Generate Java source from IDL -->
