@@ -4,5 +4,5 @@
 #exec idl --no-boa --hh-suffix=hpp $@
 
 # For OmniORB:
-export PATH="/usr/local/progs/omniorb/bin:$PATH"
+#export PATH="/usr/local/progs/omniorb/bin:$PATH"
 exec omniidl -bcxx -Wbh=.hpp -Wbs=.cc $@

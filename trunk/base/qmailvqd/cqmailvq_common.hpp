@@ -7,8 +7,8 @@
 
 namespace vq {
 
-	void vq::report_exception( CORBA::SystemException & e );
-	void vq::report_exception( CORBA::Exception & e );
+	void report_exception( CORBA::SystemException & e );
+	void report_exception( CORBA::Exception & e );
 	
 }
 

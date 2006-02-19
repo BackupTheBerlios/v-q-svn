@@ -18,7 +18,7 @@ License: GPL
 Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{project}-root
 BuildPrereq: findutils, perl, boost-devel >= 1.31.0, omniORB-devel >= 4.0.5-1
-BuildPrereq: libpqxx-devel >= 2.5.0, openssl-devel >= 0.9.7
+BuildPrereq: libpqxx-devel >= 2.5.0, openssl-devel >= 0.9.7, pkgconfig >= 0.15
 Prereq: /sbin/chkconfig, /bin/mktemp, /bin/rm, /bin/mv, /usr/sbin/useradd, /usr/sbin/groupadd
 Prereq: sh-utils, textutils, /sbin/ldconfig
 Requires: omniORB >= 4.0.5-1, boost >= 1.31.0, daemontools >= 0.76
@@ -87,7 +87,6 @@ for p in boost_date_time boost_regex boost_thread boost_unit_test_framework ; do
 done
 
 echo "-DP_USE_OMNIORB -I/usr/include" > corba.inc
-echo "-L/usr/lib -lCOS4 -lCOSDynamic4 -lomniORB4 -lssl -lcrypto -lpthread" > corba.lib
 
 echo '#!/bin/sh' > idl
 echo 'exec omniidl -bcxx -Wbh=.hpp -Wbs=.cc $@' >> idl
@@ -133,10 +132,10 @@ make jdbc
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make PREFIX=$RPM_BUILD_ROOT/usr install
-make PREFIX=$RPM_BUILD_ROOT/usr install-pgsql
+make LIBDIR=%{_libdir} PREFIX=$RPM_BUILD_ROOT/usr install
+make LIBDIR=%{_libdir} PREFIX=$RPM_BUILD_ROOT/usr install-pgsql
 %if %{?_with_jdbc:1}%{!?_with_jdbc:0}
-make PREFIX=$RPM_BUILD_ROOT/usr install-jdbc
+make LIBDIR=%{_libdir} PREFIX=$RPM_BUILD_ROOT/usr install-jdbc
 %endif
 
 # copy contrib/service/
@@ -203,46 +202,29 @@ mv $RPM_BUILD_ROOT/usr/etc $RPM_BUILD_ROOT/%{_sysconfdir}/vq
 
 %pre
 # Add the "_vq" group
-/usr/sbin/groupadd -g 111 _vq || :
-/usr/sbin/groupadd -g 112 _log || :
+id -g _vq > /dev/null 2>&1
+if [ $? != 0 ] ; then
+	/usr/sbin/groupadd -g 111 _vq || :
+fi
 
-# Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
-	-s /bin/sh -r -d %{datadir} -g _vq _vq 2> /dev/null || :
+id -g _log > /dev/null 2>&1
+if [ $? != 0 ] ; then 
+	/usr/sbin/groupadd -g 112 _log || :
+fi
 
-# Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
-	-s /bin/sh -r -d %{_localstatedir}/log -g _log _log 2> /dev/null || :
+id -u _vq > /dev/null 2>&1
+if [ $? != 0 ] ; then 
+	# Add the "_vq" user
+	/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
+		-s /bin/sh -r -d %{datadir} -g _vq _vq 2> /dev/null
+fi
 
-%pre pgsql
-# Add the "_vq" group
-/usr/sbin/groupadd -g 111 _vq || :
-/usr/sbin/groupadd -g 112 _log || :
-
-# Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
-	-s /bin/sh -r -d %{datadir} -g _vq _vq 2> /dev/null || :
-
-# Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
-	-s /bin/sh -r -d %{_localstatedir}/log -g _log _log 2> /dev/null || :
-
-%if %{?_with_jdbc:1}%{!?_with_jdbc:0}
-
-%pre jdbc
-# Add the "_vq" group
-/usr/sbin/groupadd -g 111 _vq || :
-/usr/sbin/groupadd -g 112 _log || :
-
-# Add the "_vq" user
-/usr/sbin/useradd -c "Virtual Qmail" -u 111 \
-	-s /bin/sh -r -d %{datadir} -g _vq _vq 2> /dev/null || :
-
-# Add the "_log" user
-/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
-	-s /bin/sh -r -d %{_localstatedir}/log -g _log _log 2> /dev/null || :
-
-%endif # %{?_with_jdbc:1}%{!?_with_jdbc:0}
+id -u _log > /dev/null 2>&1
+if [ $? != 0 ] ; then 
+	# Add the "_log" user
+	/usr/sbin/useradd -c "Virtual Qmail log writer" -u 112 \
+		-s /bin/sh -r -d %{_localstatedir}/log -g _log _log 2> /dev/null
+fi
 
 %post
 /sbin/ldconfig

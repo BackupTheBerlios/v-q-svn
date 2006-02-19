@@ -17,6 +17,16 @@
 			Rozdzia³ opisuje sposoby integracji v-q z innymi programami.
 		</para>
 
+		<section id="life.inte.ihs">
+			<title>Incredible Hosting System</title>
+
+			<para>
+				<ulink url="http://ihs.foo-baz.com">IHS</ulink> jest
+				systemem umo¿liwiaj±cym administracjê v-q za pomoc± 
+				przegl±darki internetowej.
+			</para>
+		</section>
+
 		<section id="life.inte.omail">
 			<title>Omail-webmail</title>
 
@@ -25,6 +35,16 @@
 				omail-webmail aby korzysta³ z vpopmail.
 				Wszelkie odwo³ania do <filename>vchkpw</filename> 
 				zmieñ na <filename>user_auth</filename>.
+			</para>
+		</section>
+
+		<section id="life.inte.bincimap">
+			<title>bincimap</title>
+
+			<para>
+				Wykorzystaj przyk³ady dla vpopmail,
+				zmieñ wszelkie odwo³ania do <filename>vchkpw</filename> 
+				na <filename>user_auth</filename>.
 			</para>
 		</section>
 	</section>

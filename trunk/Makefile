@@ -37,11 +37,6 @@ jdbc install-jdbc:
 		) || exit 1; \
 	done
 
-install-dirs:
-	for p in etc etc/ivq etc/iauth etc/ilogger bin lib lib/vq include include/vq ; do \
-		$(INSTALL) -d -m 0755 $(PREFIX)/$$p ; \
-	done
-
 install-conf: install-dirs
 	@echo "Installing default configuration..."
 

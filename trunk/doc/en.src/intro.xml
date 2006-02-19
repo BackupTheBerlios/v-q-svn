@@ -118,7 +118,8 @@
 
 			<para>
 				It's now possible to modify user's account - change 
-				flags, password at the same time.
+				flags, password at the same time. Also fixed compilation
+				problems with gcc 4.0.
 			</para>
 		</formalpara>
 

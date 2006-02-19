@@ -1,4 +1,5 @@
 PREFIX?=/var/vq
+LIBDIR?=$(PREFIX)/lib
 INSTALL?=install
 JAVAC?=javac
 JAVA?=java
@@ -20,3 +21,11 @@ $(BASE)/tools/mkdep:
 	if [ -e .depend -a ! -s .depend ]; then \
 		rm -f .depend ; \
 	fi
+
+install-dirs:
+	for p in etc/ivq etc/iauth etc/ilogger bin include/vq ; do \
+		$(INSTALL) -d -m 0755 $(PREFIX)/$$p ; \
+	done
+	$(INSTALL) -d -m 0755 $(LIBDIR)/vq
+
+

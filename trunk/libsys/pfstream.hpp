@@ -36,9 +36,9 @@
 
 namespace posix
 {
-#if __GNUC__ >= 3 
+#if __GNUC__ >= 3
+#if ( __GNUC__ >= 3 && __GNUC_MINOR__ >= 4 ) || __GNUC__ >= 4
 
-#if __GNUC_MINOR__ >= 4
 template < class charT, class traits = std::char_traits<charT> >
 class basic_filebuf : public std::basic_filebuf<charT,traits> {
 public:

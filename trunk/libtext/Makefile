@@ -21,12 +21,12 @@ auto/lmd5.h: $(BASE)/compile try/md5.c md5.h1 md5.h2
 auto/lmd5.o: $(BASE)/compile auto/lmd5.c auto/lmd5.h
 	(cd auto && $(BASE)/../compile lmd5.c)
 
-libtext.so: libtext.so.6.0
-	ln -sf libtext.so.6.0 libtext.so
+libtext.so: libtext.so.7.0
+	ln -sf libtext.so.7.0 libtext.so
 
-libtext.so.6.0: $(BASE)/make-so lower.o hex.o hmac_md5.o auto/lmd5.o \
+libtext.so.7.0: $(BASE)/make-so lower.o hex.o hmac_md5.o auto/lmd5.o \
 split.o
-	$(BASE)/make-so libtext.so.6.0 lower.o hex.o hmac_md5.o auto/lmd5.o \
+	$(BASE)/make-so libtext.so.7.0 lower.o hex.o hmac_md5.o auto/lmd5.o \
 	split.o
 
 hex.o: $(BASE)/comp-so hex.cc
@@ -52,5 +52,5 @@ install: all
 		$(INSTALL) -m 0644 $$p $(PREFIX)/include/vq/libtext/$$p ; \
 	done
 	$(INSTALL) -d -m 0755 $(PREFIX)/lib/vq
-	$(INSTALL) -m 0755 libtext.so.6.0 $(PREFIX)/lib/vq/libtext.so.6.0
+	$(INSTALL) -m 0755 libtext.so.7.0 $(PREFIX)/lib/vq/libtext.so.7.0
 	$(INSTALL) -m 0755 libtext.so $(PREFIX)/lib/vq/libtext.so

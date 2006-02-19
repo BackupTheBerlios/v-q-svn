@@ -104,6 +104,16 @@
 			</para>
 
 			<formalpara>
+				<title>Wersja 11</title>
+				
+				<para>
+					Mo¿liwe jest modyfikacja ustawieñ konta u¿ytkownika - zmiana flag,
+					has³a. 
+					Poprawiono równie¿ kompilacjê pod gcc 4.0.
+				</para>
+			</formalpara>
+			
+			<formalpara>
 				<title>Wersja 10</title>
 
 				<para>

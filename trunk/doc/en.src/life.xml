@@ -18,12 +18,31 @@
 			other software.
 		</para>
 
+		<section id="life.inte.ihs">
+			<title>Incredible Hosting System</title>
+
+			<para>
+				<ulink url="http://ihs.foo-baz.com">IHS</ulink> is a system
+				that allows managing v-q via web browser.
+			</para>
+		</section>
+
 		<section id="life.inte.omail">
 			<title>Omail-webmail</title>
 
 			<para>
 				All you need to do is to configure omail-webmail to use
 				vpopmail and change call to <filename>vchkpw</filename> 
+				to <filename>user_auth</filename>.
+			</para>
+		</section>
+
+		<section id="life.inte.bincimap">
+			<title>bincimap</title>
+
+			<para>
+				Use examples for vpopmail and change call 
+				to <filename>vchkpw</filename> 
 				to <filename>user_auth</filename>.
 			</para>
 		</section>

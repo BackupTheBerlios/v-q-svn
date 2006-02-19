@@ -155,5 +155,13 @@
 				day it will make foo-baz.com a profitable company :-)
 			</para>
 		</section>
+
+		<section id="rramiega">
+			<title>Robert Ramiega</title>
+			<para>
+				Robert issued patch for gcc 4.0 support, also described
+				changes required to compile v-q on Debian.
+			</para>
+		</section>
 	</section>
 </chapter>

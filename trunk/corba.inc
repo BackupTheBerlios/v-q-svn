@@ -1,1 +1,1 @@
--DP_USE_OMNIORB -I/usr/local/progs/omniorb/include
+-DP_USE_OMNIORB -D__x86__ -D__linux__ -D__OSVERSION__=2  -I/usr/local/include
