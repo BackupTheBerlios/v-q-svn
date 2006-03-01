@@ -228,6 +228,14 @@
 				</thead>
 				<tbody>
 					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model. You can read more in
+							<filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
 						<entry><filename>pgsql</filename></entry>
 						<entry>dbname=mail password=mail user=mail</entry>
 						<entry>
@@ -247,14 +255,6 @@
 						</entry>
 					</row>
 					<row>
-						<entry><filename>dep_mod</filename></entry>
-						<entry>fixed_ports_no_imr</entry>
-						<entry>
-							Deployment model. You can read more in
-							<filename>corba_utils.pdf</filename>.
-						</entry>
-					</row>
-					<row>
 						<entry><filename>policy</filename></entry>
 						<entry>single_thread_model</entry>
 						<entry>
@@ -263,7 +263,22 @@
 							<filename>corba_utils.pdf</filename>.
 						</entry>
 					</row>
-
+					<row>
+						<entry><filename>read_by_sql</filename></entry>
+						<entry>1</entry>
+						<entry>
+							If value is different than 0 it's possible to call functions read_by_sql and count_by_sql.
+							Otherwise functions are disabled and calls return with error.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>rm_by_sql</filename></entry>
+						<entry>0</entry>
+						<entry>
+							If value is different than 0 it's possible to call function rm_by_sql.
+							Otherwise function is disabled and calls return with error.
+						</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>

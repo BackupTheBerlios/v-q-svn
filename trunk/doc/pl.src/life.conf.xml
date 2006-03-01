@@ -241,6 +241,14 @@
 				</thead>
 				<tbody>
 					<row>
+						<entry><filename>dep_mod</filename></entry>
+						<entry>fixed_ports_no_imr</entry>
+						<entry>
+							Deployment model opisany w <filename>corba_utils.pdf</filename>.
+							Okre¶la kontekst dzia³ania us³ugi CORBA.
+						</entry>
+					</row>
+					<row>
 						<entry><filename>pgsql</filename></entry>
 						<entry>dbname=mail password=mail user=mail</entry>
 						<entry>
@@ -260,20 +268,28 @@
 						</entry>
 					</row>
 					<row>
-						<entry><filename>dep_mod</filename></entry>
-						<entry>fixed_ports_no_imr</entry>
-						<entry>
-							Deployment model opisany w <filename>corba_utils.pdf</filename>.
-							Okre¶la kontekst dzia³ania us³ugi CORBA.
-						</entry>
-					</row>
-					<row>
 						<entry><filename>policy</filename></entry>
 						<entry>single_thread_model</entry>
 						<entry>
 							Okre¶la politykê dzia³ania servanta CORBA -
 							wykorzystanie w±tków, trwa³o¶æ obiektu, etc.
 							Zobacz <filename>corba_utils.pdf</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>read_by_sql</filename></entry>
+						<entry>1</entry>
+						<entry>
+							Je¿eli warto¶æ jest ró¿na od zera funkcje read_by_sql i count_by_sql s± dostêpne dla klientów.
+							W innym wypadku dostêp jest zabroniony i odwo³anie siê do tych funkcjii zwraca b³±d.
+						</entry>
+					</row>
+					<row>
+						<entry><filename>rm_by_sql</filename></entry>
+						<entry>0</entry>
+						<entry>
+							Je¿eli warto¶æ jest ró¿na od zera funkcja rm_by_sql jest dostêpna dla klientów.
+							W innym wypadku dostêp jest zabroniony i odwo³anie siê do funkcji zwraca b³±d.
 						</entry>
 					</row>
 				</tbody>

@@ -41,12 +41,13 @@ clean:
 		rm -rf $$l.html/* ; \
 	done
 
-mirrors-put: mirrors-put-berlios.de
+mirror-prepare:
 	find *.html/ -type f -exec chmod a+r {} \; -o -type d -exec chmod a+rx {} \;
-	rsync -vCr --delete --rsh "ssh -l rsync" *.html foo-baz.com::foo-baz.com/www/foo-baz.com/v-q/
-	for l in $(LANGS) ; do \
-		rsync -vCr --delete --rsh "ssh -l paweln" $$l.html/ shell.sourceforge.net:/home/groups/v/v-/v-q/htdocs/$$l.html ; \
-	done
 
-mirrors-put-berlios.de:
+mirror: mirror-prepare mirror-berlios.de mirror-sf.net
+
+mirror-berlios.de:
 	rsync -vCr --delete --rsh "ssh -l paweln" *.html shell.berlios.de:/home/groups/v-q/htdocs/
+
+mirror-sf.net:
+	rsync -vCr --delete --rsh "ssh -l paweln" *.html shell.sourceforge.net:/home/groups/v/v-/v-q/htdocs/
