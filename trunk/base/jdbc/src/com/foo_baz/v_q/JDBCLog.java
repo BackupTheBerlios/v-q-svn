@@ -26,13 +26,18 @@ import java.util.*;
 import org.omg.CORBA.*;
 
 public class JDBCLog extends iloggerPOA {	
+	protected Boolean rm_by_sql;
+	protected Boolean read_by_sql;
+
 	/**
 	 *
 	 */
-	public JDBCLog( Connection con ) throws SQLException {
+	public JDBCLog( Connection con, Boolean rm_by_sql, Boolean read_by_sql ) throws SQLException {
 		clear();
 		this.con = con;
 		this.con.setAutoCommit(true);
+		this.rm_by_sql = rm_by_sql;
+		this.read_by_sql = read_by_sql;
 	}
 	
 	/**
@@ -277,7 +282,7 @@ public class JDBCLog extends iloggerPOA {
 				le.id_log = res.getString(idx);
 				if( res.wasNull() ) le.id_log = "";
 				++idx;
-				le.time = res.getTime(idx).toString();
+				le.time = res.getTimestamp(idx).toString();
 				if( res.wasNull() ) le.time = "";
 				++idx;
 				le.ip = res.getString(idx);
@@ -330,6 +335,87 @@ public class JDBCLog extends iloggerPOA {
 	/**
 	 *
 	 */
+	public error read_by_sql( String sql, int start, int cnt, 
+			string_list2Holder les ) 
+			throws null_error, db_error, except { try {
+		les.value = new String[0][0];
+		ArrayList ales = new ArrayList();
+
+		if( this.read_by_sql != true )
+			return lr(err_code.err_perm, "read_by_sql");
+
+		PreparedStatement st = null;
+		ResultSet res = null;
+
+		try {
+			con.setReadOnly(true);
+			con.setAutoCommit(false);
+
+			String qr = sql;
+			st = con.prepareStatement(qr);
+
+			int idx = 1;
+			res = st.executeQuery();
+
+			if( res.getType() == ResultSet.TYPE_FORWARD_ONLY ) {
+				for( int i = 0; i <= start; ++i ) {
+					if( ! res.next() ) {
+						con.rollback();
+						try { if( res != null ) res.close(); } catch(Exception e) {}
+						try { if( st != null ) st.close(); } catch(Exception e) {}
+						con.setReadOnly(false);
+						con.setAutoCommit(true);
+						return lr(start != 0 ? err_code.err_noent : err_code.err_no, "");
+					}
+				}
+			} else if( ! res.absolute(start+1) ) {
+				con.rollback();
+				try { if( res != null ) res.close(); } catch(Exception e) {}
+				try { if( st != null ) st.close(); } catch(Exception e) {}
+				con.setReadOnly(false);
+				con.setAutoCommit(true);
+				return lr(err_code.err_noent, "");
+			}
+
+			if( cnt == 0 ) --cnt; // if it's zero means that we want to read all entries
+			for( idx=1; cnt-- != 0; idx = 1 ) {
+				int cols = res.getMetaData().getColumnCount();
+				String [] le = new String[ cols ];
+				
+				for( int col = 0; col < cols; ++col ) {
+					le[col] = res.getString(col);
+					if( res.wasNull() ) le[col] = "";
+				}
+
+				ales.add(le);
+
+				if(!res.next()) break;
+			}
+
+			les.value = new String[ ales.size() ][];
+			for( int i=0, s=ales.size(); i<s; ++i )
+				les.value[i] = (String[]) ales.get(i);
+
+			con.rollback();
+		} finally {
+			try { if( res != null ) res.close(); } catch(Exception e) {}
+			try { if( st != null ) st.close(); } catch(Exception e) {}
+			con.setAutoCommit(true);
+			con.setReadOnly(false);
+		}
+
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
+	 *
+	 */
 	public error rm_all() throws null_error, db_error, except { try {
 		CallableStatement call = con.prepareCall( "{ ? = call log_rm_all() }" );
 		call.registerOutParameter(1, Types.INTEGER);
@@ -363,6 +449,33 @@ public class JDBCLog extends iloggerPOA {
 		
 		if( res != 0 )
 			return lr(err_code.err_func_res, "LOG_RM_BY_DOM");
+		
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
+	 *
+	 */
+	public error rm_by_sql( String where ) throws null_error, db_error, except { try {
+		if( this.rm_by_sql != true )
+			return lr(err_code.err_perm, "rm_by_sql");
+
+		CallableStatement call = con.prepareCall( "{ ? = call log_rm_by_sql(?) }" );
+		int idx=1;
+		call.registerOutParameter(idx++, Types.INTEGER);
+		call.setString(idx++, dom);
+		call.execute();
+		int res = call.getInt(1);
+		try { call.close(); } catch( Exception e ) {}
+		
+		if( res != 0 )
+			return lr(err_code.err_func_res, "LOG_RM_BY_SQL");
 		
 		return lr(err_code.err_no, "");
 	} catch( SQLException e ) {

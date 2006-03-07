@@ -2,7 +2,7 @@
 prog="jdbclogd"
 
 drivers="oracle.jdbc.driver.OracleDriver"
-export CLASSPATH=/export/progs2/oracle/oracle/ojdbc14.jar
+export CLASSPATH=/export/progs/oracle/oracle/ojdbc14.jar
 
 # v-q jars
 export CLASSPATH="$CLASSPATH":"$BASE/corbautil/corbautil.jar":"$BASE/base/jdbc/jdbcd.jar"

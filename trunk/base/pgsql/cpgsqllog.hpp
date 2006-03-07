@@ -43,6 +43,23 @@ namespace POA_vq {
 					typedef ::vq::ilogger::log_entry_list_out log_entry_list_out;
 					typedef ::vq::ilogger::log_entry_list log_entry_list;
 					typedef ::vq::ilogger::err_code err_code;
+					typedef ::vq::ilogger::string_list2_out string_list2_out;
+					typedef ::vq::ilogger::string_list2 string_list2;
+					typedef ::vq::ilogger::string_list string_list;
+
+					struct service_conf {
+						std::string pg_info;
+						size_type pgs_pool;
+
+						bool read_by_sql;
+						bool rm_by_sql;
+
+						service_conf( const std::string & pg_info,
+							size_type pgs_pool, bool read_by_sql, bool rm_by_sql )
+							: pg_info(pg_info), pgs_pool(pgs_pool),
+							read_by_sql(read_by_sql), rm_by_sql(rm_by_sql) {
+						}
+					};
 				
 					virtual void clear();
 					virtual void ip_set( const char* ip );
@@ -59,16 +76,21 @@ namespace POA_vq {
     				virtual error* read_by_user( size_type start, size_type cnt, 
 							log_entry_list_out les );
 					virtual error* count_by_user( size_type & cnt );
+					virtual error* read_by_sql(const char* sql, size_type start, 
+							size_type cnt, string_list2_out les);
 					virtual error* rm_all();
 					virtual error* rm_by_dom();
 					virtual error* rm_by_user();
+					virtual error* rm_by_sql(const char* where);
 
-					cpgsqllog( const std::string &, size_type );
+					cpgsqllog( const service_conf & );
 					virtual ~cpgsqllog();
 
 			protected:
 					/// pgsql
 					cpgsqlpool pool;
+
+					service_conf conf;
 
 					std::string ip;
 					std::string dom;

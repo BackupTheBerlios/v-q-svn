@@ -518,6 +518,20 @@
 							Zobacz <filename>corba_utils.pdf</filename>.
 						</entry>
 					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.rm_by_sql</entry>
+						<entry>0</entry>
+						<entry>
+							Warto¶æ ró¿na od 0 w³±cza funkcjê rm_by_sql.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.read_by_sql</entry>
+						<entry>0</entry>
+						<entry>
+							Warto¶æ ró¿na od 0 w³±cza funkcjê read_by_sql.
+						</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>

@@ -103,6 +103,8 @@ int vqmain(int ac, char **av) {
 	conf::clnconf dep_mod(conf_dir+"dep_mod", "fixed_ports_no_imr");
 	conf::clnconf policy(conf_dir+"policy", "single_thread_model");
 	conf::cintconf pgsql_pool(conf_dir+"pgsql_pool", "1");
+	conf::cintconf read_by_sql(conf_dir+"read_by_sql", "0");
+	conf::cintconf rm_by_sql(conf_dir+"rm_by_sql", "0");
 
 	auto_ptr<cpoa_hier> poa;
 	try {
@@ -112,12 +114,13 @@ int vqmain(int ac, char **av) {
 			cerr<<e<<endl;
 			return 111;
 	}
-	
+
+	cpgsqllog::service_conf conf(pgsql.val_str(), 
+		pgsql_pool.val_int(), read_by_sql.val_int() != 0, rm_by_sql.val_int() != 0 );
 	/*
 	 * Create authorization object
 	 */
-	auto_ptr<cpgsqllog> pglog( new cpgsqllog(pgsql.val_str(), 
-		pgsql_pool.val_int()) );
+	auto_ptr<cpgsqllog> pglog( new cpgsqllog(conf) );
 
 	PortableServer::ObjectId_var oid = poa->core_poa()->activate_object(pglog.get());
 	CORBA::Object_var ref = poa->core_poa()->id_to_reference (oid.in());

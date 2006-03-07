@@ -75,6 +75,8 @@ public class jdbclogd {
 		String dep_mod_prop = "com.foo_baz.v_q."+me+".dep_mod";
 		String policy_prop = "com.foo_baz.v_q."+me+".policy";
 		String ds_prop = "com.foo_baz.v_q."+me+".ds";
+		String rm_by_sql_prop = "com.foo_baz.v_q."+me+".rm_by_sql";
+		String read_by_sql_prop = "com.foo_baz.v_q."+me+".read_by_sql";
 		String jdbc_prop = "com.foo_baz.v_q."+me+".jdbc";
 		String jdbc_user_prop = "com.foo_baz.v_q."+me+".jdbc.user";
 		String jdbc_pass_prop = "com.foo_baz.v_q."+me+".jdbc.pass";
@@ -89,6 +91,12 @@ public class jdbclogd {
 			? "mail" : props.getProperty(jdbc_user_prop);
 		String jdbc_pass = props.getProperty(jdbc_pass_prop) == null 
 			? "mail" : props.getProperty(jdbc_pass_prop);
+		Boolean rm_by_sql = new Boolean(
+			! "0".equals(props.getProperty(rm_by_sql_prop) == null 
+				? "0" : props.getProperty(rm_by_sql_prop) ) );
+		Boolean read_by_sql = new Boolean(
+			! "0".equals(props.getProperty(read_by_sql_prop) == null 
+				? "0" : props.getProperty(read_by_sql_prop) ) );
 
 		System.out.println("Configuration: ");
 		System.out.println(dep_mod_prop+": "+dep_mod);
@@ -97,6 +105,8 @@ public class jdbclogd {
 		System.out.println(jdbc_prop+": "+jdbc);
 		System.out.println(jdbc_user_prop+": "+jdbc_user);
 		System.out.println(jdbc_pass_prop+": <secret>");
+		System.out.println(rm_by_sql_prop+": "+rm_by_sql);
+		System.out.println(read_by_sql_prop+": "+read_by_sql);
 
 		POAHier poa = null;
 		try {
@@ -114,7 +124,7 @@ public class jdbclogd {
 			con = DriverManager.getConnection(jdbc, jdbc_user, jdbc_pass);
 		}
 
-		JDBCLog log = new JDBCLog(con);
+		JDBCLog log = new JDBCLog(con, rm_by_sql, read_by_sql);
 
 		byte[] oid = poa.getCorePoa().activate_object(log);
 		org.omg.CORBA.Object ref = poa.getCorePoa().id_to_reference(oid);

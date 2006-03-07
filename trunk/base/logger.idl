@@ -30,6 +30,8 @@ module vq {
 			typedef ivq::err_code err_code;
 			typedef unsigned short service_type;
 			typedef unsigned short result_type;
+			typedef sequence<string> string_list;
+			typedef sequence<string_list> string_list2;
 
 			/// Size
 			typedef ivq::size_type size_type;
@@ -135,6 +137,13 @@ module vq {
 				raises (null_error, db_error, except);
 
 			/**
+			 * Execute sql query and return results.
+			 */
+			error read_by_sql( in string sql, in size_type start, in size_type cnt,
+					out string_list2 tuples )
+				raises (null_error, db_error, except);
+
+			/**
 			 * Removes all entries from log table.
 			 */
 			error rm_all()
@@ -150,6 +159,12 @@ module vq {
 			 * Removes all entries for a user.
 			 */
 			error rm_by_user()
+				raises (null_error, db_error, except);
+
+			/**
+			 * Removes all entries matching given where clause
+			 */
+			error rm_by_sql( in string where )
 				raises (null_error, db_error, except);
 
 	};

@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/regex.hpp>
 
 #include <memory>
 #include <sstream>
@@ -164,18 +165,28 @@ struct logger_test {
 
 			CORBA::ULong s = les->length();
 			BOOST_CHECK_EQUAL(s, 3U);
+
 			if( s > 0U ) {
-					BOOST_CHECK(!strcmp(les[0U].msg, "re_read"));
-					BOOST_CHECK_EQUAL(les[0U].res, ::vq::ilogger::re_read);
+					unsigned idx = 0U;
+					boost::regex time_re(
+						"[0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}(\\.[0-9]*)*", 
+						boost::regex::extended);
+					BOOST_CHECK(!strcmp(les[idx].msg, "re_read"));
+					BOOST_CHECK_EQUAL(les[idx].res, ::vq::ilogger::re_read);
+					BOOST_CHECK( boost::regex_match(static_cast<const char *>(les[idx].time), time_re) );
 
 					if( s > 1U ) {
-							BOOST_CHECK(!strcmp(les[1U].msg, "re_ok"));
-							BOOST_CHECK_EQUAL(les[1U].res, ::vq::ilogger::re_ok);
+							++idx;
+							BOOST_CHECK(!strcmp(les[idx].msg, "re_ok"));
+							BOOST_CHECK_EQUAL(les[idx].res, ::vq::ilogger::re_ok);
+							BOOST_CHECK( boost::regex_match(static_cast<const char *>(les[idx].time), time_re) );
 
 							if( s > 2U ) {
-									BOOST_CHECK(!strcmp(les[2U].msg, ""));
-									BOOST_CHECK_EQUAL(les[2U].res, 
+									++idx;
+									BOOST_CHECK(!strcmp(les[idx].msg, ""));
+									BOOST_CHECK_EQUAL(les[idx].res, 
 										::vq::ilogger::re_unknown);
+									BOOST_CHECK( boost::regex_match(static_cast<const char *>(les[idx].time), time_re) );
 							}
 					}
 			}

@@ -32,8 +32,8 @@ namespace POA_vq {
 	/**
 	 *
 	 */
-	cpgsqllog::cpgsqllog( const std::string & pginfo, size_type pgs_pool ) 
-			: pool(pginfo, pgs_pool) std_try {
+	cpgsqllog::cpgsqllog( const service_conf & c ) 
+			: pool(c.pg_info, c.pgs_pool), conf(c) std_try {
 		clear();
 	} std_catch
 	
@@ -239,6 +239,46 @@ namespace POA_vq {
 	/**
 	 *
 	 */
+	cpgsqllog::error * cpgsqllog::read_by_sql(const char * sql, 
+			size_type start, size_type cnt, string_list2_out les ) std_try {
+		if( ! sql )
+			throw ::vq::null_error(__FILE__, __LINE__);
+
+		les = new string_list2;
+
+		if( ! conf.read_by_sql ) return lr(::vq::ivq::err_perm, "read_by_sql");
+
+		string qr( sql );
+		
+		if( cnt ) {
+				qr += " LIMIT "+to_string(cnt);
+		}
+		if( start ) {
+				qr+= " OFFSET "+to_string(start);
+		}
+
+		cpgsqlpool::value_ptr pg(pool.get());
+		pqxx::work trans(*pg.get());
+		trans.exec("SET TRANSACTION READ ONLY"); // for security
+
+		result res(trans.exec(qr));
+		result::size_type s = res.size(), fs;
+
+		les->length(s);
+		for( result::tuple::size_type i=0; i<s; ++i ) {
+				fs = res[i].size();
+				les[i].length(fs);
+				for( result::tuple::size_type j=0; j < fs; ++j ) {
+						les[i][j] = CORBA::string_dup( res[i][j].is_null() ? "" : res[i][j].c_str() );
+				}
+		}
+		trans.abort(); // for security
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
+	 *
+	 */
 	cpgsqllog::error * cpgsqllog::rm_all() std_try {
 		return rm_by_func( "log_rm_all()");
 	} std_catch
@@ -256,6 +296,18 @@ namespace POA_vq {
 	cpgsqllog::error * cpgsqllog::rm_by_user() std_try {
   		return rm_by_func( "log_rm_by_user("+'\''+sqlesc(this->dom)+'\''
 			+','+'\''+sqlesc(this->log)+'\''+")" );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::rm_by_sql( const char * where ) std_try {
+		if( ! where )
+			throw ::vq::null_error(__FILE__, __LINE__);
+
+		if( ! conf.rm_by_sql ) return lr(::vq::ivq::err_perm, "rm_by_sql");
+
+  		return rm_by_func( "log_rm_by_sql("+'\''+sqlesc(where)+'\''+")" );
 	} std_catch
 
 	/**

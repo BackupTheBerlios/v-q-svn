@@ -110,7 +110,9 @@ module vq {
 					/// function not implemented
 					err_func_ni,
 					/// child crashed or was killed
-					err_exec_crash // 24
+					err_exec_crash, // 24,
+					/// permission denied
+					err_perm
 			};
 
 			/// errors

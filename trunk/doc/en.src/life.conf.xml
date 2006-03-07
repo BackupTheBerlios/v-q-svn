@@ -492,6 +492,20 @@
 							<filename>corba_utils.pdf</filename>.
 						</entry>
 					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.rm_by_sql</entry>
+						<entry>0</entry>
+						<entry>
+							If value is different than 0 enable rm_by_sql function.
+						</entry>
+					</row>
+					<row>
+						<entry>com.foo_baz.v_q.jdbclogd.read_by_sql</entry>
+						<entry>0</entry>
+						<entry>
+							If value is different than 0 enable read_by_sql function.
+						</entry>
+					</row>
 				</tbody>
 			</tgroup>
 		</table>
