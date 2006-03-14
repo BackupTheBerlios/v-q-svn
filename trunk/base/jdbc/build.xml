@@ -1,5 +1,9 @@
 <project name="jdbcd" basedir="." default="jar">
-	<taskdef name="idlcheck" classname="idldepend.IDLCheckerTask" classpath="idldepend-0-8-1.jar"/>
+	<taskdef name="idlcheck" classname="idldepend.IDLCheckerTask">
+		<classpath>
+			<pathelement location="lib/idldepend-0-8-1.jar"/>
+		</classpath>
+	</taskdef>
 
     <!-- Project settings -->
     <property name="project.distname" value="jdbcd"/>

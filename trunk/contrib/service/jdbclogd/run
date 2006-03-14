@@ -34,13 +34,16 @@ export CLASSPATH="$VQ_HOME/lib/vq/pg74.215.jdbc3.jar"
 # v-q jars
 export CLASSPATH="$CLASSPATH":"$VQ_HOME/lib/vq/corbautil.jar":"$VQ_HOME/lib/vq/jdbcd.jar"
 
+# Debugging?
+#JAVA_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8001,server=y,suspend=n"
+
 # PostgreSQL
-java -Djdbc.drivers="$drivers" \
+java $JAVA_DEBUG -Djdbc.drivers="$drivers" \
 -Dcom.foo_baz.v_q."$prog".jdbc=jdbc:postgresql://localhost/mail \
 "$prog" -ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService
 
 # Oracle
-#java -Djdbc.drivers="$drivers" \
+#java $JAVA_DEBUG -Djdbc.drivers="$drivers" \
 #-Dcom.foo_baz.v_q."$prog".jdbc=jdbc:oracle:thin:@localhost:1521:orcl \
 #"$prog" -ORBInitRef NameService=corbaloc::127.0.0.1:2809/NameService
 

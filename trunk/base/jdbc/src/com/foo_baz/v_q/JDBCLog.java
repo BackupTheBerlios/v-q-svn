@@ -341,7 +341,7 @@ public class JDBCLog extends iloggerPOA {
 		les.value = new String[0][0];
 		ArrayList ales = new ArrayList();
 
-		if( this.read_by_sql != true )
+		if( this.read_by_sql.booleanValue() != true )
 			return lr(err_code.err_perm, "read_by_sql");
 
 		PreparedStatement st = null;
@@ -463,7 +463,7 @@ public class JDBCLog extends iloggerPOA {
 	 *
 	 */
 	public error rm_by_sql( String where ) throws null_error, db_error, except { try {
-		if( this.rm_by_sql != true )
+		if( this.rm_by_sql.booleanValue() != true )
 			return lr(err_code.err_perm, "rm_by_sql");
 
 		CallableStatement call = con.prepareCall( "{ ? = call log_rm_by_sql(?) }" );
