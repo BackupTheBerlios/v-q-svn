@@ -166,3 +166,9 @@ CREATE SEQUENCE vq_domains_id_domain_seq;
 CREATE SEQUENCE vq_users_conf_id_conf_seq;
 
 CREATE SEQUENCE vq_log_id_log_seq;
+
+CREATE VIEW vq_view_log_dom_ls AS SELECT DISTINCT(domain) FROM vq_log ORDER BY domain;
+CREATE VIEW vq_view_log_service_ls AS SELECT DISTINCT(service) FROM vq_log ORDER BY service;
+CREATE VIEW vq_view_log_result_ls AS SELECT DISTINCT(result) FROM vq_log ORDER BY result;
+CREATE VIEW vq_view_log_ip_ls AS SELECT DISTINCT(ip) FROM vq_log ORDER BY ip;
+CREATE VIEW vq_view_log_user_ls_by_dom AS SELECT DISTINCT domain,login FROM vq_log ORDER BY domain;

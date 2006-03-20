@@ -46,6 +46,11 @@ namespace POA_vq {
 					typedef ::vq::ilogger::string_list2_out string_list2_out;
 					typedef ::vq::ilogger::string_list2 string_list2;
 					typedef ::vq::ilogger::string_list string_list;
+					typedef ::vq::ilogger::string_list_out string_list_out;
+					typedef ::vq::ilogger::service_type_list_out service_type_list_out;
+					typedef ::vq::ilogger::service_type_list service_type_list;
+					typedef ::vq::ilogger::result_type_list_out result_type_list_out;
+					typedef ::vq::ilogger::result_type_list result_type_list;
 
 					struct service_conf {
 						std::string pg_info;
@@ -83,6 +88,12 @@ namespace POA_vq {
 					virtual error* rm_by_user();
 					virtual error* rm_by_sql(const char* where);
 
+					virtual error* dom_ls(string_list_out doms);
+					virtual error* user_ls_by_dom(string_list_out user);
+					virtual error* service_ls(service_type_list_out stl);
+					virtual error* result_ls(result_type_list_out rtl);
+					virtual error* ip_ls(string_list_out ips);
+
 					cpgsqllog( const service_conf & );
 					virtual ~cpgsqllog();
 
@@ -113,6 +124,15 @@ namespace POA_vq {
 							size_type & cnt );
 
 					virtual error * rm_by_func( const std::string & );
+
+					error * string_ls_by_sql( string_list_out reas, 
+						const std::string & field, const std::string & view,
+						const std::string & where = "" );
+
+					template< typename TLO, typename TL, typename I >
+					error * field_ls_by_sql( TLO reas, 
+						const std::string & field, const std::string & view,
+						const std::string & where = "" );
 
 				/**
 				 * \defgroup err Errors handling

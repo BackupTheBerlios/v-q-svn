@@ -20,6 +20,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <text.hpp>
 
+#include <boost/lexical_cast.hpp>
+
 #include <stdexcept>
 #include <iostream>
 
@@ -322,6 +324,96 @@ namespace POA_vq {
 				return lr(::vq::ivq::err_func_res, func);
 
   		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::ip_ls( string_list_out slo ) std_try {
+  		return string_ls_by_sql( slo, "ip", "vq_view_log_ip_ls" );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::dom_ls( string_list_out slo ) std_try {
+  		return string_ls_by_sql( slo, "domain", "vq_view_log_dom_ls" );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::user_ls_by_dom( string_list_out slo ) std_try {
+  		return string_ls_by_sql( slo, "login", "vq_view_log_user_ls_by_dom",
+			"domain="+sqlesc(this->dom) );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::string_ls_by_sql( string_list_out reas, 
+			const std::string & field, const std::string & view,
+			const std::string & where ) std_try {
+
+		cpgsqlpool::value_ptr pg(pool.get());
+		result res(nontransaction(*pg.get()).exec(
+			"SELECT "+field+" FROM "+view
+			+( where.size() ? (" WHERE "+where) : "" )
+			+" ORDER BY "+field ) );
+
+		reas = new string_list;
+
+		if(res.empty()) return lr(::vq::ivq::err_no, "");
+
+		result::size_type s = res.size();
+		reas->length(static_cast<CORBA::ULong>(s));
+		for( result::size_type i=0; i<s; ++i ) {
+			reas[i] = CORBA::string_dup( 
+				res[i][0].is_null() ? "" : res[i][0].c_str() );
+		}
+		return lr(::vq::ivq::err_no, "");
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::service_ls( service_type_list_out slo ) std_try {
+  		return field_ls_by_sql< service_type_list_out, service_type_list, service_type >
+				( slo, "service", "vq_view_log_service_ls" );
+	} std_catch
+
+	/**
+	 *
+	 */
+	cpgsqllog::error * cpgsqllog::result_ls( result_type_list_out slo ) std_try {
+  		return field_ls_by_sql< result_type_list_out, result_type_list, result_type >
+				( slo, "result", "vq_view_log_result_ls" );
+	} std_catch
+
+	/**
+	 *
+	 */
+	template< typename TLO, typename TL, typename I >
+	cpgsqllog::error * cpgsqllog::field_ls_by_sql( TLO reas, 
+			const std::string & field, const std::string & view,
+			const std::string & where ) std_try {
+
+		cpgsqlpool::value_ptr pg(pool.get());
+		result res(nontransaction(*pg.get()).exec(
+			"SELECT "+field+" FROM "+view
+			+( where.size() ? (" WHERE "+where) : "" ) ) );
+
+		reas = new TL;
+
+		if(res.empty()) return lr(::vq::ivq::err_no, "");
+
+		result::size_type s = res.size();
+		reas->length(static_cast<CORBA::ULong>(s));
+		for( result::size_type i=0; i<s; ++i ) {
+			reas[i] = boost::lexical_cast< I >( 
+				res[i][0].is_null() ? "0" : res[i][0].c_str() );
+		}
+		return lr(::vq::ivq::err_no, "");
 	} std_catch
 
 	/**

@@ -32,6 +32,8 @@ module vq {
 			typedef unsigned short result_type;
 			typedef sequence<string> string_list;
 			typedef sequence<string_list> string_list2;
+			typedef sequence<service_type> service_type_list;
+			typedef sequence<result_type> result_type_list;
 
 			/// Size
 			typedef ivq::size_type size_type;
@@ -167,6 +169,35 @@ module vq {
 			error rm_by_sql( in string where )
 				raises (null_error, db_error, except);
 
+			/**
+			 * List of domains have any log entries
+			 */
+			error dom_ls( out string_list doms ) 
+				raises (null_error, db_error, except);
+
+			/**
+			 * List of users in specified domain having any log entries.
+			 */
+			error user_ls_by_dom( out string_list user )
+				raises (null_error, db_error, except);
+
+			/**
+			 * List of all services having any log entries
+			 */
+			error service_ls( out service_type_list stl )
+				raises (null_error, db_error, except);
+
+			/**
+			 * List of all results having any log entries
+			 */
+			error result_ls( out result_type_list rtl )
+				raises (null_error, db_error, except);
+
+			/**
+			 * List of ip addresses having any log entries
+			 */
+			error ip_ls( out string_list ips )
+				raises (null_error, db_error, except);
 	};
 
 }; // module vq

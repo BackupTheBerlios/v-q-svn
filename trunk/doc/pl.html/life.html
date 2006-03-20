@@ -1,11 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML
 ><HEAD
 ><TITLE
 >¯ycie z Virtual Qmail</TITLE
 ><META
 NAME="GENERATOR"
-CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
 REL="HOME"
 TITLE="Virtual Qmail"
 HREF="index.html"><LINK
@@ -19,7 +19,7 @@ REL="STYLESHEET"
 TYPE="text/css"
 HREF="stylesheet.css"><META
 NAME="creation"
-CONTENT="2006-02-19T20:18:43"><META
+CONTENT="2006-03-17T20:58:56"><META
 HTTP-EQUIV="Content-Type"
 CONTENT="text/html; charset=ISO-8859-2"></HEAD
 ><BODY
@@ -100,27 +100,27 @@ HREF="life.html#life.env"
 ></DT
 ><DT
 >3.1.2. <A
-HREF="life.html#AEN233"
+HREF="life.html#AEN236"
 >Konfiguracja modu³u Qmail</A
 ></DT
 ><DT
 >3.1.3. <A
-HREF="life.html#AEN341"
+HREF="life.html#AEN344"
 >Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
 ></DT
 ><DT
 >3.1.4. <A
-HREF="life.html#AEN377"
+HREF="life.html#AEN390"
 >Konfiguracja modu³u autoryzacyjnego JDBC</A
 ></DT
 ><DT
 >3.1.5. <A
-HREF="life.html#AEN419"
+HREF="life.html#AEN432"
 >Konfiguracja modu³u loguj±cego PostgreSQL</A
 ></DT
 ><DT
 >3.1.6. <A
-HREF="life.html#AEN455"
+HREF="life.html#AEN468"
 >Konfiguracja modu³u loguj±cego JDBC</A
 ></DT
 ></DL
@@ -247,7 +247,7 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN233"
+NAME="AEN236"
 >3.1.2. Konfiguracja modu³u Qmail</A
 ></H2
 ><P
@@ -263,7 +263,7 @@ HREF="life.html#life.vq_etc_dir"
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN238"
+NAME="AEN241"
 ></A
 ><P
 ><B
@@ -566,7 +566,7 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN341"
+NAME="AEN344"
 >3.1.3. Konfiguracja modu³u autoryzacyjnego PostgreSQL</A
 ></H2
 ><P
@@ -582,7 +582,7 @@ HREF="life.html#life.vq_etc_dir"
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN346"
+NAME="AEN349"
 ></A
 ><P
 ><B
@@ -603,6 +603,22 @@ CLASS="CALSTABLE"
 ></TR
 ></THEAD
 ><TBODY
+><TR
+><TD
+><TT
+CLASS="filename"
+>dep_mod</TT
+></TD
+><TD
+>fixed_ports_no_imr</TD
+><TD
+>&#13;							Deployment model opisany w <TT
+CLASS="filename"
+>corba_utils.pdf</TT
+>.
+							Okre¶la kontekst dzia³ania us³ugi CORBA.
+						</TD
+></TR
 ><TR
 ><TD
 ><TT
@@ -636,22 +652,6 @@ CLASS="filename"
 ><TD
 ><TT
 CLASS="filename"
->dep_mod</TT
-></TD
-><TD
->fixed_ports_no_imr</TD
-><TD
->&#13;							Deployment model opisany w <TT
-CLASS="filename"
->corba_utils.pdf</TT
->.
-							Okre¶la kontekst dzia³ania us³ugi CORBA.
-						</TD
-></TR
-><TR
-><TD
-><TT
-CLASS="filename"
 >policy</TT
 ></TD
 ><TD
@@ -665,6 +665,32 @@ CLASS="filename"
 >.
 						</TD
 ></TR
+><TR
+><TD
+><TT
+CLASS="filename"
+>read_by_sql</TT
+></TD
+><TD
+>1</TD
+><TD
+>&#13;							Je¿eli warto¶æ jest ró¿na od zera funkcje read_by_sql i count_by_sql s± dostêpne dla klientów.
+							W innym wypadku dostêp jest zabroniony i odwo³anie siê do tych funkcjii zwraca b³±d.
+						</TD
+></TR
+><TR
+><TD
+><TT
+CLASS="filename"
+>rm_by_sql</TT
+></TD
+><TD
+>0</TD
+><TD
+>&#13;							Je¿eli warto¶æ jest ró¿na od zera funkcja rm_by_sql jest dostêpna dla klientów.
+							W innym wypadku dostêp jest zabroniony i odwo³anie siê do funkcji zwraca b³±d.
+						</TD
+></TR
 ></TBODY
 ></TABLE
 ></DIV
@@ -674,7 +700,7 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN377"
+NAME="AEN390"
 >3.1.4. Konfiguracja modu³u autoryzacyjnego JDBC</A
 ></H2
 ><P
@@ -693,7 +719,7 @@ CLASS="userinput"
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN382"
+NAME="AEN395"
 ></A
 ><P
 ><B
@@ -805,7 +831,7 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN419"
+NAME="AEN432"
 >3.1.5. Konfiguracja modu³u loguj±cego PostgreSQL</A
 ></H2
 ><P
@@ -821,7 +847,7 @@ HREF="life.html#life.vq_etc_dir"
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN424"
+NAME="AEN437"
 ></A
 ><P
 ><B
@@ -913,7 +939,7 @@ CLASS="section"
 ><H2
 CLASS="section"
 ><A
-NAME="AEN455"
+NAME="AEN468"
 >3.1.6. Konfiguracja modu³u loguj±cego JDBC</A
 ></H2
 ><P
@@ -932,7 +958,7 @@ CLASS="userinput"
 ><DIV
 CLASS="table"
 ><A
-NAME="AEN460"
+NAME="AEN473"
 ></A
 ><P
 ><B
@@ -1033,6 +1059,24 @@ CLASS="filename"
 CLASS="filename"
 >corba_utils.pdf</TT
 >.
+						</TD
+></TR
+><TR
+><TD
+>com.foo_baz.v_q.jdbclogd.rm_by_sql</TD
+><TD
+>0</TD
+><TD
+>&#13;							Warto¶æ ró¿na od 0 w³±cza funkcjê rm_by_sql.
+						</TD
+></TR
+><TR
+><TD
+>com.foo_baz.v_q.jdbclogd.read_by_sql</TD
+><TD
+>0</TD
+><TD
+>&#13;							Warto¶æ ró¿na od 0 w³±cza funkcjê read_by_sql.
 						</TD
 ></TR
 ></TBODY

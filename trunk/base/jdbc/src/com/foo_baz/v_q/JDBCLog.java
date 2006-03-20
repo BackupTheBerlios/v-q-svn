@@ -514,6 +514,174 @@ public class JDBCLog extends iloggerPOA {
 	/**
 	 *
 	 */
+	public error ip_ls( com.foo_baz.v_q.iloggerPackage.string_listHolder reas ) 
+			throws null_error, db_error, except {
+		return string_ls_by_sql( reas, "ip", "vq_view_log_ip_ls", "" );
+	}
+
+	/**
+	 *
+	 */
+	public error dom_ls( com.foo_baz.v_q.iloggerPackage.string_listHolder reas ) 
+			throws null_error, db_error, except {
+		return string_ls_by_sql( reas, "domain", "vq_view_log_dom_ls", "" );
+	}
+
+	/**
+	 *
+	 */
+	public error user_ls_by_dom( com.foo_baz.v_q.iloggerPackage.string_listHolder reas ) 
+			throws null_error, db_error, except {
+		return string_ls_by_sql( reas, "login", "vq_view_log_user_ls_by_dom",
+			"domain="+this.dom );
+	}
+
+	/**
+	 *
+	 */
+	protected error string_ls_by_sql( com.foo_baz.v_q.iloggerPackage.string_listHolder reas, 
+			String field, String view, String where )
+			throws null_error, db_error, except { try {
+
+		reas.value = new String[0];
+		PreparedStatement st = null;
+		ResultSet res = null;
+		ArrayList areas = new ArrayList();
+
+		try {
+			st = con.prepareStatement(
+				"SELECT "+field+" FROM "+view
+				+(! "".equals(where) ? (" WHERE "+where) : "" )
+				+" ORDER BY "+field);
+			
+			res = st.executeQuery();
+
+			while( res.next() ) {
+				String item = res.getString(1);
+				if( res.wasNull() ) item = "";
+				areas.add(item);
+			}
+
+			reas.value = new String [areas.size()];
+			for( int i=0, s=areas.size(); i<s; ++i )
+				reas.value[i] = (String) areas.get(i);
+		} finally {
+			try { if(res != null) res.close(); } catch(Exception e) {}
+			try { if(st != null) st.close(); } catch(Exception e) {}
+		}
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
+	 *
+	 */
+	public error result_ls( result_type_listHolder reas ) 
+			throws null_error, db_error, except {
+		return result_ls_by_sql( reas, "result", "vq_view_log_result_ls", "" );
+	}
+
+	/**
+	 *
+	 */
+	protected error result_ls_by_sql( result_type_listHolder reas, 
+			String field, String view, String where )
+			throws null_error, db_error, except { try {
+
+		reas.value = new short[0];
+		PreparedStatement st = null;
+		ResultSet res = null;
+		ArrayList areas = new ArrayList();
+
+		try {
+			st = con.prepareStatement(
+				"SELECT "+field+" FROM "+view
+				+(! "".equals(where) ? (" WHERE "+where) : "" )
+				+" ORDER BY "+field);
+			
+			res = st.executeQuery();
+
+			while( res.next() ) {
+				Short item = new Short(res.getShort(1));
+				if( res.wasNull() ) item = new Short((short)0);
+				areas.add(item);
+			}
+
+			reas.value = new short [areas.size()];
+			for( int i=0, s=areas.size(); i<s; ++i )
+				reas.value[i] = ((Short) areas.get(i)).shortValue();
+		} finally {
+			try { if(res != null) res.close(); } catch(Exception e) {}
+			try { if(st != null) st.close(); } catch(Exception e) {}
+		}
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+	/**
+	 *
+	 */
+	public error service_ls( service_type_listHolder reas ) 
+			throws null_error, db_error, except {
+		return service_ls_by_sql( reas, "service", "vq_view_log_service_ls", "" );
+	}
+
+	/**
+	 *
+	 */
+	protected error service_ls_by_sql( service_type_listHolder reas, 
+			String field, String view, String where )
+			throws null_error, db_error, except { try {
+
+		reas.value = new short[0];
+		PreparedStatement st = null;
+		ResultSet res = null;
+		ArrayList areas = new ArrayList();
+
+		try {
+			st = con.prepareStatement(
+				"SELECT "+field+" FROM "+view
+				+(! "".equals(where) ? (" WHERE "+where) : "" )
+				+" ORDER BY "+field);
+			
+			res = st.executeQuery();
+
+			while( res.next() ) {
+				Short item = new Short(res.getShort(1));
+				if( res.wasNull() ) item = new Short((short)0);
+				areas.add(item);
+			}
+
+			reas.value = new short [areas.size()];
+			for( int i=0, s=areas.size(); i<s; ++i )
+				reas.value[i] = ((Short) areas.get(i)).shortValue();
+		} finally {
+			try { if(res != null) res.close(); } catch(Exception e) {}
+			try { if(st != null) st.close(); } catch(Exception e) {}
+		}
+		return lr(err_code.err_no, "");
+	} catch( SQLException e ) {
+		throw new db_error(e.getMessage(), getClass().getName(), 0);
+	} catch( NullPointerException e ) {
+		throw new null_error(e.getMessage(), getClass().getName(), 0);
+	} catch( Exception e ) {
+		throw new except(e.getMessage(), getClass().getName(), 0);
+	} }
+
+
+	/**
+	 *
+	 */
 	protected error lr( err_code ec, String what ) {
 		error err = new error();
 		err.ec = ec;

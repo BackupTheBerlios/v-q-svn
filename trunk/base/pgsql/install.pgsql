@@ -9,11 +9,12 @@ sub VERSION_MESSAGE {
 
 sub HELP_MESSAGE {
 	my $out = shift;
-	print $out "usage: $0 [-c con_info] [-u user] [-p pass] [-s schema]\n";
+	print $out "usage: $0 [-U] [-c con_info] [-u user] [-p pass] [-s schema]\n";
 	print $out "-c con_info\tPostgreSQL connection info\n";
 	print $out "-u user\tconnect as this user\n";
 	print $out "-p pass\tuse this password\n";
 	print $out "-s schema\tcreate objects in specified schema\n";
+	print $out "-U\tupgrade database\n";
 }
 
 package vqpgsql;
@@ -39,7 +40,7 @@ sub qdie($);
 sub version_get;
 sub plpgsql;
 
-# functions upgrading to version 9
+# functions upgrading to version 10
 sub vcur_funcs;
 sub vcur_tables;
 
@@ -69,7 +70,7 @@ if($schema ne "") {
 plpgsql();
 
 my $ver = version_get();
-my $cur_ver = 9;
+my $cur_ver = 10;
 print "Database version is: $ver\n";
 
 if( $ver == 0 ) {
@@ -94,6 +95,12 @@ if( $ver == 0 ) {
 			upd_vq_info(9);
 			$ver = 9;
 		}
+		if ($ver == 9) {
+			v9_10_funcs();
+			upd_vq_info(10);
+			$ver = 10;
+		}
+
 	} else {
 		die( "Don't know how to upgrade!" );
 	}
@@ -724,6 +731,7 @@ END;' LANGUAGE 'plpgsql'",
 
 	v7_8_funcs;
 	v8_9_funcs;
+	v9_10_funcs;
 } # vcur_funcs
 
 ##
@@ -896,6 +904,29 @@ END;
 	}
 } # v8_9_funcs
 
+##
+# v9_10_funcs 
+sub v9_10_funcs {
+	my @funcs = (
+"CREATE OR REPLACE VIEW vq_view_log_dom_ls "
+."AS SELECT DISTINCT(domain) FROM vq_log ORDER BY domain",
+"CREATE OR REPLACE VIEW vq_view_log_user_ls_by_dom "
+."AS SELECT DISTINCT domain,login FROM vq_log ORDER BY domain,login",
+"CREATE OR REPLACE VIEW vq_view_log_service_ls "
+."AS SELECT DISTINCT(service) FROM vq_log ORDER BY service",
+"CREATE OR REPLACE VIEW vq_view_log_result_ls "
+."AS SELECT DISTINCT(result) FROM vq_log ORDER BY result",
+"CREATE OR REPLACE VIEW vq_view_log_ip_ls "
+."AS SELECT DISTINCT(ip) FROM vq_log ORDER BY ip",
+);
+
+	for( my $i=0; $i < @funcs.""; ++$i ) {
+		my $res = $con->do($funcs[$i]);
+		if( $con->err != PGRES_COMMAND_OK ) {
+			qdie($funcs[$i]);
+		}
+	}
+} # v9_10_funcs
 
 ##
 # Create table with informations about database

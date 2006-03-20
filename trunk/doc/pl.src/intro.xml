@@ -104,6 +104,16 @@
 			</para>
 
 			<formalpara>
+				<title>Wersja 12</title>
+
+				<para>
+					Logger zosta³ rozszerzony o nastêpuj±ce funkcje (dodano nowe widoki do bazy danych):
+					dom_ls, service_ls, result_ls, user_ls_by_dom, read_by_sql, rm_by_sql.
+				</para>
+			</formalpara>
+
+
+			<formalpara>
 				<title>Wersja 11</title>
 				
 				<para>

@@ -100,6 +100,15 @@
 		</para>
 
 		<formalpara>
+			<title>Version 12</title>
+
+			<para>
+				Logger has been extended with following functions (new views in database): 
+				dom_ls, service_ls, result_ls, user_ls_by_dom, read_by_sql, rm_by_sql.
+			</para>
+		</formalpara>
+
+		<formalpara>
 			<title>Version 11</title>
 
 			<para>
